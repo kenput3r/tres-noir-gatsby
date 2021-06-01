@@ -163,18 +163,6 @@ export const query = graphql`
             data: gatsbyImageData(placeholder: TRACED_SVG)
             title
           }
-          bifocalPolarized {
-            data: gatsbyImageData(placeholder: TRACED_SVG)
-            title
-          }
-          bifocalTransitions {
-            data: gatsbyImageData(placeholder: TRACED_SVG)
-            title
-          }
-          bifocalTransitionsXtractivePolarized {
-            data: gatsbyImageData(placeholder: TRACED_SVG)
-            title
-          }
           clear {
             data: gatsbyImageData(placeholder: TRACED_SVG)
             title
@@ -188,30 +176,6 @@ export const query = graphql`
             title
           }
           gradientTintG15Lenses {
-            data: gatsbyImageData(placeholder: TRACED_SVG)
-            title
-          }
-          polarizedSmokeLenses {
-            data: gatsbyImageData(placeholder: TRACED_SVG)
-            title
-          }
-          progressive {
-            data: gatsbyImageData(placeholder: TRACED_SVG)
-            title
-          }
-          progressiveGradientTintSmokeLenses {
-            data: gatsbyImageData(placeholder: TRACED_SVG)
-            title
-          }
-          progressivePolarizedSmokeLenses {
-            data: gatsbyImageData(placeholder: TRACED_SVG)
-            title
-          }
-          progressiveTransitions {
-            data: gatsbyImageData(placeholder: TRACED_SVG)
-            title
-          }
-          progressiveTransitionsXtractivePolarized {
             data: gatsbyImageData(placeholder: TRACED_SVG)
             title
           }
@@ -268,14 +232,6 @@ export const query = graphql`
             title
           }
           sunGlassesG15LensesBifocal {
-            data: gatsbyImageData(placeholder: TRACED_SVG)
-            title
-          }
-          transitions {
-            data: gatsbyImageData(placeholder: TRACED_SVG)
-            title
-          }
-          transitionsXtractivePolarized {
             data: gatsbyImageData(placeholder: TRACED_SVG)
             title
           }
