@@ -5,6 +5,7 @@ import styled from "styled-components"
 
 import Layout from "../../components/layout"
 import SEO from "../../components/seo"
+// @ts-ignorets
 import text from "./text.json"
 
 const LearnMore = ({ data: { contentfulProduct } }: any) => {
@@ -21,7 +22,7 @@ const LearnMore = ({ data: { contentfulProduct } }: any) => {
   )
   useEffect(() => {
     const stickyHeading = document.getElementById("StickyHeading")
-    observer.observe(stickyHeading)
+    if (stickyHeading) observer.observe(stickyHeading)
   })
   return (
     <Layout>

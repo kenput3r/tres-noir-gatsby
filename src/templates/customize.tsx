@@ -12,8 +12,13 @@ import Step4 from "../components/customization/step4"
 import Step5 from "../components/customization/step5"
 import { CustomizeContext } from "../contexts/customize"
 import { changeImage } from "../components/customization/functions"
+import { ContentfulProduct, ShopifyProduct } from "../types/customize"
 
-const Customize = ({ data: { contentfulProduct, shopifyProduct } }: any) => {
+const Customize = ({
+  data: { contentfulProduct, shopifyProduct },
+}: {
+  data: { contentfulProduct: ContentfulProduct; shopifyProduct: ShopifyProduct }
+}) => {
   const { currentStep, setProductUrl, selectedVariants } = useContext(
     CustomizeContext
   )
@@ -28,7 +33,7 @@ const Customize = ({ data: { contentfulProduct, shopifyProduct } }: any) => {
     data: variant.contentful.customizations.clear.data,
     altText: variant.contentful.customizations.clear.title,
   })
-  const previewRef = useRef(null)
+  const previewRef = useRef<HTMLDivElement>(null)
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search)
     const sku = urlParams.get("variant")
@@ -38,26 +43,33 @@ const Customize = ({ data: { contentfulProduct, shopifyProduct } }: any) => {
     const shopify = shopifyProduct.variants.find(
       (_variant: any) => _variant.sku === sku
     )
-    const variant = { contentful, shopify }
-    setVariant(variant)
-    setProductUrl(`/products/${contentfulProduct.handle}`)
-    const previewImage = previewRef.current.querySelector(
-      ".gatsby-image-wrapper img[data-main-image]"
-    )
-    console.log(previewImage)
-    // previewImage.addEventListener("loadstart", function (e) {
-    //   console.log("Preview Image Load Started")
-    // })
-    // previewImage.addEventListener("loadend", function (e) {
-    //   console.log("Preview Image Load Ended")
-    // })
+    if (contentful && shopify) {
+      const variant = { contentful, shopify }
+      setVariant(variant)
+      setProductUrl(`/products/${contentfulProduct.handle}`)
+      if (previewRef.current) {
+        const previewImage = previewRef.current.querySelector(
+          ".gatsby-image-wrapper img[data-main-image]"
+        )
+        console.log(previewImage)
+        // previewImage.addEventListener("loadstart", function (e) {
+        //   console.log("Preview Image Load Started")
+        // })
+        // previewImage.addEventListener("loadend", function (e) {
+        //   console.log("Preview Image Load Ended")
+        // })
+      }
+    }
   }, [])
   /* UPDATE PRICING */
   useEffect(() => {
     let price = variant.shopify.priceNumber
     Object.keys(selectedVariants).forEach(key => {
       // @ts-ignore
-      price += selectedVariants[key].priceNumber
+      // price += selectedVariants[key].priceNumber
+      // convert everything to int and divide by 100 at the end
+      price = price * 100 + selectedVariants[key].priceNumber * 100
+      price = price / 100
     })
     setCurrentPrice(price)
     changeImage(

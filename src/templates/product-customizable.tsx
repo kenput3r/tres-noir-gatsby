@@ -15,7 +15,7 @@ const ProductCustomizable = ({
   })
 
   const selectVariant = (e: React.MouseEvent, variant: any) => {
-    e.currentTarget && e.currentTarget.blur()
+    e.currentTarget && (e.currentTarget as HTMLElement).blur()
     const shopify = shopifyProduct.variants.find(
       (_variant: any) => _variant.sku === variant.sku
     )
@@ -97,7 +97,7 @@ const ProductCustomizable = ({
                   <Link
                     to={`/products/${contentfulProduct.handle}/customize?variant=${selectedVariant.shopify.sku}`}
                   >
-                    CUSOTMIZE
+                    CUSTOMIZE
                   </Link>
                   <p className="small">Click for Polarized, Rx, and more</p>
                 </div>
