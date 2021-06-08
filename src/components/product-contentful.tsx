@@ -1,7 +1,7 @@
 import React, { useState } from "react"
 import { Link } from "gatsby"
 import styled from "styled-components"
-import { GatsbyImage as Image } from "gatsby-plugin-image"
+import { GatsbyImage as Img } from "gatsby-plugin-image"
 import { ContentfulProduct } from "../types/contentful-products"
 
 interface Props {
@@ -10,35 +10,43 @@ interface Props {
 
 const ProductContentful = ({ data }: Props) => {
   console.log(data)
-  const defaultImage = data.variants[0].featuredImage.gatsbyImageData
+  const defaultImage = data.variants[0].featuredImage.data
   const [variantImage, setVariantImage] = useState<any>(defaultImage)
-  const [selected, setSelected] = useState<string>(data.variants[0].colorName)
 
-  const handleClick = (name: any) => {
-    const variant = data.variants.find(({ colorName }) => colorName === name)
-    if (variant) {
-      setVariantImage(variant.featuredImage.gatsbyImageData)
-      setSelected(name)
-    }
+  const [selectedVariant, setSelectedVariant] = useState({
+    contentful: data.variants[0],
+  })
+
+  const selectVariant = (e: React.MouseEvent, variant: any) => {
+    e.currentTarget && (e.currentTarget as HTMLElement).blur()
+    setVariantImage(variant.featuredImage.data)
+    setSelectedVariant({
+      contentful: variant,
+    })
   }
 
   return (
     <Component>
-      <Image image={variantImage} alt={data.title} />
+      <Link to={`/products/${data.handle}`}>
+        <Img image={variantImage} alt={data.title} />
+      </Link>
       <h3>{data.title}</h3>
-      <div className="variants">
-        <div className="grid">
-          {data.variants.map((variant: any) => (
-            <Image
-              className={selected === variant.colorName ? "active" : ""}
-              key={variant.colorName}
-              image={variant.colorImage.gatsbyImageData}
-              alt={variant.colorName}
-              onClick={() => handleClick(variant.colorName)}
-              title={variant.colorName}
-            />
-          ))}
-        </div>
+      <div className="options">
+        {data.variants.map((variant: any) => (
+          <button
+            key={variant.id}
+            type="button"
+            data-active={variant.id === selectedVariant.contentful.id}
+            onClick={e => selectVariant(e, variant)}
+            aria-label={`Color option ${variant.colorName}`}
+            aria-pressed={
+              variant.id === selectedVariant.contentful.id ? "true" : "false"
+            }
+            title={variant.colorName}
+          >
+            <Img image={variant.colorImage.data} alt={variant.colorName} />
+          </button>
+        ))}
       </div>
     </Component>
   )
@@ -53,22 +61,23 @@ const Component = styled.article`
   h3 {
     text-align: center;
   }
-  .variants {
-    width: 80%;
-    margin: auto;
-    .grid {
-      display: flex;
-      flex-direction: row;
-      flex-wrap: wrap;
-      justify-content: space-evenly;
-      align-items: center;
-      .gatsby-image-wrapper {
+  .options {
+    button {
+      background-color: transparent;
+      border: 1px solid #fff;
+      border-radius: 50%;
+      line-height: 0;
+      margin-right: 5px;
+      padding: 5px;
+      max-width: 50px;
+      &[data-active="true"] {
+        border-color: #000;
+      }
+      :hover {
         cursor: pointer;
-        width: 40px;
-        &.active {
-          border-radius: 25px;
-          border: 3px solid #000;
-        }
+      }
+      .gatsby-image-wrapper {
+        border-radius: 50%;
       }
     }
   }

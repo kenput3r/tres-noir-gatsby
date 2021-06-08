@@ -35,12 +35,13 @@ export const query = graphql`
         handle
         id
         variants {
+          id
           featuredImage {
-            gatsbyImageData(width: 600)
+            data: gatsbyImageData(width: 600)
           }
           colorName
           colorImage {
-            gatsbyImageData
+            data: gatsbyImageData(width: 40)
           }
         }
       }

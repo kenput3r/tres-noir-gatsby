@@ -1,10 +1,12 @@
 export interface ContentfulProductVariant {
+  id: string
+  sku: string
   featuredImage: {
-    gatsbyImageData: any
+    data: any
   }
   colorName: string
   colorImage: {
-    gatsbyImageData: any
+    data: any
   }
 }
 

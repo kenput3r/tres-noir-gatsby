@@ -307,6 +307,7 @@ export const query = graphql`
       }
     }
     shopifyProduct(handle: { eq: $handle }) {
+      id
       priceRange {
         minVariantPrice {
           amount
