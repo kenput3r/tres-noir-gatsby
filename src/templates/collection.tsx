@@ -4,7 +4,7 @@ import styled from "styled-components"
 import Layout from "../components/layout"
 import SEO from "../components/seo"
 import Product from "../components/product"
-import { Data, ShopifyProduct } from "../types/collection"
+import { Data, ShopifyProduct } from "../types/shopify-products"
 
 const Collection = ({ data }: Data) => {
   const { shopifyCollection: collection } = data
