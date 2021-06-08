@@ -12,12 +12,20 @@ import Step4 from "../components/customization/step4"
 import Step5 from "../components/customization/step5"
 import { CustomizeContext } from "../contexts/customize"
 import { changeImage } from "../components/customization/functions"
-import { ContentfulProduct, ShopifyProduct } from "../types/customize"
+import {
+  ContentfulProduct,
+  ContentfulProductVariant,
+  ShopifyProduct,
+  ShopifyProductVariant,
+} from "../types/customize"
 
 const Customize = ({
   data: { contentfulProduct, shopifyProduct },
 }: {
-  data: { contentfulProduct: ContentfulProduct; shopifyProduct: ShopifyProduct }
+  data: {
+    contentfulProduct: ContentfulProduct
+    shopifyProduct: ShopifyProduct
+  }
 }) => {
   const { currentStep, setProductUrl, selectedVariants } = useContext(
     CustomizeContext
@@ -38,10 +46,10 @@ const Customize = ({
     const urlParams = new URLSearchParams(window.location.search)
     const sku = urlParams.get("variant")
     const contentful = contentfulProduct.variants.find(
-      (_variant: any) => _variant.sku === sku
+      (_variant: ContentfulProductVariant) => _variant.sku === sku
     )
     const shopify = shopifyProduct.variants.find(
-      (_variant: any) => _variant.sku === sku
+      (_variant: ShopifyProductVariant) => _variant.sku === sku
     )
     if (contentful && shopify) {
       const variant = { contentful, shopify }

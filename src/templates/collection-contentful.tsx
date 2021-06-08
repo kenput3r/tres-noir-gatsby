@@ -36,6 +36,7 @@ export const query = graphql`
         id
         variants {
           id
+          sku
           featuredImage {
             data: gatsbyImageData(width: 600)
           }

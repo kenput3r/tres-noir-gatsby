@@ -27,7 +27,9 @@ const ProductContentful = ({ data }: Props) => {
 
   return (
     <Component>
-      <Link to={`/products/${data.handle}`}>
+      <Link
+        to={`/products/${data.handle}?variant=${selectedVariant.contentful.sku}`}
+      >
         <Img image={variantImage} alt={data.title} />
       </Link>
       <h3>{data.title}</h3>

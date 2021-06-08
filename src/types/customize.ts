@@ -2,10 +2,10 @@ export interface ContentfulProduct {
   handle: string
   fitType: string
   fitDimensions: string
-  variants: ContentfulProductVariants[]
+  variants: ContentfulProductVariant[]
 }
 
-interface ContentfulProductVariants {
+export interface ContentfulProductVariant {
   colorName: string
   sku: string
   colorImage: {
@@ -114,10 +114,10 @@ export interface ShopifyProduct {
     }
   }
   title: string
-  variants: ShopifyProductVariants[]
+  variants: ShopifyProductVariant[]
 }
 
-interface ShopifyProductVariants {
+export interface ShopifyProductVariant {
   availableForSale: boolean
   compareAtPriceV2: {
     amount: number

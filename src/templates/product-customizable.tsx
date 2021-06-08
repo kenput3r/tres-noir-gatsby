@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react"
+import React, { useState, useRef, useEffect } from "react"
 import { Link, graphql } from "gatsby"
 import { StaticImage, GatsbyImage as Img } from "gatsby-plugin-image"
 import styled from "styled-components"
@@ -13,6 +13,24 @@ const ProductCustomizable = ({
     contentful: contentfulProduct.variants[0],
     shopify: shopifyProduct.variants[0],
   })
+
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search)
+    const sku = urlParams.get("variant")
+    const contentful = contentfulProduct.variants.find(
+      (_variant: any) => _variant.sku === sku
+    )
+    const shopify = shopifyProduct.variants.find(
+      (_variant: any) => _variant.sku === sku
+    )
+    if (contentful && shopify) {
+      const variant = contentful
+      setSelectedVariant({
+        contentful: variant,
+        shopify,
+      })
+    }
+  }, [])
 
   const selectVariant = (e: React.MouseEvent, variant: any) => {
     e.currentTarget && (e.currentTarget as HTMLElement).blur()
