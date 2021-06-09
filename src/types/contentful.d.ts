@@ -1,12 +1,14 @@
+import { IGatsbyImageData } from "gatsby-plugin-image"
+
 export interface ContentfulProductVariant {
   id: string
   sku: string
   featuredImage: {
-    data: any
+    data: IGatsbyImageData
   }
   colorName: string
   colorImage: {
-    data: any
+    data: IGatsbyImageData
   }
 }
 
@@ -21,10 +23,4 @@ export interface ContentfulCollection {
   handle: string
   name: string
   products: ContentfulProduct[]
-}
-
-export interface Data {
-  data: {
-    contentfulCollection: ContentfulCollection
-  }
 }

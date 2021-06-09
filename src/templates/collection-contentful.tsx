@@ -4,9 +4,13 @@ import styled from "styled-components"
 import Layout from "../components/layout"
 import SEO from "../components/seo"
 import Product from "../components/product-contentful"
-import { Data, ContentfulProduct } from "../types/contentful-products"
+import { ContentfulCollection, ContentfulProduct } from "../types/contentful"
 
-const CollectionContentful = ({ data }: Data) => {
+const CollectionContentful = ({
+  data,
+}: {
+  data: { contentfulCollection: ContentfulCollection }
+}) => {
   const { contentfulCollection: collection } = data
   return (
     <Layout>

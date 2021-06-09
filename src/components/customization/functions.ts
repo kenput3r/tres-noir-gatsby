@@ -1,4 +1,4 @@
-import { SelectedVariants } from "../../../global"
+import { SelectedVariants } from "../../types/global"
 
 export const changeImage = (
   currentStep: number,

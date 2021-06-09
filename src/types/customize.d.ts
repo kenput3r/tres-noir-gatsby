@@ -1,3 +1,5 @@
+import { IGatsbyImageData } from "gatsby-plugin-image"
+
 export interface ContentfulProduct {
   handle: string
   fitType: string
@@ -9,96 +11,96 @@ export interface ContentfulProductVariant {
   colorName: string
   sku: string
   colorImage: {
-    data: any
+    data: IGatsbyImageData
     title: string
   }
   customizations: {
     bifocal: {
-      data: any
+      data: IGatsbyImageData
       title: string
     }
     bifocalGradientTintSmokeLenses: {
-      data: any
+      data: IGatsbyImageData
       title: string
     }
     bifocalGradientTintBrownLenses: {
-      data: any
+      data: IGatsbyImageData
       title: string
     }
     bifocalGradientTintG15Lenses: {
-      data: any
+      data: IGatsbyImageData
       title: string
     }
     clear: {
-      data: any
+      data: IGatsbyImageData
       title: string
     }
     gradientTintSmokeLenses: {
-      data: any
+      data: IGatsbyImageData
       title: string
     }
     gradientTintBrownLenses: {
-      data: any
+      data: IGatsbyImageData
       title: string
     }
     gradientTintG15Lenses: {
-      data: any
+      data: IGatsbyImageData
       title: string
     }
     sunGlassesSmokeLenses: {
-      data: any
+      data: IGatsbyImageData
       title: string
     }
     sunGlassesBrownLenses: {
-      data: any
+      data: IGatsbyImageData
       title: string
     }
     sunGlassesGreenLenses: {
-      data: any
+      data: IGatsbyImageData
       title: string
     }
     sunGlassesOrangeLenses: {
-      data: any
+      data: IGatsbyImageData
       title: string
     }
     sunGlassesYellowLenses: {
-      data: any
+      data: IGatsbyImageData
       title: string
     }
     sunGlassesBlueLenses: {
-      data: any
+      data: IGatsbyImageData
       title: string
     }
     sunGlassesG15Lenses: {
-      data: any
+      data: IGatsbyImageData
       title: string
     }
     sunGlassesSmokeLensesBifocal: {
-      data: any
+      data: IGatsbyImageData
       title: string
     }
     sunGlassesBrownLensesBifocal: {
-      data: any
+      data: IGatsbyImageData
       title: string
     }
     sunGlassesGreenLensesBifocal: {
-      data: any
+      data: IGatsbyImageData
       title: string
     }
     sunGlassesOrangeLensesBifocal: {
-      data: any
+      data: IGatsbyImageData
       title: string
     }
     sunGlassesYellowLensesBifocal: {
-      data: any
+      data: IGatsbyImageData
       title: string
     }
     sunGlassesBlueLensesBifocal: {
-      data: any
+      data: IGatsbyImageData
       title: string
     }
     sunGlassesG15LensesBifocal: {
-      data: any
+      data: IGatsbyImageData
       title: string
     }
   }
@@ -121,7 +123,7 @@ export interface ShopifyProductVariant {
   availableForSale: boolean
   compareAtPriceV2: {
     amount: number
-  }
+  } | null
   id: string
   priceNumber: number
   sku: string

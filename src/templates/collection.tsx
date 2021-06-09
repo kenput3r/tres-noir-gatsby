@@ -4,9 +4,13 @@ import styled from "styled-components"
 import Layout from "../components/layout"
 import SEO from "../components/seo"
 import Product from "../components/product"
-import { Data, ShopifyProduct } from "../types/shopify-products"
+import { ShopifyCollection, ShopifyProduct } from "../types/shopify"
 
-const Collection = ({ data }: Data) => {
+const Collection = ({
+  data,
+}: {
+  data: { shopifyCollection: ShopifyCollection }
+}) => {
   const { shopifyCollection: collection } = data
   return (
     <Layout>

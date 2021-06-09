@@ -1,14 +1,12 @@
+import { IGatsbyImageData } from "gatsby-plugin-image"
+
 export interface ShopifyProduct {
   handle: string
   images: {
     altText: string
     localFile: {
       childImageSharp: {
-        gatsbyImageData: {
-          width: number
-          placeholder: any
-          formats: any[]
-        }
+        gatsbyImageData: IGatsbyImageData
       }
     }
   }
@@ -30,10 +28,4 @@ export interface ShopifyCollection {
   id: string
   title: string
   products: ShopifyProduct[]
-}
-
-export interface Data {
-  data: {
-    shopifyCollection: ShopifyCollection
-  }
 }

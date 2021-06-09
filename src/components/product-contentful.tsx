@@ -1,8 +1,11 @@
 import React, { useState, useContext } from "react"
 import { Link } from "gatsby"
 import styled from "styled-components"
-import { GatsbyImage as Img } from "gatsby-plugin-image"
-import { ContentfulProduct } from "../types/contentful-products"
+import { GatsbyImage as Img, IGatsbyImageData } from "gatsby-plugin-image"
+import {
+  ContentfulProduct,
+  ContentfulProductVariant,
+} from "../types/contentful"
 import { SelectedVariantContext } from "../contexts/selectedVariant"
 
 interface Props {
@@ -13,13 +16,18 @@ const ProductContentful = ({ data }: Props) => {
   console.log(data)
   const { setSelectedVariantContext } = useContext(SelectedVariantContext)
   const defaultImage = data.variants[0].featuredImage.data
-  const [variantImage, setVariantImage] = useState<any>(defaultImage)
+  const [variantImage, setVariantImage] = useState<IGatsbyImageData>(
+    defaultImage
+  )
 
   const [selectedVariant, setSelectedVariant] = useState({
     contentful: data.variants[0],
   })
 
-  const selectVariant = (e: React.MouseEvent, variant: any) => {
+  const selectVariant = (
+    e: React.MouseEvent,
+    variant: ContentfulProductVariant
+  ) => {
     e.currentTarget && (e.currentTarget as HTMLElement).blur()
     setVariantImage(variant.featuredImage.data)
     setSelectedVariant({
@@ -35,7 +43,7 @@ const ProductContentful = ({ data }: Props) => {
       </Link>
       <h3>{data.title}</h3>
       <div className="options">
-        {data.variants.map((variant: any) => (
+        {data.variants.map((variant: ContentfulProductVariant) => (
           <button
             key={variant.id}
             type="button"

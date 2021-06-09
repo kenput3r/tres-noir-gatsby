@@ -6,7 +6,7 @@ import {
   ShopifyCollection,
   ShopifyProduct,
   ShopifyVariant,
-} from "../../../global"
+} from "../../types/global"
 import { CustomizeContext } from "../../contexts/customize"
 
 const Form = ({

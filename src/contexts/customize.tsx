@@ -1,5 +1,5 @@
 import React, { createContext, ReactChild, useState } from "react"
-import { SelectedVariants, ShopifyVariant } from "../../global"
+import { SelectedVariants, ShopifyVariant } from "../types/global"
 
 const defaultContext = {
   currentStep: 1,
