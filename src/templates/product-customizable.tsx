@@ -19,8 +19,6 @@ const ProductCustomizable = ({
   })
 
   useEffect(() => {
-    // const urlParams = new URLSearchParams(location.search)
-    // const sku = urlParams.get("variant")
     const sku = selectedVariantContext
     if (sku) {
       const contentful = contentfulProduct.variants.find(
@@ -44,11 +42,13 @@ const ProductCustomizable = ({
     const shopify = shopifyProduct.variants.find(
       (_variant: any) => _variant.sku === variant.sku
     )
-    setSelectedVariant({
-      contentful: variant,
-      shopify,
-    })
-    setSelectedVariantContext(variant.sku)
+    if (shopify) {
+      setSelectedVariant({
+        contentful: variant,
+        shopify,
+      })
+      setSelectedVariantContext(variant.sku)
+    }
   }
   return (
     <Layout>
