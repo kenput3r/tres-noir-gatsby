@@ -43,7 +43,7 @@ const Customize = ({
   })
   const previewRef = useRef<HTMLDivElement>(null)
   useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search)
+    const urlParams = new URLSearchParams(location.search)
     const sku = urlParams.get("variant")
     const contentful = contentfulProduct.variants.find(
       (_variant: ContentfulProductVariant) => _variant.sku === sku

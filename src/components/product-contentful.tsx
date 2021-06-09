@@ -1,8 +1,9 @@
-import React, { useState } from "react"
+import React, { useState, useContext } from "react"
 import { Link } from "gatsby"
 import styled from "styled-components"
 import { GatsbyImage as Img } from "gatsby-plugin-image"
 import { ContentfulProduct } from "../types/contentful-products"
+import { SelectedVariantContext } from "../contexts/selectedVariant"
 
 interface Props {
   data: ContentfulProduct
@@ -10,6 +11,7 @@ interface Props {
 
 const ProductContentful = ({ data }: Props) => {
   console.log(data)
+  const { setSelectedVariantContext } = useContext(SelectedVariantContext)
   const defaultImage = data.variants[0].featuredImage.data
   const [variantImage, setVariantImage] = useState<any>(defaultImage)
 
@@ -23,13 +25,12 @@ const ProductContentful = ({ data }: Props) => {
     setSelectedVariant({
       contentful: variant,
     })
+    setSelectedVariantContext(variant.sku)
   }
 
   return (
     <Component>
-      <Link
-        to={`/products/${data.handle}?variant=${selectedVariant.contentful.sku}`}
-      >
+      <Link to={`/products/${data.handle}`}>
         <Img image={variantImage} alt={data.title} />
       </Link>
       <h3>{data.title}</h3>

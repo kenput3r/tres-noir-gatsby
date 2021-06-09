@@ -1,34 +1,41 @@
-import React, { useState, useRef, useEffect } from "react"
+import React, { useState, useRef, useEffect, useContext } from "react"
 import { Link, graphql } from "gatsby"
 import { StaticImage, GatsbyImage as Img } from "gatsby-plugin-image"
 import styled from "styled-components"
 import Layout from "../components/layout"
 import SEO from "../components/seo"
 import ProductCarousel from "../components/product-carousel"
+import { SelectedVariantContext } from "../contexts/selectedVariant"
 
 const ProductCustomizable = ({
   data: { contentfulProduct, shopifyProduct },
 }: any) => {
+  const { selectedVariantContext, setSelectedVariantContext } = useContext(
+    SelectedVariantContext
+  )
   const [selectedVariant, setSelectedVariant] = useState({
     contentful: contentfulProduct.variants[0],
     shopify: shopifyProduct.variants[0],
   })
 
   useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search)
-    const sku = urlParams.get("variant")
-    const contentful = contentfulProduct.variants.find(
-      (_variant: any) => _variant.sku === sku
-    )
-    const shopify = shopifyProduct.variants.find(
-      (_variant: any) => _variant.sku === sku
-    )
-    if (contentful && shopify) {
-      const variant = contentful
-      setSelectedVariant({
-        contentful: variant,
-        shopify,
-      })
+    // const urlParams = new URLSearchParams(location.search)
+    // const sku = urlParams.get("variant")
+    const sku = selectedVariantContext
+    if (sku) {
+      const contentful = contentfulProduct.variants.find(
+        (_variant: any) => _variant.sku === sku
+      )
+      const shopify = shopifyProduct.variants.find(
+        (_variant: any) => _variant.sku === sku
+      )
+      if (contentful && shopify) {
+        const variant = contentful
+        setSelectedVariant({
+          contentful: variant,
+          shopify,
+        })
+      }
     }
   }, [])
 
@@ -41,6 +48,7 @@ const ProductCustomizable = ({
       contentful: variant,
       shopify,
     })
+    setSelectedVariantContext(variant.sku)
   }
   return (
     <Layout>
