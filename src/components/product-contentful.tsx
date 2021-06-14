@@ -46,6 +46,7 @@ const ProductContentful = ({ data }: Props) => {
         {data.variants.map((variant: ContentfulProductVariant) => (
           <button
             key={variant.id}
+            className="color-option"
             type="button"
             data-active={variant.id === selectedVariant.contentful.id}
             onClick={e => selectVariant(e, variant)}

@@ -16,6 +16,7 @@ export interface ContentfulProduct {
   handle: string
   id: string
   title: string
+  fitType: string
   variants: ContentfulProductVariant[]
 }
 
