@@ -15,13 +15,18 @@ interface Props {
   setProducts: Dispatch<ContentfulProduct[]>
 }
 
+enum FilterTypes {
+  FitType = "fitType",
+  ColorName = "colorName",
+}
+
 const FiltersContentful = ({
   collection,
   filters,
   setFilters,
   setProducts,
 }: Props) => {
-  const [panel, setPanel] = useState<string>("fitType")
+  const [panel, setPanel] = useState<string>(FilterTypes.FitType)
   const [fitTypes, setFitTypes] = useState<string[]>([])
   const [colors, setColors] = useState<string[]>([])
 
@@ -40,12 +45,12 @@ const FiltersContentful = ({
     const keys = Object.keys(f)
     keys.map(filter => {
       if (f[filter]) {
-        if (filter === "fitType") {
+        if (filter === FilterTypes.FitType) {
           filteredProducts = filteredProducts.filter(
             product => product.fitType === f[filter]
           )
         }
-        if (filter === "colorName") {
+        if (filter === FilterTypes.ColorName) {
           filteredProducts = filteredProducts.filter(product => {
             let found = false
             product.variants.map(p => {
@@ -94,18 +99,18 @@ const FiltersContentful = ({
       <div>
         <ul>
           <li>
-            <a href="#" onClick={() => handlePanel("fitType")}>
+            <a href="#" onClick={() => handlePanel(FilterTypes.FitType)}>
               Fit Type
             </a>
           </li>
           <li>
-            <a href="#" onClick={() => handlePanel("color")}>
+            <a href="#" onClick={() => handlePanel(FilterTypes.ColorName)}>
               Color
             </a>
           </li>
         </ul>
       </div>
-      {panel === "fitType" && (
+      {panel === FilterTypes.FitType && (
         <div>
           {fitTypes.length &&
             fitTypes.map((fitType: string) => {
@@ -114,7 +119,7 @@ const FiltersContentful = ({
                   key={fitType}
                   type="button"
                   data-active={filters.fitType === fitType}
-                  onClick={() => filter("fitType", fitType)}
+                  onClick={() => filter(FilterTypes.FitType, fitType)}
                   aria-pressed={filters.fitType === fitType ? "true" : "false"}
                 >
                   {fitType}
@@ -123,7 +128,7 @@ const FiltersContentful = ({
             })}
         </div>
       )}
-      {panel === "color" && (
+      {panel === FilterTypes.ColorName && (
         <div>
           {colors.length &&
             colors.map((colorName: string) => {
@@ -132,7 +137,7 @@ const FiltersContentful = ({
                   key={colorName}
                   type="button"
                   data-active={filters.colorName === colorName}
-                  onClick={() => filter("colorName", colorName)}
+                  onClick={() => filter(FilterTypes.ColorName, colorName)}
                   aria-pressed={
                     filters.colorName === colorName ? "true" : "false"
                   }
