@@ -22,17 +22,12 @@ const CollectionContentful = ({
     collection.products
   )
 
-  const reset = () => {
-    setFilters(defaultFilters)
-    setProducts(collection.products)
-  }
-
-  const selectColors = (color: string) => {
+  const selectColors = (color: string): void => {
     const options: HTMLElement[] = Array.from(
       document.querySelectorAll(".color-option")
     )
     options.map(option => {
-      if (option.getAttribute("title")?.includes(color)) {
+      if (option.getAttribute("data-frame-color")?.includes(color)) {
         option.click()
       }
     })
@@ -53,7 +48,6 @@ const CollectionContentful = ({
           filters={filters}
           setFilters={setFilters}
           setProducts={setProducts}
-          reset={reset}
         />
         <h1>{collection.name}</h1>
         <div className="grid">
@@ -62,7 +56,7 @@ const CollectionContentful = ({
               <Product key={product.handle} data={product} />
             ))
           ) : (
-            <p>No Products found please remove filters.</p>
+            <p>No Products found please remove filters and try again.</p>
           )}
         </div>
       </Page>
@@ -92,6 +86,7 @@ export const query = graphql`
           colorImage {
             data: gatsbyImageData(width: 40)
           }
+          frameColor
         }
       }
     }

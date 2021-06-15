@@ -55,6 +55,7 @@ const ProductContentful = ({ data }: Props) => {
               variant.id === selectedVariant.contentful.id ? "true" : "false"
             }
             title={variant.colorName}
+            data-frame-color={variant.frameColor}
           >
             <Img image={variant.colorImage.data} alt={variant.colorName} />
           </button>

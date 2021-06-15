@@ -10,6 +10,7 @@ export interface ContentfulProductVariant {
   colorImage: {
     data: IGatsbyImageData
   }
+  frameColor: string
 }
 
 export interface ContentfulProduct {
