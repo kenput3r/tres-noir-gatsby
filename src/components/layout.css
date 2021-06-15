@@ -620,3 +620,8 @@ pre tt:after {
   padding: 1rem 1.45rem;
   text-decoration: none;
 }
+
+main {
+  max-width: 1440px;
+  margin: auto;
+}

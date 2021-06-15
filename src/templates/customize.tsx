@@ -31,15 +31,16 @@ const Customize = ({
     CustomizeContext
   )
   const [variant, setVariant] = useState({
-    contentful: contentfulProduct.variants[0],
+    contentful: contentfulProduct?.variants && contentfulProduct.variants[0],
     shopify: shopifyProduct.variants[0],
   })
   const [currentPrice, setCurrentPrice] = useState(
     shopifyProduct.variants[0].priceNumber
   )
   const [currentImage, setCurrentImage] = useState({
-    data: variant.contentful.customizations.clear.data,
-    altText: variant.contentful.customizations.clear.title,
+    data: variant?.contentful && variant.contentful.customizations.clear.data,
+    altText:
+      variant?.contentful && variant.contentful.customizations.clear.title,
   })
   const previewRef = useRef<HTMLDivElement>(null)
   useEffect(() => {

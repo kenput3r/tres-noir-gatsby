@@ -20,9 +20,11 @@ const Header = ({
   isIndex,
 }: HeaderProps) => {
   const [currentPath, setCurrentPath] = useState("/")
-  useEffect(() => {
-    setCurrentPath(location.pathname)
-  }, [location])
+  if (typeof window !== `undefined`) {
+    useEffect(() => {
+      setCurrentPath(location.pathname)
+    }, [location])
+  }
   return (
     <Component>
       <div className="top-wrapper">

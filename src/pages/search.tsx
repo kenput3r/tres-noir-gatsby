@@ -21,7 +21,7 @@ const Search = ({ location: { state } }: Location) => {
         <h1>Search</h1>
         <p>
           some search form stuff will go here or{" "}
-          <Link to={state.prevPath}>GO BACK</Link>
+          <Link to={state?.prevPath}>GO BACK</Link>
         </p>
       </Page>
     </Layout>

@@ -71,6 +71,9 @@ const Component = styled.article`
   margin-bottom: 1.45rem;
   width: 33.33%;
   text-align: center;
+  @media only screen and (max-width: 480px) {
+    width: 100%;
+  }
   h3 {
     text-align: center;
   }

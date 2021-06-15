@@ -14,7 +14,7 @@ const ProductCustomizable = ({
     SelectedVariantContext
   )
   const [selectedVariant, setSelectedVariant] = useState({
-    contentful: contentfulProduct.variants[0],
+    contentful: contentfulProduct?.variants && contentfulProduct.variants[0],
     shopify: shopifyProduct.variants[0],
   })
 
@@ -65,17 +65,23 @@ const ProductCustomizable = ({
         </div>
         <div className="row">
           <div className="col images">
-            <ProductCarousel imageSet={selectedVariant.contentful.imageSet} />
+            <ProductCarousel
+              imageSet={
+                selectedVariant?.contentful &&
+                selectedVariant.contentful.imageSet
+              }
+            />
           </div>
           <div className="col">
             <div className="heading">
               <h1>{shopifyProduct.title}</h1>
               <p className="fit">
-                Size: {contentfulProduct.fitDimensions}{" "}
+                Size: {contentfulProduct && contentfulProduct.fitDimensions}{" "}
                 <span>
-                  {contentfulProduct.fitType === "medium (average)"
+                  {contentfulProduct &&
+                  contentfulProduct.fitType === "medium (average)"
                     ? "medium"
-                    : contentfulProduct.fitType}{" "}
+                    : contentfulProduct && contentfulProduct.fitType}{" "}
                   fit
                 </span>
               </p>
@@ -85,32 +91,35 @@ const ProductCustomizable = ({
                 Color: <span>{selectedVariant.shopify.title}</span>
               </p>
               <div className="buttons">
-                {contentfulProduct.variants.map((variant: any) => (
-                  <button
-                    key={variant.id}
-                    type="button"
-                    data-active={variant.id === selectedVariant.contentful.id}
-                    onClick={e => selectVariant(e, variant)}
-                    aria-label={`Color option ${variant.colorImage.title}`}
-                    aria-pressed={
-                      variant.id === selectedVariant.contentful.id
-                        ? "true"
-                        : "false"
-                    }
-                  >
-                    <Img
-                      image={variant.colorImage.data}
-                      alt={variant.colorImage.title}
-                    />
-                  </button>
-                ))}
+                {contentfulProduct &&
+                  contentfulProduct.variants.map((variant: any) => (
+                    <button
+                      key={variant.id}
+                      type="button"
+                      data-active={variant.id === selectedVariant.contentful.id}
+                      onClick={e => selectVariant(e, variant)}
+                      aria-label={`Color option ${variant.colorImage.title}`}
+                      aria-pressed={
+                        variant.id === selectedVariant.contentful.id
+                          ? "true"
+                          : "false"
+                      }
+                    >
+                      <Img
+                        image={variant.colorImage.data}
+                        alt={variant.colorImage.title}
+                      />
+                    </button>
+                  ))}
               </div>
               <div className="price">
                 <p className="label">STARTING AT</p>
                 <p className="value">
                   ${selectedVariant.shopify.priceV2.amount} USD
                   <span>
-                    <Link to={`/${contentfulProduct.handle}`}>
+                    <Link
+                      to={contentfulProduct && `/${contentfulProduct.handle}`}
+                    >
                       Learn More {`>`}
                     </Link>
                   </span>
@@ -121,7 +130,10 @@ const ProductCustomizable = ({
                   <button type="button">ADD TO CART</button>
                   <p>- OR -</p>
                   <Link
-                    to={`/products/${contentfulProduct.handle}/customize?variant=${selectedVariant.shopify.sku}`}
+                    to={
+                      contentfulProduct &&
+                      `/products/${contentfulProduct.handle}/customize?variant=${selectedVariant.shopify.sku}`
+                    }
                   >
                     CUSTOMIZE
                   </Link>

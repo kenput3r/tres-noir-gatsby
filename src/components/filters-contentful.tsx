@@ -158,6 +158,7 @@ const Filters = styled.div`
   flex-wrap: wrap;
   align-items: center;
   justify-content: center;
+  text-align: center;
   a {
     text-decoration: none;
     color: var(--color-grey-dark);

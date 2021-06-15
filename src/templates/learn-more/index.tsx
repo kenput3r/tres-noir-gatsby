@@ -10,20 +10,22 @@ import text from "./text.json"
 
 const LearnMore = ({ data: { contentfulProduct } }: any) => {
   const [isStuck, setIsStuck] = useState(false)
-  const observer = new IntersectionObserver(
-    ([e]) => {
-      if (e.intersectionRatio < 1) {
-        setIsStuck(true)
-      } else {
-        setIsStuck(false)
-      }
-    },
-    { threshold: [1] }
-  )
-  useEffect(() => {
-    const stickyHeading = document.getElementById("StickyHeading")
-    if (stickyHeading) observer.observe(stickyHeading)
-  })
+  if (typeof window !== `undefined`) {
+    const observer = new IntersectionObserver(
+      ([e]) => {
+        if (e.intersectionRatio < 1) {
+          setIsStuck(true)
+        } else {
+          setIsStuck(false)
+        }
+      },
+      { threshold: [1] }
+    )
+    useEffect(() => {
+      const stickyHeading = document.getElementById("StickyHeading")
+      if (stickyHeading) observer.observe(stickyHeading)
+    })
+  }
   return (
     <Layout>
       <SEO title={contentfulProduct.title} />
