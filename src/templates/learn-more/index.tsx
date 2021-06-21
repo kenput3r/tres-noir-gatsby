@@ -59,7 +59,6 @@ const LearnMore = ({ data: { contentfulProduct } }: any) => {
           </div>
         </h1>
         <section className="tagline">
-          <p className="h2">{contentfulProduct.tagline}</p>
           <p className="h3">{contentfulProduct.styleDescription.text}</p>
         </section>
         <section className="frame-details wrapper">
@@ -208,7 +207,6 @@ export const query = graphql`
         text: styleDescription
       }
       title
-      tagline
       rxAble
       variantsImage {
         data: gatsbyImageData
@@ -380,6 +378,7 @@ const Page = styled.div`
         position: absolute;
         text-transform: uppercase;
         width: 100%;
+        bottom: 0;
       }
       .h3 {
         color: #000000;
