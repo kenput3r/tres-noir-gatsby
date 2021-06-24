@@ -27,9 +27,8 @@ const Customize = ({
     shopifyProduct: ShopifyProduct
   }
 }) => {
-  const { currentStep, setProductUrl, selectedVariants } = useContext(
-    CustomizeContext
-  )
+  const { currentStep, setProductUrl, selectedVariants } =
+    useContext(CustomizeContext)
   const [variant, setVariant] = useState({
     contentful: contentfulProduct?.variants && contentfulProduct.variants[0],
     shopify: shopifyProduct.variants[0],
@@ -77,7 +76,8 @@ const Customize = ({
       // @ts-ignore
       // price += selectedVariants[key].priceNumber
       // convert everything to int and divide by 100 at the end
-      price = price * 100 + selectedVariants[key].priceNumber * 100
+      price = price * 100
+      price += selectedVariants[key].priceNumber * 100
       price = price / 100
     })
     setCurrentPrice(price)

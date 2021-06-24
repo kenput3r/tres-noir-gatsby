@@ -82,9 +82,8 @@ export const changeImage = (
           }
           case "Transitions Xtractive Polarized": {
             setCurrentImage({
-              data:
-                variant.contentful.customizations
-                  .bifocalTransitionsXtractivePolarized.data,
+              data: variant.contentful.customizations
+                .bifocalTransitionsXtractivePolarized.data,
               altText:
                 variant.contentful.customizations
                   .bifocalTransitionsXtractivePolarized.title,
@@ -93,9 +92,8 @@ export const changeImage = (
           }
           case "Vantage": {
             setCurrentImage({
-              data:
-                variant.contentful.customizations
-                  .bifocalTransitionsXtractivePolarized.data,
+              data: variant.contentful.customizations
+                .bifocalTransitionsXtractivePolarized.data,
               altText:
                 variant.contentful.customizations
                   .bifocalTransitionsXtractivePolarized.title,
@@ -158,9 +156,8 @@ export const changeImage = (
           }
           case "Vantage": {
             setCurrentImage({
-              data:
-                variant.contentful.customizations.transitionsXtractivePolarized
-                  .data,
+              data: variant.contentful.customizations
+                .transitionsXtractivePolarized.data,
               altText:
                 variant.contentful.customizations.transitionsXtractivePolarized
                   .title,
@@ -169,9 +166,8 @@ export const changeImage = (
           }
           case "Transitions Xtractive Polarized": {
             setCurrentImage({
-              data:
-                variant.contentful.customizations.transitionsXtractivePolarized
-                  .data,
+              data: variant.contentful.customizations
+                .transitionsXtractivePolarized.data,
               altText:
                 variant.contentful.customizations.transitionsXtractivePolarized
                   .title,
