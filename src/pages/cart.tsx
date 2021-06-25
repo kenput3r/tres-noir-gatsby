@@ -26,7 +26,6 @@ const Cart = () => {
             <ul>
               {cart?.lineItems &&
                 cart?.lineItems.map((line: LineItem) => {
-                  console.log("IMAGE SRC", line.variant.image.src)
                   return (
                     <li key={line.id}>
                       <div>

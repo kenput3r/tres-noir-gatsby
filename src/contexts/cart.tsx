@@ -168,14 +168,19 @@ export const CartProvider = ({ children }) => {
         if (checkoutId) {
           //Get Local Checkout
           const localCheckout = localStorage.getItem("checkout")
+          console.log("CHECK IF LOCAL CHECKOUT EXISTS")
           if (localCheckout) {
+            console.log("LOCAL CHECKOUT EXISTS")
             checkout = JSON.parse(localCheckout)
           } else {
             checkout = await client.checkout.fetch(checkoutId)
+            console.log(
+              "LOCAL CHECKOUT DOESN'T EXIST, FETCH IT FROM SHOPIFY",
+              checkout
+            )
             if (isBrowser)
               localStorage.setItem("checkout", JSON.stringify(checkout))
           }
-          console.log("CHECKOUT EXISTS, FETCH IT FROM SHOPIFY", checkout)
           if (checkout.completedAt) {
             checkout = await getNewCheckout()
             console.log("CHECKOUT EXPIRED, LETS CREATE A NEW ONE", checkout)
