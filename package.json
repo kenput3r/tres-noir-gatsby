@@ -5,7 +5,6 @@
   "version": "0.1.0",
   "author": "Kyle Mathews <mathews.kyle@gmail.com>",
   "dependencies": {
-    "@types/shopify-buy": "^2.10.5",
     "@types/styled-components": "^5.1.7",
     "contentful": "^8.1.8",
     "dotenv": "^8.2.0",
@@ -41,6 +40,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.13.8",
+    "@types/shopify-buy": "^2.10.5",
     "@types/swiper": "^5.4.2",
     "@typescript-eslint/eslint-plugin": "4.16.1",
     "@typescript-eslint/parser": "^4.16.1",

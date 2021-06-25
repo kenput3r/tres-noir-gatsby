@@ -6,6 +6,7 @@ import Layout from "../components/layout"
 import SEO from "../components/seo"
 import ProductCarousel from "../components/product-carousel"
 import { SelectedVariantContext } from "../contexts/selectedVariant"
+import { CartContext } from "../contexts/cart"
 
 const ProductCustomizable = ({
   data: { contentfulProduct, shopifyProduct },
@@ -17,6 +18,8 @@ const ProductCustomizable = ({
     contentful: contentfulProduct?.variants && contentfulProduct.variants[0],
     shopify: shopifyProduct.variants[0],
   })
+  // cart
+  const { addProductToCart } = useContext(CartContext)
 
   useEffect(() => {
     const sku = selectedVariantContext
@@ -50,6 +53,17 @@ const ProductCustomizable = ({
       setSelectedVariantContext(variant.sku)
     }
   }
+
+  const handleAddToCart = () => {
+    const id = selectedVariant.shopify.id.replace(
+      "Shopify__ProductVariant__",
+      ""
+    )
+    console.log("ADDING TO CART", `${id} x 1`)
+    addProductToCart(id, 1)
+    alert("ADDED TO CART")
+  }
+
   return (
     <Layout>
       <SEO title={shopifyProduct.title} />
@@ -127,7 +141,9 @@ const ProductCustomizable = ({
               </div>
               <div className="actions">
                 <div>
-                  <button type="button">ADD TO CART</button>
+                  <button type="button" onClick={handleAddToCart}>
+                    ADD TO CART
+                  </button>
                   <p>- OR -</p>
                   <Link
                     to={

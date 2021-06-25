@@ -225,6 +225,9 @@ const Component = styled.form`
       padding-right: 10px;
       position: relative;
       width: 50%;
+      @media only screen and (max-width: 768px) {
+        width: 100%;
+      }
       .variant-image {
         max-height: 30px;
         max-width: 30px;
@@ -234,6 +237,14 @@ const Component = styled.form`
       }
       p {
         line-height: 0.5;
+      }
+      .checkmark {
+        @media only screen and (min-width: 1024px) {
+          margin-right: 40px;
+        }
+        @media only screen and (min-width: 1200px) {
+          margin-right: 40%;
+        }
       }
     }
   }

@@ -75,14 +75,14 @@ const Header = ({
             <a href="#" className="login-text">
               LOG IN
             </a>
-            <a href="#">
+            <Link to="/cart">
               <StaticImage
                 src="../images/cart.png"
                 alt="Shopping Cart"
                 placeholder="tracedSVG"
                 style={{ marginBottom: 0, maxWidth: 26 }}
               />
-            </a>
+            </Link>
             <a
               href="#"
               className="hide-large"
