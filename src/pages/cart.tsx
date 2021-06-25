@@ -5,14 +5,15 @@ import Layout from "../components/layout"
 import SEO from "../components/seo"
 import Loader from "../components/loader"
 import { CartContext } from "../contexts/cart"
+import { Checkout, LineItem } from "../types/checkout"
 
 const Cart = () => {
-  const [cart, setCart] = useState<any>()
   const { checkout, removeProductFromCart } = useContext(CartContext)
+  const [cart, setCart] = useState<Checkout>()
 
   useEffect(() => {
     console.log("CHECKOUT", checkout)
-    setCart(checkout)
+    setCart(checkout as Checkout)
   }, [checkout])
 
   return (
@@ -24,7 +25,7 @@ const Cart = () => {
           <>
             <ul>
               {cart?.lineItems &&
-                cart.lineItems.map((line: any) => {
+                cart?.lineItems.map((line: LineItem) => {
                   console.log("IMAGE SRC", line.variant.image.src)
                   return (
                     <li key={line.id}>
