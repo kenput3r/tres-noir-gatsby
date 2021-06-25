@@ -625,3 +625,7 @@ main {
   max-width: 1440px;
   margin: auto;
 }
+
+.text-center {
+  text-align: center;
+}

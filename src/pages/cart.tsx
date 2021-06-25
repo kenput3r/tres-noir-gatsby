@@ -22,57 +22,63 @@ const Cart = () => {
       <Page>
         <h1>Cart</h1>
         {cart ? (
-          <>
-            <ul>
-              {cart?.lineItems &&
-                cart?.lineItems.map((line: LineItem) => {
-                  return (
-                    <li key={line.id}>
-                      <div>
-                        <img
-                          src={line.variant.image.src}
-                          alt={line.variant.image.altText}
-                        />
-                      </div>
-                      <div>
-                        <p className="title">{line.title}</p>
-                        <span className="sub-title">{line.variant.title}</span>
-                      </div>
-                      <div>
-                        <p className="quantity">x {line.quantity}</p>
-                      </div>
-                      <div>
-                        <p className="price">${line.variant.price}</p>
-                      </div>
-                      <div>
-                        <a
-                          className="remove-item"
-                          href="#"
-                          onClick={() => removeProductFromCart(line.id)}
-                        >
-                          X Remove
-                        </a>
-                      </div>
-                    </li>
-                  )
-                })}
-            </ul>
-            <div className="subtotal">
-              <div>
-                <h2>Subtotal</h2>
-                <span>Delivery is calculated at checkout</span>
+          cart?.lineItems.length === 0 ? (
+            <p className="text-center">Your cart is currently empty.</p>
+          ) : (
+            <>
+              <ul>
+                {cart?.lineItems &&
+                  cart?.lineItems.map((line: LineItem) => {
+                    return (
+                      <li key={line.id}>
+                        <div>
+                          <img
+                            src={line.variant.image.src}
+                            alt={line.variant.image.altText}
+                          />
+                        </div>
+                        <div>
+                          <p className="title">{line.title}</p>
+                          <span className="sub-title">
+                            {line.variant.title}
+                          </span>
+                        </div>
+                        <div>
+                          <p className="quantity">x {line.quantity}</p>
+                        </div>
+                        <div>
+                          <p className="price">${line.variant.price}</p>
+                        </div>
+                        <div>
+                          <a
+                            className="remove-item"
+                            href="#"
+                            onClick={() => removeProductFromCart(line.id)}
+                          >
+                            X Remove
+                          </a>
+                        </div>
+                      </li>
+                    )
+                  })}
+              </ul>
+              <div className="subtotal">
+                <div>
+                  <h2>Subtotal</h2>
+                  <span>Delivery & Taxes are calculated at checkout.</span>
+                </div>
+                <div>
+                  <h2 className="total">${cart.subtotalPrice}</h2>
+                </div>
               </div>
-              <div>
-                <h2 className="total">${cart.subtotalPrice}</h2>
+              <div className="checkout-container">
+                <a href={cart.webUrl} className="button">
+                  Checkout
+                </a>
+                <Link to="/">Continue Shopping</Link>
               </div>
-            </div>
-            <div className="checkout-container">
-              <a href={cart.webUrl} className="button">
-                Checkout
-              </a>
-              <Link to="/">Continue Shopping</Link>
-            </div>
-          </>
+            </>
+          )
         ) : (
           <Loader />
         )}
@@ -85,6 +91,7 @@ export default Cart
 
 const Page = styled.div`
   ul {
+    margin: 0;
     li {
       display: flex;
       flex-direction: row;
