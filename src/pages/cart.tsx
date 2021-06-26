@@ -4,17 +4,23 @@ import styled from "styled-components"
 import Layout from "../components/layout"
 import SEO from "../components/seo"
 import Loader from "../components/loader"
+import QuantitySelector from "../components/quantity-selector"
 import { CartContext } from "../contexts/cart"
 import { Checkout, LineItem } from "../types/checkout"
 
 const Cart = () => {
-  const { checkout, removeProductFromCart } = useContext(CartContext)
+  const { checkout, removeProductFromCart, updateProductInCart } =
+    useContext(CartContext)
   const [cart, setCart] = useState<Checkout>()
 
   useEffect(() => {
     console.log("CHECKOUT", checkout)
     setCart(checkout as Checkout)
   }, [checkout])
+
+  const updateQuantity = (lineId: string, quantity: number) => {
+    updateProductInCart(lineId, quantity)
+  }
 
   return (
     <Layout>
@@ -38,14 +44,22 @@ const Cart = () => {
                           />
                         </div>
                         <div>
-                          <p className="title">{line.title}</p>
+                          <p className="title">
+                            <Link
+                              to={`/products/${line.variant.product.handle}`}
+                            >
+                              {line.title}
+                            </Link>
+                          </p>
                           <span className="sub-title">
                             {line.variant.title}
                           </span>
                         </div>
-                        <div>
-                          <p className="quantity">x {line.quantity}</p>
-                        </div>
+                        <QuantitySelector
+                          lineId={line.id}
+                          quantity={line.quantity}
+                          updateQuantity={updateQuantity}
+                        />
                         <div>
                           <p className="price">${line.variant.price}</p>
                         </div>
@@ -102,6 +116,10 @@ const Page = styled.div`
       .title {
         font-weight: bold;
         margin-bottom: 5px;
+        a {
+          color: #000;
+          text-decoration: none;
+        }
       }
       .sub-title {
         color: var(--color-grey-dark);

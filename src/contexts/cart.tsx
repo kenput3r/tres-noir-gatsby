@@ -19,6 +19,7 @@ export const CartContext = createContext({
   checkout: {},
   addProductToCart: (variantId: string, quantity: number) => {},
   removeProductFromCart: (lineItemId: string) => {},
+  updateProductInCart: (variantId: string, quantity: number) => {},
   addDiscountCode: (code: string) => {},
   removeDiscountCode: () => {},
 })
@@ -57,11 +58,11 @@ export const CartProvider = ({ children }) => {
   const getNewCheckout = async () => {
     const newCheckout = await client.checkout.create()
     if (isBrowser) {
-      document.cookie = `shopifyCheckout=${newCheckout.id};max-age=2592000`
+      document.cookie = `shopifyCheckout=${newCheckout.id};max-age=2592000;SameSite=Strict;`
       const now = new Date()
       localStorage.setItem(
         "checkout",
-        JSON.stringify({ value: newCheckout, expiry: now.getTime() + 259200 })
+        JSON.stringify({ value: newCheckout, expiry: now.getTime() + 2592000 })
       )
     }
     console.log("NEW CHECKOUT", newCheckout)
@@ -122,6 +123,39 @@ export const CartProvider = ({ children }) => {
         [lineItemId]
       )
       console.log("REMOVED PRODUCT FROM CART", updatedCheckout)
+      if (isBrowser) {
+        const now = new Date()
+        localStorage.setItem(
+          "checkout",
+          JSON.stringify({
+            value: updatedCheckout,
+            expiry: now.getTime() + 259200,
+          })
+        )
+      }
+      setCheckout(updatedCheckout)
+    } catch (e) {
+      console.error(e)
+    }
+  }
+
+  /**
+   * @function updateProductInCart - updates a product in current cart
+   * @param
+   */
+  const updateProductInCart = async (id: string, quantity: number) => {
+    try {
+      const line_items = [
+        {
+          id,
+          quantity,
+        },
+      ]
+      const updatedCheckout = await client.checkout.updateLineItems(
+        checkout.id,
+        line_items
+      )
+      console.log("ADDED PRODUCT TO CART", updatedCheckout)
       if (isBrowser) {
         const now = new Date()
         localStorage.setItem(
@@ -275,6 +309,7 @@ export const CartProvider = ({ children }) => {
         checkout,
         addProductToCart,
         removeProductFromCart,
+        updateProductInCart,
         addDiscountCode,
         removeDiscountCode,
       }}

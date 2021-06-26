@@ -55,10 +55,7 @@ const ProductCustomizable = ({
   }
 
   const handleAddToCart = () => {
-    const id = selectedVariant.shopify.id.replace(
-      "Shopify__ProductVariant__",
-      ""
-    )
+    const id = selectedVariant.shopify.shopifyId
     console.log("ADDING TO CART", `${id} x 1`)
     addProductToCart(id, 1)
     alert("ADDED TO CART")
