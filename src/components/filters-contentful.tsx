@@ -5,6 +5,7 @@ import styled from "styled-components"
 import { StaticImage, GatsbyImage } from "gatsby-plugin-image"
 import { useSpring, animated, config } from "react-spring"
 import { useHeight } from "../hooks/useHeight"
+import { getFilters } from "../utils/getContentfulCollectionFilters"
 
 interface Props {
   collection: ContentfulCollection
@@ -127,20 +128,27 @@ const FiltersContentful = ({
   }
 
   const generateFilters = (products: ContentfulProduct[]) => {
-    // get fit type
-    let fitTypesList = products.map(product => product.fitType)
-    fitTypesList = fitTypesList.filter((v, i) => fitTypesList.indexOf(v) === i)
-    // get colors
-    let colorsList: string[] = []
-    console.log("PRODUCTS", products)
-    products.forEach(product =>
-      product.variants.forEach(variant => colorsList.push(variant.frameColor))
-    )
-    colorsList = colorsList.filter((v, i) => colorsList.indexOf(v) === i)
+    const { fitTypesList, colorsList } = getFilters(products)
     // set values
     setFitTypes(fitTypesList)
-    setColors(colorsList.sort())
+    setColors(colorsList)
   }
+
+  // const generateFilters = (products: ContentfulProduct[]) => {
+  //   // get fit type
+  //   let fitTypesList = products.map(product => product.fitType)
+  //   fitTypesList = fitTypesList.filter((v, i) => fitTypesList.indexOf(v) === i)
+  //   // get colors
+  //   let colorsList: string[] = []
+  //   console.log("PRODUCTS", products)
+  //   products.forEach(product =>
+  //     product.variants.forEach(variant => colorsList.push(variant.frameColor))
+  //   )
+  //   colorsList = colorsList.filter((v, i) => colorsList.indexOf(v) === i)
+  //   // set values
+  //   setFitTypes(fitTypesList)
+  //   setColors(colorsList.sort())
+  // }
 
   const reset = (): void => {
     setFilters({ fitType: null, colorName: null })
