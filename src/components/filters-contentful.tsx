@@ -44,25 +44,24 @@ const FiltersContentful = ({
 
   const filter = (type: string, value: string): void => {
     let filteredProducts: ContentfulProduct[] = collection.products
-    const f = filters
-    if (f[type] === value) {
-      f[type] = null
+    if (filters[type] === value) {
+      filters[type] = null
     } else {
-      f[type] = value
+      filters[type] = value
     }
-    const keys = Object.keys(f)
+    const keys = Object.keys(filters)
     keys.map(filter => {
-      if (f[filter]) {
+      if (filters[filter]) {
         if (filter === FilterTypes.FitType) {
           filteredProducts = filteredProducts.filter(
-            product => product.fitType === f[filter]
+            product => product.fitType === filters[filter]
           )
         }
         if (filter === FilterTypes.ColorName) {
           filteredProducts = filteredProducts.filter(product => {
             let found = false
             product.variants.map(p => {
-              if (p.frameColor === f[filter]) {
+              if (p.frameColor === filters[filter]) {
                 found = true
               }
             })
@@ -73,7 +72,7 @@ const FiltersContentful = ({
     })
 
     setProducts(filteredProducts)
-    setFilters(f)
+    setFilters(filters)
     generateFilters(filteredProducts)
   }
 
@@ -83,22 +82,6 @@ const FiltersContentful = ({
     setFitTypes(fitTypesList)
     setColors(colorsList)
   }
-
-  // const generateFilters = (products: ContentfulProduct[]) => {
-  //   // get fit type
-  //   let fitTypesList = products.map(product => product.fitType)
-  //   fitTypesList = fitTypesList.filter((v, i) => fitTypesList.indexOf(v) === i)
-  //   // get colors
-  //   let colorsList: string[] = []
-  //   console.log("PRODUCTS", products)
-  //   products.forEach(product =>
-  //     product.variants.forEach(variant => colorsList.push(variant.frameColor))
-  //   )
-  //   colorsList = colorsList.filter((v, i) => colorsList.indexOf(v) === i)
-  //   // set values
-  //   setFitTypes(fitTypesList)
-  //   setColors(colorsList.sort())
-  // }
 
   const reset = (): void => {
     setFilters({ fitType: null, colorName: null })
@@ -123,107 +106,113 @@ const FiltersContentful = ({
     to: {
       opacity: showFilters ? 1 : 0,
       height: showFilters ? height : 0,
+      marginBottom: 25,
     },
   })
 
   return (
     <>
       <DisplayFilters>
-        <button onClick={handleShowFilters}>Filters +</button>
+        <button onClick={handleShowFilters}>Filter +</button>
       </DisplayFilters>
 
       <animated.div style={{ ...slideInStyles, overflow: "hidden" }}>
-        <Filters ref={heightRef}>
-          <div className="filter-header">
-            <ul>
-              <li>
-                <button
-                  className="filter-type"
-                  type="button"
-                  onClick={() => handlePanel(FilterTypes.FitType)}
-                  data-active={panel === FilterTypes.FitType}
-                  aria-pressed={
-                    panel === FilterTypes.FitType ? "true" : "false"
-                  }
-                >
-                  FRAME WIDTH
-                </button>
-              </li>
-              <li>
-                <button
-                  className="filter-type"
-                  type="button"
-                  onClick={() => handlePanel(FilterTypes.ColorName)}
-                  data-active={panel === FilterTypes.ColorName}
-                  aria-pressed={
-                    panel === FilterTypes.ColorName ? "true" : "false"
-                  }
-                >
-                  COLOR
-                </button>
-              </li>
-            </ul>
-          </div>
-          {panel === FilterTypes.FitType && (
-            <div>
-              {fitTypes.length &&
-                fitTypes.map((fitType: string) => {
-                  return (
-                    <button
-                      className="filter"
-                      key={fitType}
-                      type="button"
-                      data-active={filters.fitType === fitType}
-                      onClick={() => filter(FilterTypes.FitType, fitType)}
-                      aria-pressed={
-                        filters.fitType === fitType ? "true" : "false"
-                      }
-                    >
-                      <StaticImage
-                        src="../images/glasses-icon.png"
-                        alt={fitType}
-                        placeholder="tracedSVG"
-                        style={{ marginBottom: 0 }}
-                        width={75}
-                      />
-                      <br />
-                      <span>{fitType}</span>
-                    </button>
-                  )
-                })}
+        <div ref={heightRef}>
+          <Triangle>
+            <div className="triangle" />
+          </Triangle>
+          <Filters>
+            <div className="filter-header">
+              <ul>
+                <li>
+                  <button
+                    className="filter-type"
+                    type="button"
+                    onClick={() => handlePanel(FilterTypes.FitType)}
+                    data-active={panel === FilterTypes.FitType}
+                    aria-pressed={
+                      panel === FilterTypes.FitType ? "true" : "false"
+                    }
+                  >
+                    FRAME WIDTH
+                  </button>
+                </li>
+                <li>
+                  <button
+                    className="filter-type"
+                    type="button"
+                    onClick={() => handlePanel(FilterTypes.ColorName)}
+                    data-active={panel === FilterTypes.ColorName}
+                    aria-pressed={
+                      panel === FilterTypes.ColorName ? "true" : "false"
+                    }
+                  >
+                    COLOR
+                  </button>
+                </li>
+              </ul>
             </div>
-          )}
-          {panel === FilterTypes.ColorName && (
-            <div>
-              {colors.length &&
-                colors.map((colorName: string) => {
-                  const image = frameColors[colorName.replace("-", "_")]
-                  return (
-                    <button
-                      className="filter"
-                      key={colorName}
-                      type="button"
-                      data-active={filters.colorName === colorName}
-                      onClick={() => filter(FilterTypes.ColorName, colorName)}
-                      aria-pressed={
-                        filters.colorName === colorName ? "true" : "false"
-                      }
-                    >
-                      <GatsbyImage
-                        image={image.childImageSharp.gatsbyImageData}
-                        alt={colorName}
-                        style={{ marginBottom: 0, marginRight: 10 }}
-                      />
-                      <span>{colorName}</span>
-                    </button>
-                  )
-                })}
-            </div>
-          )}
-          <button className="reset" type="button" onClick={reset}>
-            RESET
-          </button>
-        </Filters>
+            {panel === FilterTypes.FitType && (
+              <div>
+                {fitTypes.length &&
+                  fitTypes.map((fitType: string) => {
+                    return (
+                      <button
+                        className="filter"
+                        key={fitType}
+                        type="button"
+                        data-active={filters.fitType === fitType}
+                        onClick={() => filter(FilterTypes.FitType, fitType)}
+                        aria-pressed={
+                          filters.fitType === fitType ? "true" : "false"
+                        }
+                      >
+                        <StaticImage
+                          src="../images/glasses-icon.png"
+                          alt={fitType}
+                          placeholder="tracedSVG"
+                          style={{ marginBottom: 0 }}
+                          width={75}
+                        />
+                        <br />
+                        <span>{fitType}</span>
+                      </button>
+                    )
+                  })}
+              </div>
+            )}
+            {panel === FilterTypes.ColorName && (
+              <div>
+                {colors.length &&
+                  colors.map((colorName: string) => {
+                    const image = frameColors[colorName.replace("-", "_")]
+                    return (
+                      <button
+                        className="filter"
+                        key={colorName}
+                        type="button"
+                        data-active={filters.colorName === colorName}
+                        onClick={() => filter(FilterTypes.ColorName, colorName)}
+                        aria-pressed={
+                          filters.colorName === colorName ? "true" : "false"
+                        }
+                      >
+                        <GatsbyImage
+                          image={image.childImageSharp.gatsbyImageData}
+                          alt={colorName}
+                          style={{ marginBottom: 0, marginRight: 10 }}
+                        />
+                        <span>{colorName}</span>
+                      </button>
+                    )
+                  })}
+              </div>
+            )}
+            <button className="reset" type="button" onClick={reset}>
+              RESET
+            </button>
+          </Filters>
+        </div>
       </animated.div>
     </>
   )
@@ -247,6 +236,24 @@ const DisplayFilters = styled.div`
     &:hover {
       color: var(--color-grey-dark);
     }
+  }
+`
+
+const Triangle = styled.div`
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  .triangle {
+    width: 0px;
+    height: 0px;
+    background: black;
+    border: 20px solid;
+    border-top-color: #fff;
+    border-left-color: #fff;
+    border-right-color: #fff;
+    border-bottom-color: rgb(239, 239, 239);
+    margin-top: -20px;
   }
 `
 
