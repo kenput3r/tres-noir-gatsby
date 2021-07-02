@@ -158,7 +158,7 @@ const FiltersContentful = ({
                   fitTypes.map((fitType: string) => {
                     return (
                       <button
-                        className="filter"
+                        className="filter frame-filter"
                         key={fitType}
                         type="button"
                         data-active={filters.fitType === fitType}
@@ -172,10 +172,9 @@ const FiltersContentful = ({
                           alt={fitType}
                           placeholder="tracedSVG"
                           style={{ marginBottom: 0 }}
-                          width={75}
+                          width={150}
                         />
-                        <br />
-                        <span>{fitType}</span>
+                        <p>{fitType}</p>
                       </button>
                     )
                   })}
@@ -188,7 +187,7 @@ const FiltersContentful = ({
                     const image = frameColors[colorName.replace("-", "_")]
                     return (
                       <button
-                        className="filter"
+                        className="filter color-filter"
                         key={colorName}
                         type="button"
                         data-active={filters.colorName === colorName}
@@ -226,6 +225,7 @@ const DisplayFilters = styled.div`
   flex-wrap: wrap;
   align-items: center;
   justify-content: flex-end;
+  margin-top: 20px;
   button {
     border: none;
     background-color: transparent;
@@ -276,28 +276,38 @@ const Filters = styled.div`
     margin: 3px;
     border: none;
     cursor: pointer;
-    text-transform: capitalize;
+    text-transform: uppercase;
     color: var(--color-grey-dark);
+    font-size: 1.2em;
     &:hover {
       border-radius: 15px;
       color: #000;
     }
     &.filter-type {
+      /* font-size: 1.2em; */
       &[data-active="true"] {
         color: #000;
       }
     }
     &.filter {
+      padding: 8px 12px;
+      margin: 20px;
+      border-radius: 15px;
+      color: #000;
       &[data-active="true"] {
         background-color: #fff;
       }
-      padding: 8px 12px;
-      margin: 3px;
-      border-radius: 15px;
-      color: #000;
     }
     &.filter:hover {
       background-color: #fff;
+    }
+    &.frame-filter {
+      p {
+        margin: 0.65rem 0.65rem;
+      }
+    }
+    &.color-filter {
+      line-height: 50px;
     }
   }
   ul {

@@ -3,6 +3,7 @@ import { Link, graphql } from "gatsby"
 import styled from "styled-components"
 import Layout from "../components/layout"
 import SEO from "../components/seo"
+import { GatsbyImage } from "gatsby-plugin-image"
 import Product from "../components/product-contentful"
 import Filters from "../components/filters-contentful"
 import { ContentfulCollection, ContentfulProduct } from "../types/contentful"
@@ -43,13 +44,19 @@ const CollectionContentful = ({
     <Layout>
       <SEO title={collection.name} />
       <Page>
+        <FeaturedImage>
+          <GatsbyImage
+            image={collection.featuredImage.data}
+            alt="collection.name"
+          />
+          <h1>{collection.name}</h1>
+        </FeaturedImage>
         <Filters
           collection={collection}
           filters={filters}
           setFilters={setFilters}
           setProducts={setProducts}
         />
-        <h1>{collection.name}</h1>
         <div className="grid">
           {products.length ? (
             products.map((product: ContentfulProduct) => (
@@ -71,6 +78,14 @@ export const query = graphql`
     contentfulCollection(handle: { eq: $handle }) {
       handle
       name
+      featuredImage {
+        data: gatsbyImageData(
+          aspectRatio: 2.29
+          width: 2048
+          placeholder: BLURRED
+          formats: [AUTO, WEBP]
+        )
+      }
       products {
         title
         handle
@@ -99,5 +114,16 @@ const Page = styled.div`
     flex-direction: row;
     flex-wrap: wrap;
     justify-content: center;
+  }
+`
+
+const FeaturedImage = styled.div`
+  position: relative;
+  h1 {
+    text-transform: uppercase;
+    position: absolute;
+    bottom: 15px;
+    right: 15px;
+    margin-bottom: 0;
   }
 `

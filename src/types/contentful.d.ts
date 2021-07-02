@@ -24,5 +24,8 @@ export interface ContentfulProduct {
 export interface ContentfulCollection {
   handle: string
   name: string
+  featuredImage: {
+    data: IGatsbyImageData
+  }
   products: ContentfulProduct[]
 }
