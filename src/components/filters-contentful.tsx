@@ -1,10 +1,10 @@
-import React, { Dispatch, useState, useEffect, useRef } from "react"
-import { useStaticQuery, graphql } from "gatsby"
+import React, { Dispatch, useState, useEffect } from "react"
 import { ContentfulCollection, ContentfulProduct } from "../types/contentful"
 import styled from "styled-components"
 import { StaticImage, GatsbyImage } from "gatsby-plugin-image"
 import { useSpring, animated, config } from "react-spring"
 import { useHeight } from "../hooks/useHeight"
+import { useFrameColors } from "../hooks/useFrameColors"
 import { getFilters } from "../utils/getContentfulCollectionFilters"
 
 interface Props {
@@ -36,57 +36,7 @@ const FiltersContentful = ({
   const [fitTypes, setFitTypes] = useState<string[]>([])
   const [colors, setColors] = useState<string[]>([])
 
-  const staticColorImages = useStaticQuery(
-    graphql`
-      query {
-        amber: file(relativePath: { eq: "amber.png" }) {
-          childImageSharp {
-            gatsbyImageData(width: 30)
-          }
-        }
-        black: file(relativePath: { eq: "black.png" }) {
-          childImageSharp {
-            gatsbyImageData(width: 30)
-          }
-        }
-        blue: file(relativePath: { eq: "blue.png" }) {
-          childImageSharp {
-            gatsbyImageData(width: 30)
-          }
-        }
-        brown: file(relativePath: { eq: "brown.png" }) {
-          childImageSharp {
-            gatsbyImageData(width: 30)
-          }
-        }
-        clear: file(relativePath: { eq: "clear.png" }) {
-          childImageSharp {
-            gatsbyImageData(width: 30)
-          }
-        }
-        green: file(relativePath: { eq: "green.png" }) {
-          childImageSharp {
-            gatsbyImageData(width: 30)
-          }
-        }
-        grey: file(relativePath: { eq: "grey.png" }) {
-          childImageSharp {
-            gatsbyImageData(width: 30)
-          }
-        }
-        tortoise: file(relativePath: { eq: "tortoise.png" }) {
-          childImageSharp {
-            gatsbyImageData(width: 30)
-          }
-        }
-        two_toned: file(relativePath: { eq: "two-toned.png" }) {
-          childImageSharp {
-            gatsbyImageData(width: 30)
-          }
-        }
-      }
-    `
-  )
+  const frameColors = useFrameColors()
 
   useEffect(() => {
     generateFilters(collection.products)
@@ -247,7 +197,7 @@ const FiltersContentful = ({
             <div>
               {colors.length &&
                 colors.map((colorName: string) => {
-                  const image = staticColorImages[colorName.replace("-", "_")]
+                  const image = frameColors[colorName.replace("-", "_")]
                   return (
                     <button
                       className="filter"

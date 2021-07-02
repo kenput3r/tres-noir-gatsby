@@ -1,7 +1,4 @@
-import React, { createElement } from "react"
 import { useRef, useState, useLayoutEffect } from "react"
-
-import { useSpring, config, animated } from "react-spring"
 
 declare var ResizeObserver
 
