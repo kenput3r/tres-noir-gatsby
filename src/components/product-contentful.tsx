@@ -13,12 +13,10 @@ interface Props {
 }
 
 const ProductContentful = ({ data }: Props) => {
-  console.log(data)
   const { setSelectedVariantContext } = useContext(SelectedVariantContext)
   const defaultImage = data.variants[0].featuredImage.data
-  const [variantImage, setVariantImage] = useState<IGatsbyImageData>(
-    defaultImage
-  )
+  const [variantImage, setVariantImage] =
+    useState<IGatsbyImageData>(defaultImage)
 
   const [selectedVariant, setSelectedVariant] = useState({
     contentful: data.variants[0],

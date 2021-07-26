@@ -2,7 +2,7 @@ import React, { Dispatch, useState, useEffect } from "react"
 import { ContentfulCollection, ContentfulProduct } from "../types/contentful"
 import styled from "styled-components"
 import { StaticImage, GatsbyImage } from "gatsby-plugin-image"
-import { useSpring, animated, config } from "react-spring"
+import { useSpring, useTransition, animated, config } from "react-spring"
 import { useHeight } from "../hooks/useHeight"
 import { useFrameColors } from "../hooks/useFrameColors"
 import { getFilters } from "../utils/getContentfulCollectionFilters"
@@ -90,7 +90,6 @@ const FiltersContentful = ({
   }
 
   const handleShowFilters = () => {
-    console.log("SETTING SHOW FILTERS", !showFilters)
     setShowFilters(!showFilters)
   }
 
