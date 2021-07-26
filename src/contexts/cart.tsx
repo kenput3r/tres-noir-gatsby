@@ -18,6 +18,9 @@ export const CartContext = createContext({
   closeDrawer: () => {},
   checkout: {},
   addProductToCart: (variantId: string, quantity: number) => {},
+  addProductsToCart: (
+    line_items: { variantId: string; quantity: number }[]
+  ) => {},
   removeProductFromCart: (lineItemId: string) => {},
   updateProductInCart: (variantId: string, quantity: number) => {},
   addDiscountCode: (code: string) => {},
@@ -91,6 +94,36 @@ export const CartProvider = ({ children }) => {
           quantity,
         },
       ]
+      const updatedCheckout = await client.checkout.addLineItems(
+        checkout.id,
+        line_items
+      )
+      console.log("ADDED PRODUCT TO CART", updatedCheckout)
+      if (isBrowser) {
+        const now = new Date()
+        localStorage.setItem(
+          "checkout",
+          JSON.stringify({
+            value: updatedCheckout,
+            expiry: now.getTime() + 259200,
+          })
+        )
+      }
+      setCheckout(updatedCheckout)
+    } catch (e) {
+      console.error(e)
+    }
+  }
+
+  /**
+   * @function addProductsToCart - Adds product to the current checkout
+   * @param {String} variantId - shopifyId
+   * @param {Int} quantity - quantity
+   */
+  const addProductsToCart = async (
+    line_items: { variantId: string; quantity: number }[]
+  ) => {
+    try {
       const updatedCheckout = await client.checkout.addLineItems(
         checkout.id,
         line_items
@@ -308,6 +341,7 @@ export const CartProvider = ({ children }) => {
         closeDrawer,
         checkout,
         addProductToCart,
+        addProductsToCart,
         removeProductFromCart,
         updateProductInCart,
         addDiscountCode,

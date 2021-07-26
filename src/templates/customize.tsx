@@ -18,6 +18,7 @@ import {
   ShopifyProduct,
   ShopifyProductVariant,
 } from "../types/customize"
+import Product from "../components/product"
 
 const Customize = ({
   data: { contentfulProduct, shopifyProduct },
@@ -42,6 +43,7 @@ const Customize = ({
       variant?.contentful && variant.contentful.customizations.clear.title,
   })
   const previewRef = useRef<HTMLDivElement>(null)
+
   useEffect(() => {
     const urlParams = new URLSearchParams(location.search)
     const sku = urlParams.get("variant")
@@ -76,7 +78,7 @@ const Customize = ({
       // @ts-ignore
       // price += selectedVariants[key].priceNumber
       // convert everything to int and divide by 100 at the end
-      price = price * 100
+      price = Number(price.toFixed(2)) * 100
       price += selectedVariants[key].priceNumber * 100
       price = price / 100
     })
@@ -112,7 +114,13 @@ const Customize = ({
               {currentStep === 2 && <Step2 />}
               {currentStep === 3 && <Step3 />}
               {currentStep === 4 && <Step4 />}
-              {currentStep === 5 && <Step5 />}
+              {currentStep === 5 && (
+                <Step5
+                  productTitle={shopifyProduct.title}
+                  variant={variant.shopify}
+                  currentPrice={currentPrice}
+                />
+              )}
             </div>
           </div>
         </div>

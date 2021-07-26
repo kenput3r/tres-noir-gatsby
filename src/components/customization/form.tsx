@@ -31,6 +31,7 @@ const Form = ({
   // useEffect(() => {
   //   console.log(selectedVariants)
   // }, [selectedVariants])
+  console.log("SELECTED VARIANTS", selectedVariants)
   return (
     <Component>
       {shopifyCollection.products.map((product: ShopifyProduct) => (
@@ -53,6 +54,10 @@ const Form = ({
                 id={product.id}
                 aria-label={product.title}
                 onChange={() => handleChange(product.variants[0])}
+                checked={
+                  product.variants[0].shopifyId ===
+                  selectedVariants[`step${currentStep}`].shopifyId
+                }
               />
               <div className="checkmark" />
             </div>
@@ -87,6 +92,10 @@ const Form = ({
                       id={product.id}
                       aria-label={product.title}
                       onChange={() => handleChange(variant)}
+                      checked={
+                        variant.shopifyId ===
+                        selectedVariants[`step${currentStep}`].shopifyId
+                      }
                     />
                     <div className="checkmark" />
                   </li>
