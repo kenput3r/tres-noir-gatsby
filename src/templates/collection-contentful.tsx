@@ -44,13 +44,15 @@ const CollectionContentful = ({
     <Layout>
       <SEO title={collection.name} />
       <Page>
-        <FeaturedImage>
-          <GatsbyImage
-            image={collection.featuredImage.data}
-            alt="collection.name"
-          />
-          <h1>{collection.name}</h1>
-        </FeaturedImage>
+        {collection.featuredImage && (
+          <FeaturedImage>
+            <GatsbyImage
+              image={collection.featuredImage.data}
+              alt="collection.name"
+            />
+            <h1>{collection.name}</h1>
+          </FeaturedImage>
+        )}
         <Filters
           collection={collection}
           filters={filters}
