@@ -76,6 +76,7 @@ const ProductCustomizable = ({
         </div>
         <div className="row">
           <div className="col images">
+            {console.log("IMAGE SET", selectedVariant.contentful.imageSet)}
             <ProductCarousel
               imageSet={
                 selectedVariant?.contentful &&
