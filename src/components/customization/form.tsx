@@ -31,7 +31,6 @@ const Form = ({
   // useEffect(() => {
   //   console.log(selectedVariants)
   // }, [selectedVariants])
-  console.log("SELECTED VARIANTS", selectedVariants)
   return (
     <Component>
       {shopifyCollection.products.map((product: ShopifyProduct) => (
