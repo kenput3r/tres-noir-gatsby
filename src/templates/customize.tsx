@@ -96,7 +96,7 @@ const Customize = ({
     <Layout>
       <SEO title="customize" />
       <Page>
-        <div className="row">
+        <div className="row product-customize">
           <div className="col preview" ref={previewRef}>
             <GatsbyImage
               image={currentImage.data}
@@ -135,6 +135,11 @@ const Page = styled.div`
   .row {
     display: flex;
     flex-direction: row;
+    @media only screen and (max-width: 480px) {
+      &.product-customize {
+        display: block;
+      }
+    }
   }
   .col {
     display: flex;

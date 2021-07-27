@@ -35,6 +35,7 @@ const Form = ({
     <Component>
       {shopifyCollection.products.map((product: ShopifyProduct) => (
         <React.Fragment key={product.id}>
+          {console.log("PRODUCT", product)}
           {product.variants.length === 1 ? (
             <div className="product-option">
               <GatsbyImage
@@ -44,7 +45,12 @@ const Form = ({
                 alt={product.images[0].altText || product.title}
               />
               <div className="product-description">
-                <h4>{product.title}</h4>
+                <h4>
+                  {product.title}{" "}
+                  <span className="price">
+                    {` + $${product.variants[0].priceNumber.toFixed(2)}`}
+                  </span>
+                </h4>
                 <p>{product.description}</p>
               </div>
               <input
@@ -83,7 +89,12 @@ const Form = ({
                       className="variant-image"
                     />
                     <div className="variant-description">
-                      <h6>{variant.title}</h6>
+                      <h6>
+                        {variant.title}
+                        <span className="price">
+                          {` + $${product.variants[0].priceNumber.toFixed(2)}`}
+                        </span>
+                      </h6>
                     </div>
                     <input
                       type="radio"
@@ -217,6 +228,9 @@ const Component = styled.form`
     :hover {
       cursor: pointer;
     }
+    @media only screen and (max-width: 480px) {
+      display: inline-block;
+    }
   }
   ul.variants {
     display: flex;
@@ -240,6 +254,12 @@ const Component = styled.form`
         max-height: 30px;
         max-width: 30px;
       }
+      .variant-description {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+      }
       div {
         padding-left: 5px;
       }
@@ -251,7 +271,7 @@ const Component = styled.form`
           margin-right: 40px;
         }
         @media only screen and (min-width: 1200px) {
-          margin-right: 40%;
+          margin-right: 25%;
         }
       }
     }

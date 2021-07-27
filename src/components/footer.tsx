@@ -13,7 +13,6 @@ interface Item {
 
 const Footer = () => {
   const { items } = useFooterNavigation()
-  console.log("FOOTER ITEMS", items)
   return (
     <Component>
       <nav>
