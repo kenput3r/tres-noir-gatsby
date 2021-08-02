@@ -1,4 +1,3 @@
-import { any } from "prop-types"
 import React, { createContext, useState, useEffect } from "react"
 import Client, { Cart } from "shopify-buy"
 import { Checkout } from "../types/checkout"

@@ -104,15 +104,21 @@ const Cart = () => {
 export default Cart
 
 const Page = styled.div`
+  margin: 0 1.45rem;
   ul {
     margin: 0;
     li {
-      display: flex;
-      flex-direction: row;
+      display: grid;
+      grid-gap: 1em;
+      grid-template-columns: repeat(5, 1fr);
       justify-content: space-between;
       align-items: center;
       align-content: center;
       border-bottom: 1px solid var(--color-grey-dark);
+      @media only screen and (max-width: 480px) {
+        grid-template-columns: 1fr 1fr;
+        grid-gap: 1em;
+      }
       .title {
         font-weight: bold;
         margin-bottom: 5px;

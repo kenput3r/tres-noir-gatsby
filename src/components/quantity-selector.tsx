@@ -11,21 +11,23 @@ const QuantitySelector = (props: Props) => {
   const { lineId, quantity, updateQuantity } = props
   return (
     <Selector>
-      <a
-        href="#"
-        className="quantity-down"
-        onClick={() => updateQuantity(lineId, quantity - 1)}
-      >
-        -
-      </a>
-      <input className="quantity" type="text" value={quantity} readOnly />
-      <a
-        href="#"
-        className="quantity-up"
-        onClick={() => updateQuantity(lineId, quantity + 1)}
-      >
-        +
-      </a>
+      <div>
+        <a
+          href="#"
+          className="quantity-down"
+          onClick={() => updateQuantity(lineId, quantity - 1)}
+        >
+          -
+        </a>
+        <input className="quantity" type="text" value={quantity} readOnly />
+        <a
+          href="#"
+          className="quantity-up"
+          onClick={() => updateQuantity(lineId, quantity + 1)}
+        >
+          +
+        </a>
+      </div>
     </Selector>
   )
 }
@@ -33,20 +35,27 @@ const QuantitySelector = (props: Props) => {
 export default QuantitySelector
 
 const Selector = styled.div`
-  display: flex;
-  flex-direction: row;
-  line-height: 1.5em;
-  border: 1px solid var(--color-grey-dark);
-  padding: 7px;
-  input {
-    border: none;
-    text-align: center;
-    width: 2em;
-  }
-  a {
-    text-decoration: none;
-    font-weight: bold;
-    color: #000;
-    font-size: 1.5em;
+  div {
+    display: inline-block;
+    line-height: 1.5em;
+    border: 1px solid var(--color-grey-dark);
+    padding: 3px 7px;
+    /* @media only screen and (max-width: 480px) {
+      padding: 1px 4px;
+    } */
+    input {
+      border: none;
+      text-align: center;
+      width: 2em;
+      /* @media only screen and (max-width: 480px) {
+        width: 1em;
+      } */
+    }
+    a {
+      text-decoration: none;
+      font-weight: bold;
+      color: #000;
+      font-size: 1.5em;
+    }
   }
 `
