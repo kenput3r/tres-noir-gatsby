@@ -92,7 +92,23 @@ export default TermsandConditions
 
 const Page = styled.div`
   margin: auto;
-  h2 {
-    padding-right: 25px;
+  width: 640px;
+  max-width: 100%;
+  h1 {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 12em;
+
+    .paragraph {
+      display: flex;
+      h3 {
+        justify-content: flex-start;
+      }
+
+      p {
+        flex-wrap: wrap;
+      }
+    }
   }
 `

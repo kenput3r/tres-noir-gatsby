@@ -557,4 +557,16 @@ const PrivacyPolicy = () => {
 
 export default PrivacyPolicy
 
-const Page = styled.div``
+const Page = styled.div`
+  div {
+    margin: auto;
+    width: 640px;
+    max-width: 100%;
+  }
+  h1 {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 8em;
+  }
+`

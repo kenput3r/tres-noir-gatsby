@@ -6,13 +6,22 @@ import SEO from "../../components/seo"
 const ReturnPolicy = () => {
   return (
     <Layout>
-      <SEO title="Return Policy" />
-      <h1>Return Policy</h1>
-      <p>Return Policy Here</p>
+      <Page>
+        <SEO title="Return Policy" />
+        <h1>Return Policy</h1>
+        <p>Return Policy Here</p>
+      </Page>
     </Layout>
   )
 }
 
 export default ReturnPolicy
 
-const Page = styled.div``
+const Page = styled.div`
+  h1 {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 8em;
+  }
+`
