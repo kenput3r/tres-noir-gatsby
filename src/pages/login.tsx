@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useContext } from "react"
 import styled from "styled-components"
-import { useMutation, gql } from "@apollo/client"
 import { navigate } from "gatsby"
 import Layout from "../components/layout"
 import SEO from "../components/seo"
@@ -10,31 +9,58 @@ const Login = () => {
   const { login } = useContext(CustomerContext)
   const [email, setEmail] = useState<string>("")
   const [password, setPassword] = useState<string>("")
-  const [getAccessToken, { data }] = useMutation(CREATE_CUSTOMER_ACCESS_TOKEN)
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     console.log("MUTATION", { variables: { email: email, password: password } })
-    const response = await getAccessToken({
-      variables: {
-        input: {
-          email: email,
-          password: password,
-        },
-      },
-    })
-    console.log("RESPONSE", response)
-    if (response.data) {
-      const { customerAccessToken, customerUserErrors } =
-        response.data.customerAccessTokenCreate
-      if (customerUserErrors.length) {
-        alert(`ERROR: ${customerUserErrors[0].message}`)
-      } else {
-        login(customerAccessToken)
-        navigate("/account")
+    const query = `
+      mutation customerAccessTokenCreate($input: CustomerAccessTokenCreateInput!) {
+        customerAccessTokenCreate(input: $input) {
+          customerAccessToken {
+            accessToken
+            expiresAt
+          }
+          customerUserErrors {
+            code
+            field
+            message
+          }
+        }
       }
-    } else {
-      alert("ERROR: please try again later...")
+    `
+    try {
+      const response = await fetch(
+        `https://tres-noir.myshopify.com/api/2021-07/graphql.json`,
+        {
+          method: "POST",
+          headers: {
+            "X-Shopify-Storefront-Access-Token": process.env
+              .GATSBY_STORE_TOKEN as string,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            query,
+            variables: { input: { email, password } },
+          }),
+        }
+      )
+      console.log("RESPONSE", response)
+      const json = await response.json()
+      console.log("json", json)
+      if (json.data) {
+        const { customerAccessToken, customerUserErrors } =
+          json.data.customerAccessTokenCreate
+        if (customerUserErrors.length) {
+          alert(`ERROR: ${customerUserErrors[0].message}`)
+        } else {
+          login(customerAccessToken)
+          navigate("/account")
+        }
+      } else {
+        alert("ERROR: please try again later...")
+      }
+    } catch (e) {
+      console.log("ERROR", e.message)
     }
   }
 
@@ -90,22 +116,6 @@ const Login = () => {
 }
 
 export default Login
-
-const CREATE_CUSTOMER_ACCESS_TOKEN = gql`
-  mutation customerAccessTokenCreate($input: CustomerAccessTokenCreateInput!) {
-    customerAccessTokenCreate(input: $input) {
-      customerAccessToken {
-        accessToken
-        expiresAt
-      }
-      customerUserErrors {
-        code
-        field
-        message
-      }
-    }
-  }
-`
 
 const Page = styled.div`
   width: 420px;

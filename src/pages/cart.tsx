@@ -1,37 +1,21 @@
 import React, { useState, useEffect, useContext } from "react"
 import { Link } from "gatsby"
 import styled from "styled-components"
-import { useMutation, gql } from "@apollo/client"
 import Layout from "../components/layout"
 import SEO from "../components/seo"
 import Loader from "../components/loader"
 import QuantitySelector from "../components/quantity-selector"
 import { CartContext } from "../contexts/cart"
-import { CustomerContext } from "../contexts/customer"
 import { Checkout, LineItem } from "../types/checkout"
 
 const Cart = () => {
-  const [associate] = useMutation(ASSOCIATE_CHECKOUT_TO_CUSTOMER)
   const { checkout, removeProductFromCart, updateProductInCart } =
     useContext(CartContext)
-  const { customerAccessToken } = useContext(CustomerContext)
   const [cart, setCart] = useState<Checkout>()
 
   useEffect(() => {
-    const associateCheckout = async (checkout: Checkout) => {
-      const response = await associate({
-        variables: {
-          checkoutId: checkout.id,
-          customerAccessToken,
-        },
-      })
-      console.log("ASSOCIATE RESPONSE", response)
-      console.log("WEB URL", checkout.webUrl)
-    }
-    console.log("CHECKOUT", checkout)
     if (checkout) {
       setCart(checkout as Checkout)
-      associateCheckout(checkout as Checkout)
     }
   }, [checkout])
 
@@ -119,31 +103,6 @@ const Cart = () => {
 }
 
 export default Cart
-
-const ASSOCIATE_CHECKOUT_TO_CUSTOMER = gql`
-  mutation checkoutCustomerAssociateV2(
-    $checkoutId: ID!
-    $customerAccessToken: String!
-  ) {
-    checkoutCustomerAssociateV2(
-      checkoutId: $checkoutId
-      customerAccessToken: $customerAccessToken
-    ) {
-      checkout {
-        id
-        webUrl
-      }
-      checkoutUserErrors {
-        code
-        field
-        message
-      }
-      customer {
-        id
-      }
-    }
-  }
-`
 
 const Page = styled.div`
   margin: 0 1.45rem;

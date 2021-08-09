@@ -1,22 +1,83 @@
-import React, { useContext } from "react"
+import React, { useContext, useEffect, useState } from "react"
 import styled from "styled-components"
-import { useQuery, gql } from "@apollo/client"
 import { navigate } from "gatsby"
 import Layout from "../components/layout"
 import SEO from "../components/seo"
 import { CustomerContext } from "../contexts/customer"
 
 const Account = () => {
+  const [loading, setLoading] = useState<boolean>(false)
+  const [data, setData] = useState<any>(false)
+  const [error, setError] = useState<boolean>(false)
   const { customerAccessToken } = useContext(CustomerContext)
   if (!customerAccessToken) {
     navigate("/login")
   }
-  const { loading, error, data } = useQuery(GET_CUSTOMER, {
-    variables: {
-      customerAccessToken: `${customerAccessToken}`,
-    },
-    skip: customerAccessToken ? false : true,
-  })
+
+  const getCustomer = async () => {
+    const query = `
+      query customer($customerAccessToken: String!) {
+        customer(customerAccessToken: $customerAccessToken) {
+          id
+          email
+          firstName
+          lastName
+          defaultAddress {
+            address1
+            address2
+            city
+            province
+            country
+            zip
+            phone
+          }
+          orders(first: 10) {
+            edges {
+              node {
+                id
+                name
+              }
+            }
+          }
+        }
+      }
+    `
+    try {
+      const response = await fetch(
+        `https://tres-noir.myshopify.com/api/2021-07/graphql.json`,
+        {
+          method: "POST",
+          headers: {
+            "X-Shopify-Storefront-Access-Token": process.env
+              .GATSBY_STORE_TOKEN as string,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            query,
+            variables: {
+              customerAccessToken,
+            },
+          }),
+        }
+      )
+      console.log("RESPONSE", response)
+      const json = await response.json()
+      console.log("json", json)
+      if (json.data) {
+        console.log("SETTING JSON DATA && LOADING TO FALSE")
+        setData(json.data)
+        setLoading(false)
+      }
+    } catch (e) {
+      console.log("ERROR", error)
+      setLoading(false)
+      setError(true)
+    }
+  }
+
+  useEffect(() => {
+    getCustomer()
+  }, [])
 
   const renderContent = () => {
     if (loading) {
@@ -58,8 +119,6 @@ const Account = () => {
           </div>
         </div>
       )
-    } else {
-      navigate("/login")
     }
   }
 
@@ -75,34 +134,6 @@ const Account = () => {
 }
 
 export default Account
-
-const GET_CUSTOMER = gql`
-  query customer($customerAccessToken: String!) {
-    customer(customerAccessToken: $customerAccessToken) {
-      id
-      email
-      firstName
-      lastName
-      defaultAddress {
-        address1
-        address2
-        city
-        province
-        country
-        zip
-        phone
-      }
-      orders(first: 10) {
-        edges {
-          node {
-            id
-            name
-          }
-        }
-      }
-    }
-  }
-`
 
 const Page = styled.div`
   max-width: 95%;
