@@ -74,7 +74,7 @@ const TermsandConditions = () => {
           </p>
           <p>
             Returns must be received within 30 days of your original order.
-            Items must be in original packaging and in new, unworn condition.{" "}
+            Items must be in original packaging and in new, unworn condition.
           </p>
           <p>
             Exchanges and Refunds will be issued within 3 business days of
