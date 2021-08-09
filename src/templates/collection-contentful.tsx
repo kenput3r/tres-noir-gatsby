@@ -1,0 +1,131 @@
+import React, { useState, useEffect } from "react"
+import { Link, graphql } from "gatsby"
+import styled from "styled-components"
+import Layout from "../components/layout"
+import SEO from "../components/seo"
+import { GatsbyImage } from "gatsby-plugin-image"
+import Product from "../components/product-contentful"
+import Filters from "../components/filters-contentful"
+import { ContentfulCollection, ContentfulProduct } from "../types/contentful"
+
+const CollectionContentful = ({
+  data,
+}: {
+  data: { contentfulCollection: ContentfulCollection }
+}) => {
+  const { contentfulCollection: collection } = data
+  const defaultFilters = { fitType: null, colorName: null }
+  const [filters, setFilters] = useState<{
+    fitType: null | string
+    colorName: null | string
+  }>(defaultFilters)
+  const [products, setProducts] = useState<ContentfulProduct[]>(
+    collection.products
+  )
+
+  const selectColors = (color: string): void => {
+    const options: HTMLElement[] = Array.from(
+      document.querySelectorAll(".color-option")
+    )
+    options.map(option => {
+      if (option.getAttribute("data-frame-color")?.includes(color)) {
+        option.click()
+      }
+    })
+  }
+
+  useEffect(() => {
+    if (filters.colorName) {
+      selectColors(filters.colorName)
+    }
+  }, [filters.fitType, filters.colorName])
+
+  return (
+    <Layout>
+      <SEO title={collection.name} />
+      <Page>
+        {collection.featuredImage && (
+          <FeaturedImage>
+            <GatsbyImage
+              image={collection.featuredImage.data}
+              alt="collection.name"
+            />
+            <h1>{collection.name}</h1>
+          </FeaturedImage>
+        )}
+        <Filters
+          collection={collection}
+          filters={filters}
+          setFilters={setFilters}
+          setProducts={setProducts}
+        />
+        <div className="grid">
+          {products.length ? (
+            products.map((product: ContentfulProduct) => (
+              <Product key={product.handle} data={product} />
+            ))
+          ) : (
+            <p>No Products found please remove filters and try again.</p>
+          )}
+        </div>
+      </Page>
+    </Layout>
+  )
+}
+
+export default CollectionContentful
+
+export const query = graphql`
+  query ContentfulCollectionQuery($handle: String!) {
+    contentfulCollection(handle: { eq: $handle }) {
+      handle
+      name
+      featuredImage {
+        data: gatsbyImageData(
+          aspectRatio: 2.29
+          width: 2048
+          placeholder: BLURRED
+          formats: [AUTO, WEBP]
+        )
+      }
+      products {
+        title
+        handle
+        id
+        fitType
+        variants {
+          id
+          sku
+          featuredImage {
+            data: gatsbyImageData(width: 600)
+          }
+          colorName
+          colorImage {
+            data: gatsbyImageData(width: 40)
+          }
+          frameColor
+        }
+      }
+    }
+  }
+`
+
+const Page = styled.div`
+  .grid {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+`
+
+const FeaturedImage = styled.div`
+  position: relative;
+  h1 {
+    text-transform: uppercase;
+    position: absolute;
+    bottom: 15px;
+    right: 15px;
+    margin-bottom: 0;
+  }
+`

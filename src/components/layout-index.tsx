@@ -1,9 +1,10 @@
 import React, { useState } from "react"
-import PropTypes from "prop-types"
 import { useStaticQuery, graphql } from "gatsby"
+import styled from "styled-components"
 
 import Header from "./header"
 import Drawer from "./drawer"
+import Footer from "./footer"
 import "./layout.css"
 import "./fonts.css"
 
@@ -31,22 +32,18 @@ const Layout = ({ children }: LayoutProps) => {
         isIndex={true}
       />
       <Drawer isDrawerOpen={isDrawerOpen} setIsDrawerOpen={setIsDrawerOpen} />
-      <main>{children}</main>
-      <footer
-        style={{
-          marginTop: `2rem`,
-        }}
-      >
-        © {new Date().getFullYear()}, Built with
-        {` `}
-        <a href="https://www.gatsbyjs.com">Gatsby</a>
-      </footer>
+      <Main>{children}</Main>
+      <Footer />
     </>
   )
 }
 
-Layout.propTypes = {
-  children: PropTypes.node.isRequired,
-}
-
 export default Layout
+
+const Main = styled.main`
+  max-width: 100%;
+  .container {
+    max-width: 1440px;
+    margin: auto;
+  }
+`

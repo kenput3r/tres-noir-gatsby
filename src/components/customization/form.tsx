@@ -6,7 +6,7 @@ import {
   ShopifyCollection,
   ShopifyProduct,
   ShopifyVariant,
-} from "../../../global"
+} from "../../types/global"
 import { CustomizeContext } from "../../contexts/customize"
 
 const Form = ({
@@ -35,6 +35,7 @@ const Form = ({
     <Component>
       {shopifyCollection.products.map((product: ShopifyProduct) => (
         <React.Fragment key={product.id}>
+          {console.log("PRODUCT", product)}
           {product.variants.length === 1 ? (
             <div className="product-option">
               <GatsbyImage
@@ -44,7 +45,12 @@ const Form = ({
                 alt={product.images[0].altText || product.title}
               />
               <div className="product-description">
-                <h4>{product.title}</h4>
+                <h4>
+                  {product.title}{" "}
+                  <span className="price">
+                    {` + $${product.variants[0].priceNumber.toFixed(2)}`}
+                  </span>
+                </h4>
                 <p>{product.description}</p>
               </div>
               <input
@@ -53,6 +59,10 @@ const Form = ({
                 id={product.id}
                 aria-label={product.title}
                 onChange={() => handleChange(product.variants[0])}
+                checked={
+                  product.variants[0].shopifyId ===
+                  selectedVariants[`step${currentStep}`].shopifyId
+                }
               />
               <div className="checkmark" />
             </div>
@@ -79,7 +89,12 @@ const Form = ({
                       className="variant-image"
                     />
                     <div className="variant-description">
-                      <h6>{variant.title}</h6>
+                      <h6>
+                        {variant.title}
+                        <span className="price">
+                          {` + $${product.variants[0].priceNumber.toFixed(2)}`}
+                        </span>
+                      </h6>
                     </div>
                     <input
                       type="radio"
@@ -87,6 +102,10 @@ const Form = ({
                       id={product.id}
                       aria-label={product.title}
                       onChange={() => handleChange(variant)}
+                      checked={
+                        variant.shopifyId ===
+                        selectedVariants[`step${currentStep}`].shopifyId
+                      }
                     />
                     <div className="checkmark" />
                   </li>
@@ -209,6 +228,9 @@ const Component = styled.form`
     :hover {
       cursor: pointer;
     }
+    @media only screen and (max-width: 480px) {
+      display: inline-block;
+    }
   }
   ul.variants {
     display: flex;
@@ -225,15 +247,32 @@ const Component = styled.form`
       padding-right: 10px;
       position: relative;
       width: 50%;
+      @media only screen and (max-width: 768px) {
+        width: 100%;
+      }
       .variant-image {
         max-height: 30px;
         max-width: 30px;
+      }
+      .variant-description {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
       }
       div {
         padding-left: 5px;
       }
       p {
         line-height: 0.5;
+      }
+      .checkmark {
+        @media only screen and (min-width: 1024px) {
+          margin-right: 40px;
+        }
+        @media only screen and (min-width: 1200px) {
+          margin-right: 25%;
+        }
       }
     }
   }

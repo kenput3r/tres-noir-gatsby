@@ -31,6 +31,13 @@ exports.createPages = async ({ graphql, actions: { createPage } }) => {
           }
         }
       }
+      allContentfulCollection {
+        edges {
+          node {
+            handle
+          }
+        }
+      }
     }
   `)
 
@@ -98,6 +105,18 @@ exports.createPages = async ({ graphql, actions: { createPage } }) => {
       createPage({
         path: `/${handle}`,
         component: path.resolve(`./src/templates/learn-more/index.tsx`),
+        context: {
+          handle,
+        },
+      })
+    }
+  )
+  pageable.data.allContentfulCollection.edges.forEach(
+    ({ node: { handle } }) => {
+      const template = "collection-contentful"
+      createPage({
+        path: `/collections/${handle}`,
+        component: path.resolve(`./src/templates/${template}.tsx`),
         context: {
           handle,
         },

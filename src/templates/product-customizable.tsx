@@ -1,29 +1,66 @@
-import React, { useState, useRef } from "react"
+import React, { useState, useRef, useEffect, useContext } from "react"
 import { Link, graphql } from "gatsby"
 import { StaticImage, GatsbyImage as Img } from "gatsby-plugin-image"
 import styled from "styled-components"
 import Layout from "../components/layout"
 import SEO from "../components/seo"
 import ProductCarousel from "../components/product-carousel"
+import { SelectedVariantContext } from "../contexts/selectedVariant"
+import { CartContext } from "../contexts/cart"
 
 const ProductCustomizable = ({
   data: { contentfulProduct, shopifyProduct },
 }: any) => {
+  const { selectedVariantContext, setSelectedVariantContext } = useContext(
+    SelectedVariantContext
+  )
   const [selectedVariant, setSelectedVariant] = useState({
-    contentful: contentfulProduct.variants[0],
+    contentful: contentfulProduct?.variants && contentfulProduct.variants[0],
     shopify: shopifyProduct.variants[0],
   })
+  // cart
+  const { addProductToCart } = useContext(CartContext)
+
+  useEffect(() => {
+    const sku = selectedVariantContext
+    if (sku) {
+      const contentful = contentfulProduct.variants.find(
+        (_variant: any) => _variant.sku === sku
+      )
+      const shopify = shopifyProduct.variants.find(
+        (_variant: any) => _variant.sku === sku
+      )
+      if (contentful && shopify) {
+        const variant = contentful
+        setSelectedVariant({
+          contentful: variant,
+          shopify,
+        })
+      }
+    }
+  }, [])
 
   const selectVariant = (e: React.MouseEvent, variant: any) => {
-    e.currentTarget && e.currentTarget.blur()
+    e.currentTarget && (e.currentTarget as HTMLElement).blur()
     const shopify = shopifyProduct.variants.find(
       (_variant: any) => _variant.sku === variant.sku
     )
-    setSelectedVariant({
-      contentful: variant,
-      shopify,
-    })
+    if (shopify) {
+      setSelectedVariant({
+        contentful: variant,
+        shopify,
+      })
+      setSelectedVariantContext(variant.sku)
+    }
   }
+
+  const handleAddToCart = () => {
+    const id = selectedVariant.shopify.shopifyId
+    console.log("ADDING TO CART", `${id} x 1`)
+    addProductToCart(id, 1)
+    alert("ADDED TO CART")
+  }
+
   return (
     <Layout>
       <SEO title={shopifyProduct.title} />
@@ -39,17 +76,24 @@ const ProductCustomizable = ({
         </div>
         <div className="row">
           <div className="col images">
-            <ProductCarousel imageSet={selectedVariant.contentful.imageSet} />
+            {console.log("IMAGE SET", selectedVariant.contentful.imageSet)}
+            <ProductCarousel
+              imageSet={
+                selectedVariant?.contentful &&
+                selectedVariant.contentful.imageSet
+              }
+            />
           </div>
           <div className="col">
             <div className="heading">
               <h1>{shopifyProduct.title}</h1>
               <p className="fit">
-                Size: {contentfulProduct.fitDimensions}{" "}
+                Size: {contentfulProduct && contentfulProduct.fitDimensions}{" "}
                 <span>
-                  {contentfulProduct.fitType === "medium (average)"
+                  {contentfulProduct &&
+                  contentfulProduct.fitType === "medium (average)"
                     ? "medium"
-                    : contentfulProduct.fitType}{" "}
+                    : contentfulProduct && contentfulProduct.fitType}{" "}
                   fit
                 </span>
               </p>
@@ -59,32 +103,35 @@ const ProductCustomizable = ({
                 Color: <span>{selectedVariant.shopify.title}</span>
               </p>
               <div className="buttons">
-                {contentfulProduct.variants.map((variant: any) => (
-                  <button
-                    key={variant.id}
-                    type="button"
-                    data-active={variant.id === selectedVariant.contentful.id}
-                    onClick={e => selectVariant(e, variant)}
-                    aria-label={`Color option ${variant.colorImage.title}`}
-                    aria-pressed={
-                      variant.id === selectedVariant.contentful.id
-                        ? "true"
-                        : "false"
-                    }
-                  >
-                    <Img
-                      image={variant.colorImage.data}
-                      alt={variant.colorImage.title}
-                    />
-                  </button>
-                ))}
+                {contentfulProduct &&
+                  contentfulProduct.variants.map((variant: any) => (
+                    <button
+                      key={variant.id}
+                      type="button"
+                      data-active={variant.id === selectedVariant.contentful.id}
+                      onClick={e => selectVariant(e, variant)}
+                      aria-label={`Color option ${variant.colorImage.title}`}
+                      aria-pressed={
+                        variant.id === selectedVariant.contentful.id
+                          ? "true"
+                          : "false"
+                      }
+                    >
+                      <Img
+                        image={variant.colorImage.data}
+                        alt={variant.colorImage.title}
+                      />
+                    </button>
+                  ))}
               </div>
               <div className="price">
                 <p className="label">STARTING AT</p>
                 <p className="value">
                   ${selectedVariant.shopify.priceV2.amount} USD
                   <span>
-                    <Link to={`/${contentfulProduct.handle}`}>
+                    <Link
+                      to={contentfulProduct && `/${contentfulProduct.handle}`}
+                    >
                       Learn More {`>`}
                     </Link>
                   </span>
@@ -92,12 +139,17 @@ const ProductCustomizable = ({
               </div>
               <div className="actions">
                 <div>
-                  <button type="button">ADD TO CART</button>
+                  <button type="button" onClick={handleAddToCart}>
+                    ADD TO CART
+                  </button>
                   <p>- OR -</p>
                   <Link
-                    to={`/products/${contentfulProduct.handle}/customize?variant=${selectedVariant.shopify.sku}`}
+                    to={
+                      contentfulProduct &&
+                      `/products/${contentfulProduct.handle}/customize?variant=${selectedVariant.shopify.sku}`
+                    }
                   >
-                    CUSOTMIZE
+                    CUSTOMIZE
                   </Link>
                   <p className="small">Click for Polarized, Rx, and more</p>
                 </div>
@@ -307,6 +359,7 @@ export const query = graphql`
       }
     }
     shopifyProduct(handle: { eq: $handle }) {
+      id
       priceRange {
         minVariantPrice {
           amount

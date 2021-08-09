@@ -12,52 +12,75 @@ import Step4 from "../components/customization/step4"
 import Step5 from "../components/customization/step5"
 import { CustomizeContext } from "../contexts/customize"
 import { changeImage } from "../components/customization/functions"
+import {
+  ContentfulProduct,
+  ContentfulProductVariant,
+  ShopifyProduct,
+  ShopifyProductVariant,
+} from "../types/customize"
+import Product from "../components/product"
 
-const Customize = ({ data: { contentfulProduct, shopifyProduct } }: any) => {
-  const { currentStep, setProductUrl, selectedVariants } = useContext(
-    CustomizeContext
-  )
+const Customize = ({
+  data: { contentfulProduct, shopifyProduct },
+}: {
+  data: {
+    contentfulProduct: ContentfulProduct
+    shopifyProduct: ShopifyProduct
+  }
+}) => {
+  const { currentStep, setProductUrl, selectedVariants } =
+    useContext(CustomizeContext)
   const [variant, setVariant] = useState({
-    contentful: contentfulProduct.variants[0],
+    contentful: contentfulProduct?.variants && contentfulProduct.variants[0],
     shopify: shopifyProduct.variants[0],
   })
   const [currentPrice, setCurrentPrice] = useState(
     shopifyProduct.variants[0].priceNumber
   )
   const [currentImage, setCurrentImage] = useState({
-    data: variant.contentful.customizations.clear.data,
-    altText: variant.contentful.customizations.clear.title,
+    data: variant?.contentful && variant.contentful.customizations.clear.data,
+    altText:
+      variant?.contentful && variant.contentful.customizations.clear.title,
   })
-  const previewRef = useRef(null)
+  const previewRef = useRef<HTMLDivElement>(null)
+
   useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search)
+    const urlParams = new URLSearchParams(location.search)
     const sku = urlParams.get("variant")
     const contentful = contentfulProduct.variants.find(
-      (_variant: any) => _variant.sku === sku
+      (_variant: ContentfulProductVariant) => _variant.sku === sku
     )
     const shopify = shopifyProduct.variants.find(
-      (_variant: any) => _variant.sku === sku
+      (_variant: ShopifyProductVariant) => _variant.sku === sku
     )
-    const variant = { contentful, shopify }
-    setVariant(variant)
-    setProductUrl(`/products/${contentfulProduct.handle}`)
-    const previewImage = previewRef.current.querySelector(
-      ".gatsby-image-wrapper img[data-main-image]"
-    )
-    console.log(previewImage)
-    // previewImage.addEventListener("loadstart", function (e) {
-    //   console.log("Preview Image Load Started")
-    // })
-    // previewImage.addEventListener("loadend", function (e) {
-    //   console.log("Preview Image Load Ended")
-    // })
+    if (contentful && shopify) {
+      const variant = { contentful, shopify }
+      setVariant(variant)
+      setProductUrl(`/products/${contentfulProduct.handle}`)
+      if (previewRef.current) {
+        const previewImage = previewRef.current.querySelector(
+          ".gatsby-image-wrapper img[data-main-image]"
+        )
+        console.log(previewImage)
+        // previewImage.addEventListener("loadstart", function (e) {
+        //   console.log("Preview Image Load Started")
+        // })
+        // previewImage.addEventListener("loadend", function (e) {
+        //   console.log("Preview Image Load Ended")
+        // })
+      }
+    }
   }, [])
   /* UPDATE PRICING */
   useEffect(() => {
     let price = variant.shopify.priceNumber
     Object.keys(selectedVariants).forEach(key => {
       // @ts-ignore
-      price += selectedVariants[key].priceNumber
+      // price += selectedVariants[key].priceNumber
+      // convert everything to int and divide by 100 at the end
+      price = Number(price.toFixed(2)) * 100
+      price += selectedVariants[key].priceNumber * 100
+      price = price / 100
     })
     setCurrentPrice(price)
     changeImage(
@@ -73,7 +96,7 @@ const Customize = ({ data: { contentfulProduct, shopifyProduct } }: any) => {
     <Layout>
       <SEO title="customize" />
       <Page>
-        <div className="row">
+        <div className="row product-customize">
           <div className="col preview" ref={previewRef}>
             <GatsbyImage
               image={currentImage.data}
@@ -91,7 +114,13 @@ const Customize = ({ data: { contentfulProduct, shopifyProduct } }: any) => {
               {currentStep === 2 && <Step2 />}
               {currentStep === 3 && <Step3 />}
               {currentStep === 4 && <Step4 />}
-              {currentStep === 5 && <Step5 />}
+              {currentStep === 5 && (
+                <Step5
+                  productTitle={shopifyProduct.title}
+                  variant={variant.shopify}
+                  currentPrice={currentPrice}
+                />
+              )}
             </div>
           </div>
         </div>
@@ -106,6 +135,11 @@ const Page = styled.div`
   .row {
     display: flex;
     flex-direction: row;
+    @media only screen and (max-width: 480px) {
+      &.product-customize {
+        display: block;
+      }
+    }
   }
   .col {
     display: flex;

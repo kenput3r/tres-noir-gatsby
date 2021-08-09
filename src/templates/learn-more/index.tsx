@@ -5,24 +5,27 @@ import styled from "styled-components"
 
 import Layout from "../../components/layout"
 import SEO from "../../components/seo"
+// @ts-ignorets
 import text from "./text.json"
 
 const LearnMore = ({ data: { contentfulProduct } }: any) => {
   const [isStuck, setIsStuck] = useState(false)
-  const observer = new IntersectionObserver(
-    ([e]) => {
-      if (e.intersectionRatio < 1) {
-        setIsStuck(true)
-      } else {
-        setIsStuck(false)
-      }
-    },
-    { threshold: [1] }
-  )
-  useEffect(() => {
-    const stickyHeading = document.getElementById("StickyHeading")
-    observer.observe(stickyHeading)
-  })
+  if (typeof window !== `undefined`) {
+    const observer = new IntersectionObserver(
+      ([e]) => {
+        if (e.intersectionRatio < 1) {
+          setIsStuck(true)
+        } else {
+          setIsStuck(false)
+        }
+      },
+      { threshold: [1] }
+    )
+    useEffect(() => {
+      const stickyHeading = document.getElementById("StickyHeading")
+      if (stickyHeading) observer.observe(stickyHeading)
+    })
+  }
   return (
     <Layout>
       <SEO title={contentfulProduct.title} />
@@ -56,7 +59,6 @@ const LearnMore = ({ data: { contentfulProduct } }: any) => {
           </div>
         </h1>
         <section className="tagline">
-          <p className="h2">{contentfulProduct.tagline}</p>
           <p className="h3">{contentfulProduct.styleDescription.text}</p>
         </section>
         <section className="frame-details wrapper">
@@ -205,7 +207,6 @@ export const query = graphql`
         text: styleDescription
       }
       title
-      tagline
       rxAble
       variantsImage {
         data: gatsbyImageData
@@ -377,6 +378,7 @@ const Page = styled.div`
         position: absolute;
         text-transform: uppercase;
         width: 100%;
+        bottom: 0;
       }
       .h3 {
         color: #000000;

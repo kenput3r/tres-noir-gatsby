@@ -1,10 +1,19 @@
 import { Link } from "gatsby"
-import React, { useState, useEffect, SetStateAction, Dispatch } from "react"
+import React, {
+  useState,
+  useEffect,
+  useContext,
+  useRef,
+  SetStateAction,
+  Dispatch,
+} from "react"
 import { StaticImage } from "gatsby-plugin-image"
 import styled from "styled-components"
 import { FaSearch, FaFacebookF, FaBars } from "react-icons/fa"
+import { useClickAway } from "react-use"
 import { TiSocialInstagram } from "react-icons/ti"
 import DesktopNavigation from "./desktopNavigation"
+import { CustomerContext } from "../contexts/customer"
 
 interface HeaderProps {
   siteTitle: string
@@ -19,10 +28,28 @@ const Header = ({
   setIsDrawerOpen,
   isIndex,
 }: HeaderProps) => {
+  const { customerAccessToken, logout } = useContext(CustomerContext)
   const [currentPath, setCurrentPath] = useState("/")
-  useEffect(() => {
-    setCurrentPath(location.pathname)
-  }, [location])
+  const [visibleAccountSubNav, setVisibileAccountSubNav] =
+    useState<boolean>(false)
+  if (typeof window !== `undefined`) {
+    useEffect(() => {
+      setCurrentPath(location.pathname)
+    }, [location])
+  }
+  const ref = useRef(null)
+
+  const toggleAccountSubNav = (
+    e: React.MouseEvent<HTMLAnchorElement, MouseEvent>
+  ) => {
+    e.preventDefault()
+    setVisibileAccountSubNav(!visibleAccountSubNav)
+  }
+
+  useClickAway(ref, () => {
+    setVisibileAccountSubNav(false)
+  })
+
   return (
     <Component>
       <div className="top-wrapper">
@@ -70,17 +97,41 @@ const Header = ({
             <Link to="/search" state={{ prevPath: currentPath }}>
               <FaSearch />
             </Link>
-            <a href="#" className="login-text">
-              LOG IN
-            </a>
-            <a href="#">
+            {!customerAccessToken ? (
+              <Link to="/login" className="login-text">
+                LOG IN
+              </Link>
+            ) : (
+              <span className="accounts">
+                <a
+                  href="#"
+                  onClick={e => toggleAccountSubNav(e)}
+                  className={visibleAccountSubNav ? `active` : ``}
+                >
+                  ACCOUNT
+                </a>
+                {visibleAccountSubNav && (
+                  <ul ref={ref} className="accounts-sub-nav sub-nav">
+                    <li>
+                      <Link to="/account">YOUR ACCOUNT</Link>
+                    </li>
+                    <li>
+                      <a href="#" onClick={logout}>
+                        LOG OUT
+                      </a>
+                    </li>
+                  </ul>
+                )}
+              </span>
+            )}
+            <Link to="/cart">
               <StaticImage
                 src="../images/cart.png"
                 alt="Shopping Cart"
                 placeholder="tracedSVG"
                 style={{ marginBottom: 0, maxWidth: 26 }}
               />
-            </a>
+            </Link>
             <a
               href="#"
               className="hide-large"
@@ -191,6 +242,32 @@ const Component = styled.header`
   @media (max-width: 500px) {
     .search {
       flex: 1.5;
+    }
+  }
+  .accounts {
+    position: relative;
+    ul.sub-nav {
+      background-color: #000;
+      color: #fff;
+      flex-direction: column;
+      height: auto;
+      margin-top: 10px;
+      margin-left: -5px;
+      padding-left: 10px;
+      padding-right: 10px;
+      padding-bottom: 10px;
+      position: absolute;
+      z-index: 10;
+      li {
+        flex: 1;
+        width: 100%;
+        margin-bottom: 0;
+        padding: 10px 5px;
+      }
+      a {
+        color: #fff;
+        text-decoration: none;
+      }
     }
   }
 `

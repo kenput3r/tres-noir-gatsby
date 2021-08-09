@@ -30,6 +30,7 @@ export const shopifyProductsFields = graphql`
       priceNumber
       product {
         title
+        description
       }
       selectedOptions {
         name

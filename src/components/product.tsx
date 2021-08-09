@@ -2,8 +2,9 @@ import React from "react"
 import { Link } from "gatsby"
 import styled from "styled-components"
 import { GatsbyImage as Image } from "gatsby-plugin-image"
+import { ShopifyProduct } from "../types/shopify"
 
-const Product = ({ data }: any) => {
+const Product = ({ data }: { data: ShopifyProduct }) => {
   console.log(data)
   return (
     <Component>

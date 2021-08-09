@@ -3,6 +3,7 @@ import { Link } from "gatsby"
 import styled from "styled-components"
 import { useClickAway } from "react-use"
 import { useDesktopNavigation } from "../hooks/useDesktopNavigation"
+import SubNavImage from "./subNavImage"
 
 interface Item {
   id: string
@@ -14,6 +15,7 @@ interface Item {
 const DesktopNavigation = () => {
   const { items } = useDesktopNavigation()
   const [visibleSubNav, setVisibleSubNav] = useState("none")
+  const [left, setLeft] = useState<string>("")
   const ref = useRef(null)
 
   const toggleSubNav = (
@@ -52,17 +54,20 @@ const DesktopNavigation = () => {
                 >
                   <span className="toggle">{item.name}</span>
                 </a>
-                {item.id === visibleSubNav && (
-                  <ul className="sub-nav">
-                    {item.subListItems.map((_item: Item) => (
-                      <li key={_item.id}>
-                        <Link to={_item.url ? _item.url : "/"}>
-                          {_item.name}
-                        </Link>
-                      </li>
-                    ))}
-                  </ul>
-                )}
+                {item.id === visibleSubNav &&
+                  (!item.name.toLowerCase().includes("glasses") ? (
+                    <ul className="sub-nav">
+                      {item.subListItems.map((_item: Item) => (
+                        <li key={_item.id}>
+                          <Link to={_item.url ? _item.url : "/"}>
+                            {_item.name}
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <SubNavImage subListItems={item.subListItems} />
+                  ))}
               </>
             )}
           </li>

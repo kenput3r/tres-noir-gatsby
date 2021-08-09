@@ -1,5 +1,5 @@
 import React, { createContext, ReactChild, useState } from "react"
-import { SelectedVariants, ShopifyVariant } from "../../global"
+import { SelectedVariants, ShopifyVariant } from "../types/global"
 
 const defaultContext = {
   currentStep: 1,
@@ -7,10 +7,102 @@ const defaultContext = {
   productUrl: "/",
   setProductUrl: (productUrl: string) => {},
   selectedVariants: {
-    step1: { priceNumber: 0, product: null },
-    step2: { priceNumber: 0, product: null },
-    step3: { priceNumber: 0, product: null },
-    step4: { priceNumber: 0, product: null },
+    step1: {
+      image: {
+        altText: "",
+        localFile: {
+          childImageSharp: {
+            gatsbyImageData: {},
+          },
+        },
+      },
+      priceNumber: 0,
+      product: {
+        title: "",
+        description: "",
+      },
+      selectedOptions: [
+        {
+          name: "",
+          value: "",
+        },
+      ],
+      shopifyId: "",
+      sku: "",
+      title: "",
+    },
+    step2: {
+      image: {
+        altText: "",
+        localFile: {
+          childImageSharp: {
+            gatsbyImageData: {},
+          },
+        },
+      },
+      priceNumber: 0,
+      product: {
+        title: "",
+        description: "",
+      },
+      selectedOptions: [
+        {
+          name: "",
+          value: "",
+        },
+      ],
+      shopifyId: "",
+      sku: "",
+      title: "",
+    },
+    step3: {
+      image: {
+        altText: "",
+        localFile: {
+          childImageSharp: {
+            gatsbyImageData: {},
+          },
+        },
+      },
+      priceNumber: 0,
+      product: {
+        title: "",
+        description: "",
+      },
+      selectedOptions: [
+        {
+          name: "",
+          value: "",
+        },
+      ],
+      shopifyId: "",
+      sku: "",
+      title: "",
+    },
+    step4: {
+      image: {
+        altText: "",
+        localFile: {
+          childImageSharp: {
+            gatsbyImageData: {},
+          },
+        },
+      },
+      priceNumber: 0,
+      product: {
+        title: "",
+        description: "",
+      },
+      selectedOptions: [
+        {
+          name: "",
+          value: "",
+        },
+      ],
+      shopifyId: "",
+      sku: "",
+      title: "",
+    },
   },
   setSelectedVariants: (selectedVariants: SelectedVariants) => {},
 }
@@ -21,10 +113,102 @@ export const CustomizeProvider = ({ children }: { children: ReactChild }) => {
   const [currentStep, setCurrentStep] = useState(1)
   const [productUrl, setProductUrl] = useState("/")
   const [selectedVariants, setSelectedVariants] = useState<SelectedVariants>({
-    step1: { priceNumber: 0, product: null },
-    step2: { priceNumber: 0, product: null },
-    step3: { priceNumber: 0, product: null },
-    step4: { priceNumber: 0, product: null },
+    step1: {
+      image: {
+        altText: "",
+        localFile: {
+          childImageSharp: {
+            gatsbyImageData: {},
+          },
+        },
+      },
+      priceNumber: 0,
+      product: {
+        title: "",
+        description: "",
+      },
+      selectedOptions: [
+        {
+          name: "",
+          value: "",
+        },
+      ],
+      shopifyId: "",
+      sku: "",
+      title: "",
+    },
+    step2: {
+      image: {
+        altText: "",
+        localFile: {
+          childImageSharp: {
+            gatsbyImageData: {},
+          },
+        },
+      },
+      priceNumber: 0,
+      product: {
+        title: "",
+        description: "",
+      },
+      selectedOptions: [
+        {
+          name: "",
+          value: "",
+        },
+      ],
+      shopifyId: "",
+      sku: "",
+      title: "",
+    },
+    step3: {
+      image: {
+        altText: "",
+        localFile: {
+          childImageSharp: {
+            gatsbyImageData: {},
+          },
+        },
+      },
+      priceNumber: 0,
+      product: {
+        title: "",
+        description: "",
+      },
+      selectedOptions: [
+        {
+          name: "",
+          value: "",
+        },
+      ],
+      shopifyId: "",
+      sku: "",
+      title: "",
+    },
+    step4: {
+      image: {
+        altText: "",
+        localFile: {
+          childImageSharp: {
+            gatsbyImageData: {},
+          },
+        },
+      },
+      priceNumber: 0,
+      product: {
+        title: "",
+        description: "",
+      },
+      selectedOptions: [
+        {
+          name: "",
+          value: "",
+        },
+      ],
+      shopifyId: "",
+      sku: "",
+      title: "",
+    },
   })
 
   return (

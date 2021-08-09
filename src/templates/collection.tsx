@@ -4,8 +4,13 @@ import styled from "styled-components"
 import Layout from "../components/layout"
 import SEO from "../components/seo"
 import Product from "../components/product"
+import { ShopifyCollection, ShopifyProduct } from "../types/shopify"
 
-const Collection = ({ data }: any) => {
+const Collection = ({
+  data,
+}: {
+  data: { shopifyCollection: ShopifyCollection }
+}) => {
   const { shopifyCollection: collection } = data
   return (
     <Layout>
@@ -13,7 +18,7 @@ const Collection = ({ data }: any) => {
       <Page>
         <h1>{collection.title}</h1>
         <div className="grid">
-          {collection.products.map((product: any) => (
+          {collection.products.map((product: ShopifyProduct) => (
             <Product key={product.handle} data={product} />
           ))}
         </div>
