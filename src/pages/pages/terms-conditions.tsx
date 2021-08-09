@@ -92,4 +92,7 @@ export default TermsandConditions
 
 const Page = styled.div`
   margin: auto;
+  h2 {
+    padding-right: 25px;
+  }
 `
