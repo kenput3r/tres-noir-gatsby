@@ -111,7 +111,11 @@ const PrivacyPolicy = () => {
             <li>
               We use Shopify to power our online store. You can read more about
               how Shopify uses your Personal Information here:
-              <a href=" https://www.shopify.com/legal/privacy" rel="noreferrer">
+              <a
+                href=" https://www.shopify.com/legal/privacy"
+                rel="noreferrer"
+                target="_blank"
+              >
                 https://www.shopify.com/legal/privacy.
               </a>
             </li>
@@ -138,6 +142,7 @@ const PrivacyPolicy = () => {
               <a
                 href=" https://policies.google.com/privacy?hl=en"
                 rel="noreferrer"
+                target="_blank"
               >
                 https://policies.google.com/privacy?hl=en.
               </a>
@@ -145,6 +150,7 @@ const PrivacyPolicy = () => {
               <a
                 href="https://tools.google.com/dlpage/gaoptout"
                 rel="noreferrer"
+                target="_blank"
               >
                 https://tools.google.com/dlpage/gaoptout.
               </a>
@@ -170,6 +176,7 @@ const PrivacyPolicy = () => {
             <a
               href="http://www.networkadvertising.org/understanding-online-advertising/how-does-it-work"
               rel="noreferrer"
+              target="_blank"
             >
               http://www.networkadvertising.org/understanding-online-advertising/how-does-it-work.
             </a>
@@ -181,6 +188,7 @@ const PrivacyPolicy = () => {
               <a
                 href="https://www.facebook.com/settings/?tab=ads"
                 rel="noreferrer"
+                target="_blank"
               >
                 https://www.facebook.com/settings/?tab=ads.
               </a>
@@ -190,6 +198,7 @@ const PrivacyPolicy = () => {
               <a
                 href="https://www.google.com/settings/ads/anonymous"
                 rel="noreferrer"
+                target="_blank"
               >
                 https://www.google.com/settings/ads/anonymous.
               </a>
@@ -199,6 +208,7 @@ const PrivacyPolicy = () => {
               <a
                 href="https://advertise.bingads.microsoft.com/en-us/resources/policies/personalized-ads"
                 rel="noreferrer"
+                target="_blank"
               >
                 https://advertise.bingads.microsoft.com/en-us/resources/policies/personalized-ads.
               </a>
@@ -207,7 +217,11 @@ const PrivacyPolicy = () => {
           <p>
             Additionally, you can opt out of some of these services by visiting
             the Digital Advertising Alliance’s opt-out portal at:
-            <a href=" http://optout.aboutads.info/" rel="noreferrer">
+            <a
+              href=" http://optout.aboutads.info/"
+              rel="noreferrer"
+              target="_blank"
+            >
               http://optout.aboutads.info/.
             </a>
           </p>
@@ -301,6 +315,7 @@ const PrivacyPolicy = () => {
             <a
               href="https://help.shopify.com/en/manual/your-account/privacy/GDPR"
               rel="noreferrer"
+              target="_blank"
             >
               https://help.shopify.com/en/manual/your-account/privacy/GDPR.
             </a>
@@ -512,7 +527,11 @@ const PrivacyPolicy = () => {
             more information on how to modify your browser settings or how to
             block, manage or filter cookies can be found in your browser’s help
             file or through such sites as
-            <a href="www.allaboutcookies.org" rel="noreferrer"></a>
+            <a
+              href="www.allaboutcookies.org"
+              rel="noreferrer"
+              target="_blank"
+            ></a>
             www.allaboutcookies.org.
           </p>
           <p>
@@ -554,7 +573,11 @@ const PrivacyPolicy = () => {
             have the right to lodge your complaint with the relevant data
             protection authority. You can contact your local data protection
             authority, or our supervisory authority here:
-            <a href="https://oag.ca.gov/privacy" rel="noreferrer">
+            <a
+              href="https://oag.ca.gov/privacy"
+              rel="noreferrer"
+              target="_blank"
+            >
               https://oag.ca.gov/privacy.
             </a>
           </p>
