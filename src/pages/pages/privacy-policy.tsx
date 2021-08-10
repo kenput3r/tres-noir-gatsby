@@ -111,7 +111,9 @@ const PrivacyPolicy = () => {
             <li>
               We use Shopify to power our online store. You can read more about
               how Shopify uses your Personal Information here:
-              https://www.shopify.com/legal/privacy.
+              <a href=" https://www.shopify.com/legal/privacy" target="_blank">
+                https://www.shopify.com/legal/privacy.
+              </a>
             </li>
             <li>
               We may share your Personal Information to comply with applicable
@@ -133,8 +135,19 @@ const PrivacyPolicy = () => {
               We use Google Analytics to help us understand how our customers
               use the Site. You can read more about how Google uses your
               Personal Information here:
-              https://policies.google.com/privacy?hl=en.You can also opt-out of
-              Google Analytics here: https://tools.google.com/dlpage/gaoptout.
+              <a
+                href=" https://policies.google.com/privacy?hl=en"
+                target="_blank"
+              >
+                https://policies.google.com/privacy?hl=en
+              </a>
+              . You can also opt-out of Google Analytics here:
+              <a
+                href="https://tools.google.com/dlpage/gaoptout"
+                target="_blank"
+              >
+                https://tools.google.com/dlpage/gaoptout.
+              </a>
             </li>
             <li>
               We share information about your use of the Site, your purchases,
@@ -168,25 +181,35 @@ const PrivacyPolicy = () => {
               <a
                 href="https://www.facebook.com/settings/?tab=ads"
                 target="_blank"
-              ></a>
-              https://www.facebook.com/settings/?tab=ads
+              >
+                https://www.facebook.com/settings/?tab=ads
+              </a>
             </li>
             <li>
               <i>GOOGLE - </i>
-              <a href="https://www.google.com/settings/ads/anonymous"></a>{" "}
-              https://www.google.com/settings/ads/anonymous
+              <a
+                href="https://www.google.com/settings/ads/anonymous"
+                target="_blank"
+              >
+                https://www.google.com/settings/ads/anonymous
+              </a>
             </li>
             <li>
-              {" "}
-              <i>BING - </i>{" "}
-              <a href="https://advertise.bingads.microsoft.com/en-us/resources/policies/personalized-ads]"></a>
-              https://advertise.bingads.microsoft.com/en-us/resources/policies/personalized-ads]
+              <i>BING - </i>
+              <a
+                href="https://advertise.bingads.microsoft.com/en-us/resources/policies/personalized-ads"
+                target="_blank"
+              >
+                https://advertise.bingads.microsoft.com/en-us/resources/policies/personalized-ads]
+              </a>
             </li>
           </ul>
           <p>
             Additionally, you can opt out of some of these services by visiting
             the Digital Advertising Alliance’s opt-out portal at:
-            http://optout.aboutads.info/.
+            <a href=" http://optout.aboutads.info/">
+              http://optout.aboutads.info/.
+            </a>
           </p>
           <h2>Using Personal Information</h2>
           <p>
@@ -274,8 +297,11 @@ const PrivacyPolicy = () => {
             then will be transferred outside of Europe for storage and further
             processing, including to Canada and the United States. For more
             information on how data transfers comply with the GDPR, see
-            Shopify’s GDPR Whitepaper:{" "}
-            <a href="https://help.shopify.com/en/manual/your-account/privacy/GDPR.">
+            Shopify’s GDPR Whitepaper:
+            <a
+              href="https://help.shopify.com/en/manual/your-account/privacy/GDPR"
+              target="_blank"
+            >
               https://help.shopify.com/en/manual/your-account/privacy/GDPR.
             </a>
           </p>
@@ -326,15 +352,13 @@ const PrivacyPolicy = () => {
             <tbody>
               <tr>
                 <td>
-                  {" "}
-                  <i>_ab</i>{" "}
+                  <i>_ab</i>
                 </td>
                 <td>Used in connection with access to admin.</td>
               </tr>
               <tr>
                 <td>
-                  {" "}
-                  <i>_secure_session_id </i>{" "}
+                  <i>_secure_session_id </i>
                 </td>
                 <td>
                   Used in connection with navigation through a storefront.
@@ -342,57 +366,49 @@ const PrivacyPolicy = () => {
               </tr>
               <tr>
                 <td>
-                  {" "}
-                  <i>cart</i>{" "}
+                  <i>cart</i>
                 </td>
                 <td>Used in connection with shopping cart.</td>
               </tr>
               <tr>
                 <td>
-                  {" "}
-                  <i>cart_sig </i>{" "}
+                  <i>cart_sig </i>
                 </td>
                 <td>Used in connection with checkout.</td>
               </tr>
               <tr>
                 <td>
-                  {" "}
-                  <i>cart_ts </i>{" "}
+                  <i>cart_ts </i>
                 </td>
                 <td>Used in connection with checkout.</td>
               </tr>
               <tr>
                 <td>
-                  {" "}
-                  <i>checkout_token </i>{" "}
+                  <i>checkout_token </i>
                 </td>
                 <td>Used in connection with checkout.</td>
               </tr>
               <tr>
                 <td>
-                  {" "}
-                  <i>secret </i>{" "}
+                  <i>secret </i>
                 </td>
                 <td>Used in connection with checkout.</td>
               </tr>
               <tr>
                 <td>
-                  {" "}
-                  <i>secure_customer_sig </i>{" "}
+                  <i>secure_customer_sig </i>
                 </td>
                 <td>Used in connection with customer login.</td>
               </tr>
               <tr>
                 <td>
-                  {" "}
-                  <i>storefront_digest </i>{" "}
+                  <i>storefront_digest </i>
                 </td>
                 <td>Used in connection with customer login.</td>
               </tr>
               <tr>
                 <td>
-                  {" "}
-                  <i>_shopify_u </i>{" "}
+                  <i>_shopify_u </i>
                 </td>
                 <td>
                   Used to facilitate updating customer account information.
@@ -415,78 +431,67 @@ const PrivacyPolicy = () => {
             <tbody>
               <tr>
                 <td>
-                  {" "}
-                  <i>_tracking_consent </i>{" "}
+                  <i>_tracking_consent </i>
                 </td>
                 <td>Tracking preferences.</td>
               </tr>
               <tr>
                 <td>
-                  {" "}
-                  <i>_landing_page </i>{" "}
+                  <i>_landing_page </i>
                 </td>
                 <td>Track landing pages</td>
               </tr>
               <tr>
                 <td>
-                  {" "}
-                  <i>_orig_referrer</i>{" "}
+                  <i>_orig_referrer</i>
                 </td>
                 <td>Track landing pages</td>
               </tr>
               <tr>
                 <td>
-                  {" "}
-                  <i>_s </i>{" "}
+                  <i>_s </i>
                 </td>
                 <td>Shopify analytics.</td>
               </tr>
               <tr>
                 <td>
-                  {" "}
-                  <i>_shopify_fs </i>{" "}
+                  <i>_shopify_fs </i>
                 </td>
                 <td>Shopify analytics.</td>
               </tr>
               <tr>
                 <td>
-                  {" "}
-                  <i>_shopify_s </i>{" "}
+                  <i>_shopify_s </i>
                 </td>
                 <td>Shopify analytics.</td>
               </tr>
               <tr>
                 <td>
-                  {" "}
-                  <i>_shopify_sa_p </i>{" "}
+                  <i>_shopify_sa_p </i>
                 </td>
                 <td>Shopify analytics relating to marketing & referrals.</td>
               </tr>
               <tr>
                 <td>
-                  {" "}
-                  <i>_shopify_sa_t </i>{" "}
+                  <i>_shopify_sa_t </i>
                 </td>
                 <td>Shopify analytics relating to marketing & referrals.</td>
               </tr>
               <tr>
                 <td>
-                  {" "}
-                  <i>_shopify_y </i>{" "}
+                  <i>_shopify_y </i>
                 </td>
                 <td>Shopify analytics.</td>
               </tr>
               <tr>
                 <td>
-                  {" "}
-                  <i>_y </i>{" "}
+                  <i>_y </i>
                 </td>
                 <td>Shopify analytics.</td>
               </tr>
             </tbody>
           </table>
           <p>
-            <br />
             The length of time that a cookie remains on your computer or mobile
             device depends on whether it is a “persistent” or “session” cookie.
             Session cookies last until you stop browsing and persistent cookies
@@ -506,7 +511,8 @@ const PrivacyPolicy = () => {
             often found in your browser’s “Tools” or “Preferences” menu. For
             more information on how to modify your browser settings or how to
             block, manage or filter cookies can be found in your browser’s help
-            file or through such sites as <a href="www.allaboutcookies.org"></a>{" "}
+            file or through such sites as
+            <a href="www.allaboutcookies.org" target="_blank"></a>
             www.allaboutcookies.org.
           </p>
           <p>
@@ -547,8 +553,10 @@ const PrivacyPolicy = () => {
             If you are not satisfied with our response to your complaint, you
             have the right to lodge your complaint with the relevant data
             protection authority. You can contact your local data protection
-            authority, or our supervisory authority here:{" "}
-            <a href="https://oag.ca.gov/privacy"></a> https://oag.ca.gov/privacy
+            authority, or our supervisory authority here:
+            <a href="https://oag.ca.gov/privacy" target="_blank">
+              https://oag.ca.gov/privacy
+            </a>
           </p>
         </div>
       </Page>
@@ -565,29 +573,13 @@ const Page = styled.div`
     max-width: 100%;
   }
   h1 {
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    text-align: center;
   }
-  h2 {
-    padding: 15px 0;
+  a {
+    color: black;
+    text-decoration: none;
   }
-  span {
-    text-decoration: underline;
-  }
-
-  @media screen and (max-width: 600px) {
-    div {
-      margin: auto;
-      width: 400;
-      max-width: 100%;
-    }
-    h2 {
-      padding: 10px 10px;
-    }
-    p,
-    ul {
-      padding: 0 15px;
-    }
+  table {
+    margin-bottom: 50px;
   }
 `

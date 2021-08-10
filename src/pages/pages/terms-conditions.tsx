@@ -9,7 +9,7 @@ const TermsandConditions = () => {
       <SEO title="Terms and Conditions" />
       <Page>
         <h1>Terms and Conditions</h1>
-        <div className="paragraph">
+        <div>
           <h2>SHIPPING</h2>
           <p>
             Free U.S shipping on all orders over $50. Most orders ship same day
@@ -34,7 +34,7 @@ const TermsandConditions = () => {
           </p>
         </div>
 
-        <div className="paragraph">
+        <div>
           <h2>WARRANTY</h2>
           <p>
             All Tres Noir glasses come with a 1 year manufacturers warranty.
@@ -46,8 +46,10 @@ const TermsandConditions = () => {
             replace.
           </p>
           <p>
-            To make a warranty claim please email-{" "}
-            <strong>info@tresnoir.com.</strong>
+            To make a warranty claim please email-
+            <a href="info@tresnoir.com">
+              <strong>info@tresnoir.com.</strong>
+            </a>
           </p>
           <p>
             We will not accept a warranty return without a return authorization
@@ -63,7 +65,7 @@ const TermsandConditions = () => {
           </p>
         </div>
 
-        <div className="paragraph">
+        <div>
           <h2>RETURN POLICY</h2>
           <p>
             Rx & Custom Lenses are NON-REFUNDABLE. The return policy does not
@@ -81,7 +83,12 @@ const TermsandConditions = () => {
             receipt.
           </p>
           <p>Click below to download the return form.</p>
-          <a href="#">RETURN FORM</a>
+          <a
+            href="https://cdn.shopify.com/s/files/1/0140/0012/8057/files/tn_return_form_2020.pdf?v=1603495365"
+            target="_blank"
+          >
+            RETURN FORM
+          </a>
         </div>
       </Page>
     </Layout>
