@@ -47,7 +47,7 @@ const TermsandConditions = () => {
           </p>
           <p>
             To make a warranty claim please email-
-            <a href="info@tresnoir.com">
+            <a href="info@tresnoir.com" target="_blank">
               <strong>info@tresnoir.com.</strong>
             </a>
           </p>
@@ -85,7 +85,7 @@ const TermsandConditions = () => {
           <p>Click below to download the return form.</p>
           <a
             href="https://cdn.shopify.com/s/files/1/0140/0012/8057/files/tn_return_form_2020.pdf?v=1603495365"
-            target="_blank"
+            rel="noreferrer"
           >
             RETURN FORM
           </a>
@@ -107,5 +107,6 @@ const Page = styled.div`
   a {
     color: black;
     text-decoration: none;
+    padding-bottom: 30px;
   }
 `

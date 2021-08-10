@@ -111,7 +111,7 @@ const PrivacyPolicy = () => {
             <li>
               We use Shopify to power our online store. You can read more about
               how Shopify uses your Personal Information here:
-              <a href=" https://www.shopify.com/legal/privacy" target="_blank">
+              <a href=" https://www.shopify.com/legal/privacy" rel="noreferrer">
                 https://www.shopify.com/legal/privacy.
               </a>
             </li>
@@ -137,14 +137,14 @@ const PrivacyPolicy = () => {
               Personal Information here:
               <a
                 href=" https://policies.google.com/privacy?hl=en"
-                target="_blank"
+                rel="noreferrer"
               >
-                https://policies.google.com/privacy?hl=en
+                https://policies.google.com/privacy?hl=en.
               </a>
               . You can also opt-out of Google Analytics here:
               <a
                 href="https://tools.google.com/dlpage/gaoptout"
-                target="_blank"
+                rel="noreferrer"
               >
                 https://tools.google.com/dlpage/gaoptout.
               </a>
@@ -169,9 +169,9 @@ const PrivacyPolicy = () => {
             <br />
             <a
               href="http://www.networkadvertising.org/understanding-online-advertising/how-does-it-work"
-              target="_blank"
+              rel="noreferrer"
             >
-              http://www.networkadvertising.org/understanding-online-advertising/how-does-it-work
+              http://www.networkadvertising.org/understanding-online-advertising/how-does-it-work.
             </a>
           </p>
           <p>You can opt out of targeted advertising by:</p>
@@ -180,34 +180,34 @@ const PrivacyPolicy = () => {
               <i> FACEBOOK (and Instagram) -</i>
               <a
                 href="https://www.facebook.com/settings/?tab=ads"
-                target="_blank"
+                rel="noreferrer"
               >
-                https://www.facebook.com/settings/?tab=ads
+                https://www.facebook.com/settings/?tab=ads.
               </a>
             </li>
             <li>
               <i>GOOGLE - </i>
               <a
                 href="https://www.google.com/settings/ads/anonymous"
-                target="_blank"
+                rel="noreferrer"
               >
-                https://www.google.com/settings/ads/anonymous
+                https://www.google.com/settings/ads/anonymous.
               </a>
             </li>
             <li>
               <i>BING - </i>
               <a
                 href="https://advertise.bingads.microsoft.com/en-us/resources/policies/personalized-ads"
-                target="_blank"
+                rel="noreferrer"
               >
-                https://advertise.bingads.microsoft.com/en-us/resources/policies/personalized-ads]
+                https://advertise.bingads.microsoft.com/en-us/resources/policies/personalized-ads.
               </a>
             </li>
           </ul>
           <p>
             Additionally, you can opt out of some of these services by visiting
             the Digital Advertising Alliance’s opt-out portal at:
-            <a href=" http://optout.aboutads.info/">
+            <a href=" http://optout.aboutads.info/" rel="noreferrer">
               http://optout.aboutads.info/.
             </a>
           </p>
@@ -300,7 +300,7 @@ const PrivacyPolicy = () => {
             Shopify’s GDPR Whitepaper:
             <a
               href="https://help.shopify.com/en/manual/your-account/privacy/GDPR"
-              target="_blank"
+              rel="noreferrer"
             >
               https://help.shopify.com/en/manual/your-account/privacy/GDPR.
             </a>
@@ -512,7 +512,7 @@ const PrivacyPolicy = () => {
             more information on how to modify your browser settings or how to
             block, manage or filter cookies can be found in your browser’s help
             file or through such sites as
-            <a href="www.allaboutcookies.org" target="_blank"></a>
+            <a href="www.allaboutcookies.org" rel="noreferrer"></a>
             www.allaboutcookies.org.
           </p>
           <p>
@@ -554,8 +554,8 @@ const PrivacyPolicy = () => {
             have the right to lodge your complaint with the relevant data
             protection authority. You can contact your local data protection
             authority, or our supervisory authority here:
-            <a href="https://oag.ca.gov/privacy" target="_blank">
-              https://oag.ca.gov/privacy
+            <a href="https://oag.ca.gov/privacy" rel="noreferrer">
+              https://oag.ca.gov/privacy.
             </a>
           </p>
         </div>
