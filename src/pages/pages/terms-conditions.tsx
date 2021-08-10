@@ -95,52 +95,10 @@ const Page = styled.div`
   width: 640px;
   max-width: 100%;
   h1 {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
-    .paragraph {
-      display: flex;
-      h2 {
-        padding: 10px;
-        justify-content: flex-start;
-      }
-
-      p {
-        flex-wrap: wrap;
-      }
-    }
+    text-align: center;
   }
-
-  @media screen and (max-width: 750px) {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-
-  @media screen and (max-width: 600px) {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    h1 {
-      font-size: 2em;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 0 2px;
-    }
-
-    .paragraph {
-      display: flex;
-      justify-content: flex-start;
-      p {
-        align-items: center;
-        justify-content: center;
-      }
-    }
-
-    h2 {
-      padding: 0 10px;
-    }
+  a {
+    color: black;
+    text-decoration: none;
   }
 `
