@@ -6,13 +6,20 @@ import SEO from "../../components/seo"
 const Contact = () => {
   return (
     <Layout>
-      <SEO title="Contact Us" />
-      <h1>Contact Us</h1>
-      <p>Contact Form Here</p>
+      <Page>
+        <SEO title="Contact Us" />
+        <h1>Contact Us</h1>
+        <p>Contact Form Here</p>
+      </Page>
     </Layout>
   )
 }
 
 export default Contact
 
-const Page = styled.div``
+const Page = styled.div`
+  h1,
+  p {
+    text-align: center;
+  }
+`

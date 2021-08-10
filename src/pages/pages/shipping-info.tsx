@@ -6,13 +6,27 @@ import SEO from "../../components/seo"
 const ShippingInfo = () => {
   return (
     <Layout>
-      <SEO title="Shipping Info" />
-      <h1>Shipping Info</h1>
-      <p>Shipping Info Here</p>
+      <Page>
+        <SEO title="Shipping Info" />
+        <h1>Shipping Info</h1>
+        <p>Shipping Info Here</p>
+      </Page>
     </Layout>
   )
 }
 
 export default ShippingInfo
 
-const Page = styled.div``
+const Page = styled.div`
+  h1 {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  p {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+`
