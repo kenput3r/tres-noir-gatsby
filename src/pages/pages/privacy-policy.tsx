@@ -27,8 +27,9 @@ const PrivacyPolicy = () => {
             list below for more information about what Personal Information we
             collect and why.
           </p>
-
-          <u>Device Information</u>
+          <p>
+            <span className="underline">Device Information</span>
+          </p>
           <ul>
             <li>
               <strong>
@@ -55,7 +56,7 @@ const PrivacyPolicy = () => {
           </ul>
 
           <p>
-            <u>Order Information</u>
+            <span className="underline">Order Information</span>
           </p>
 
           <ul>
@@ -83,7 +84,7 @@ const PrivacyPolicy = () => {
           </ul>
 
           <p>
-            <u>Customer Support Information</u>
+            <span className="underline">Customer Support Information</span>
           </p>
           <ul>
             <li>
@@ -564,9 +565,29 @@ const Page = styled.div`
     max-width: 100%;
   }
   h1 {
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-    width: 8em;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  h2 {
+    padding: 15px 0;
+  }
+  span {
+    text-decoration: underline;
+  }
+
+  @media screen and (max-width: 600px) {
+    div {
+      margin: auto;
+      width: 400;
+      max-width: 100%;
+    }
+    h2 {
+      padding: 10px 10px;
+    }
+    p,
+    ul {
+      padding: 0 15px;
+    }
   }
 `

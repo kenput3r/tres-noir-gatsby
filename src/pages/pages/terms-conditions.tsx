@@ -10,7 +10,7 @@ const TermsandConditions = () => {
       <Page>
         <h1>Terms and Conditions</h1>
         <div className="paragraph">
-          <h3>SHIPPING</h3>
+          <h2>SHIPPING</h2>
           <p>
             Free U.S shipping on all orders over $50. Most orders ship same day
             if received before 2pm Pacific time M-F. Orders received on the
@@ -26,7 +26,7 @@ const TermsandConditions = () => {
             Next Day air is available upon request.
           </p>
 
-          <h3>International Orders</h3>
+          <h2>International Orders</h2>
           <p>
             VAT, Duties and other Local Taxes may apply upon delivery. Rates
             vary by country. Expect to pay additional govt. fees before
@@ -35,7 +35,7 @@ const TermsandConditions = () => {
         </div>
 
         <div className="paragraph">
-          <h3>WARRANTY</h3>
+          <h2>WARRANTY</h2>
           <p>
             All Tres Noir glasses come with a 1 year manufacturers warranty.
             This protects against any manufacturer defects. This does not
@@ -64,7 +64,7 @@ const TermsandConditions = () => {
         </div>
 
         <div className="paragraph">
-          <h3>RETURN POLICY</h3>
+          <h2>RETURN POLICY</h2>
           <p>
             Rx & Custom Lenses are NON-REFUNDABLE. The return policy does not
             apply to Rx & Custom Orders. All sales are final for Rx & Custom
@@ -95,20 +95,52 @@ const Page = styled.div`
   width: 640px;
   max-width: 100%;
   h1 {
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-    width: 12em;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 
     .paragraph {
       display: flex;
-      h3 {
+      h2 {
+        padding: 10px;
         justify-content: flex-start;
       }
 
       p {
         flex-wrap: wrap;
       }
+    }
+  }
+
+  @media screen and (max-width: 750px) {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  @media screen and (max-width: 600px) {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    h1 {
+      font-size: 2em;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 0 2px;
+    }
+
+    .paragraph {
+      display: flex;
+      justify-content: flex-start;
+      p {
+        align-items: center;
+        justify-content: center;
+      }
+    }
+
+    h2 {
+      padding: 0 10px;
     }
   }
 `
