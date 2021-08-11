@@ -42,7 +42,6 @@
   },
   "devDependencies": {
     "@babel/core": "^7.13.8",
-    "@types/isomorphic-fetch": "0.0.35",
     "@types/shopify-buy": "^2.10.5",
     "@types/swiper": "^5.4.2",
     "@typescript-eslint/eslint-plugin": "4.16.1",
