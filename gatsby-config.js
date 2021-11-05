@@ -43,8 +43,8 @@ module.exports = {
     {
       resolve: `gatsby-source-shopify`,
       options: {
-        shopName: `tresnoir.com`,
-        accessToken: process.env.GATSBY_STORE_TOKEN,
+        storeUrl: process.env.GATSBY_STORE_MY_SHOPIFY,
+        password: process.env.GATSBY_STORE_TOKEN,
         apiVersion: `2020-10`,
         paginationSize: 250,
         shopifyQueries: {
