@@ -12,7 +12,7 @@
     "gatsby": "^3.7.1",
     "gatsby-cli": "^3.10.0",
     "gatsby-image": "^3.0.0",
-    "gatsby-plugin-gatsby-cloud": "^2.0.0",
+    "gatsby-plugin-gatsby-cloud": "^4.1.0",
     "gatsby-plugin-image": "^1.0.0",
     "gatsby-plugin-manifest": "^3.0.0",
     "gatsby-plugin-offline": "^4.0.0",
@@ -81,5 +81,12 @@
   },
   "bugs": {
     "url": "https://github.com/gatsbyjs/gatsby/issues"
+  },
+  "resolutions": {
+    "webpack": "^5.61.0",
+    "graphql": "^15.1.1"
+  },
+  "peerDependencies": {
+    "gatsby": "^4.1.0"
   }
 }
