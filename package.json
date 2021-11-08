@@ -24,6 +24,7 @@
     "gatsby-transformer-sharp": "^4.1.0",
     "graphql": "^15.5.1",
     "js-cookie": "^3.0.0",
+    "path": "^0.12.7",
     "prop-types": "^15.7.2",
     "react": "^17.0.0",
     "react-dom": "^17.0.0",
@@ -60,7 +61,7 @@
     "eslint-plugin-react": "^7.20.6",
     "eslint-plugin-react-hooks": "^4.1.2",
     "prettier": "^2.1.1",
-    "webpack": "^5.39.0"
+    "webpack": "^5.62.1"
   },
   "keywords": [
     "gatsby"
@@ -83,7 +84,7 @@
     "url": "https://github.com/gatsbyjs/gatsby/issues"
   },
   "resolutions": {
-    "webpack": "^5.61.0",
+    "webpack": "^5.62.1",
     "graphql": "^15.1.1"
   },
   "peerDependencies": {

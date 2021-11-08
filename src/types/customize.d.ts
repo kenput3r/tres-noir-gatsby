@@ -107,13 +107,9 @@ export interface ContentfulProductVariant {
 }
 
 export interface ShopifyProduct {
-  priceRange: {
-    minVariantPrice: {
-      amount: number
-    }
-    maxVariantPrice: {
-      amount: number
-    }
+  priceRangeV2: {
+    minVariantPrice: number
+    maxVariantPrice: number
   }
   title: string
   variants: ShopifyProductVariant[]
@@ -121,12 +117,10 @@ export interface ShopifyProduct {
 
 export interface ShopifyProductVariant {
   availableForSale: boolean
-  compareAtPriceV2: {
-    amount: number
-  } | null
+  compareAtPriceV2: number | null
   id: string
-  priceNumber: number
+  price: number
   sku: string
-  shopifyId: string
+  storefrontId: string
   title: string
 }

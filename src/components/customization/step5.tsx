@@ -22,23 +22,23 @@ const Step5 = (props: {
     const { step1, step2, step3, step4 } = selectedVariants
     const items = [
       {
-        variantId: variant.shopifyId,
+        variantId: variant.storefrontId,
         quantity: 1,
       },
       {
-        variantId: step1.shopifyId,
+        variantId: step1.storefrontId,
         quantity: 1,
       },
       {
-        variantId: step2.shopifyId,
+        variantId: step2.storefrontId,
         quantity: 1,
       },
       {
-        variantId: step3.shopifyId,
+        variantId: step3.storefrontId,
         quantity: 1,
       },
       {
-        variantId: step4.shopifyId,
+        variantId: step4.storefrontId,
         quantity: 1,
       },
     ]
@@ -65,7 +65,7 @@ const Step5 = (props: {
             <h4>
               {selectedVariants[`step${i + 1}`].product.title}{" "}
               <span className="price">
-                + ${selectedVariants.step4.priceNumber.toFixed()}
+                + ${selectedVariants.step4.price.toFixed()}
               </span>
             </h4>
             <p>{selectedVariants[`step${i + 1}`].product.description}</p>

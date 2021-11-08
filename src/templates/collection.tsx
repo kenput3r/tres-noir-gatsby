@@ -49,7 +49,7 @@ export const query = graphql`
             }
           }
         }
-        priceRange {
+        priceRangeV2 {
           minVariantPrice {
             amount
           }
@@ -58,7 +58,7 @@ export const query = graphql`
           }
         }
         productType
-        shopifyId
+        storefrontId
         title
       }
     }

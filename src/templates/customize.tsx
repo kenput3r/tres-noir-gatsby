@@ -35,7 +35,7 @@ const Customize = ({
     shopify: shopifyProduct.variants[0],
   })
   const [currentPrice, setCurrentPrice] = useState(
-    shopifyProduct.variants[0].priceNumber
+    shopifyProduct.variants[0].price
   )
   const [currentImage, setCurrentImage] = useState({
     data: variant?.contentful && variant.contentful.customizations.clear.data,
@@ -73,13 +73,13 @@ const Customize = ({
   }, [])
   /* UPDATE PRICING */
   useEffect(() => {
-    let price = variant.shopify.priceNumber
+    let price = variant.shopify.price
     Object.keys(selectedVariants).forEach(key => {
       // @ts-ignore
-      // price += selectedVariants[key].priceNumber
+      // price += selectedVariants[key].price
       // convert everything to int and divide by 100 at the end
       price = Number(price.toFixed(2)) * 100
-      price += selectedVariants[key].priceNumber * 100
+      price += selectedVariants[key].price * 100
       price = price / 100
     })
     setCurrentPrice(price)
@@ -287,7 +287,7 @@ export const query = graphql`
       }
     }
     shopifyProduct(handle: { eq: $handle }) {
-      priceRange {
+      priceRangeV2 {
         minVariantPrice {
           amount
         }
@@ -298,13 +298,11 @@ export const query = graphql`
       title
       variants {
         availableForSale
-        compareAtPriceV2 {
-          amount
-        }
+        compareAtPrice
         id
-        priceNumber
+        price
         sku
-        shopifyId
+        storefrontId
         title
       }
     }

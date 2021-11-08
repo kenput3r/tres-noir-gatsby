@@ -6,7 +6,7 @@ declare module "*.json"
 
 interface ShopifyVariant {
   sku: string
-  shopifyId: string
+  storefrontId: string
   title: string
   image: {
     altText: string
@@ -16,7 +16,7 @@ interface ShopifyVariant {
       }
     }
   }
-  priceNumber: number
+  price: number
   product?: {
     title: string
   }

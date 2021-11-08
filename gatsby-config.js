@@ -47,6 +47,7 @@ module.exports = {
         password: process.env.GATSBY_STORE_TOKEN,
         apiVersion: `2020-10`,
         paginationSize: 250,
+        shopifyConnections: ["collections"],
         shopifyQueries: {
           articles: `
             query GetArticles($first: Int!, $after: String) {
@@ -196,7 +197,7 @@ module.exports = {
                       name
                       values
                     }
-                    priceRange {
+                    priceRangeV2 {
                       minVariantPrice {
                         amount
                         currencyCode
@@ -216,10 +217,6 @@ module.exports = {
                         node {
                           availableForSale
                           compareAtPrice
-                          compareAtPriceV2 {
-                            amount
-                            currencyCode
-                          }
                           id
                           image {
                             altText
@@ -239,10 +236,6 @@ module.exports = {
                             }
                           }
                           price
-                          priceV2 {
-                            amount
-                            currencyCode
-                          }
                           requiresShipping
                           selectedOptions {
                             name

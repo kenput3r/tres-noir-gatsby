@@ -10,7 +10,7 @@ export interface ShopifyProduct {
       }
     }
   }
-  priceRange: {
+  priceRangeV2: {
     minVariantPrice: {
       amount: number
     }
@@ -19,7 +19,7 @@ export interface ShopifyProduct {
     }
   }
   productType: string
-  shopifyId: string
+  storefrontId: string
   title: string
 }
 

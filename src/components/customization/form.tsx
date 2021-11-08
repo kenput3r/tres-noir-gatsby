@@ -48,7 +48,7 @@ const Form = ({
                 <h4>
                   {product.title}{" "}
                   <span className="price">
-                    {` + $${product.variants[0].priceNumber.toFixed(2)}`}
+                    {` + $${product.variants[0].price.toFixed(2)}`}
                   </span>
                 </h4>
                 <p>{product.description}</p>
@@ -60,8 +60,8 @@ const Form = ({
                 aria-label={product.title}
                 onChange={() => handleChange(product.variants[0])}
                 checked={
-                  product.variants[0].shopifyId ===
-                  selectedVariants[`step${currentStep}`].shopifyId
+                  product.variants[0].storefrontId ===
+                  selectedVariants[`step${currentStep}`].storefrontId
                 }
               />
               <div className="checkmark" />
@@ -80,7 +80,7 @@ const Form = ({
               </div>
               <ul className="variants">
                 {product.variants.map((variant: ShopifyVariant) => (
-                  <li key={variant.shopifyId}>
+                  <li key={variant.storefrontId}>
                     <GatsbyImage
                       image={
                         variant.image.localFile.childImageSharp.gatsbyImageData
@@ -92,7 +92,7 @@ const Form = ({
                       <h6>
                         {variant.title}
                         <span className="price">
-                          {` + $${product.variants[0].priceNumber.toFixed(2)}`}
+                          {` + $${product.variants[0].price.toFixed(2)}`}
                         </span>
                       </h6>
                     </div>
@@ -103,8 +103,8 @@ const Form = ({
                       aria-label={product.title}
                       onChange={() => handleChange(variant)}
                       checked={
-                        variant.shopifyId ===
-                        selectedVariants[`step${currentStep}`].shopifyId
+                        variant.storefrontId ===
+                        selectedVariants[`step${currentStep}`].storefrontId
                       }
                     />
                     <div className="checkmark" />

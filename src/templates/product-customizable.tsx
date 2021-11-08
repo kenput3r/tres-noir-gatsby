@@ -127,7 +127,7 @@ const ProductCustomizable = ({
               <div className="price">
                 <p className="label">STARTING AT</p>
                 <p className="value">
-                  ${selectedVariant.shopify.priceV2.amount} USD
+                  ${selectedVariant.shopify.compareAtPrice} USD
                   <span>
                     <Link
                       to={contentfulProduct && `/${contentfulProduct.handle}`}
@@ -360,7 +360,7 @@ export const query = graphql`
     }
     shopifyProduct(handle: { eq: $handle }) {
       id
-      priceRange {
+      priceRangeV2 {
         minVariantPrice {
           amount
         }
@@ -371,15 +371,10 @@ export const query = graphql`
       title
       variants {
         availableForSale
-        compareAtPriceV2 {
-          amount
-        }
         id
-        priceV2 {
-          amount
-        }
+        compareAtPrice
         sku
-        shopifyId
+        storefrontId
         title
       }
     }
