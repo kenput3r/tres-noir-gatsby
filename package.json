@@ -82,12 +82,5 @@
   },
   "bugs": {
     "url": "https://github.com/gatsbyjs/gatsby/issues"
-  },
-  "resolutions": {
-    "webpack": "^5.62.1",
-    "graphql": "^15.1.1"
-  },
-  "peerDependencies": {
-    "gatsby": "^4.1.0"
   }
 }
