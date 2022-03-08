@@ -1,55 +1,7 @@
-import React, { useState, useRef, useEffect } from "react"
+import React, { useState, useEffect } from "react"
 import { Link } from "gatsby"
-import { StaticImage, GatsbyImage } from "gatsby-plugin-image"
+import { StaticImage } from "gatsby-plugin-image"
 import styled from "styled-components"
-
-interface Item {
-  id: string
-  url: string | null
-  name: string
-  subListItems: [Item] | null
-}
-
-const SubNavImage = ({ subListItems }) => {
-  const [left, setLeft] = useState<string>("")
-  useEffect(() => {
-    const nav = document.querySelector("nav")
-    if (nav) {
-      setLeft(`${nav.offsetLeft}px`)
-    }
-  }, [])
-
-  return (
-    <Component>
-      <div className="triangle"></div>
-      <div
-        className="sub-nav-container"
-        style={{
-          width: `calc(100% + ${left})`,
-          left: `calc(-${left} / 2)`,
-        }}
-      >
-        <div className="sub-nav-content">
-          {subListItems.map((_item: Item) => (
-            <Link key={_item.id} to={_item.url ? _item.url : "/"}>
-              <div className="nav-item-img">
-                <StaticImage
-                  src="../images/example-menu-item-mens.jpg"
-                  alt="Tres Noir"
-                  placeholder="tracedSVG"
-                  layout="constrained"
-                />
-                <span className="name">{_item.name}</span>
-              </div>
-            </Link>
-          ))}
-        </div>
-      </div>
-    </Component>
-  )
-}
-
-export default SubNavImage
 
 const Component = styled.div`
   .triangle {
@@ -100,3 +52,51 @@ const Component = styled.div`
     }
   }
 `
+
+interface Item {
+  id: string
+  url: string | null
+  name: string
+  subListItems: [Item] | null
+}
+
+const SubNavImage = ({ subListItems }) => {
+  const [left, setLeft] = useState<string>("")
+  useEffect(() => {
+    const nav = document.querySelector("nav")
+    if (nav) {
+      setLeft(`${nav.offsetLeft}px`)
+    }
+  }, [])
+
+  return (
+    <Component>
+      <div className="triangle" />
+      <div
+        className="sub-nav-container"
+        style={{
+          width: `calc(100% + ${left})`,
+          left: `calc(-${left} / 2)`,
+        }}
+      >
+        <div className="sub-nav-content">
+          {subListItems.map((_item: Item) => (
+            <Link key={_item.id} to={_item.url ? _item.url : "/"}>
+              <div className="nav-item-img">
+                <StaticImage
+                  src="../images/example-menu-item-mens.jpg"
+                  alt="Tres Noir"
+                  placeholder="tracedSVG"
+                  layout="constrained"
+                />
+                <span className="name">{_item.name}</span>
+              </div>
+            </Link>
+          ))}
+        </div>
+      </div>
+    </Component>
+  )
+}
+
+export default SubNavImage

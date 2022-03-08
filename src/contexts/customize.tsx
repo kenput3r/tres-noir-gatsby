@@ -1,4 +1,4 @@
-import React, { createContext, ReactChild, useState } from "react"
+import React, { createContext, ReactChild, useState, useMemo } from "react"
 import { SelectedVariants, ShopifyVariant } from "../types/global"
 
 const defaultContext = {
@@ -211,17 +211,27 @@ export const CustomizeProvider = ({ children }: { children: ReactChild }) => {
     },
   })
 
+  const value = useMemo(
+    () => ({
+      currentStep,
+      setCurrentStep,
+      productUrl,
+      setProductUrl,
+      selectedVariants,
+      setSelectedVariants,
+    }),
+    [
+      currentStep,
+      setCurrentStep,
+      productUrl,
+      setProductUrl,
+      selectedVariants,
+      setSelectedVariants,
+    ]
+  )
+
   return (
-    <CustomizeContext.Provider
-      value={{
-        currentStep,
-        setCurrentStep,
-        productUrl,
-        setProductUrl,
-        selectedVariants,
-        setSelectedVariants,
-      }}
-    >
+    <CustomizeContext.Provider value={value}>
       {children}
     </CustomizeContext.Provider>
   )

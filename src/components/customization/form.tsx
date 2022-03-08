@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react"
+import React, { useContext } from "react"
 import { Link } from "gatsby"
 import { GatsbyImage } from "gatsby-plugin-image"
 import styled from "styled-components"
@@ -8,132 +8,6 @@ import {
   ShopifyVariant,
 } from "../../types/global"
 import { CustomizeContext } from "../../contexts/customize"
-
-const Form = ({
-  shopifyCollection,
-}: {
-  shopifyCollection: ShopifyCollection
-}) => {
-  const {
-    currentStep,
-    setCurrentStep,
-    productUrl,
-    selectedVariants,
-    setSelectedVariants,
-  } = useContext(CustomizeContext)
-  const handleChange = (variant: ShopifyVariant) => {
-    setSelectedVariants({
-      ...selectedVariants,
-      [`step${currentStep}`]: variant,
-    })
-  }
-  /* tests */
-  // useEffect(() => {
-  //   console.log(selectedVariants)
-  // }, [selectedVariants])
-  return (
-    <Component>
-      {shopifyCollection.products.map((product: ShopifyProduct) => (
-        <React.Fragment key={product.id}>
-          {console.log("PRODUCT", product)}
-          {product.variants.length === 1 ? (
-            <div className="product-option">
-              <GatsbyImage
-                image={
-                  product.images[0].localFile.childImageSharp.gatsbyImageData
-                }
-                alt={product.images[0].altText || product.title}
-              />
-              <div className="product-description">
-                <h4>
-                  {product.title}{" "}
-                  <span className="price">
-                    {` + $${product.variants[0].price.toFixed(2)}`}
-                  </span>
-                </h4>
-                <p>{product.description}</p>
-              </div>
-              <input
-                type="radio"
-                name={`step${currentStep}`}
-                id={product.id}
-                aria-label={product.title}
-                onChange={() => handleChange(product.variants[0])}
-                checked={
-                  product.variants[0].storefrontId ===
-                  selectedVariants[`step${currentStep}`].storefrontId
-                }
-              />
-              <div className="checkmark" />
-            </div>
-          ) : (
-            <div className="product-option with-variants">
-              <GatsbyImage
-                image={
-                  product.images[0].localFile.childImageSharp.gatsbyImageData
-                }
-                alt={product.images[0].altText || product.title}
-              />
-              <div className="product-description">
-                <h4>{product.title}</h4>
-                <p>{product.description}</p>
-              </div>
-              <ul className="variants">
-                {product.variants.map((variant: ShopifyVariant) => (
-                  <li key={variant.storefrontId}>
-                    <GatsbyImage
-                      image={
-                        variant.image.localFile.childImageSharp.gatsbyImageData
-                      }
-                      alt={variant.title}
-                      className="variant-image"
-                    />
-                    <div className="variant-description">
-                      <h6>
-                        {variant.title}
-                        <span className="price">
-                          {` + $${product.variants[0].price.toFixed(2)}`}
-                        </span>
-                      </h6>
-                    </div>
-                    <input
-                      type="radio"
-                      name={`step${currentStep}`}
-                      id={product.id}
-                      aria-label={product.title}
-                      onChange={() => handleChange(variant)}
-                      checked={
-                        variant.storefrontId ===
-                        selectedVariants[`step${currentStep}`].storefrontId
-                      }
-                    />
-                    <div className="checkmark" />
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-        </React.Fragment>
-      ))}
-      <div className="row">
-        {currentStep === 1 ? (
-          <Link className="button" to={productUrl}>
-            GO BACK
-          </Link>
-        ) : (
-          <button type="button" onClick={() => setCurrentStep(currentStep - 1)}>
-            GO BACK
-          </button>
-        )}
-        <button type="button" onClick={() => setCurrentStep(currentStep + 1)}>
-          CONTINUE
-        </button>
-      </div>
-    </Component>
-  )
-}
-
-export default Form
 
 const Component = styled.form`
   padding: 10px;
@@ -277,3 +151,128 @@ const Component = styled.form`
     }
   }
 `
+
+const Form = ({
+  shopifyCollection,
+}: {
+  shopifyCollection: ShopifyCollection
+}) => {
+  const {
+    currentStep,
+    setCurrentStep,
+    productUrl,
+    selectedVariants,
+    setSelectedVariants,
+  } = useContext(CustomizeContext)
+  const handleChange = (variant: ShopifyVariant) => {
+    setSelectedVariants({
+      ...selectedVariants,
+      [`step${currentStep}`]: variant,
+    })
+  }
+  /* tests */
+  // useEffect(() => {
+  //   console.log(selectedVariants)
+  // }, [selectedVariants])
+  return (
+    <Component>
+      {shopifyCollection.products.map((product: ShopifyProduct) => (
+        <React.Fragment key={product.id}>
+          {product.variants.length === 1 ? (
+            <div className="product-option">
+              <GatsbyImage
+                image={
+                  product.images[0].localFile.childImageSharp.gatsbyImageData
+                }
+                alt={product.images[0].altText || product.title}
+              />
+              <div className="product-description">
+                <h4>
+                  {product.title}{" "}
+                  <span className="price">
+                    {` + $${product.variants[0].price}`}
+                  </span>
+                </h4>
+                <p>{product.description}</p>
+              </div>
+              <input
+                type="radio"
+                name={`step${currentStep}`}
+                id={product.id}
+                aria-label={product.title}
+                onChange={() => handleChange(product.variants[0])}
+                checked={
+                  product.variants[0].storefrontId ===
+                  selectedVariants[`step${currentStep}`].storefrontId
+                }
+              />
+              <div className="checkmark" />
+            </div>
+          ) : (
+            <div className="product-option with-variants">
+              <GatsbyImage
+                image={
+                  product.images[0].localFile.childImageSharp.gatsbyImageData
+                }
+                alt={product.images[0].altText || product.title}
+              />
+              <div className="product-description">
+                <h4>{product.title}</h4>
+                <p>{product.description}</p>
+              </div>
+              <ul className="variants">
+                {product.variants.map((variant: ShopifyVariant) => (
+                  <li key={variant.storefrontId}>
+                    <GatsbyImage
+                      image={
+                        variant.image.localFile.childImageSharp.gatsbyImageData
+                      }
+                      alt={variant.title}
+                      className="variant-image"
+                    />
+                    <div className="variant-description">
+                      <h6>
+                        {variant.title}
+                        <span className="price">
+                          {` + $${product.variants[0].price}`}
+                        </span>
+                      </h6>
+                    </div>
+                    <input
+                      type="radio"
+                      name={`step${currentStep}`}
+                      id={product.id}
+                      aria-label={product.title}
+                      onChange={() => handleChange(variant)}
+                      checked={
+                        variant.storefrontId ===
+                        selectedVariants[`step${currentStep}`].storefrontId
+                      }
+                    />
+                    <div className="checkmark" />
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </React.Fragment>
+      ))}
+      <div className="row">
+        {currentStep === 1 ? (
+          <Link className="button" to={productUrl}>
+            GO BACK
+          </Link>
+        ) : (
+          <button type="button" onClick={() => setCurrentStep(currentStep - 1)}>
+            GO BACK
+          </button>
+        )}
+        <button type="button" onClick={() => setCurrentStep(currentStep + 1)}>
+          CONTINUE
+        </button>
+      </div>
+    </Component>
+  )
+}
+
+export default Form

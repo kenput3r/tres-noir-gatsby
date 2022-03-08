@@ -8,6 +8,38 @@ import {
 } from "../types/contentful"
 import { SelectedVariantContext } from "../contexts/selectedVariant"
 
+const Component = styled.article`
+  margin-bottom: 1.45rem;
+  width: 33.33%;
+  text-align: center;
+  @media only screen and (max-width: 480px) {
+    width: 100%;
+  }
+  h3 {
+    text-align: center;
+  }
+  .options {
+    button {
+      background-color: transparent;
+      border: 1px solid #fff;
+      border-radius: 50%;
+      line-height: 0;
+      margin-right: 5px;
+      padding: 5px;
+      max-width: 50px;
+      &[data-active="true"] {
+        border-color: #000;
+      }
+      :hover {
+        cursor: pointer;
+      }
+      .gatsby-image-wrapper {
+        border-radius: 50%;
+      }
+    }
+  }
+`
+
 interface Props {
   data: ContentfulProduct
 }
@@ -26,7 +58,7 @@ const ProductContentful = ({ data }: Props) => {
     e: React.MouseEvent,
     variant: ContentfulProductVariant
   ) => {
-    e.currentTarget && (e.currentTarget as HTMLElement).blur()
+    // e.currentTarget && (e.currentTarget as HTMLElement).blur()
     setVariantImage(variant.featuredImage.data)
     setSelectedVariant({
       contentful: variant,
@@ -64,35 +96,3 @@ const ProductContentful = ({ data }: Props) => {
 }
 
 export default ProductContentful
-
-const Component = styled.article`
-  margin-bottom: 1.45rem;
-  width: 33.33%;
-  text-align: center;
-  @media only screen and (max-width: 480px) {
-    width: 100%;
-  }
-  h3 {
-    text-align: center;
-  }
-  .options {
-    button {
-      background-color: transparent;
-      border: 1px solid #fff;
-      border-radius: 50%;
-      line-height: 0;
-      margin-right: 5px;
-      padding: 5px;
-      max-width: 50px;
-      &[data-active="true"] {
-        border-color: #000;
-      }
-      :hover {
-        cursor: pointer;
-      }
-      .gatsby-image-wrapper {
-        border-radius: 50%;
-      }
-    }
-  }
-`

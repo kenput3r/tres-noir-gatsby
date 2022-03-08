@@ -5,6 +5,24 @@ import Layout from "../components/layout"
 import SEO from "../components/seo"
 import { CustomerContext } from "../contexts/customer"
 
+const Page = styled.div`
+  max-width: 95%;
+  margin: auto;
+  .content {
+    display: grid;
+    grid-gap: 1em;
+    grid-template-columns: 1fr 1fr;
+  }
+  .customer-detail {
+    p {
+      margin: 0;
+    }
+    .address {
+      margin: 1.75rem 0;
+    }
+  }
+`
+
 const Account = () => {
   const [loading, setLoading] = useState<boolean>(false)
   const [data, setData] = useState<any>(false)
@@ -14,8 +32,9 @@ const Account = () => {
     navigate("/login")
   }
 
-  const getCustomer = async () => {
-    const query = `
+  useEffect(() => {
+    const getCustomer = async () => {
+      const query = `
       query customer($customerAccessToken: String!) {
         customer(customerAccessToken: $customerAccessToken) {
           id
@@ -42,40 +61,38 @@ const Account = () => {
         }
       }
     `
-    try {
-      const response = await fetch(
-        `https://tres-noir.myshopify.com/api/2021-07/graphql.json`,
-        {
-          method: "POST",
-          headers: {
-            "X-Shopify-Storefront-Access-Token": process.env
-              .GATSBY_STORE_TOKEN as string,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            query,
-            variables: {
-              customerAccessToken,
+      try {
+        const response = await fetch(
+          `https://tres-noir.myshopify.com/api/2022-01/graphql.json`,
+          {
+            method: "POST",
+            headers: {
+              "X-Shopify-Storefront-Access-Token": process.env
+                .GATSBY_STORE_STOREFRONT_TOKEN as string,
+              "Content-Type": "application/json",
             },
-          }),
+            body: JSON.stringify({
+              query,
+              variables: {
+                customerAccessToken,
+              },
+            }),
+          }
+        )
+        console.log("RESPONSE", response)
+        const json = await response.json()
+        console.log("json", json)
+        if (json.data) {
+          console.log("SETTING JSON DATA && LOADING TO FALSE")
+          setData(json.data)
+          setLoading(false)
         }
-      )
-      console.log("RESPONSE", response)
-      const json = await response.json()
-      console.log("json", json)
-      if (json.data) {
-        console.log("SETTING JSON DATA && LOADING TO FALSE")
-        setData(json.data)
+      } catch (e) {
+        console.log("ERROR", error)
         setLoading(false)
+        setError(true)
       }
-    } catch (e) {
-      console.log("ERROR", error)
-      setLoading(false)
-      setError(true)
     }
-  }
-
-  useEffect(() => {
     getCustomer()
   }, [])
 
@@ -86,7 +103,7 @@ const Account = () => {
       return <p>ERROR ... please try again later...</p>
     } else if (customerAccessToken && data) {
       const address = data.customer.defaultAddress
-      const orders = data.customer.orders
+      const { orders } = data.customer
       return (
         <div className="content">
           <div className="customer-detail">
@@ -134,21 +151,3 @@ const Account = () => {
 }
 
 export default Account
-
-const Page = styled.div`
-  max-width: 95%;
-  margin: auto;
-  .content {
-    display: grid;
-    grid-gap: 1em;
-    grid-template-columns: 1fr 1fr;
-  }
-  .customer-detail {
-    p {
-      margin: 0;
-    }
-    .address {
-      margin: 1.75rem 0;
-    }
-  }
-`

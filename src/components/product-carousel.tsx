@@ -7,6 +7,40 @@ import styled from "styled-components"
 
 import "swiper/swiper-bundle.min.css"
 
+const Component = styled.div`
+  .navigation {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    a:hover {
+      cursor: pointer;
+    }
+  }
+  .prev {
+    padding-right: 10px;
+  }
+`
+
+const StyledSwiper = styled(Swiper)`
+  max-width: 100%;
+  .swiper-slide {
+    max-width: 100%;
+  }
+`
+const StyledThumbs = styled(Swiper)`
+  .swiper-slide {
+    line-height: 0;
+    margin-left: 5px;
+    max-width: calc(33.333% - 15px);
+    &:hover {
+      cursor: pointer;
+    }
+  }
+  .swiper-slide-thumb-active {
+    border: 1px solid #000;
+  }
+`
+
 interface ImageSet {
   data: any
   title: string
@@ -22,9 +56,9 @@ const ProductCarousel = ({ imageSet }: { imageSet: [ImageSet] }) => {
         spaceBetween={50}
         slidesPerView={1}
         thumbs={{ swiper: thumbsSwiper }}
-        loop={true}
+        loop
         navigation={{ nextEl: ".next", prevEl: ".prev" }}
-        grabCursor={true}
+        grabCursor
       >
         {imageSet.map((image: ImageSet, i: number) => (
           <SwiperSlide key={`slide-${i}`}>
@@ -62,37 +96,3 @@ const ProductCarousel = ({ imageSet }: { imageSet: [ImageSet] }) => {
 }
 
 export default ProductCarousel
-
-const Component = styled.div`
-  .navigation {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    a:hover {
-      cursor: pointer;
-    }
-  }
-  .prev {
-    padding-right: 10px;
-  }
-`
-
-const StyledSwiper = styled(Swiper)`
-  max-width: 100%;
-  .swiper-slide {
-    max-width: 100%;
-  }
-`
-const StyledThumbs = styled(Swiper)`
-  .swiper-slide {
-    line-height: 0;
-    margin-left: 5px;
-    max-width: calc(33.333% - 15px);
-    &:hover {
-      cursor: pointer;
-    }
-  }
-  .swiper-slide-thumb-active {
-    border: 1px solid #000;
-  }
-`

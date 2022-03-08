@@ -1,9 +1,60 @@
-import React, { useState, useEffect, useContext } from "react"
+import React, { useState, useContext } from "react"
 import styled from "styled-components"
 import { navigate } from "gatsby"
 import Layout from "../components/layout"
 import SEO from "../components/seo"
 import { CustomerContext } from "../contexts/customer"
+
+const Page = styled.div`
+  width: 420px;
+  max-width: 100;
+  margin: auto;
+  label {
+    display: block;
+    font-size: 0.875rem;
+    line-height: 1.4em;
+    margin-bottom: 4px;
+  }
+  input {
+    font-size: 15px;
+    line-height: 15px;
+    background: #fff;
+    color: #8a8f93;
+    border: 1px solid #e1e3e4;
+    padding: 11px 15px;
+    margin: 0;
+    vertical-align: middle;
+    max-width: 100%;
+    border-radius: 0;
+    box-sizing: border-box;
+    &.customer-password,
+    &.customer-email {
+      width: 100%;
+    }
+  }
+  .btn {
+    background: #232323;
+    border: 1px solid #232323;
+    color: #fff;
+    font-size: 12px;
+    line-height: 15px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    height: auto;
+    margin: 0;
+    text-decoration: none;
+    cursor: pointer;
+    padding: 11px 25px;
+    vertical-align: middle;
+    text-align: center;
+    box-sizing: content-box;
+    transition: background-color 0.1s, color 0.1s, border-color 0.1s;
+    display: inline-block;
+  }
+  .action-bottom {
+    margin-top: 20px;
+  }
+`
 
 const Login = () => {
   const { login } = useContext(CustomerContext)
@@ -12,7 +63,7 @@ const Login = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    console.log("MUTATION", { variables: { email: email, password: password } })
+    console.log("MUTATION", { variables: { email, password } })
     const query = `
       mutation customerAccessTokenCreate($input: CustomerAccessTokenCreateInput!) {
         customerAccessTokenCreate(input: $input) {
@@ -30,12 +81,12 @@ const Login = () => {
     `
     try {
       const response = await fetch(
-        `https://tres-noir.myshopify.com/api/2021-07/graphql.json`,
+        `https://tres-noir.myshopify.com/api/2022-01/graphql.json`,
         {
           method: "POST",
           headers: {
             "X-Shopify-Storefront-Access-Token": process.env
-              .GATSBY_STORE_TOKEN as string,
+              .GATSBY_STORE_STOREFRONT_TOKEN as string,
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
@@ -59,8 +110,8 @@ const Login = () => {
       } else {
         alert("ERROR: please try again later...")
       }
-    } catch (e) {
-      console.log("ERROR", e.message)
+    } catch (err: any) {
+      console.log("ERROR", err.message)
     }
   }
 
@@ -116,54 +167,3 @@ const Login = () => {
 }
 
 export default Login
-
-const Page = styled.div`
-  width: 420px;
-  max-width: 100;
-  margin: auto;
-  label {
-    display: block;
-    font-size: 0.875rem;
-    line-height: 1.4em;
-    margin-bottom: 4px;
-  }
-  input {
-    font-size: 15px;
-    line-height: 15px;
-    background: #fff;
-    color: #8a8f93;
-    border: 1px solid #e1e3e4;
-    padding: 11px 15px;
-    margin: 0;
-    vertical-align: middle;
-    max-width: 100%;
-    border-radius: 0;
-    box-sizing: border-box;
-    &.customer-password,
-    &.customer-email {
-      width: 100%;
-    }
-  }
-  .btn {
-    background: #232323;
-    border: 1px solid #232323;
-    color: #fff;
-    font-size: 12px;
-    line-height: 15px;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-    height: auto;
-    margin: 0;
-    text-decoration: none;
-    cursor: pointer;
-    padding: 11px 25px;
-    vertical-align: middle;
-    text-align: center;
-    box-sizing: content-box;
-    transition: background-color 0.1s, color 0.1s, border-color 0.1s;
-    display: inline-block;
-  }
-  .action-bottom {
-    margin-top: 20px;
-  }
-`

@@ -1,7 +1,5 @@
 {
-  "extends": [
-    "wesbos"
-  ],
+  "extends": ["wesbos"],
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
     "sourceType": "module",
@@ -15,6 +13,7 @@
     "@typescript-eslint/no-use-before-define": ["error"],
     "import/no-unresolved": "error",
     "no-plusplus": [0],
+    "no-else-return": "off",
     "prettier/prettier": [
       "error",
       {
@@ -26,8 +25,15 @@
       }
     ],
     "react/prop-types": [0],
-    "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx", ".tsx"] }],
-    "quotes": [2, "double", { "avoidEscape": true, "allowTemplateLiterals": true}]
+    "react/jsx-filename-extension": [
+      1,
+      { "extensions": [".js", ".jsx", ".tsx"] }
+    ],
+    "quotes": [
+      2,
+      "double",
+      { "avoidEscape": true, "allowTemplateLiterals": true }
+    ]
   },
   "settings": {
     "import/parsers": {

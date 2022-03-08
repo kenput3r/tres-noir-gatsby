@@ -7,7 +7,7 @@ const contentfulConfig = {
   accessToken:
     process.env.CONTENTFUL_ACCESS_TOKEN ||
     process.env.CONTENTFUL_DELIVERY_TOKEN,
-};
+}
 
 module.exports = {
   siteMetadata: {
@@ -46,7 +46,7 @@ module.exports = {
         storeUrl: process.env.GATSBY_STORE_MY_SHOPIFY,
         password: process.env.GATSBY_STORE_TOKEN,
         shopifyConnections: ["collections"],
-        downloadImages: true
+        downloadImages: true,
       },
     },
     {

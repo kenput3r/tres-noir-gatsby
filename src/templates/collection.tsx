@@ -1,10 +1,19 @@
 import React from "react"
-import { Link, graphql } from "gatsby"
+import { graphql } from "gatsby"
 import styled from "styled-components"
 import Layout from "../components/layout"
 import SEO from "../components/seo"
 import Product from "../components/product"
 import { ShopifyCollection, ShopifyProduct } from "../types/shopify"
+
+const Page = styled.div`
+  .grid {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-around;
+  }
+`
 
 const Collection = ({
   data,
@@ -62,14 +71,5 @@ export const query = graphql`
         title
       }
     }
-  }
-`
-
-const Page = styled.div`
-  .grid {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    justify-content: space-around;
   }
 `

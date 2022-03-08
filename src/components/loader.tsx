@@ -1,21 +1,6 @@
 import React from "react"
 import styled from "styled-components"
 
-const Loader = () => {
-  return (
-    <Container>
-      <div className="loader">
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
-      </div>
-    </Container>
-  )
-}
-
-export default Loader
-
 const Container = styled.div`
   text-align: center;
   .loader {
@@ -54,3 +39,16 @@ const Container = styled.div`
     }
   }
 `
+
+const Loader = () => (
+  <Container>
+    <div className="loader">
+      <div />
+      <div />
+      <div />
+      <div />
+    </div>
+  </Container>
+)
+
+export default Loader

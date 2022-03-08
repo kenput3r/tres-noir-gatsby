@@ -1,6 +1,32 @@
 import React from "react"
 import styled from "styled-components"
 
+const Selector = styled.div`
+  div {
+    display: inline-block;
+    line-height: 1.5em;
+    border: 1px solid var(--color-grey-dark);
+    padding: 3px 7px;
+    /* @media only screen and (max-width: 480px) {
+      padding: 1px 4px;
+    } */
+    input {
+      border: none;
+      text-align: center;
+      width: 2em;
+      /* @media only screen and (max-width: 480px) {
+        width: 1em;
+      } */
+    }
+    a {
+      text-decoration: none;
+      font-weight: bold;
+      color: #000;
+      font-size: 1.5em;
+    }
+  }
+`
+
 interface Props {
   lineId: string
   quantity: number
@@ -33,29 +59,3 @@ const QuantitySelector = (props: Props) => {
 }
 
 export default QuantitySelector
-
-const Selector = styled.div`
-  div {
-    display: inline-block;
-    line-height: 1.5em;
-    border: 1px solid var(--color-grey-dark);
-    padding: 3px 7px;
-    /* @media only screen and (max-width: 480px) {
-      padding: 1px 4px;
-    } */
-    input {
-      border: none;
-      text-align: center;
-      width: 2em;
-      /* @media only screen and (max-width: 480px) {
-        width: 1em;
-      } */
-    }
-    a {
-      text-decoration: none;
-      font-weight: bold;
-      color: #000;
-      font-size: 1.5em;
-    }
-  }
-`

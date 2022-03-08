@@ -1,80 +1,10 @@
 import React from "react"
 import { StaticImage, GatsbyImage, IGatsbyImageData } from "gatsby-plugin-image"
+import { Link, graphql } from "gatsby"
 import styled from "styled-components"
 import Layout from "../components/layout-index"
 import SEO from "../components/seo"
-import { Link, graphql } from "gatsby"
 import Carousel from "../components/carousel"
-
-const IndexPage = ({
-  data: { contentfulHomepage },
-}: {
-  data: HomePageQuery
-}) => {
-  return (
-    <>
-      <Layout>
-        <SEO title="Home" />
-        <Page>
-          <div className="shipping-message container">
-            <StaticImage
-              src="../images/double-diamonds.png"
-              alt="double diamonds"
-              width={40}
-            />
-            <p className="h2">FREE SHIPPING IN USA</p>
-            <p className="h3">ALL ORDERS SHIP SAME OR NEXT BUSINESS DAY</p>
-          </div>
-          <div className="featured container">
-            <GatsbyImage
-              image={contentfulHomepage.hero.gatsbyImageData}
-              alt="Hero"
-            />
-            <div className="featured-actions">
-              <Link className="button" to="/collections/glasses-for-men">
-                SHOP MEN'S
-              </Link>
-              <Link className="button" to="/collections/glasses-for-women">
-                SHOP WOMEN'S
-              </Link>
-            </div>
-          </div>
-          <h3 className="sub-title">{contentfulHomepage.tagline.tagline}</h3>
-          <div className="diamond-divider">
-            <StaticImage
-              src="../images/double-diamonds.png"
-              alt="double diamonds"
-              width={40}
-            />
-          </div>
-          <div className="featured-styles container">
-            <h2>FEATURED STYLES</h2>
-            <Carousel
-              imageSet={contentfulHomepage && contentfulHomepage.featuredStyles}
-              imageLinks={
-                contentfulHomepage && contentfulHomepage.featuredStylesLinks
-              }
-            />
-          </div>
-          <div className="about">
-            <div className="about-content container">
-              <GatsbyImage
-                image={contentfulHomepage.aboutTresNoir1.gatsbyImageData}
-                alt="About Tres Noir 1"
-              />
-              <GatsbyImage
-                image={contentfulHomepage.aboutTresNoir2.gatsbyImageData}
-                alt="About Tres Noir 2"
-              />
-            </div>
-          </div>
-        </Page>
-      </Layout>
-    </>
-  )
-}
-
-export default IndexPage
 
 const Page = styled.div`
   margin: auto;
@@ -173,6 +103,72 @@ const Page = styled.div`
     }
   }
 `
+
+const IndexPage = ({
+  data: { contentfulHomepage },
+}: {
+  data: HomePageQuery
+}) => (
+  <Layout>
+    <SEO title="Home" />
+    <Page>
+      <div className="shipping-message container">
+        <StaticImage
+          src="../images/double-diamonds.png"
+          alt="double diamonds"
+          width={40}
+        />
+        <p className="h2">FREE SHIPPING IN USA</p>
+        <p className="h3">ALL ORDERS SHIP SAME OR NEXT BUSINESS DAY</p>
+      </div>
+      <div className="featured container">
+        <GatsbyImage
+          image={contentfulHomepage.hero.gatsbyImageData}
+          alt="Hero"
+        />
+        <div className="featured-actions">
+          <Link className="button" to="/collections/glasses-for-men">
+            SHOP MEN'S
+          </Link>
+          <Link className="button" to="/collections/glasses-for-women">
+            SHOP WOMEN'S
+          </Link>
+        </div>
+      </div>
+      <h3 className="sub-title">{contentfulHomepage.tagline.tagline}</h3>
+      <div className="diamond-divider">
+        <StaticImage
+          src="../images/double-diamonds.png"
+          alt="double diamonds"
+          width={40}
+        />
+      </div>
+      <div className="featured-styles container">
+        <h2>FEATURED STYLES</h2>
+        <Carousel
+          imageSet={contentfulHomepage && contentfulHomepage.featuredStyles}
+          imageLinks={
+            contentfulHomepage && contentfulHomepage.featuredStylesLinks
+          }
+        />
+      </div>
+      <div className="about">
+        <div className="about-content container">
+          <GatsbyImage
+            image={contentfulHomepage.aboutTresNoir1.gatsbyImageData}
+            alt="About Tres Noir 1"
+          />
+          <GatsbyImage
+            image={contentfulHomepage.aboutTresNoir2.gatsbyImageData}
+            alt="About Tres Noir 2"
+          />
+        </div>
+      </div>
+    </Page>
+  </Layout>
+)
+
+export default IndexPage
 
 interface HomePageQuery {
   contentfulHomepage: {

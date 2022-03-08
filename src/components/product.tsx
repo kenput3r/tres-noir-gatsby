@@ -1,8 +1,12 @@
 import React from "react"
-import { Link } from "gatsby"
 import styled from "styled-components"
 import { GatsbyImage as Image } from "gatsby-plugin-image"
 import { ShopifyProduct } from "../types/shopify"
+
+const Component = styled.article`
+  margin-bottom: 1.45rem;
+  width: 30%;
+`
 
 const Product = ({ data }: { data: ShopifyProduct }) => {
   console.log(data)
@@ -18,8 +22,3 @@ const Product = ({ data }: { data: ShopifyProduct }) => {
 }
 
 export default Product
-
-const Component = styled.article`
-  margin-bottom: 1.45rem;
-  width: 30%;
-`

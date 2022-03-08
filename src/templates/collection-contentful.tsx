@@ -1,12 +1,32 @@
 import React, { useState, useEffect } from "react"
-import { Link, graphql } from "gatsby"
+import { graphql } from "gatsby"
 import styled from "styled-components"
+import { GatsbyImage } from "gatsby-plugin-image"
 import Layout from "../components/layout"
 import SEO from "../components/seo"
-import { GatsbyImage } from "gatsby-plugin-image"
 import Product from "../components/product-contentful"
 import Filters from "../components/filters-contentful"
 import { ContentfulCollection, ContentfulProduct } from "../types/contentful"
+
+const Page = styled.div`
+  .grid {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+`
+
+const FeaturedImage = styled.div`
+  position: relative;
+  h1 {
+    text-transform: uppercase;
+    position: absolute;
+    bottom: 15px;
+    right: 15px;
+    margin-bottom: 0;
+  }
+`
 
 const CollectionContentful = ({
   data,
@@ -27,7 +47,7 @@ const CollectionContentful = ({
     const options: HTMLElement[] = Array.from(
       document.querySelectorAll(".color-option")
     )
-    options.map(option => {
+    options.forEach(option => {
       if (option.getAttribute("data-frame-color")?.includes(color)) {
         option.click()
       }
@@ -107,25 +127,5 @@ export const query = graphql`
         }
       }
     }
-  }
-`
-
-const Page = styled.div`
-  .grid {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    justify-content: center;
-  }
-`
-
-const FeaturedImage = styled.div`
-  position: relative;
-  h1 {
-    text-transform: uppercase;
-    position: absolute;
-    bottom: 15px;
-    right: 15px;
-    margin-bottom: 0;
   }
 `

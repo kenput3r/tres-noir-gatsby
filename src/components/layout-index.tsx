@@ -8,6 +8,14 @@ import Footer from "./footer"
 import "./layout.css"
 import "./fonts.css"
 
+const Main = styled.main`
+  max-width: 100%;
+  .container {
+    max-width: 1440px;
+    margin: auto;
+  }
+`
+
 interface LayoutProps {
   children: React.ReactNode
 }
@@ -29,7 +37,7 @@ const Layout = ({ children }: LayoutProps) => {
         siteTitle={data.site.siteMetadata?.title || `Title`}
         isDrawerOpen={isDrawerOpen}
         setIsDrawerOpen={setIsDrawerOpen}
-        isIndex={true}
+        isIndex
       />
       <Drawer isDrawerOpen={isDrawerOpen} setIsDrawerOpen={setIsDrawerOpen} />
       <Main>{children}</Main>
@@ -39,11 +47,3 @@ const Layout = ({ children }: LayoutProps) => {
 }
 
 export default Layout
-
-const Main = styled.main`
-  max-width: 100%;
-  .container {
-    max-width: 1440px;
-    margin: auto;
-  }
-`

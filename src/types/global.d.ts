@@ -4,7 +4,7 @@ declare module "*.svg"
 declare module "*.png"
 declare module "*.json"
 
-interface ShopifyVariant {
+export interface ShopifyVariant {
   sku: string
   storefrontId: string
   title: string
@@ -26,7 +26,7 @@ interface ShopifyVariant {
   }
 }
 
-interface ShopifyProduct {
+export interface ShopifyProduct {
   handle: string
   description: string
   id: string
@@ -45,12 +45,12 @@ interface ShopifyProduct {
   variants: [ShopifyVariant]
 }
 
-interface ShopifyCollection {
+export interface ShopifyCollection {
   title: string
   products: [ShopifyProduct]
 }
 
-interface SelectedVariants {
+export interface SelectedVariants {
   step1: any
   step2: any
   step3: any
