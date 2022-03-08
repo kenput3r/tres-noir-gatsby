@@ -47,6 +47,7 @@ module.exports = {
         password: process.env.GATSBY_STORE_TOKEN,
         shopifyConnections: ["collections"],
         downloadImages: true,
+        salesChannel: "Tres Noir Gatsby v4",
       },
     },
     {
