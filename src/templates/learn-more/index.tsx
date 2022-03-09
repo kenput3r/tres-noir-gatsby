@@ -1,220 +1,12 @@
 import React, { useState, useEffect } from "react"
 import { Link, graphql } from "gatsby"
-import { StaticImage, GatsbyImage, getImage } from "gatsby-plugin-image"
+import { StaticImage, GatsbyImage } from "gatsby-plugin-image"
 import styled from "styled-components"
 
 import Layout from "../../components/layout"
 import SEO from "../../components/seo"
 // @ts-ignorets
 import text from "./text.json"
-
-const LearnMore = ({ data: { contentfulProduct } }: any) => {
-  const [isStuck, setIsStuck] = useState(false)
-  if (typeof window !== `undefined`) {
-    const observer = new IntersectionObserver(
-      ([e]) => {
-        if (e.intersectionRatio < 1) {
-          setIsStuck(true)
-        } else {
-          setIsStuck(false)
-        }
-      },
-      { threshold: [1] }
-    )
-    useEffect(() => {
-      const stickyHeading = document.getElementById("StickyHeading")
-      if (stickyHeading) observer.observe(stickyHeading)
-    })
-  }
-  return (
-    <Layout>
-      <SEO title={contentfulProduct.title} />
-      <Page>
-        <h1
-          id="StickyHeading"
-          className="sticky-heading"
-          data-is-stuck={isStuck}
-        >
-          <div className="wrapper">
-            <div className="text-container">
-              <StaticImage
-                src="../../images/double-diamonds.png"
-                alt="Double Diamonds"
-                placeholder="tracedSVG"
-                layout="constrained"
-                height={25}
-              />
-              <span>{contentfulProduct.title}</span>
-              <StaticImage
-                src="../../images/double-diamonds.png"
-                alt="Double Diamonds"
-                placeholder="tracedSVG"
-                layout="constrained"
-                height={25}
-              />
-            </div>
-            <Link className="btn" to={`/products/${contentfulProduct.handle}`}>
-              <span style={{ color: "#fff" }}>CUSTOMIZE &amp; </span>BUY
-            </Link>
-          </div>
-        </h1>
-        <section className="tagline">
-          <p className="h3">{contentfulProduct.styleDescription.text}</p>
-        </section>
-        <section className="frame-details wrapper">
-          <GatsbyImage
-            className="details-image"
-            image={contentfulProduct.frameDetailsImage.data}
-            alt={text.frameDetailsAlt}
-          />
-          <GatsbyImage
-            image={contentfulProduct.variantsImage.data}
-            alt={contentfulProduct.variantsImage.description}
-          />
-        </section>
-        <section className="fit-info">
-          <div className="wrapper">
-            <p className="h2">
-              {contentfulProduct.title} frames are a {contentfulProduct.fitType}{" "}
-              fit.
-            </p>
-            <p className="h3">{contentfulProduct.fitDimensions}</p>
-          </div>
-          <div className="color-wrapper">
-            <div className="wrapper">
-              <p className="h2">{text.fitHeading}</p>
-              <p className="h3">{text.fitInfo}</p>
-              <GatsbyImage
-                image={contentfulProduct.fitDiagram.data}
-                alt={text.fitDiagramAlt}
-              />
-            </div>
-          </div>
-        </section>
-        {contentfulProduct.rxAble && (
-          <section className="rx-able">
-            <p className="h2">
-              <span className="upper">{contentfulProduct.title}</span> frames
-              are <span>RX-able.</span>
-            </p>
-            <div className="row wrapper">
-              <div className="col">
-                <GatsbyImage
-                  image={contentfulProduct.customizeImage.data}
-                  alt={contentfulProduct.customizeImage.description}
-                  className="faded"
-                />
-                <p className="h2">
-                  Customize
-                  <br />
-                  to fit
-                  <br />
-                  your
-                  <br />
-                  needs
-                </p>
-              </div>
-              <div className="col">
-                <div className="color-wrapper lists">
-                  {text.lensCustomizations.map((list: any, index: number) => (
-                    <div className="list" key={`list-${index}`}>
-                      <h3 className="h3">{list.title}</h3>
-                      <div className="row">
-                        {list.items.map((item: string, _index: number) => (
-                          <span key={`item-${_index}`}>
-                            <StaticImage
-                              src="../../images/grey-diamond.png"
-                              alt="Diamond"
-                              placeholder="tracedSVG"
-                              layout="constrained"
-                              height={15}
-                            />
-                            {item}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </section>
-        )}
-        <section className="lenses-info">
-          <div className="wrapper">
-            <GatsbyImage
-              image={contentfulProduct.lensesInfoImage.data}
-              alt={text.lensesInfoAlt}
-            />
-          </div>
-        </section>
-        <section className="what-you-get">
-          <p className="h2">WHAT YOU GET</p>
-          <p>{text.whatYouGet}</p>
-          <div className="wrapper">
-            <StaticImage
-              src="../../images/CaseCloth.jpg"
-              alt="Glasses case and cleaning cloth"
-              layout="constrained"
-              placeholder="blurred"
-            />
-          </div>
-        </section>
-        <section className="call-to-action">
-          <div className="p">
-            <StaticImage
-              src="../../images/double-diamonds.png"
-              alt="Double Diamonds"
-              placeholder="tracedSVG"
-              layout="constrained"
-              height={25}
-            />
-          </div>
-          <p>
-            <Link className="btn" to={`/products/${contentfulProduct.handle}`}>
-              CUSTOMIZE &amp; BUY
-            </Link>
-          </p>
-        </section>
-      </Page>
-    </Layout>
-  )
-}
-
-export default LearnMore
-
-export const query = graphql`
-  query ContentfulProduct($handle: String) {
-    contentfulProduct(handle: { eq: $handle }) {
-      id
-      customizeImage {
-        data: gatsbyImageData
-        description
-      }
-      frameDetailsImage {
-        data: gatsbyImageData
-      }
-      fitDiagram {
-        data: gatsbyImageData
-      }
-      fitDimensions
-      fitType
-      handle
-      lensesInfoImage {
-        data: gatsbyImageData
-      }
-      styleDescription {
-        text: styleDescription
-      }
-      title
-      rxAble
-      variantsImage {
-        data: gatsbyImageData
-        description
-      }
-    }
-  }
-`
 
 const Page = styled.div`
   h1 {
@@ -454,6 +246,232 @@ const Page = styled.div`
     }
     .h2 {
       font-size: 1.62671rem;
+    }
+  }
+`
+
+const LearnMore = ({ data: { contentfulProduct } }: any) => {
+  const [isStuck, setIsStuck] = useState(false)
+  // if (typeof window !== `undefined`) {
+  //   const observer = new IntersectionObserver(
+  //     ([e]) => {
+  //       if (e.intersectionRatio < 1) {
+  //         setIsStuck(true)
+  //       } else {
+  //         setIsStuck(false)
+  //       }
+  //     },
+  //     { threshold: [1] }
+  //   )
+  //   useEffect(() => {
+  //     const stickyHeading = document.getElementById("StickyHeading")
+  //     if (stickyHeading) observer.observe(stickyHeading)
+  //   })
+  // }
+
+  useEffect(() => {
+    if (typeof window !== `undefined`) {
+      const observer = new IntersectionObserver(
+        ([e]) => {
+          if (e.intersectionRatio < 1) {
+            setIsStuck(true)
+          } else {
+            setIsStuck(false)
+          }
+        },
+        { threshold: [1] }
+      )
+      const stickyHeading = document.getElementById("StickyHeading")
+      if (stickyHeading) observer.observe(stickyHeading)
+    }
+  })
+
+  return (
+    <Layout>
+      <SEO title={contentfulProduct.title} />
+      <Page>
+        <h1
+          id="StickyHeading"
+          className="sticky-heading"
+          data-is-stuck={isStuck}
+        >
+          <div className="wrapper">
+            <div className="text-container">
+              <StaticImage
+                src="../../images/double-diamonds.png"
+                alt="Double Diamonds"
+                placeholder="tracedSVG"
+                layout="constrained"
+                height={25}
+              />
+              <span>{contentfulProduct.title}</span>
+              <StaticImage
+                src="../../images/double-diamonds.png"
+                alt="Double Diamonds"
+                placeholder="tracedSVG"
+                layout="constrained"
+                height={25}
+              />
+            </div>
+            <Link className="btn" to={`/products/${contentfulProduct.handle}`}>
+              <span style={{ color: "#fff" }}>CUSTOMIZE &amp; </span>BUY
+            </Link>
+          </div>
+        </h1>
+        <section className="tagline">
+          <p className="h3">{contentfulProduct.styleDescription.text}</p>
+        </section>
+        <section className="frame-details wrapper">
+          <GatsbyImage
+            className="details-image"
+            image={contentfulProduct.frameDetailsImage.data}
+            alt={text.frameDetailsAlt}
+          />
+          <GatsbyImage
+            image={contentfulProduct.variantsImage.data}
+            alt={contentfulProduct.variantsImage.description}
+          />
+        </section>
+        <section className="fit-info">
+          <div className="wrapper">
+            <p className="h2">
+              {contentfulProduct.title} frames are a {contentfulProduct.fitType}{" "}
+              fit.
+            </p>
+            <p className="h3">{contentfulProduct.fitDimensions}</p>
+          </div>
+          <div className="color-wrapper">
+            <div className="wrapper">
+              <p className="h2">{text.fitHeading}</p>
+              <p className="h3">{text.fitInfo}</p>
+              <GatsbyImage
+                image={contentfulProduct.fitDiagram.data}
+                alt={text.fitDiagramAlt}
+              />
+            </div>
+          </div>
+        </section>
+        {contentfulProduct.rxAble && (
+          <section className="rx-able">
+            <p className="h2">
+              <span className="upper">{contentfulProduct.title}</span> frames
+              are <span>RX-able.</span>
+            </p>
+            <div className="row wrapper">
+              <div className="col">
+                <GatsbyImage
+                  image={contentfulProduct.customizeImage.data}
+                  alt={contentfulProduct.customizeImage.description}
+                  className="faded"
+                />
+                <p className="h2">
+                  Customize
+                  <br />
+                  to fit
+                  <br />
+                  your
+                  <br />
+                  needs
+                </p>
+              </div>
+              <div className="col">
+                <div className="color-wrapper lists">
+                  {text.lensCustomizations.map((list: any, index: number) => (
+                    <div className="list" key={`list-${index}`}>
+                      <h3 className="h3">{list.title}</h3>
+                      <div className="row">
+                        {list.items.map((item: string, _index: number) => (
+                          <span key={`item-${_index}`}>
+                            <StaticImage
+                              src="../../images/grey-diamond.png"
+                              alt="Diamond"
+                              placeholder="tracedSVG"
+                              layout="constrained"
+                              height={15}
+                            />
+                            {item}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </section>
+        )}
+        <section className="lenses-info">
+          <div className="wrapper">
+            <GatsbyImage
+              image={contentfulProduct.lensesInfoImage.data}
+              alt={text.lensesInfoAlt}
+            />
+          </div>
+        </section>
+        <section className="what-you-get">
+          <p className="h2">WHAT YOU GET</p>
+          <p>{text.whatYouGet}</p>
+          <div className="wrapper">
+            <StaticImage
+              src="../../images/CaseCloth.jpg"
+              alt="Glasses case and cleaning cloth"
+              layout="constrained"
+              placeholder="blurred"
+            />
+          </div>
+        </section>
+        <section className="call-to-action">
+          <div className="p">
+            <StaticImage
+              src="../../images/double-diamonds.png"
+              alt="Double Diamonds"
+              placeholder="tracedSVG"
+              layout="constrained"
+              height={25}
+            />
+          </div>
+          <p>
+            <Link className="btn" to={`/products/${contentfulProduct.handle}`}>
+              CUSTOMIZE &amp; BUY
+            </Link>
+          </p>
+        </section>
+      </Page>
+    </Layout>
+  )
+}
+
+export default LearnMore
+
+export const query = graphql`
+  query ContentfulProduct($handle: String) {
+    contentfulProduct(handle: { eq: $handle }) {
+      id
+      customizeImage {
+        data: gatsbyImageData
+        description
+      }
+      frameDetailsImage {
+        data: gatsbyImageData
+      }
+      fitDiagram {
+        data: gatsbyImageData
+      }
+      fitDimensions
+      fitType
+      handle
+      lensesInfoImage {
+        data: gatsbyImageData
+      }
+      styleDescription {
+        text: styleDescription
+      }
+      title
+      rxAble
+      variantsImage {
+        data: gatsbyImageData
+        description
+      }
     }
   }
 `

@@ -15,143 +15,6 @@ import { TiSocialInstagram } from "react-icons/ti"
 import DesktopNavigation from "./desktopNavigation"
 import { CustomerContext } from "../contexts/customer"
 
-interface HeaderProps {
-  siteTitle: string
-  isDrawerOpen: boolean
-  setIsDrawerOpen: Dispatch<SetStateAction<boolean>>
-  isIndex?: boolean
-}
-
-const Header = ({
-  siteTitle,
-  isDrawerOpen,
-  setIsDrawerOpen,
-  isIndex,
-}: HeaderProps) => {
-  const { customerAccessToken, logout } = useContext(CustomerContext)
-  const [currentPath, setCurrentPath] = useState("/")
-  const [visibleAccountSubNav, setVisibileAccountSubNav] =
-    useState<boolean>(false)
-  if (typeof window !== `undefined`) {
-    useEffect(() => {
-      setCurrentPath(location.pathname)
-    }, [location])
-  }
-  const ref = useRef(null)
-
-  const toggleAccountSubNav = (
-    e: React.MouseEvent<HTMLAnchorElement, MouseEvent>
-  ) => {
-    e.preventDefault()
-    setVisibileAccountSubNav(!visibleAccountSubNav)
-  }
-
-  useClickAway(ref, () => {
-    setVisibileAccountSubNav(false)
-  })
-
-  return (
-    <Component>
-      <div className="top-wrapper">
-        {isIndex ? (
-          <h1 className="h1">
-            <Link to="/" className="logo-link">
-              <StaticImage
-                src="../images/tres-noir-independent-eyewear-co-24.png"
-                alt={siteTitle}
-                placeholder="tracedSVG"
-                style={{ marginBottom: 0 }}
-              />
-            </Link>
-          </h1>
-        ) : (
-          <div className="h1">
-            <Link to="/" className="logo-link">
-              <StaticImage
-                src="../images/tres-noir-independent-eyewear-co-24.png"
-                alt={siteTitle}
-                placeholder="tracedSVG"
-                style={{ marginBottom: 0 }}
-              />
-            </Link>
-          </div>
-        )}
-        <div className="icons">
-          <div className="social">
-            <a
-              href="https://www.instagram.com/tresnoir/"
-              target="_blank"
-              rel="noreferrer"
-            >
-              <TiSocialInstagram className="instagram" />
-            </a>
-            <a
-              href="https://www.facebook.com/tresnoir"
-              target="_blank"
-              rel="noreferrer"
-            >
-              <FaFacebookF />
-            </a>
-          </div>
-          <div className="search">
-            <Link to="/search" state={{ prevPath: currentPath }}>
-              <FaSearch />
-            </Link>
-            {!customerAccessToken ? (
-              <Link to="/login" className="login-text">
-                LOG IN
-              </Link>
-            ) : (
-              <span className="accounts">
-                <a
-                  href="#"
-                  onClick={e => toggleAccountSubNav(e)}
-                  className={visibleAccountSubNav ? `active` : ``}
-                >
-                  ACCOUNT
-                </a>
-                {visibleAccountSubNav && (
-                  <ul ref={ref} className="accounts-sub-nav sub-nav">
-                    <li>
-                      <Link to="/account">YOUR ACCOUNT</Link>
-                    </li>
-                    <li>
-                      <a href="#" onClick={logout}>
-                        LOG OUT
-                      </a>
-                    </li>
-                  </ul>
-                )}
-              </span>
-            )}
-            <Link to="/cart">
-              <StaticImage
-                src="../images/cart.png"
-                alt="Shopping Cart"
-                placeholder="tracedSVG"
-                style={{ marginBottom: 0, maxWidth: 26 }}
-              />
-            </Link>
-            <a
-              href="#"
-              className="hide-large"
-              role="button"
-              onClick={() => setIsDrawerOpen(!isDrawerOpen)}
-            >
-              <FaBars />
-            </a>
-          </div>
-        </div>
-      </div>
-      <div className="wrapper hide-small">
-        <DesktopNavigation />
-      </div>
-    </Component>
-  )
-}
-
-export default Header
-
 const Component = styled.header`
   font-family: var(--sub-heading-font);
   margin-bottom: 1.45rem;
@@ -271,3 +134,148 @@ const Component = styled.header`
     }
   }
 `
+
+interface HeaderProps {
+  siteTitle: string
+  isDrawerOpen: boolean
+  setIsDrawerOpen: Dispatch<SetStateAction<boolean>>
+  isIndex?: boolean
+}
+
+const Header = ({
+  siteTitle,
+  isDrawerOpen,
+  setIsDrawerOpen,
+  isIndex,
+}: HeaderProps) => {
+  const { customerAccessToken, logout } = useContext(CustomerContext)
+  const [currentPath, setCurrentPath] = useState("/")
+  const [visibleAccountSubNav, setVisibileAccountSubNav] =
+    useState<boolean>(false)
+  // if (typeof window !== `undefined`) {
+  //   useEffect(() => {
+  //     setCurrentPath(location.pathname)
+  //   }, [location])
+  // }
+
+  useEffect(() => {
+    if (typeof window !== `undefined`) {
+      console.log(window.location.pathname)
+      setCurrentPath(window.location.pathname)
+    }
+  }, [])
+
+  const ref = useRef(null)
+
+  const toggleAccountSubNav = (
+    e: React.MouseEvent<HTMLAnchorElement, MouseEvent>
+  ) => {
+    e.preventDefault()
+    setVisibileAccountSubNav(!visibleAccountSubNav)
+  }
+
+  useClickAway(ref, () => {
+    setVisibileAccountSubNav(false)
+  })
+
+  return (
+    <Component>
+      <div className="top-wrapper">
+        {isIndex ? (
+          <h1 className="h1">
+            <Link to="/" className="logo-link">
+              <StaticImage
+                src="../images/tres-noir-independent-eyewear-co-24.png"
+                alt={siteTitle}
+                placeholder="tracedSVG"
+                style={{ marginBottom: 0 }}
+              />
+            </Link>
+          </h1>
+        ) : (
+          <div className="h1">
+            <Link to="/" className="logo-link">
+              <StaticImage
+                src="../images/tres-noir-independent-eyewear-co-24.png"
+                alt={siteTitle}
+                placeholder="tracedSVG"
+                style={{ marginBottom: 0 }}
+              />
+            </Link>
+          </div>
+        )}
+        <div className="icons">
+          <div className="social">
+            <a
+              href="https://www.instagram.com/tresnoir/"
+              target="_blank"
+              rel="noreferrer"
+            >
+              <TiSocialInstagram className="instagram" />
+            </a>
+            <a
+              href="https://www.facebook.com/tresnoir"
+              target="_blank"
+              rel="noreferrer"
+            >
+              <FaFacebookF />
+            </a>
+          </div>
+          <div className="search">
+            <Link to="/search" state={{ prevPath: currentPath }}>
+              <FaSearch />
+            </Link>
+            {!customerAccessToken ? (
+              <Link to="/login" className="login-text">
+                LOG IN
+              </Link>
+            ) : (
+              <span className="accounts">
+                <a
+                  href="#"
+                  onClick={e => toggleAccountSubNav(e)}
+                  className={visibleAccountSubNav ? `active` : ``}
+                >
+                  ACCOUNT
+                </a>
+                {visibleAccountSubNav && (
+                  <ul ref={ref} className="accounts-sub-nav sub-nav">
+                    <li>
+                      <Link to="/account">YOUR ACCOUNT</Link>
+                    </li>
+                    <li>
+                      <a href="#" onClick={logout}>
+                        LOG OUT
+                      </a>
+                    </li>
+                  </ul>
+                )}
+              </span>
+            )}
+            <Link to="/cart">
+              <StaticImage
+                src="../images/cart.png"
+                alt="Shopping Cart"
+                placeholder="tracedSVG"
+                style={{ marginBottom: 0, maxWidth: 26 }}
+              />
+            </Link>
+            <a
+              href="#"
+              className="hide-large"
+              role="button"
+              onClick={() => setIsDrawerOpen(!isDrawerOpen)}
+            >
+              <FaBars />
+            </a>
+          </div>
+        </div>
+      </div>
+      <div className="wrapper hide-small">
+        <DesktopNavigation />
+      </div>
+    </Component>
+  )
+}
+
+export default Header

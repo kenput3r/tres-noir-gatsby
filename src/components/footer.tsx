@@ -5,59 +5,6 @@ import { FaFacebookF as F } from "react-icons/fa"
 import { TiSocialInstagram as I } from "react-icons/ti"
 import { useFooterNavigation } from "../hooks/useFooterNavigation"
 
-interface Item {
-  id: string
-  url: string | null
-  name: string
-}
-
-const Footer = () => {
-  const { items } = useFooterNavigation()
-  return (
-    <Component>
-      <nav>
-        <ul>
-          {items.map((item: Item) => (
-            <li key={item.id}>
-              {item.url && <Link to={item.url}>{item.name}</Link>}
-            </li>
-          ))}
-        </ul>
-      </nav>
-      <p className="social">
-        <a
-          href="https://instagram.com/tresnoir"
-          target="_blank"
-          rel="noreferrer"
-        >
-          <I />
-        </a>
-        <a
-          href="https://facebook.com/tresnoir"
-          target="_blank"
-          rel="noreferrer"
-        >
-          <F />
-        </a>
-      </p>
-      <p>
-        <a href="tel:1-714-656-4796">714.656.4796</a>
-        <br />
-        2831 W 1st St, Santa Ana, CA 92703
-      </p>
-      <form>
-        <label>Sign up for our newsletter</label>
-        <div className="form-group">
-          <input type="email" placeholder="Email Address" />
-          <input type="button" value="&rarr;" />
-        </div>
-      </form>
-    </Component>
-  )
-}
-
-export default Footer
-
 const Component = styled.footer`
   background-color: var(--color-grey-dark);
   color: #fff;
@@ -105,3 +52,56 @@ const Component = styled.footer`
     border-style: solid;
   }
 `
+
+interface Item {
+  id: string
+  url: string | null
+  name: string
+}
+
+const Footer = () => {
+  const { items } = useFooterNavigation()
+  return (
+    <Component>
+      <nav>
+        <ul>
+          {items.map((item: Item) => (
+            <li key={item.id}>
+              {item.url && <Link to={item.url}>{item.name}</Link>}
+            </li>
+          ))}
+        </ul>
+      </nav>
+      <p className="social">
+        <a
+          href="https://instagram.com/tresnoir"
+          target="_blank"
+          rel="noreferrer"
+        >
+          <I />
+        </a>
+        <a
+          href="https://facebook.com/tresnoir"
+          target="_blank"
+          rel="noreferrer"
+        >
+          <F />
+        </a>
+      </p>
+      <p>
+        <a href="tel:1-714-656-4796">714.656.4796</a>
+        <br />
+        2831 W 1st St, Santa Ana, CA 92703
+      </p>
+      <form>
+        <p>Sign up for our newsletter</p>
+        <div className="form-group">
+          <input type="email" placeholder="Email Address" />
+          <input type="button" value="&rarr;" />
+        </div>
+      </form>
+    </Component>
+  )
+}
+
+export default Footer

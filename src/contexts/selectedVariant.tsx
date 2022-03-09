@@ -1,4 +1,4 @@
-import React, { createContext, ReactChild, useState } from "react"
+import React, { createContext, ReactChild, useState, useMemo } from "react"
 
 const defaultContext = {
   selectedVariantContext: "",
@@ -14,10 +14,16 @@ export const SelectedVariantProvider = ({
 }) => {
   const [selectedVariantContext, setSelectedVariantContext] = useState("")
 
+  const value = useMemo(
+    () => ({
+      selectedVariantContext,
+      setSelectedVariantContext,
+    }),
+    [selectedVariantContext]
+  )
+
   return (
-    <SelectedVariantContext.Provider
-      value={{ selectedVariantContext, setSelectedVariantContext }}
-    >
+    <SelectedVariantContext.Provider value={value}>
       {children}
     </SelectedVariantContext.Provider>
   )

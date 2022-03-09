@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useContext } from "react"
+import React, { useState, useEffect, useContext } from "react"
 import { Link, graphql } from "gatsby"
 import { StaticImage, GatsbyImage as Img } from "gatsby-plugin-image"
 import styled from "styled-components"
@@ -7,162 +7,6 @@ import SEO from "../components/seo"
 import ProductCarousel from "../components/product-carousel"
 import { SelectedVariantContext } from "../contexts/selectedVariant"
 import { CartContext } from "../contexts/cart"
-
-const ProductCustomizable = ({
-  data: { contentfulProduct, shopifyProduct },
-}: any) => {
-  const { selectedVariantContext, setSelectedVariantContext } = useContext(
-    SelectedVariantContext
-  )
-  const [selectedVariant, setSelectedVariant] = useState({
-    contentful: contentfulProduct?.variants && contentfulProduct.variants[0],
-    shopify: shopifyProduct.variants[0],
-  })
-  // cart
-  const { addProductToCart } = useContext(CartContext)
-
-  useEffect(() => {
-    const sku = selectedVariantContext
-    if (sku) {
-      const contentful = contentfulProduct.variants.find(
-        (_variant: any) => _variant.sku === sku
-      )
-      const shopify = shopifyProduct.variants.find(
-        (_variant: any) => _variant.sku === sku
-      )
-      if (contentful && shopify) {
-        const variant = contentful
-        setSelectedVariant({
-          contentful: variant,
-          shopify,
-        })
-      }
-    }
-  }, [])
-
-  const selectVariant = (e: React.MouseEvent, variant: any) => {
-    e.currentTarget && (e.currentTarget as HTMLElement).blur()
-    const shopify = shopifyProduct.variants.find(
-      (_variant: any) => _variant.sku === variant.sku
-    )
-    if (shopify) {
-      setSelectedVariant({
-        contentful: variant,
-        shopify,
-      })
-      setSelectedVariantContext(variant.sku)
-    }
-  }
-
-  const handleAddToCart = () => {
-    const id = selectedVariant.shopify.shopifyId
-    console.log("ADDING TO CART", `${id} x 1`)
-    addProductToCart(id, 1)
-    alert("ADDED TO CART")
-  }
-
-  return (
-    <Layout>
-      <SEO title={shopifyProduct.title} />
-      <Page>
-        <div className="shipping-message">
-          <StaticImage
-            src="../images/double-diamonds.png"
-            alt="double diamonds"
-            width={40}
-          />
-          <p className="h2">FREE SHIPPING IN USA</p>
-          <p className="h3">ALL ORDERS SHIP SAME OR NEXT BUSINESS DAY</p>
-        </div>
-        <div className="row">
-          <div className="col images">
-            {console.log("IMAGE SET", selectedVariant.contentful.imageSet)}
-            <ProductCarousel
-              imageSet={
-                selectedVariant?.contentful &&
-                selectedVariant.contentful.imageSet
-              }
-            />
-          </div>
-          <div className="col">
-            <div className="heading">
-              <h1>{shopifyProduct.title}</h1>
-              <p className="fit">
-                Size: {contentfulProduct && contentfulProduct.fitDimensions}{" "}
-                <span>
-                  {contentfulProduct &&
-                  contentfulProduct.fitType === "medium (average)"
-                    ? "medium"
-                    : contentfulProduct && contentfulProduct.fitType}{" "}
-                  fit
-                </span>
-              </p>
-            </div>
-            <form className="options">
-              <p className="selected-text-label">
-                Color: <span>{selectedVariant.shopify.title}</span>
-              </p>
-              <div className="buttons">
-                {contentfulProduct &&
-                  contentfulProduct.variants.map((variant: any) => (
-                    <button
-                      key={variant.id}
-                      type="button"
-                      data-active={variant.id === selectedVariant.contentful.id}
-                      onClick={e => selectVariant(e, variant)}
-                      aria-label={`Color option ${variant.colorImage.title}`}
-                      aria-pressed={
-                        variant.id === selectedVariant.contentful.id
-                          ? "true"
-                          : "false"
-                      }
-                    >
-                      <Img
-                        image={variant.colorImage.data}
-                        alt={variant.colorImage.title}
-                      />
-                    </button>
-                  ))}
-              </div>
-              <div className="price">
-                <p className="label">STARTING AT</p>
-                <p className="value">
-                  ${selectedVariant.shopify.priceV2.amount} USD
-                  <span>
-                    <Link
-                      to={contentfulProduct && `/${contentfulProduct.handle}`}
-                    >
-                      Learn More {`>`}
-                    </Link>
-                  </span>
-                </p>
-              </div>
-              <div className="actions">
-                <div>
-                  <button type="button" onClick={handleAddToCart}>
-                    ADD TO CART
-                  </button>
-                  <p>- OR -</p>
-                  <Link
-                    to={
-                      contentfulProduct &&
-                      `/products/${contentfulProduct.handle}/customize?variant=${selectedVariant.shopify.sku}`
-                    }
-                  >
-                    CUSTOMIZE
-                  </Link>
-                  <p className="small">Click for Polarized, Rx, and more</p>
-                </div>
-              </div>
-            </form>
-          </div>
-        </div>
-      </Page>
-    </Layout>
-  )
-}
-
-export default ProductCustomizable
 
 const Page = styled.div`
   .shipping-message {
@@ -333,6 +177,167 @@ const Page = styled.div`
   }
 `
 
+const ProductCustomizable = ({
+  data: { contentfulProduct, shopifyProduct },
+}: any) => {
+  console.log("SHOPIFY PRODUCT", shopifyProduct)
+  const { selectedVariantContext, setSelectedVariantContext } = useContext(
+    SelectedVariantContext
+  )
+  const [selectedVariant, setSelectedVariant] = useState({
+    contentful: contentfulProduct?.variants && contentfulProduct.variants[0],
+    shopify: shopifyProduct.variants[0],
+  })
+  // cart
+  const { addProductToCart } = useContext(CartContext)
+
+  useEffect(() => {
+    const sku = selectedVariantContext
+    if (sku) {
+      const contentful = contentfulProduct.variants.find(
+        (_variant: any) => _variant.sku === sku
+      )
+      const shopify = shopifyProduct.variants.find(
+        (_variant: any) => _variant.sku === sku
+      )
+      if (contentful && shopify) {
+        const variant = contentful
+        setSelectedVariant({
+          contentful: variant,
+          shopify,
+        })
+      }
+    }
+  }, [
+    contentfulProduct.variants,
+    selectedVariantContext,
+    shopifyProduct.variants,
+  ])
+
+  const selectVariant = (e: React.MouseEvent, variant: any) => {
+    // e.currentTarget && (e.currentTarget as HTMLElement).blur()
+    const shopify = shopifyProduct.variants.find(
+      (_variant: any) => _variant.sku === variant.sku
+    )
+    if (shopify) {
+      setSelectedVariant({
+        contentful: variant,
+        shopify,
+      })
+      setSelectedVariantContext(variant.sku)
+    }
+  }
+
+  const handleAddToCart = () => {
+    const id = selectedVariant.shopify.storefrontId
+    console.log("ADDING TO CART", `${id} x 1`)
+    addProductToCart(id, 1)
+    alert("ADDED TO CART")
+  }
+  console.log("SELECTED VARIANT", selectedVariant)
+  return (
+    <Layout>
+      <SEO title={shopifyProduct.title} />
+      <Page>
+        <div className="shipping-message">
+          <StaticImage
+            src="../images/double-diamonds.png"
+            alt="double diamonds"
+            width={40}
+          />
+          <p className="h2">FREE SHIPPING IN USA</p>
+          <p className="h3">ALL ORDERS SHIP SAME OR NEXT BUSINESS DAY</p>
+        </div>
+        <div className="row">
+          <div className="col images">
+            {console.log("IMAGE SET", selectedVariant.contentful.imageSet)}
+            <ProductCarousel
+              imageSet={
+                selectedVariant?.contentful &&
+                selectedVariant.contentful.imageSet
+              }
+            />
+          </div>
+          <div className="col">
+            <div className="heading">
+              <h1>{shopifyProduct.title}</h1>
+              <p className="fit">
+                Size: {contentfulProduct && contentfulProduct.fitDimensions}{" "}
+                <span>
+                  {contentfulProduct &&
+                  contentfulProduct.fitType === "medium (average)"
+                    ? "medium"
+                    : contentfulProduct && contentfulProduct.fitType}{" "}
+                  fit
+                </span>
+              </p>
+            </div>
+            <form className="options">
+              <p className="selected-text-label">
+                Color: <span>{selectedVariant.shopify.title}</span>
+              </p>
+              <div className="buttons">
+                {contentfulProduct &&
+                  contentfulProduct.variants.map((variant: any) => (
+                    <button
+                      key={variant.id}
+                      type="button"
+                      data-active={variant.id === selectedVariant.contentful.id}
+                      onClick={e => selectVariant(e, variant)}
+                      aria-label={`Color option ${variant.colorImage.title}`}
+                      aria-pressed={
+                        variant.id === selectedVariant.contentful.id
+                          ? "true"
+                          : "false"
+                      }
+                    >
+                      <Img
+                        image={variant.colorImage.data}
+                        alt={variant.colorImage.title}
+                      />
+                    </button>
+                  ))}
+              </div>
+              <div className="price">
+                <p className="label">STARTING AT</p>
+                <p className="value">
+                  ${selectedVariant.shopify.price} USD
+                  <span>
+                    <Link
+                      to={contentfulProduct && `/${contentfulProduct.handle}`}
+                    >
+                      Learn More {`>`}
+                    </Link>
+                  </span>
+                </p>
+              </div>
+              <div className="actions">
+                <div>
+                  <button type="button" onClick={handleAddToCart}>
+                    ADD TO CART
+                  </button>
+                  <p>- OR -</p>
+                  <Link
+                    to={
+                      contentfulProduct &&
+                      `/products/${contentfulProduct.handle}/customize?variant=${selectedVariant.shopify.sku}`
+                    }
+                  >
+                    CUSTOMIZE
+                  </Link>
+                  <p className="small">Click for Polarized, Rx, and more</p>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </Page>
+    </Layout>
+  )
+}
+
+export default ProductCustomizable
+
 export const query = graphql`
   query ProductQuery($handle: String) {
     contentfulProduct(handle: { eq: $handle }) {
@@ -360,7 +365,7 @@ export const query = graphql`
     }
     shopifyProduct(handle: { eq: $handle }) {
       id
-      priceRange {
+      priceRangeV2 {
         minVariantPrice {
           amount
         }
@@ -371,15 +376,11 @@ export const query = graphql`
       title
       variants {
         availableForSale
-        compareAtPriceV2 {
-          amount
-        }
+        compareAtPrice
         id
-        priceV2 {
-          amount
-        }
+        price
         sku
-        shopifyId
+        storefrontId
         title
       }
     }

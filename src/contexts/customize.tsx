@@ -1,4 +1,4 @@
-import React, { createContext, ReactChild, useState } from "react"
+import React, { createContext, ReactChild, useState, useMemo } from "react"
 import { SelectedVariants, ShopifyVariant } from "../types/global"
 
 const defaultContext = {
@@ -16,7 +16,7 @@ const defaultContext = {
           },
         },
       },
-      priceNumber: 0,
+      price: 0,
       product: {
         title: "",
         description: "",
@@ -27,7 +27,7 @@ const defaultContext = {
           value: "",
         },
       ],
-      shopifyId: "",
+      storefrontId: "",
       sku: "",
       title: "",
     },
@@ -40,7 +40,7 @@ const defaultContext = {
           },
         },
       },
-      priceNumber: 0,
+      price: 0,
       product: {
         title: "",
         description: "",
@@ -51,7 +51,7 @@ const defaultContext = {
           value: "",
         },
       ],
-      shopifyId: "",
+      storefrontId: "",
       sku: "",
       title: "",
     },
@@ -64,7 +64,7 @@ const defaultContext = {
           },
         },
       },
-      priceNumber: 0,
+      price: 0,
       product: {
         title: "",
         description: "",
@@ -75,7 +75,7 @@ const defaultContext = {
           value: "",
         },
       ],
-      shopifyId: "",
+      storefrontId: "",
       sku: "",
       title: "",
     },
@@ -88,7 +88,7 @@ const defaultContext = {
           },
         },
       },
-      priceNumber: 0,
+      price: 0,
       product: {
         title: "",
         description: "",
@@ -99,7 +99,7 @@ const defaultContext = {
           value: "",
         },
       ],
-      shopifyId: "",
+      storefrontId: "",
       sku: "",
       title: "",
     },
@@ -122,7 +122,7 @@ export const CustomizeProvider = ({ children }: { children: ReactChild }) => {
           },
         },
       },
-      priceNumber: 0,
+      price: 0,
       product: {
         title: "",
         description: "",
@@ -133,7 +133,7 @@ export const CustomizeProvider = ({ children }: { children: ReactChild }) => {
           value: "",
         },
       ],
-      shopifyId: "",
+      storefrontId: "",
       sku: "",
       title: "",
     },
@@ -146,7 +146,7 @@ export const CustomizeProvider = ({ children }: { children: ReactChild }) => {
           },
         },
       },
-      priceNumber: 0,
+      price: 0,
       product: {
         title: "",
         description: "",
@@ -157,7 +157,7 @@ export const CustomizeProvider = ({ children }: { children: ReactChild }) => {
           value: "",
         },
       ],
-      shopifyId: "",
+      storefrontId: "",
       sku: "",
       title: "",
     },
@@ -170,7 +170,7 @@ export const CustomizeProvider = ({ children }: { children: ReactChild }) => {
           },
         },
       },
-      priceNumber: 0,
+      price: 0,
       product: {
         title: "",
         description: "",
@@ -181,7 +181,7 @@ export const CustomizeProvider = ({ children }: { children: ReactChild }) => {
           value: "",
         },
       ],
-      shopifyId: "",
+      storefrontId: "",
       sku: "",
       title: "",
     },
@@ -194,7 +194,7 @@ export const CustomizeProvider = ({ children }: { children: ReactChild }) => {
           },
         },
       },
-      priceNumber: 0,
+      price: 0,
       product: {
         title: "",
         description: "",
@@ -205,23 +205,33 @@ export const CustomizeProvider = ({ children }: { children: ReactChild }) => {
           value: "",
         },
       ],
-      shopifyId: "",
+      storefrontId: "",
       sku: "",
       title: "",
     },
   })
 
+  const value = useMemo(
+    () => ({
+      currentStep,
+      setCurrentStep,
+      productUrl,
+      setProductUrl,
+      selectedVariants,
+      setSelectedVariants,
+    }),
+    [
+      currentStep,
+      setCurrentStep,
+      productUrl,
+      setProductUrl,
+      selectedVariants,
+      setSelectedVariants,
+    ]
+  )
+
   return (
-    <CustomizeContext.Provider
-      value={{
-        currentStep,
-        setCurrentStep,
-        productUrl,
-        setProductUrl,
-        selectedVariants,
-        setSelectedVariants,
-      }}
-    >
+    <CustomizeContext.Provider value={value}>
       {children}
     </CustomizeContext.Provider>
   )

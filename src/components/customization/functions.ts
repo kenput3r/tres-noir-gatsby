@@ -1,10 +1,11 @@
+import { Dispatch, SetStateAction } from "react"
 import { SelectedVariants } from "../../types/global"
 
 export const changeImage = (
   currentStep: number,
   selectedVariants: SelectedVariants,
-  currentImage: any,
-  setCurrentImage: React.Dispatch<React.SetStateAction<any>>,
+  // currentImage: any,
+  setCurrentImage: Dispatch<SetStateAction<any>>,
   variant: any
 ) => {
   const { step1, step2, step3, step4 } = selectedVariants
@@ -100,8 +101,11 @@ export const changeImage = (
             })
             break
           }
+          default: {
+            console.log("ERROR")
+          }
         }
-        //Not Bifocal
+        // Not Bifocal
       } else {
         switch (step2.product.title) {
           case "Clear": {
@@ -174,11 +178,19 @@ export const changeImage = (
             })
             break
           }
+          default: {
+            console.log("ERROR")
+          }
         }
       }
+      break
     case 3:
       console.log("step is 3")
+      break
     case 4:
       console.log("step is 4")
+      break
+    default:
+      console.log("ERROR")
   }
 }

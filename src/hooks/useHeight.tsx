@@ -1,14 +1,12 @@
 import { useRef, useState, useLayoutEffect } from "react"
 
-declare var ResizeObserver
-
 export function useHeight({ on = true /* no value means on */ } = {} as any) {
   const ref = useRef<any>()
   const [height, set] = useState(0)
   const heightRef = useRef(height)
   const [ro] = useState(
     () =>
-      new ResizeObserver(packet => {
+      new ResizeObserver((_packet: any) => {
         if (ref.current && heightRef.current !== ref.current.offsetHeight) {
           heightRef.current = ref.current.offsetHeight
           set(ref.current.offsetHeight)
@@ -21,7 +19,7 @@ export function useHeight({ on = true /* no value means on */ } = {} as any) {
       ro.observe(ref.current, {})
     }
     return () => ro.disconnect()
-  }, [on, ref.current])
+  }, [on, ro])
 
   return [ref, height as any]
 }

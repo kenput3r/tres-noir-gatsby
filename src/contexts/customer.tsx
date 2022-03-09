@@ -1,4 +1,4 @@
-import React, { createContext, ReactChild, useState } from "react"
+import React, { createContext, ReactChild, useState, useMemo } from "react"
 import Cookies from "js-cookie"
 
 interface CC {
@@ -20,7 +20,7 @@ export const CustomerContext = createContext(defaultContext)
 export const CustomerProvider = ({ children }: { children: ReactChild }) => {
   const accessToken = Cookies.get("tn-login")
   const [customerAccessToken, setCustomerAccessToken] = useState<null | string>(
-    accessToken ? accessToken : null
+    accessToken || null
   )
 
   const logout = () => {
@@ -35,10 +35,18 @@ export const CustomerProvider = ({ children }: { children: ReactChild }) => {
     setCustomerAccessToken(data.accessToken)
   }
 
+  const value = useMemo(
+    () => ({
+      customerAccessToken,
+      setCustomerAccessToken,
+      login,
+      logout,
+    }),
+    [customerAccessToken]
+  )
+
   return (
-    <CustomerContext.Provider
-      value={{ customerAccessToken, setCustomerAccessToken, login, logout }}
-    >
+    <CustomerContext.Provider value={value}>
       {children}
     </CustomerContext.Provider>
   )

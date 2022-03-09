@@ -36,7 +36,6 @@ export interface LineItem {
   variant: {
     available: boolean
     compareAtPrice: null | string
-    compareAtPriceV2: null | string
     id: string
     image: {
       altText: string
@@ -44,10 +43,6 @@ export interface LineItem {
       src: string
     }
     price: string
-    priceV2: {
-      amount: string
-      currencyCode: string
-    }
     product: {
       handle: string
       id: string

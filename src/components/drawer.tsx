@@ -4,55 +4,6 @@ import styled from "styled-components"
 import { useDesktopNavigation } from "../hooks/useDesktopNavigation"
 import Accordion from "./accordion"
 
-interface DrawerProps {
-  isDrawerOpen: boolean
-  setIsDrawerOpen: Dispatch<SetStateAction<boolean>>
-}
-
-interface StyledProps {
-  isDrawerOpen: boolean
-}
-
-interface Item {
-  id: string
-  url: string | null
-  name: string
-  subListItems: [Item] | null
-}
-
-const Drawer = ({ isDrawerOpen, setIsDrawerOpen }: DrawerProps) => {
-  const { items } = useDesktopNavigation()
-  return (
-    <Component isDrawerOpen={isDrawerOpen}>
-      <a href="#" role="button" onClick={() => setIsDrawerOpen(!isDrawerOpen)}>
-        &times;
-      </a>
-      {items.map((item: Item) => {
-        if (item.url && !item.subListItems) {
-          return (
-            <Link key={item.id} to={item.url}>
-              {item.name}
-            </Link>
-          )
-        }
-        if (item.subListItems) {
-          return (
-            <Accordion key={item.id} name={`${item.name}+`}>
-              {item.subListItems.map((_item: Item) => (
-                <Link key={_item.id} to={_item.url ? _item.url : "/"}>
-                  {_item.name}
-                </Link>
-              ))}
-            </Accordion>
-          )
-        }
-      })}
-    </Component>
-  )
-}
-
-export default Drawer
-
 const Component = styled.nav<StyledProps>`
   box-sizing: border-box;
   display: flex;
@@ -95,3 +46,52 @@ const Component = styled.nav<StyledProps>`
     display: none;
   }
 `
+
+interface DrawerProps {
+  isDrawerOpen: boolean
+  setIsDrawerOpen: Dispatch<SetStateAction<boolean>>
+}
+
+interface StyledProps {
+  isDrawerOpen: boolean
+}
+
+interface Item {
+  id: string
+  url: string | null
+  name: string
+  subListItems: [Item] | null
+}
+
+const Drawer = ({ isDrawerOpen, setIsDrawerOpen }: DrawerProps) => {
+  const { items } = useDesktopNavigation()
+  return (
+    <Component isDrawerOpen={isDrawerOpen}>
+      <a href="#" role="button" onClick={() => setIsDrawerOpen(!isDrawerOpen)}>
+        &times;
+      </a>
+      {items.forEach((item: Item) => {
+        if (item.url && !item.subListItems) {
+          return (
+            <Link key={item.id} to={item.url}>
+              {item.name}
+            </Link>
+          )
+        }
+        if (item.subListItems) {
+          return (
+            <Accordion key={item.id} name={`${item.name}+`}>
+              {item.subListItems.map((_item: Item) => (
+                <Link key={_item.id} to={_item.url ? _item.url : "/"}>
+                  {_item.name}
+                </Link>
+              ))}
+            </Accordion>
+          )
+        }
+      })}
+    </Component>
+  )
+}
+
+export default Drawer

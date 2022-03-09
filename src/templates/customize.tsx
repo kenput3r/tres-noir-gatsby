@@ -1,4 +1,10 @@
-import React, { useContext, useEffect, useState, useRef } from "react"
+import React, {
+  useContext,
+  useEffect,
+  useState,
+  useRef,
+  useCallback,
+} from "react"
 import { graphql } from "gatsby"
 import { GatsbyImage } from "gatsby-plugin-image"
 import styled from "styled-components"
@@ -18,7 +24,43 @@ import {
   ShopifyProduct,
   ShopifyProductVariant,
 } from "../types/customize"
-import Product from "../components/product"
+// import Product from "../components/product"
+
+const Page = styled.div`
+  .row {
+    display: flex;
+    flex-direction: row;
+    @media only screen and (max-width: 480px) {
+      &.product-customize {
+        display: block;
+      }
+    }
+  }
+  .col {
+    display: flex;
+    flex-direction: column;
+    &.preview {
+      flex: 1.2;
+      .gatsby-image-wrapper {
+        position: sticky;
+        top: 1px;
+      }
+    }
+    &.steps {
+      flex: 1;
+    }
+  }
+  .current-price {
+    text-align: right;
+    span {
+      background-color: var(--color-grey-dark);
+      color: #fff;
+      display: inline-block;
+      font-family: var(--sub-heading-font);
+      padding: 5px;
+    }
+  }
+`
 
 const Customize = ({
   data: { contentfulProduct, shopifyProduct },
@@ -35,7 +77,7 @@ const Customize = ({
     shopify: shopifyProduct.variants[0],
   })
   const [currentPrice, setCurrentPrice] = useState(
-    shopifyProduct.variants[0].priceNumber
+    shopifyProduct.variants[0].price
   )
   const [currentImage, setCurrentImage] = useState({
     data: variant?.contentful && variant.contentful.customizations.clear.data,
@@ -45,7 +87,7 @@ const Customize = ({
   const previewRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    const urlParams = new URLSearchParams(location.search)
+    const urlParams = new URLSearchParams(window.location.search)
     const sku = urlParams.get("variant")
     const contentful = contentfulProduct.variants.find(
       (_variant: ContentfulProductVariant) => _variant.sku === sku
@@ -54,8 +96,8 @@ const Customize = ({
       (_variant: ShopifyProductVariant) => _variant.sku === sku
     )
     if (contentful && shopify) {
-      const variant = { contentful, shopify }
-      setVariant(variant)
+      const _variant = { contentful, shopify }
+      setVariant(_variant)
       setProductUrl(`/products/${contentfulProduct.handle}`)
       if (previewRef.current) {
         const previewImage = previewRef.current.querySelector(
@@ -70,27 +112,36 @@ const Customize = ({
         // })
       }
     }
-  }, [])
+  }, [
+    contentfulProduct.handle,
+    contentfulProduct.variants,
+    setProductUrl,
+    shopifyProduct.variants,
+  ])
+
   /* UPDATE PRICING */
   useEffect(() => {
-    let price = variant.shopify.priceNumber
+    let { price } = variant.shopify
+    console.log("SELECTED VARIANTS", selectedVariants)
     Object.keys(selectedVariants).forEach(key => {
       // @ts-ignore
-      // price += selectedVariants[key].priceNumber
+      // price += selectedVariants[key].price
       // convert everything to int and divide by 100 at the end
-      price = Number(price.toFixed(2)) * 100
-      price += selectedVariants[key].priceNumber * 100
-      price = price / 100
+      // price = Number(price.toFixed(2)) * 100
+      // price += selectedVariants[key].price * 100
+      // price /= 100
+      price = Number(price)
+      price += Number(selectedVariants[key].price)
     })
     setCurrentPrice(price)
     changeImage(
       currentStep,
       selectedVariants,
-      currentImage,
+      // currentImage,
       setCurrentImage,
       variant
     )
-  }, [variant, selectedVariants])
+  }, [variant, selectedVariants, currentStep])
 
   return (
     <Layout>
@@ -130,42 +181,6 @@ const Customize = ({
 }
 
 export default Customize
-
-const Page = styled.div`
-  .row {
-    display: flex;
-    flex-direction: row;
-    @media only screen and (max-width: 480px) {
-      &.product-customize {
-        display: block;
-      }
-    }
-  }
-  .col {
-    display: flex;
-    flex-direction: column;
-    &.preview {
-      flex: 1.2;
-      .gatsby-image-wrapper {
-        position: sticky;
-        top: 1px;
-      }
-    }
-    &.steps {
-      flex: 1;
-    }
-  }
-  .current-price {
-    text-align: right;
-    span {
-      background-color: var(--color-grey-dark);
-      color: #fff;
-      display: inline-block;
-      font-family: var(--sub-heading-font);
-      padding: 5px;
-    }
-  }
-`
 
 export const query = graphql`
   query CustomizeQuery($handle: String) {
@@ -287,7 +302,7 @@ export const query = graphql`
       }
     }
     shopifyProduct(handle: { eq: $handle }) {
-      priceRange {
+      priceRangeV2 {
         minVariantPrice {
           amount
         }
@@ -298,13 +313,11 @@ export const query = graphql`
       title
       variants {
         availableForSale
-        compareAtPriceV2 {
-          amount
-        }
+        compareAtPrice
         id
-        priceNumber
+        price
         sku
-        shopifyId
+        storefrontId
         title
       }
     }

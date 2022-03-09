@@ -1,4 +1,4 @@
-import React, { useContext } from "react"
+import React from "react"
 import { useStaticQuery, graphql } from "gatsby"
 import Form from "./form"
 
@@ -13,7 +13,6 @@ const Step1 = () => {
       }
     }
   `)
-  console.log(shopifyCollection)
   return <Form shopifyCollection={shopifyCollection} />
 }
 

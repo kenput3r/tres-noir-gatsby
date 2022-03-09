@@ -17,7 +17,7 @@ export const shopifyProductsFields = graphql`
     title
     variants {
       sku
-      shopifyId
+      storefrontId
       title
       image {
         altText
@@ -27,7 +27,7 @@ export const shopifyProductsFields = graphql`
           }
         }
       }
-      priceNumber
+      price
       product {
         title
         description
