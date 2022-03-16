@@ -20,9 +20,19 @@ const Page = styled.div`
     z-index: 2;
     &[data-is-stuck="true"] {
       border-bottom: 1px solid var(--color-grey-light);
-      .btn {
+      .details-shop {
         display: inline-block;
         margin-left: auto;
+      }
+      .diamonds {
+        display: none;
+      }
+      .wrapper {
+        padding-bottom: 0;
+        padding 10px 0;
+        .product-title {
+          font-size: 2.5rem;
+        }
       }
       @media (max-width: 768px) {
         font-size: 2.5rem;
@@ -55,7 +65,7 @@ const Page = styled.div`
       justify-content: center;
       align-items: center;
       flex-wrap: wrap;
-      padding-bottom: 0;
+      padding-bottom: 15pxr;
     }
     span {
       color: #000000;
@@ -63,10 +73,26 @@ const Page = styled.div`
       padding: 0 5px;
     }
     .btn {
-      display: none;
       font-size: 1.5rem;
       padding: 0.5rem;
       margin-left: 0;
+    }
+    .details-shop {
+      display: none;
+      .inner-flex {
+        display: flex;
+        column-gap: 35px;
+        align-items: center;
+        justify-content: center;
+      }
+      .inner-flex * {
+        margin: auto 0;
+      }
+      .grey-text {
+        text-transform: capitalize;
+        color: #808080;
+        font-size: 2.1rem;
+      }
     }
   }
   section.tagline {
@@ -129,9 +155,6 @@ const Page = styled.div`
       margin-bottom: 3rem;
       span {
         white-space: nowrap;
-      }
-      span.upper {
-        text-transform: uppercase;
       }
     }
     .wrapper {
@@ -248,6 +271,19 @@ const Page = styled.div`
       font-size: 1.62671rem;
     }
   }
+  .text-container,
+  .title-container {
+    .product-title {
+      text-transform: initial;
+    }
+  }
+  .title-container {
+    display: flex;
+    column-gap: 10px;
+    .diamonds {
+      margin: auto 0;
+    }
+  }
 `
 
 const LearnMore = ({ data: { contentfulProduct } }: any) => {
@@ -296,26 +332,36 @@ const LearnMore = ({ data: { contentfulProduct } }: any) => {
           data-is-stuck={isStuck}
         >
           <div className="wrapper">
-            <div className="text-container">
+            <div className="title-container">
               <StaticImage
                 src="../../images/double-diamonds.png"
                 alt="Double Diamonds"
                 placeholder="tracedSVG"
                 layout="constrained"
                 height={25}
+                className="diamonds"
               />
-              <span>{contentfulProduct.title}</span>
+              <span className="product-title">{contentfulProduct.title}</span>
               <StaticImage
                 src="../../images/double-diamonds.png"
                 alt="Double Diamonds"
                 placeholder="tracedSVG"
                 layout="constrained"
                 height={25}
+                className="diamonds"
               />
             </div>
-            <Link className="btn" to={`/products/${contentfulProduct.handle}`}>
-              <span style={{ color: "#fff" }}>CUSTOMIZE &amp; </span>BUY
-            </Link>
+            <div className="details-shop">
+              <div className="inner-flex">
+                <span className="grey-text">Details</span>
+                <Link
+                  className="btn"
+                  to={`/products/${contentfulProduct.handle}`}
+                >
+                  <span style={{ color: "#fff" }}>Shop</span>
+                </Link>
+              </div>
+            </div>
           </div>
         </h1>
         <section className="tagline">
