@@ -8,6 +8,7 @@ import {
   ShopifyVariant,
 } from "../../types/global"
 import { CustomizeContext } from "../../contexts/customize"
+import { RxInfoContext } from "../../contexts/rxInfo"
 
 const Component = styled.form`
   padding: 10px;
@@ -106,6 +107,9 @@ const Component = styled.form`
       display: inline-block;
     }
   }
+  .rx-box {
+    display: flex;
+  }
   ul.variants {
     display: flex;
     flex-direction: row;
@@ -164,7 +168,11 @@ const Form = ({
     selectedVariants,
     setSelectedVariants,
   } = useContext(CustomizeContext)
+  const { isRxAble, setRxAble } = useContext(RxInfoContext)
   const handleChange = (variant: ShopifyVariant) => {
+    setRxAble(variant.product?.title !== "Non-Prescription Lens")
+    console.log("isRxAble", isRxAble)
+    console.log("actual", variant.product?.title !== "Non-Prescription Lens")
     setSelectedVariants({
       ...selectedVariants,
       [`step${currentStep}`]: variant,
@@ -174,6 +182,7 @@ const Form = ({
   // useEffect(() => {
   //   console.log(selectedVariants)
   // }, [selectedVariants])
+
   return (
     <Component>
       {shopifyCollection.products.map((product: ShopifyProduct) => (
@@ -271,6 +280,32 @@ const Form = ({
           CONTINUE
         </button>
       </div>
+      {currentStep === 1 && isRxAble ? (
+        <div className="rx-box">
+          <div className="rx-selection">
+            <p>Right Eye (OD)</p>
+            <label htmlFor="sph-right">SPH</label>
+            <select id="sph-right">
+              <option value="test">Test</option>
+            </select>
+            <label htmlFor="cyl-right">CYL</label>
+            <select id="cyl-right">
+              <option value="test">Test</option>
+            </select>
+            <label htmlFor="axis-right">Axis</label>
+            <select id="axis-right">
+              <option value="test">Test</option>
+            </select>
+          </div>
+          <div className="rx-selection">
+            <p>Left Eye (OS)</p>
+            <label htmlFor="right-eye">SPH</label>
+            <select id="right-eye">
+              <option value="test">Test</option>
+            </select>
+          </div>
+        </div>
+      ) : null}
     </Component>
   )
 }
