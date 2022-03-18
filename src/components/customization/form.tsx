@@ -12,6 +12,10 @@ import { RxInfoContext } from "../../contexts/rxInfo"
 
 const Component = styled.form`
   padding: 10px;
+  .step-header {
+    font-family: var(--heading-font);
+    text-transform: uppercase;
+  }
   .product-option {
     background-color: var(--color-grey-light);
     border-radius: 4px;
@@ -89,6 +93,7 @@ const Component = styled.form`
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+    margin-top: 25px;
   }
   button,
   .button {
@@ -107,8 +112,41 @@ const Component = styled.form`
       display: inline-block;
     }
   }
-  .rx-box {
-    display: flex;
+  .rx-info {
+    font-family: var(--sub-heading-font);
+    .rx-box {
+      display: flex;
+      justify-content: space-between;
+      margin: 25px 0;
+      .rx-col {
+        flex: 1;
+        p {
+          text-align: center;
+          margin-bottom: 5px;
+        }
+        .rx-select {
+          border-bottom: 1px solid #808080;
+          display: flex;
+          label {
+            color: #808080;
+          }
+          select {
+            margin-left: 15px;
+            border: none;
+            width: 100%;
+          }
+        }
+      }
+    }
+    .rx-prism {
+      p {
+        color: #808080;
+        margin: 0;
+        span {
+          color: initial;
+        }
+      }
+    }
   }
   ul.variants {
     display: flex;
@@ -168,23 +206,38 @@ const Form = ({
     selectedVariants,
     setSelectedVariants,
   } = useContext(CustomizeContext)
+  const stepMap = new Map()
+  stepMap.set(1, "RX TYPE")
+  stepMap.set(2, "LENS TYPE")
+  stepMap.set(3, "LENS MATERIAL")
+  stepMap.set(4, "LENS COATING")
   const { isRxAble, setRxAble } = useContext(RxInfoContext)
   const handleChange = (variant: ShopifyVariant) => {
     setRxAble(variant.product?.title !== "Non-Prescription Lens")
-    console.log("isRxAble", isRxAble)
-    console.log("actual", variant.product?.title !== "Non-Prescription Lens")
     setSelectedVariants({
       ...selectedVariants,
       [`step${currentStep}`]: variant,
     })
   }
+  // const handleSteps = () => {}
   /* tests */
   // useEffect(() => {
   //   console.log(selectedVariants)
   // }, [selectedVariants])
+  const range = (start: number, end: number, step: number): string[] => {
+    const arr: string[] = []
+    const format: number = step % 1 === 0 ? 0 : 2
+    for (let i = start; i < end + step; i += step) {
+      arr.push(i.toFixed(format))
+    }
+    return arr
+  }
 
   return (
     <Component>
+      <div className="step-header">
+        <p>Choose your {stepMap.get(currentStep)}</p>
+      </div>
       {shopifyCollection.products.map((product: ShopifyProduct) => (
         <React.Fragment key={product.id}>
           {product.variants.length === 1 ? (
@@ -266,6 +319,140 @@ const Form = ({
           )}
         </React.Fragment>
       ))}
+      {currentStep === 1 && isRxAble ? (
+        <div className="rx-info">
+          <div className="rx-box">
+            <div className="rx-col">
+              <p>Right Eye (OD)</p>
+              <div className="rx-select">
+                <label htmlFor="sph-right">SPH</label>
+                <select id="sph-right">
+                  {range(-20, 19.75, 0.25).map(el => {
+                    if (el !== "0.00") {
+                      return <option>{el}</option>
+                    }
+                    return <option selected>{el}</option>
+                  })}
+                </select>
+              </div>
+              <div className="rx-select">
+                <label htmlFor="cyl-right">CYL</label>
+                <select id="cyl-right">
+                  {range(-20, 19.75, 0.25).map(el => {
+                    if (el !== "0.00") {
+                      return <option>{el}</option>
+                    }
+                    return <option selected>{el}</option>
+                  })}
+                </select>
+              </div>
+              <div className="rx-select">
+                <label htmlFor="axis-right">Axis</label>
+                <select id="axis-right">
+                  <option selected disabled>
+                    &nbsp;
+                  </option>
+                  {range(1, 180, 1).map(el => (
+                    <option value={el}>{el}</option>
+                  ))}
+                </select>
+              </div>
+              <div className="rx-select">
+                <label htmlFor="add-right">Add</label>
+                <select id="add-right">
+                  <option selected disabled>
+                    &nbsp;
+                  </option>
+                  {range(0, 3.5, 0.25).map(el => (
+                    <option value={el}>{el}</option>
+                  ))}
+                </select>
+              </div>
+            </div>
+            <div className="rx-col">
+              <p>Left Eye (OS)</p>
+              <div className="rx-select">
+                <label htmlFor="sph-left">SPH</label>
+                <select id="sph-left">
+                  {range(-20, 19.75, 0.25).map(el => {
+                    if (el !== "0.00") {
+                      return <option>{el}</option>
+                    }
+                    return <option selected>{el}</option>
+                  })}
+                </select>
+              </div>
+              <div className="rx-select">
+                <label htmlFor="cyl-left">CYL</label>
+                <select id="cyl-left">
+                  {range(-20, 19.75, 0.25).map(el => {
+                    if (el !== "0.00") {
+                      return <option>{el}</option>
+                    }
+                    return <option selected>{el}</option>
+                  })}
+                </select>
+              </div>
+              <div className="rx-select">
+                <label htmlFor="axis-left">Axis</label>
+                <select id="axis-left">
+                  <option selected disabled>
+                    &nbsp;
+                  </option>
+                  {range(1, 180, 1).map(el => (
+                    <option value={el}>{el}</option>
+                  ))}
+                </select>
+              </div>
+              <div className="rx-select">
+                <label htmlFor="add-left">Add</label>
+                <select id="add-left">
+                  <option selected disabled>
+                    &nbsp;
+                  </option>
+                  {range(0, 3.5, 0.25).map(el => (
+                    <option value={el}>{el}</option>
+                  ))}
+                </select>
+              </div>
+            </div>
+          </div>
+          <div className="rx-box">
+            <div className="rx-col">
+              <div className="rx-select">
+                <label htmlFor="add-left">Add</label>
+                <select id="add-left">
+                  <option selected disabled>
+                    &nbsp;
+                  </option>
+                  {range(0, 3.5, 0.25).map(el => (
+                    <option value={el}>{el}</option>
+                  ))}
+                </select>
+              </div>
+            </div>
+            <div className="rx-col">
+              <div className="rx-select">
+                <label htmlFor="add-left">Add</label>
+                <select id="add-left">
+                  <option selected disabled>
+                    &nbsp;
+                  </option>
+                  {range(0, 3.5, 0.25).map(el => (
+                    <option value={el}>{el}</option>
+                  ))}
+                </select>
+              </div>
+            </div>
+          </div>
+          <div className="rx-prism">
+            <p>
+              Need prism corection? Email <span>info@tresnoir.com</span> or call{" "}
+              <span>714-656-4796</span>
+            </p>
+          </div>
+        </div>
+      ) : null}
       <div className="row">
         {currentStep === 1 ? (
           <Link className="button" to={productUrl}>
@@ -280,32 +467,6 @@ const Form = ({
           CONTINUE
         </button>
       </div>
-      {currentStep === 1 && isRxAble ? (
-        <div className="rx-box">
-          <div className="rx-selection">
-            <p>Right Eye (OD)</p>
-            <label htmlFor="sph-right">SPH</label>
-            <select id="sph-right">
-              <option value="test">Test</option>
-            </select>
-            <label htmlFor="cyl-right">CYL</label>
-            <select id="cyl-right">
-              <option value="test">Test</option>
-            </select>
-            <label htmlFor="axis-right">Axis</label>
-            <select id="axis-right">
-              <option value="test">Test</option>
-            </select>
-          </div>
-          <div className="rx-selection">
-            <p>Left Eye (OS)</p>
-            <label htmlFor="right-eye">SPH</label>
-            <select id="right-eye">
-              <option value="test">Test</option>
-            </select>
-          </div>
-        </div>
-      ) : null}
     </Component>
   )
 }
