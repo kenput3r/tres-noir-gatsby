@@ -298,22 +298,9 @@ const Form = ({
       [`step${currentStep}`]: variant,
     })
   }
-
   const handleRx = evt => {
-    const key = evt.target.id.split("-")
-    const option = key[0]
-    const direction = key[1]
-    const tp = direction + "_" + option
-    const val = evt.target.value
-    console.log("tp", tp)
-    dispatch({ type: tp, payload: val })
-    console.log(direction, option, val)
+    dispatch({ type: evt.target.id, payload: evt.target.value })
   }
-  // const handleSteps = () => {}
-  /* tests */
-  // useEffect(() => {
-  //   console.log(selectedVariants)
-  // }, [selectedVariants])
   const range = (start: number, end: number, step: number): string[] => {
     const arr: string[] = []
     const format: number = step % 1 === 0 ? 0 : 2
@@ -415,8 +402,8 @@ const Form = ({
             <div className="rx-col">
               <p>Right Eye (OD)</p>
               <div className="rx-select">
-                <label htmlFor="sph-right">SPH</label>
-                <select id="sph-right" onChange={evt => handleRx(evt)}>
+                <label htmlFor="right-sph">SPH</label>
+                <select id="right-sph" onChange={evt => handleRx(evt)}>
                   {range(-20, 19.75, 0.25).map(el => {
                     if (el !== "0.00") {
                       return <option>{el}</option>
@@ -426,8 +413,8 @@ const Form = ({
                 </select>
               </div>
               <div className="rx-select">
-                <label htmlFor="cyl-right">CYL</label>
-                <select id="cyl-right" onChange={evt => handleRx(evt)}>
+                <label htmlFor="right-cyl">CYL</label>
+                <select id="right-cyl" onChange={evt => handleRx(evt)}>
                   {range(-20, 19.75, 0.25).map(el => {
                     if (el !== "0.00") {
                       return <option>{el}</option>
@@ -437,8 +424,8 @@ const Form = ({
                 </select>
               </div>
               <div className="rx-select">
-                <label htmlFor="axis-right">Axis</label>
-                <select id="axis-right" onChange={evt => handleRx(evt)}>
+                <label htmlFor="right-axis">Axis</label>
+                <select id="right-axis" onChange={evt => handleRx(evt)}>
                   <option selected disabled>
                     &nbsp;
                   </option>
@@ -448,8 +435,8 @@ const Form = ({
                 </select>
               </div>
               <div className="rx-select">
-                <label htmlFor="add-right">Add</label>
-                <select id="add-right" onChange={evt => handleRx(evt)}>
+                <label htmlFor="right-add">Add</label>
+                <select id="right-add" onChange={evt => handleRx(evt)}>
                   <option selected disabled>
                     &nbsp;
                   </option>
@@ -462,8 +449,8 @@ const Form = ({
             <div className="rx-col">
               <p>Left Eye (OS)</p>
               <div className="rx-select">
-                <label htmlFor="sph-left">SPH</label>
-                <select id="sph-left" onChange={evt => handleRx(evt)}>
+                <label htmlFor="left-sph">SPH</label>
+                <select id="left-sph" onChange={evt => handleRx(evt)}>
                   {range(-20, 19.75, 0.25).map(el => {
                     if (el !== "0.00") {
                       return <option>{el}</option>
@@ -473,8 +460,8 @@ const Form = ({
                 </select>
               </div>
               <div className="rx-select">
-                <label htmlFor="cyl-left">CYL</label>
-                <select id="cyl-left" onChange={evt => handleRx(evt)}>
+                <label htmlFor="left-cyl">CYL</label>
+                <select id="left-cyl" onChange={evt => handleRx(evt)}>
                   {range(-20, 19.75, 0.25).map(el => {
                     if (el !== "0.00") {
                       return <option>{el}</option>
@@ -484,8 +471,8 @@ const Form = ({
                 </select>
               </div>
               <div className="rx-select">
-                <label htmlFor="axis-left">Axis</label>
-                <select id="axis-left" onChange={evt => handleRx(evt)}>
+                <label htmlFor="left-axis">Axis</label>
+                <select id="left-axis" onChange={evt => handleRx(evt)}>
                   <option selected disabled>
                     &nbsp;
                   </option>
@@ -495,8 +482,8 @@ const Form = ({
                 </select>
               </div>
               <div className="rx-select">
-                <label htmlFor="add-left">Add</label>
-                <select id="add-left" onChange={evt => handleRx(evt)}>
+                <label htmlFor="left-add">Add</label>
+                <select id="left-add" onChange={evt => handleRx(evt)}>
                   <option selected disabled>
                     &nbsp;
                   </option>
@@ -511,7 +498,7 @@ const Form = ({
             <div className="rx-col">
               <div className="rx-select">
                 <div className="pd-box">
-                  <label htmlFor="pd-right">Pupillary Distance Right</label>
+                  <label htmlFor="right-pd">Pupillary Distance Right</label>
                   <div>
                     <FaQuestionCircle />
                     <span className="tooltip-text">
@@ -521,7 +508,7 @@ const Form = ({
                     </span>
                   </div>
                 </div>
-                <select id="pd-right">
+                <select id="right-pd" onChange={evt => handleRx(evt)}>
                   <option selected disabled>
                     &nbsp;
                   </option>
@@ -534,7 +521,7 @@ const Form = ({
             <div className="rx-col">
               <div className="rx-select">
                 <div className="pd-box">
-                  <label htmlFor="pd-left">Pupillary Distance Left</label>
+                  <label htmlFor="left-pd">Pupillary Distance Left</label>
                   <div>
                     <FaQuestionCircle />
                     <span className="tooltip-text">
@@ -544,7 +531,7 @@ const Form = ({
                     </span>
                   </div>
                 </div>
-                <select id="pd-left">
+                <select id="left-pd" onChange={evt => handleRx(evt)}>
                   <option selected disabled>
                     &nbsp;
                   </option>

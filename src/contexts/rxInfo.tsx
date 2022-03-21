@@ -18,7 +18,7 @@ interface rxType {
   left: rxDetails
 }
 
-const rxInit = {
+const rxInit: rxType = {
   right: {
     sph: "",
     cyl: "",
@@ -42,19 +42,18 @@ const defaultContext = {
 }
 
 const actionList = {
-  RIGHT_SPH: "right_sph",
-  RIGHT_CYL: "right_cyl",
-  RIGHT_AXIS: "right_axis",
-  RIGHT_ADD: "right_add",
-  RIGHT_PD: "right_pd",
-  LEFT_SPH: "left_sph",
-  LEFT_CYL: "left_cyl",
-  LEFT_AXIS: "left_axis",
-  LEFT_ADD: "left_add",
-  LEFT_PD: "left_pd",
+  RIGHT_SPH: "right-sph",
+  RIGHT_CYL: "right-cyl",
+  RIGHT_AXIS: "right-axis",
+  RIGHT_ADD: "right-add",
+  RIGHT_PD: "right-pd",
+  LEFT_SPH: "left-sph",
+  LEFT_CYL: "left-cyl",
+  LEFT_AXIS: "left-axis",
+  LEFT_ADD: "left-add",
+  LEFT_PD: "left-pd",
 }
 const reducer = (state, action) => {
-  console.log(action)
   switch (action.type) {
     case actionList.RIGHT_SPH:
       return { ...state, right: { ...state.right, sph: action.payload } }
