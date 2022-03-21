@@ -29,9 +29,19 @@ const Page = styled.div`
       }
       .wrapper {
         padding-bottom: 0;
-        padding 10px 0;
+        padding: 10px 0;
         .product-title {
           font-size: 2.5rem;
+          @media (max-width: 500px) {
+            font-size: 2rem;
+          }
+        }
+        .details-shop {
+          .grey-text {
+            @media (max-width: 500px) {
+              display: none;
+            }
+          }
         }
       }
       @media (max-width: 768px) {
@@ -42,15 +52,6 @@ const Page = styled.div`
         .wrapper {
           padding-left: 5px;
           padding-right: 5px;
-        }
-        .btn {
-          background-color: transparent;
-          box-shadow: none;
-          color: #000000;
-          padding: 0;
-          span {
-            display: none;
-          }
         }
       }
       @media (max-width: 320px) {

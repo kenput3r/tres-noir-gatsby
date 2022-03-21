@@ -2,6 +2,8 @@ import React, { useContext } from "react"
 import { Link } from "gatsby"
 import { GatsbyImage } from "gatsby-plugin-image"
 import styled from "styled-components"
+import { FaQuestionCircle } from "react-icons/fa"
+
 import {
   ShopifyCollection,
   ShopifyProduct,
@@ -119,6 +121,12 @@ const Component = styled.form`
       justify-content: space-between;
       margin: 25px 0;
       .rx-col {
+        :nth-of-type(odd) {
+          margin-right: 25px;
+          @media only screen and (max-width: 480px) {
+            margin-right: 10px;
+          }
+        }
         flex: 1;
         p {
           text-align: center;
@@ -134,6 +142,77 @@ const Component = styled.form`
             margin-left: 15px;
             border: none;
             width: 100%;
+          }
+        }
+      }
+    }
+    .rx-box:nth-of-type(2) {
+      .rx-col {
+        .rx-select {
+          .pd-box {
+            display: flex;
+            column-gap: 12px;
+            align-items: center;
+            @media screen and (max-width: 480px) {
+              column-gap: 6px;
+            }
+            div {
+              display: flex;
+              position: relative;
+              .tooltip-text {
+                visibility: hidden;
+                width: 100px;
+                background-color: #555;
+                color: #fff;
+                text-align: center;
+                border-radius: 6px;
+                padding: 5px 3px;
+                position: absolute;
+                z-index: 1;
+                bottom: 125%;
+                left: 50%;
+                margin-left: -50px;
+                opacity: 0;
+                transition: opacity 0.3s;
+                a {
+                  color: inherit;
+                  text-decoration: inherit;
+                }
+                ::after {
+                  content: "";
+                  position: absolute;
+                  top: 100%;
+                  left: 50%;
+                  margin-left: -5px;
+                  border-width: 5px;
+                  border-style: solid;
+                  border-color: #555 transparent transparent transparent;
+                }
+              }
+              :hover .tooltip-text {
+                visibility: visible;
+                opacity: 1;
+              }
+            }
+          }
+          flex-direction: column;
+          select {
+            margin: 0;
+          }
+        }
+        :nth-child(2) {
+          .rx-select {
+            .pd-box {
+              div {
+                .tooltip-text {
+                  margin-left: -80px;
+                  left: unset;
+                  ::after {
+                    left: 90%;
+                  }
+                }
+              }
+            }
           }
         }
       }
@@ -211,13 +290,24 @@ const Form = ({
   stepMap.set(2, "LENS TYPE")
   stepMap.set(3, "LENS MATERIAL")
   stepMap.set(4, "LENS COATING")
-  const { isRxAble, setRxAble } = useContext(RxInfoContext)
+  const { isRxAble, setRxAble, rxInfo, dispatch } = useContext(RxInfoContext)
   const handleChange = (variant: ShopifyVariant) => {
     setRxAble(variant.product?.title !== "Non-Prescription Lens")
     setSelectedVariants({
       ...selectedVariants,
       [`step${currentStep}`]: variant,
     })
+  }
+
+  const handleRx = evt => {
+    const key = evt.target.id.split("-")
+    const option = key[0]
+    const direction = key[1]
+    const tp = direction + "_" + option
+    const val = evt.target.value
+    console.log("tp", tp)
+    dispatch({ type: tp, payload: val })
+    console.log(direction, option, val)
   }
   // const handleSteps = () => {}
   /* tests */
@@ -326,7 +416,7 @@ const Form = ({
               <p>Right Eye (OD)</p>
               <div className="rx-select">
                 <label htmlFor="sph-right">SPH</label>
-                <select id="sph-right">
+                <select id="sph-right" onChange={evt => handleRx(evt)}>
                   {range(-20, 19.75, 0.25).map(el => {
                     if (el !== "0.00") {
                       return <option>{el}</option>
@@ -337,7 +427,7 @@ const Form = ({
               </div>
               <div className="rx-select">
                 <label htmlFor="cyl-right">CYL</label>
-                <select id="cyl-right">
+                <select id="cyl-right" onChange={evt => handleRx(evt)}>
                   {range(-20, 19.75, 0.25).map(el => {
                     if (el !== "0.00") {
                       return <option>{el}</option>
@@ -348,7 +438,7 @@ const Form = ({
               </div>
               <div className="rx-select">
                 <label htmlFor="axis-right">Axis</label>
-                <select id="axis-right">
+                <select id="axis-right" onChange={evt => handleRx(evt)}>
                   <option selected disabled>
                     &nbsp;
                   </option>
@@ -359,7 +449,7 @@ const Form = ({
               </div>
               <div className="rx-select">
                 <label htmlFor="add-right">Add</label>
-                <select id="add-right">
+                <select id="add-right" onChange={evt => handleRx(evt)}>
                   <option selected disabled>
                     &nbsp;
                   </option>
@@ -373,7 +463,7 @@ const Form = ({
               <p>Left Eye (OS)</p>
               <div className="rx-select">
                 <label htmlFor="sph-left">SPH</label>
-                <select id="sph-left">
+                <select id="sph-left" onChange={evt => handleRx(evt)}>
                   {range(-20, 19.75, 0.25).map(el => {
                     if (el !== "0.00") {
                       return <option>{el}</option>
@@ -384,7 +474,7 @@ const Form = ({
               </div>
               <div className="rx-select">
                 <label htmlFor="cyl-left">CYL</label>
-                <select id="cyl-left">
+                <select id="cyl-left" onChange={evt => handleRx(evt)}>
                   {range(-20, 19.75, 0.25).map(el => {
                     if (el !== "0.00") {
                       return <option>{el}</option>
@@ -395,7 +485,7 @@ const Form = ({
               </div>
               <div className="rx-select">
                 <label htmlFor="axis-left">Axis</label>
-                <select id="axis-left">
+                <select id="axis-left" onChange={evt => handleRx(evt)}>
                   <option selected disabled>
                     &nbsp;
                   </option>
@@ -406,7 +496,7 @@ const Form = ({
               </div>
               <div className="rx-select">
                 <label htmlFor="add-left">Add</label>
-                <select id="add-left">
+                <select id="add-left" onChange={evt => handleRx(evt)}>
                   <option selected disabled>
                     &nbsp;
                   </option>
@@ -420,8 +510,18 @@ const Form = ({
           <div className="rx-box">
             <div className="rx-col">
               <div className="rx-select">
-                <label htmlFor="add-left">Add</label>
-                <select id="add-left">
+                <div className="pd-box">
+                  <label htmlFor="pd-right">Pupillary Distance Right</label>
+                  <div>
+                    <FaQuestionCircle />
+                    <span className="tooltip-text">
+                      <a href="https://www.youtube.com/watch?v=OBuX8QEabZc">
+                        Need help measuring your pd? Click here!
+                      </a>
+                    </span>
+                  </div>
+                </div>
+                <select id="pd-right">
                   <option selected disabled>
                     &nbsp;
                   </option>
@@ -433,8 +533,18 @@ const Form = ({
             </div>
             <div className="rx-col">
               <div className="rx-select">
-                <label htmlFor="add-left">Add</label>
-                <select id="add-left">
+                <div className="pd-box">
+                  <label htmlFor="pd-left">Pupillary Distance Left</label>
+                  <div>
+                    <FaQuestionCircle />
+                    <span className="tooltip-text">
+                      <a href="https://www.youtube.com/watch?v=OBuX8QEabZc">
+                        Need help measuring your pd? Click here!
+                      </a>
+                    </span>
+                  </div>
+                </div>
+                <select id="pd-left">
                   <option selected disabled>
                     &nbsp;
                   </option>
