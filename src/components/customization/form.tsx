@@ -142,6 +142,7 @@ const Component = styled.form`
             margin-left: 15px;
             border: none;
             width: 100%;
+            background: none;
           }
         }
       }
@@ -154,7 +155,7 @@ const Component = styled.form`
             column-gap: 12px;
             align-items: center;
             @media screen and (max-width: 480px) {
-              column-gap: 6px;
+              column-gap: 5px;
             }
             div {
               display: flex;
@@ -309,7 +310,6 @@ const Form = ({
     }
     return arr
   }
-
   return (
     <Component>
       <div className="step-header">
@@ -403,18 +403,15 @@ const Form = ({
               <p>Right Eye (OD)</p>
               <div className="rx-select">
                 <label htmlFor="right-sph">SPH</label>
-                <select id="right-sph" onChange={evt => handleRx(evt)}>
+                <select
+                  id="right-sph"
+                  defaultValue={rxInfo.right.sph}
+                  onChange={evt => handleRx(evt)}
+                >
                   {range(-20, 19.75, 0.25).map(el => {
-                    if (el !== "0.00") {
-                      return (
-                        <React.Fragment key={`right-sph-${el}`}>
-                          <option>{el}</option>
-                        </React.Fragment>
-                      )
-                    }
                     return (
                       <React.Fragment key={`right-sph-${el}`}>
-                        <option selected>{el}</option>
+                        <option value={el}>{el}</option>
                       </React.Fragment>
                     )
                   })}
@@ -422,18 +419,15 @@ const Form = ({
               </div>
               <div className="rx-select">
                 <label htmlFor="right-cyl">CYL</label>
-                <select id="right-cyl" onChange={evt => handleRx(evt)}>
+                <select
+                  id="right-cyl"
+                  defaultValue={rxInfo.right.cyl}
+                  onChange={evt => handleRx(evt)}
+                >
                   {range(-20, 19.75, 0.25).map(el => {
-                    if (el !== "0.00") {
-                      return (
-                        <React.Fragment key={`right-cyl-${el}`}>
-                          <option>{el}</option>
-                        </React.Fragment>
-                      )
-                    }
                     return (
                       <React.Fragment key={`right-cyl-${el}`}>
-                        <option selected>{el}</option>
+                        <option value={el}>{el}</option>
                       </React.Fragment>
                     )
                   })}
@@ -441,28 +435,36 @@ const Form = ({
               </div>
               <div className="rx-select">
                 <label htmlFor="right-axis">Axis</label>
-                <select id="right-axis" onChange={evt => handleRx(evt)}>
-                  <option selected disabled>
-                    &nbsp;
-                  </option>
-                  {range(1, 180, 1).map(el => (
-                    <React.Fragment key={`right-axis-${el}`}>
-                      <option value={el}>{el}</option>
-                    </React.Fragment>
-                  ))}
+                <select
+                  id="right-axis"
+                  defaultValue={rxInfo.right.axis}
+                  onChange={evt => handleRx(evt)}
+                >
+                  <option>{""}</option>
+                  {range(1, 180, 1).map(el => {
+                    return (
+                      <React.Fragment key={`right-axis-${el}`}>
+                        <option value={el}>{el}</option>
+                      </React.Fragment>
+                    )
+                  })}
                 </select>
               </div>
               <div className="rx-select">
                 <label htmlFor="right-add">Add</label>
-                <select id="right-add" onChange={evt => handleRx(evt)}>
-                  <option selected disabled>
-                    &nbsp;
-                  </option>
-                  {range(0, 3.5, 0.25).map(el => (
-                    <React.Fragment key={`right-add-${el}`}>
-                      <option value={el}>{el}</option>
-                    </React.Fragment>
-                  ))}
+                <select
+                  id="right-add"
+                  defaultValue={rxInfo.right.add}
+                  onChange={evt => handleRx(evt)}
+                >
+                  <option>{""}</option>
+                  {range(0, 3.5, 0.25).map(el => {
+                    return (
+                      <React.Fragment key={`right-add-${el}`}>
+                        <option value={el}>{el}</option>
+                      </React.Fragment>
+                    )
+                  })}
                 </select>
               </div>
             </div>
@@ -470,18 +472,15 @@ const Form = ({
               <p>Left Eye (OS)</p>
               <div className="rx-select">
                 <label htmlFor="left-sph">SPH</label>
-                <select id="left-sph" onChange={evt => handleRx(evt)}>
+                <select
+                  id="left-sph"
+                  defaultValue={rxInfo.left.sph}
+                  onChange={evt => handleRx(evt)}
+                >
                   {range(-20, 19.75, 0.25).map(el => {
-                    if (el !== "0.00") {
-                      return (
-                        <React.Fragment key={`left-sph-${el}`}>
-                          <option>{el}</option>
-                        </React.Fragment>
-                      )
-                    }
                     return (
                       <React.Fragment key={`left-sph-${el}`}>
-                        <option selected>{el}</option>
+                        <option value={el}>{el}</option>
                       </React.Fragment>
                     )
                   })}
@@ -489,18 +488,15 @@ const Form = ({
               </div>
               <div className="rx-select">
                 <label htmlFor="left-cyl">CYL</label>
-                <select id="left-cyl" onChange={evt => handleRx(evt)}>
+                <select
+                  id="left-cyl"
+                  defaultValue={rxInfo.left.cyl}
+                  onChange={evt => handleRx(evt)}
+                >
                   {range(-20, 19.75, 0.25).map(el => {
-                    if (el !== "0.00") {
-                      return (
-                        <React.Fragment key={`left-sph-${el}`}>
-                          <option>{el}</option>
-                        </React.Fragment>
-                      )
-                    }
                     return (
-                      <React.Fragment key={`left-cyl-${el}`}>
-                        <option selected>{el}</option>
+                      <React.Fragment key={`left-sph-${el}`}>
+                        <option value={el}>{el}</option>
                       </React.Fragment>
                     )
                   })}
@@ -508,10 +504,12 @@ const Form = ({
               </div>
               <div className="rx-select">
                 <label htmlFor="left-axis">Axis</label>
-                <select id="left-axis" onChange={evt => handleRx(evt)}>
-                  <option selected disabled>
-                    &nbsp;
-                  </option>
+                <select
+                  id="left-axis"
+                  defaultValue={rxInfo.left.axis}
+                  onChange={evt => handleRx(evt)}
+                >
+                  <option>{""}</option>
                   {range(1, 180, 1).map(el => (
                     <React.Fragment key={`left-axis-${el}`}>
                       <option value={el}>{el}</option>
@@ -521,10 +519,12 @@ const Form = ({
               </div>
               <div className="rx-select">
                 <label htmlFor="left-add">Add</label>
-                <select id="left-add" onChange={evt => handleRx(evt)}>
-                  <option selected disabled>
-                    &nbsp;
-                  </option>
+                <select
+                  id="left-add"
+                  defaultValue={rxInfo.left.add}
+                  onChange={evt => handleRx(evt)}
+                >
+                  <option>{""}</option>
                   {range(0, 3.5, 0.25).map(el => (
                     <React.Fragment key={`left-add-${el}`}>
                       <option value={el}>{el}</option>
@@ -548,15 +548,19 @@ const Form = ({
                     </span>
                   </div>
                 </div>
-                <select id="right-pd" onChange={evt => handleRx(evt)}>
-                  <option selected disabled>
-                    &nbsp;
-                  </option>
-                  {range(0, 3.5, 0.25).map(el => (
-                    <React.Fragment key={`right-pd-${el}`}>
-                      <option value={el}>{el}</option>
-                    </React.Fragment>
-                  ))}
+                <select
+                  id="right-pd"
+                  defaultValue={rxInfo.right.pd}
+                  onChange={evt => handleRx(evt)}
+                >
+                  <option>{""}</option>
+                  {range(46, 80, 1).map(el => {
+                    return (
+                      <React.Fragment key={`right-pd-${el}`}>
+                        <option value={el}>{el}</option>
+                      </React.Fragment>
+                    )
+                  })}
                 </select>
               </div>
             </div>
@@ -573,15 +577,18 @@ const Form = ({
                     </span>
                   </div>
                 </div>
-                <select id="left-pd" onChange={evt => handleRx(evt)}>
-                  <option selected disabled>
-                    &nbsp;
-                  </option>
-                  {range(0, 3.5, 0.25).map(el => (
-                    <React.Fragment key={`left-pd-${el}`}>
-                      <option value={el}>{el}</option>
-                    </React.Fragment>
-                  ))}
+                <select
+                  id="left-pd"
+                  defaultValue={rxInfo.left.pd}
+                  onChange={evt => handleRx(evt)}
+                >
+                  {range(46, 80, 1).map(el => {
+                    return (
+                      <React.Fragment key={`left-pd-${el}`}>
+                        <option value={el}>{el}</option>
+                      </React.Fragment>
+                    )
+                  })}
                 </select>
               </div>
             </div>

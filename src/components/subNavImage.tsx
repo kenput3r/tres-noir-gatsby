@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react"
 import { Link } from "gatsby"
-import { StaticImage } from "gatsby-plugin-image"
 import styled from "styled-components"
+import { GatsbyImage as Img, IGatsbyImageData } from "gatsby-plugin-image"
 
 const Component = styled.div`
   .triangle {
@@ -57,6 +57,10 @@ interface Item {
   id: string
   url: string | null
   name: string
+  image: {
+    gatsbyImageData: IGatsbyImageData
+    title: string
+  }
   subListItems: [Item] | null
 }
 
@@ -83,11 +87,9 @@ const SubNavImage = ({ subListItems }) => {
           {subListItems.map((_item: Item) => (
             <Link key={_item.id} to={_item.url ? _item.url : "/"}>
               <div className="nav-item-img">
-                <StaticImage
-                  src="../images/example-menu-item-mens.jpg"
-                  alt="Tres Noir"
-                  placeholder="tracedSVG"
-                  layout="constrained"
+                <Img
+                  image={_item.image.gatsbyImageData}
+                  alt={_item.image.title}
                 />
                 <span className="name">{_item.name}</span>
               </div>

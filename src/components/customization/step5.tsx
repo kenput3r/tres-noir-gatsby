@@ -131,6 +131,8 @@ const Step5 = (props: {
       },
     ]
     addProductsToCart(items)
+    // attach rxInfo to main product
+    // reset context
     alert("ADDED TO CART")
   }
 

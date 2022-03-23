@@ -20,18 +20,18 @@ interface rxType {
 
 const rxInit: rxType = {
   right: {
-    sph: "",
-    cyl: "",
+    sph: "0.00",
+    cyl: "0.00",
     axis: "",
     add: "",
-    pd: "",
+    pd: "63",
   },
   left: {
-    sph: "",
-    cyl: "",
+    sph: "0.00",
+    cyl: "0.00",
     axis: "",
     add: "",
-    pd: "",
+    pd: "63",
   },
 }
 
