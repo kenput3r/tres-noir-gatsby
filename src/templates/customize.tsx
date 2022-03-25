@@ -80,9 +80,9 @@ const Customize = ({
     shopifyProduct.variants[0].price
   )
   const [currentImage, setCurrentImage] = useState({
-    data: variant?.contentful && variant.contentful.customizations.clear.data,
+    data: variant?.contentful && variant.contentful.customizations?.clear.data,
     altText:
-      variant?.contentful && variant.contentful.customizations.clear.title,
+      variant?.contentful && variant.contentful.customizations?.clear.title,
   })
   const previewRef = useRef<HTMLDivElement>(null)
 

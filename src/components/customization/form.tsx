@@ -310,6 +310,23 @@ const Form = ({
     }
     return arr
   }
+  const handleSteps = (num: number) => {
+    if (currentStep !== 1 || !isRxAble) {
+      setCurrentStep(currentStep + num)
+      return
+    }
+    if (rxInfo.right.sph !== "0.00" || rxInfo.left.sph !== "0.00") {
+      // if (rxInfo.right.cyl !== "0.00" && rxInfo.right.axis === "") {
+      //   console.log("please enter right axis")
+      // }
+      // if (rxInfo.left.cyl !== "0.00" && rxInfo.left.axis === "") {
+      //   console.log("please enter left axis")
+      // }
+      setCurrentStep(currentStep + num)
+    }
+  }
+  // when doing validation,
+  // if a cyl value is included, it must have an Axis value
   return (
     <Component>
       <div className="step-header">
@@ -553,7 +570,6 @@ const Form = ({
                   defaultValue={rxInfo.right.pd}
                   onChange={evt => handleRx(evt)}
                 >
-                  <option>{""}</option>
                   {range(46, 80, 1).map(el => {
                     return (
                       <React.Fragment key={`right-pd-${el}`}>
@@ -607,11 +623,11 @@ const Form = ({
             GO BACK
           </Link>
         ) : (
-          <button type="button" onClick={() => setCurrentStep(currentStep - 1)}>
+          <button type="button" onClick={() => handleSteps(-1)}>
             GO BACK
           </button>
         )}
-        <button type="button" onClick={() => setCurrentStep(currentStep + 1)}>
+        <button type="button" onClick={() => handleSteps(1)}>
           CONTINUE
         </button>
       </div>

@@ -294,10 +294,19 @@ const ProductCustomizable = ({
                           : "false"
                       }
                     >
-                      <Img
-                        image={variant.colorImage.data}
-                        alt={variant.colorImage.title}
-                      />
+                      {variant.colorImage ? (
+                        <Img
+                          image={variant.colorImage.data}
+                          alt={variant.colorImage.title}
+                        />
+                      ) : (
+                        <StaticImage
+                          src="../images/empty-color.jpg"
+                          alt="Tres Noir"
+                          placeholder="tracedSVG"
+                          layout="constrained"
+                        />
+                      )}
                     </button>
                   ))}
               </div>

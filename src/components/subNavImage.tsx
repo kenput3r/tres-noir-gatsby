@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from "react"
 import { Link } from "gatsby"
 import styled from "styled-components"
-import { GatsbyImage as Img, IGatsbyImageData } from "gatsby-plugin-image"
+import {
+  GatsbyImage as Img,
+  IGatsbyImageData,
+  StaticImage,
+} from "gatsby-plugin-image"
 
 const Component = styled.div`
   .triangle {
@@ -87,10 +91,19 @@ const SubNavImage = ({ subListItems }) => {
           {subListItems.map((_item: Item) => (
             <Link key={_item.id} to={_item.url ? _item.url : "/"}>
               <div className="nav-item-img">
-                <Img
-                  image={_item.image.gatsbyImageData}
-                  alt={_item.image.title}
-                />
+                {_item.image ? (
+                  <Img
+                    image={_item.image.gatsbyImageData}
+                    alt={_item.image.title}
+                  />
+                ) : (
+                  <StaticImage
+                    src="../images/example-menu-item-mens.jpg"
+                    alt="Tres Noir"
+                    placeholder="tracedSVG"
+                    layout="constrained"
+                  />
+                )}
                 <span className="name">{_item.name}</span>
               </div>
             </Link>
