@@ -1,4 +1,4 @@
-import React, { useContext } from "react"
+import React, { useContext, useRef, ChangeEvent, useState } from "react"
 import { Link } from "gatsby"
 import { GatsbyImage } from "gatsby-plugin-image"
 import styled from "styled-components"
@@ -227,6 +227,13 @@ const Component = styled.form`
         }
       }
     }
+    .form-error {
+      display: none;
+      color: red;
+      p {
+        margin: 0;
+      }
+    }
   }
   ul.variants {
     display: flex;
@@ -272,6 +279,13 @@ const Component = styled.form`
       }
     }
   }
+  .select-error {
+    border: 1px solid red;
+    outline: 2px solid red;
+  }
+  .hide {
+    display: none;
+  }
 `
 
 const Form = ({
@@ -292,16 +306,33 @@ const Form = ({
   stepMap.set(3, "LENS MATERIAL")
   stepMap.set(4, "LENS COATING")
   const { isRxAble, setRxAble, rxInfo, dispatch } = useContext(RxInfoContext)
+  const [errorStates, setErrorStates] = useState<HTMLElement[]>([])
+  const errorRefs = useRef({})
   const handleChange = (variant: ShopifyVariant) => {
     setRxAble(variant.product?.title !== "Non-Prescription Lens")
+    //if (!isRxAble) messageRef.current.style.display = "none"
     setSelectedVariants({
       ...selectedVariants,
       [`step${currentStep}`]: variant,
     })
   }
-  const handleRx = evt => {
+
+  const handleRx = (evt: ChangeEvent<HTMLSelectElement>) => {
+    clearErrors(evt)
     dispatch({ type: evt.target.id, payload: evt.target.value })
   }
+
+  const messageRef = useRef<HTMLDivElement>(null)
+
+  const clearErrors = (evt: ChangeEvent<HTMLSelectElement>) => {
+    console.log(messageRef[""])
+    evt.target.closest(".rx-select")?.classList.remove("select-error")
+    document.querySelectorAll(`.${evt.target.id}-error`).forEach(x => {
+      x.remove()
+    })
+    evt.target.closest(".rx-select")?.classList.remove("select-error")
+  }
+
   const range = (start: number, end: number, step: number): string[] => {
     const arr: string[] = []
     const format: number = step % 1 === 0 ? 0 : 2
@@ -310,20 +341,28 @@ const Form = ({
     }
     return arr
   }
+  // modify function to append error messages
+  const verifyForm = () => {
+    if (rxInfo.right.sph === "0.00") {
+      errorRefs.current["select-right-sph"].classList.add("select-error")
+    }
+    if (rxInfo.left.sph === "0.00") {
+      errorRefs.current["select-left-sph"].classList.add("select-error")
+    }
+    if (rxInfo.right.cyl !== "0.00" && rxInfo.right.axis === "") {
+      errorRefs.current["select-right-axis"].classList.add("select-error")
+    }
+    if (rxInfo.left.cyl !== "0.00" && rxInfo.left.axis === "") {
+      errorRefs.current["select-left-axis"].classList.add("select-error")
+    }
+  }
   const handleSteps = (num: number) => {
+    console.log(errorRefs)
     if (currentStep !== 1 || !isRxAble) {
       setCurrentStep(currentStep + num)
       return
     }
-    if (rxInfo.right.sph !== "0.00" || rxInfo.left.sph !== "0.00") {
-      // if (rxInfo.right.cyl !== "0.00" && rxInfo.right.axis === "") {
-      //   console.log("please enter right axis")
-      // }
-      // if (rxInfo.left.cyl !== "0.00" && rxInfo.left.axis === "") {
-      //   console.log("please enter left axis")
-      // }
-      setCurrentStep(currentStep + num)
-    }
+    verifyForm()
   }
   // when doing validation,
   // if a cyl value is included, it must have an Axis value
@@ -418,7 +457,12 @@ const Form = ({
           <div className="rx-box">
             <div className="rx-col">
               <p>Right Eye (OD)</p>
-              <div className="rx-select">
+              <div
+                className="rx-select"
+                ref={el => {
+                  errorRefs.current["select-right-sph"] = el
+                }}
+              >
                 <label htmlFor="right-sph">SPH</label>
                 <select
                   id="right-sph"
@@ -450,7 +494,12 @@ const Form = ({
                   })}
                 </select>
               </div>
-              <div className="rx-select">
+              <div
+                className="rx-select"
+                ref={el => {
+                  errorRefs.current["select-right-axis"] = el
+                }}
+              >
                 <label htmlFor="right-axis">Axis</label>
                 <select
                   id="right-axis"
@@ -487,7 +536,12 @@ const Form = ({
             </div>
             <div className="rx-col">
               <p>Left Eye (OS)</p>
-              <div className="rx-select">
+              <div
+                className="rx-select"
+                ref={el => {
+                  errorRefs.current["select-left-sph"] = el
+                }}
+              >
                 <label htmlFor="left-sph">SPH</label>
                 <select
                   id="left-sph"
@@ -519,7 +573,12 @@ const Form = ({
                   })}
                 </select>
               </div>
-              <div className="rx-select">
+              <div
+                className="rx-select"
+                ref={el => {
+                  errorRefs.current["select-left-axis"] = el
+                }}
+              >
                 <label htmlFor="left-axis">Axis</label>
                 <select
                   id="left-axis"
@@ -615,6 +674,7 @@ const Form = ({
               <span>714-656-4796</span>
             </p>
           </div>
+          <div className="form-error" ref={messageRef}></div>
         </div>
       ) : null}
       <div className="row">

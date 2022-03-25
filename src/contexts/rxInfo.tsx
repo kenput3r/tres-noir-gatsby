@@ -4,6 +4,7 @@ import React, {
   useState,
   useMemo,
   useReducer,
+  Dispatch,
 } from "react"
 
 interface rxDetails {
@@ -38,6 +39,7 @@ const rxInit: rxType = {
 const defaultContext = {
   isRxAble: false,
   rxInfo: rxInit,
+  dispatch: Dispatch => {},
   setRxAble: (isRxAble: boolean) => {},
 }
 

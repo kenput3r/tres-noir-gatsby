@@ -12,9 +12,15 @@ export const changeImage = (
   switch (currentStep) {
     case 1:
       if (step1.product?.title === "Bifocal") {
+        const data = variant.contentful.customizations?.bifocal.data
+          ? variant.contentful.customizations?.bifocal.data
+          : variant.contentful.featuredImage.title
+        const title = variant.contentful.customizations?.bifocal.title
+          ? variant.contentful.customizations?.bifocal.title
+          : variant.contentful.featuredImage.title
         setCurrentImage({
-          data: variant.contentful.customizations?.bifocal.data,
-          altText: variant.contentful.customizations?.bifocal.title,
+          data: data,
+          altText: title,
         })
         // } else if (step1.product?.title === "Progressive") {
         //   setCurrentImage({
@@ -22,12 +28,15 @@ export const changeImage = (
         //     altText: variant.contentful.customizations.progressive.title,
         //   })
       } else {
-        if (!variant.contentful.customizations?.clear.data) {
-          console.log('set')
-        }
+        const data = variant.contentful.customizations?.clear.data
+          ? variant.contentful.customizations?.clear.data
+          : variant.contentful.featuredImage.title
+        const title = variant.contentful.customizations?.clear.title
+          ? variant.contentful.customizations?.clear.title
+          : variant.contentful.featuredImage.title
         setCurrentImage({
-          data: variant.contentful.customizations?.clear.data,
-          altText: variant.contentful.customizations?.clear.title,
+          data: data,
+          altText: title,
         })
       }
       break
@@ -35,52 +44,88 @@ export const changeImage = (
       if (step1.product?.title === "Bifocal" && step2.product?.title) {
         switch (step2.product.title) {
           case "Clear": {
+            const data = variant.contentful.customizations?.bifocal.data
+              ? variant.contentful.customizations?.bifocal.data
+              : variant.contentful.featuredImage.data
+            const title = variant.contentful.customizations?.bifocal.title
+              ? variant.contentful.customizations?.bifocal.title
+              : variant.contentful.featuredImage.title
             setCurrentImage({
-              data: variant.contentful.customizations?.bifocal.data,
-              altText: variant.contentful.customizations?.bifocal.title,
+              data: data,
+              altText: title,
             })
             break
           }
           case "Blue Light Blocking": {
+            const data = variant.contentful.customizations?.bifocal.data
+              ? variant.contentful.customizations?.bifocal.data
+              : variant.contentful.featuredImage.data
+            const title = variant.contentful.customizations?.bifocal.title
+              ? variant.contentful.customizations?.bifocal.title
+              : variant.contentful.featuredImage.title
             setCurrentImage({
-              data: variant.contentful.customizations?.bifocal.data,
-              altText: variant.contentful.customizations?.bifocal.title,
+              data: data,
+              altText: title,
             })
             break
           }
           case "Sunglasses": {
             const variantTitle: string = selectedVariants.step2.title
             const property: string = `sunGlasses${variantTitle}LensesBifocal`
+            const data = variant.contentful.customizations?.clear.data
+              ? variant.contentful?.customizations[property].data
+              : variant.contentful.featuredImage.data
+            const title = variant.contentful.customizations?.clear.data
+              ? variant.contentful?.customizations[property].title
+              : variant.contentful.featuredImage.title
             setCurrentImage({
-              data: variant.contentful.customizations[property]?.data,
-              altText: variant.contentful.customizations[property]?.title,
+              data: data,
+              altText: title,
             })
             break
           }
           case "Transitions": {
             const variantTitle: string = selectedVariants.step2.title
             const property: string = `sunGlasses${variantTitle}LensesBifocal`
+            const data = variant.contentful.customizations?.clear.data
+              ? variant.contentful?.customizations[property].data
+              : variant.contentful.featuredImage.data
+            const title = variant.contentful.customizations?.clear.data
+              ? variant.contentful?.customizations[property].title
+              : variant.contentful.featuredImage.title
             setCurrentImage({
-              data: variant.contentful.customizations[property]?.data,
-              altText: variant.contentful.customizations[property]?.title,
+              data: data,
+              altText: title,
             })
             break
           }
           case "Polarized": {
             const variantTitle: string = selectedVariants.step2.title
             const property: string = `sunGlasses${variantTitle}LensesBifocal`
+            const data = variant.contentful.customizations?.clear.data
+              ? variant.contentful?.customizations[property].data
+              : variant.contentful.featuredImage.data
+            const title = variant.contentful.customizations?.clear.data
+              ? variant.contentful?.customizations[property].title
+              : variant.contentful.featuredImage.title
             setCurrentImage({
-              data: variant.contentful.customizations[property]?.data,
-              altText: variant.contentful.customizations[property]?.title,
+              data: data,
+              altText: title,
             })
             break
           }
           case "Gradient Tint": {
             const variantTitle: string = selectedVariants.step2.title
             const property = `bifocalGradientTint${variantTitle}Lenses`
+            const data = variant.contentful.customizations?.clear.data
+              ? variant.contentful?.customizations[property].data
+              : variant.contentful.featuredImage.data
+            const title = variant.contentful.customizations?.clear.data
+              ? variant.contentful?.customizations[property].title
+              : variant.contentful.featuredImage.title
             setCurrentImage({
-              data: variant.contentful.customizations[property]?.data,
-              altText: variant.contentful.customizations[property]?.title,
+              data: data,
+              altText: title,
             })
             break
           }
@@ -112,29 +157,40 @@ export const changeImage = (
       } else {
         switch (step2.product.title) {
           case "Clear": {
-            const data = variant.contentful.customizations?.clear.data ? variant.contentful.customizations?.clear.data: variant.contentful.featuredImage.data
-            const title = variant.contentful.customizations?.clear.data ? variant.contentful.customizations?.clear.title: variant.contentful.featuredImage.title
+            const data = variant.contentful.customizations?.clear.data
+              ? variant.contentful.customizations?.clear.data
+              : variant.contentful.featuredImage.data
+            const title = variant.contentful.customizations?.clear.data
+              ? variant.contentful.customizations?.clear.title
+              : variant.contentful.featuredImage.title
             setCurrentImage({
               data: data,
-              altText: title
+              altText: title,
             })
             break
           }
           case "Blue Light Blocking": {
-            const data = variant.contentful.customizations?.clear.data ? variant.contentful.customizations?.clear.data: variant.contentful.featuredImage.data
-            const title = variant.contentful.customizations?.clear.data ? variant.contentful.customizations?.clear.title: variant.contentful.featuredImage.title
+            const data = variant.contentful.customizations?.clear.data
+              ? variant.contentful.customizations?.clear.data
+              : variant.contentful.featuredImage.data
+            const title = variant.contentful.customizations?.clear.data
+              ? variant.contentful.customizations?.clear.title
+              : variant.contentful.featuredImage.title
             setCurrentImage({
               data: data,
-              altText: title
+              altText: title,
             })
             break
           }
           case "Sunglasses": {
             const variantTitle: string = selectedVariants.step2.title
             const property: string = `sunGlasses${variantTitle}Lenses`
-            console.log(variant)
-            const data = variant.contentful.customizations?.clear.data ? variant.contentful?.customizations[property].data: variant.contentful.featuredImage.data
-            const title = variant.contentful.customizations?.clear.data ? variant.contentful?.customizations[property].title: variant.contentful.featuredImage.title
+            const data = variant.contentful.customizations?.clear.data
+              ? variant.contentful?.customizations[property].data
+              : variant.contentful.featuredImage.data
+            const title = variant.contentful.customizations?.clear.data
+              ? variant.contentful?.customizations[property].title
+              : variant.contentful.featuredImage.title
             setCurrentImage({
               data: data,
               altText: title,
@@ -144,8 +200,12 @@ export const changeImage = (
           case "Transitions": {
             const variantTitle: string = selectedVariants.step2.title
             const property: string = `sunGlasses${variantTitle}Lenses`
-            const data = variant.contentful.customizations?.clear.data ? variant.contentful?.customizations[property].data: variant.contentful.featuredImage.data
-            const title = variant.contentful.customizations?.clear.data ? variant.contentful?.customizations[property].title: variant.contentful.featuredImage.title
+            const data = variant.contentful.customizations?.clear.data
+              ? variant.contentful?.customizations[property].data
+              : variant.contentful.featuredImage.data
+            const title = variant.contentful.customizations?.clear.data
+              ? variant.contentful?.customizations[property].title
+              : variant.contentful.featuredImage.title
             setCurrentImage({
               data: data,
               altText: title,
@@ -155,8 +215,12 @@ export const changeImage = (
           case "Polarized": {
             const variantTitle: string = selectedVariants.step2.title
             const property: string = `sunGlasses${variantTitle}Lenses`
-            const data = variant.contentful.customizations?.clear.data ? variant.contentful?.customizations[property].data: variant.contentful.featuredImage.data
-            const title = variant.contentful.customizations?.clear.data ? variant.contentful?.customizations[property].title: variant.contentful.featuredImage.title
+            const data = variant.contentful.customizations?.clear.data
+              ? variant.contentful?.customizations[property].data
+              : variant.contentful.featuredImage.data
+            const title = variant.contentful.customizations?.clear.data
+              ? variant.contentful?.customizations[property].title
+              : variant.contentful.featuredImage.title
             setCurrentImage({
               data: data,
               altText: title,
@@ -166,8 +230,12 @@ export const changeImage = (
           case "Gradient Tint": {
             const variantTitle: string = selectedVariants.step2.title
             const property = `gradientTint${variantTitle}Lenses`
-            const data = variant.contentful.customizations?.clear.data ? variant.contentful?.customizations[property].data: variant.contentful.featuredImage.data
-            const title = variant.contentful.customizations?.clear.data ? variant.contentful?.customizations[property].title: variant.contentful.featuredImage.title
+            const data = variant.contentful.customizations?.clear.data
+              ? variant.contentful?.customizations[property].data
+              : variant.contentful.featuredImage.data
+            const title = variant.contentful.customizations?.clear.data
+              ? variant.contentful?.customizations[property].title
+              : variant.contentful.featuredImage.title
             setCurrentImage({
               data: data,
               altText: title,
@@ -177,7 +245,7 @@ export const changeImage = (
           case "Vantage": {
             setCurrentImage({
               data: variant.contentful.customizations
-                .transitionsXtractivePolarized?.data,
+                ?.transitionsXtractivePolarized.data,
               altText:
                 variant.contentful.customizations?.transitionsXtractivePolarized
                   .title,
