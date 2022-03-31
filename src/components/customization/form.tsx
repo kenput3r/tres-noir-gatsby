@@ -228,10 +228,9 @@ const Component = styled.form`
       }
     }
     .form-error {
-      display: none;
       color: red;
-      p {
-        margin: 0;
+      li:first-of-type {
+        margin-top: 10px;
       }
     }
   }
@@ -241,13 +240,13 @@ const Component = styled.form`
     flex-wrap: wrap;
     flex-basis: 100%;
     margin: 0 auto;
-    padding: 10px 10%;
+    padding: 10px 5%;
     li {
       display: flex;
       flex-direction: row;
       height: 30px;
       margin-bottom: 5px;
-      padding-right: 10px;
+      padding-right: 15px;
       position: relative;
       width: 50%;
       @media only screen and (max-width: 768px) {
@@ -270,6 +269,7 @@ const Component = styled.form`
         line-height: 0.5;
       }
       .checkmark {
+        flex-shrink: 0;
         @media only screen and (min-width: 1024px) {
           margin-right: 40px;
         }
@@ -306,33 +306,34 @@ const Form = ({
   stepMap.set(3, "LENS MATERIAL")
   stepMap.set(4, "LENS COATING")
   const { isRxAble, setRxAble, rxInfo, dispatch } = useContext(RxInfoContext)
-  const [errorStates, setErrorStates] = useState<HTMLElement[]>([])
+  const messageRef = useRef<HTMLElement>()
+  const [isFormValid, setIsFormValid] = useState(true)
   const errorRefs = useRef({})
   const handleChange = (variant: ShopifyVariant) => {
     setRxAble(variant.product?.title !== "Non-Prescription Lens")
-    //if (!isRxAble) messageRef.current.style.display = "none"
     setSelectedVariants({
       ...selectedVariants,
       [`step${currentStep}`]: variant,
     })
   }
-
   const handleRx = (evt: ChangeEvent<HTMLSelectElement>) => {
     clearErrors(evt)
     dispatch({ type: evt.target.id, payload: evt.target.value })
   }
-
-  const messageRef = useRef<HTMLDivElement>(null)
-
   const clearErrors = (evt: ChangeEvent<HTMLSelectElement>) => {
-    console.log(messageRef[""])
-    evt.target.closest(".rx-select")?.classList.remove("select-error")
-    document.querySelectorAll(`.${evt.target.id}-error`).forEach(x => {
-      x.remove()
-    })
-    evt.target.closest(".rx-select")?.classList.remove("select-error")
+    if (isFormValid === true || !messageRef.current) return
+    const generalErrors: string[] = ["right-sph", "right-cyl", "left-sph", "left-cyl"]
+    let id: string = evt.target.id
+    if (id.includes("axis")) {
+      evt.target.closest(".rx-select")?.classList.remove("select-error")
+    }
+    if (generalErrors.indexOf(id) > -1) {
+        let msg = messageRef.current.querySelector("#error-general")
+        if (msg) msg.remove()
+    }
+    let msg = messageRef.current.querySelector(`#error-${id}`)
+    if (msg) msg.remove()
   }
-
   const range = (start: number, end: number, step: number): string[] => {
     const arr: string[] = []
     const format: number = step % 1 === 0 ? 0 : 2
@@ -341,31 +342,61 @@ const Form = ({
     }
     return arr
   }
-  // modify function to append error messages
-  const verifyForm = () => {
-    if (rxInfo.right.sph === "0.00") {
-      errorRefs.current["select-right-sph"].classList.add("select-error")
-    }
-    if (rxInfo.left.sph === "0.00") {
-      errorRefs.current["select-left-sph"].classList.add("select-error")
-    }
-    if (rxInfo.right.cyl !== "0.00" && rxInfo.right.axis === "") {
-      errorRefs.current["select-right-axis"].classList.add("select-error")
-    }
-    if (rxInfo.left.cyl !== "0.00" && rxInfo.left.axis === "") {
-      errorRefs.current["select-left-axis"].classList.add("select-error")
+  const removeChildNodes = (parent: HTMLElement) => {
+    while (parent.firstChild) {
+      parent.removeChild(parent.firstChild)
     }
   }
+  const verifyForm = () => {
+    let isValid = true
+    let messages: HTMLElement[] = []
+    if (messageRef.current) removeChildNodes(messageRef.current)
+    if (
+      rxInfo.right.sph === "0.00" &&
+      rxInfo.left.sph === "0.00" &&
+      rxInfo.right.cyl === "0.00" &&
+      rxInfo.left.cyl === "0.00"
+    ) {
+      let node = document.createElement("li")
+      node.textContent = "Please add prescription information or choose non-prescription"
+      node.setAttribute("id", "error-general")
+      messages.push(node)
+      isValid = false
+    }
+    if (rxInfo.right.cyl !== "0.00" && rxInfo.right.axis === "") {
+      let node = document.createElement("li")
+      node.textContent = "Please add an axis value for right eye"
+      node.setAttribute("id", "error-right-axis")
+      messages.push(node)
+      errorRefs.current["select-right-axis"].classList.add("select-error")
+      isValid = false
+    }
+    if (rxInfo.left.cyl !== "0.00" && rxInfo.left.axis === "") {
+      let node = document.createElement("li")
+      node.textContent = "Please add an axis value for left eye"
+      node.setAttribute("id", "error-left-axis")
+      messages.push(node)
+      errorRefs.current["select-left-axis"].classList.add("select-error")
+      isValid = false
+    }
+    if (!isValid && messageRef.current) {
+      for (let i = 0; i < messages.length; ++i) {
+        messageRef.current?.appendChild(messages[i])
+      }
+    }
+    setIsFormValid(isValid)
+    return isValid
+  }
   const handleSteps = (num: number) => {
-    console.log(errorRefs)
     if (currentStep !== 1 || !isRxAble) {
       setCurrentStep(currentStep + num)
       return
     }
-    verifyForm()
+    if (verifyForm()) {
+      setCurrentStep(currentStep + num)
+      return
+    }
   }
-  // when doing validation,
-  // if a cyl value is included, it must have an Axis value
   return (
     <Component>
       <div className="step-header">
@@ -469,7 +500,7 @@ const Form = ({
                   defaultValue={rxInfo.right.sph}
                   onChange={evt => handleRx(evt)}
                 >
-                  {range(-20, 19.75, 0.25).map(el => {
+                  {range(-20, 20, 0.25).map(el => {
                     return (
                       <React.Fragment key={`right-sph-${el}`}>
                         <option value={el}>{el}</option>
@@ -478,14 +509,19 @@ const Form = ({
                   })}
                 </select>
               </div>
-              <div className="rx-select">
+              <div
+                className="rx-select"
+                ref={el => {
+                  errorRefs.current["select-right-cyl"] = el
+                }}
+              >
                 <label htmlFor="right-cyl">CYL</label>
                 <select
                   id="right-cyl"
                   defaultValue={rxInfo.right.cyl}
                   onChange={evt => handleRx(evt)}
                 >
-                  {range(-20, 19.75, 0.25).map(el => {
+                  {range(-20, 20, 0.25).map(el => {
                     return (
                       <React.Fragment key={`right-cyl-${el}`}>
                         <option value={el}>{el}</option>
@@ -548,7 +584,7 @@ const Form = ({
                   defaultValue={rxInfo.left.sph}
                   onChange={evt => handleRx(evt)}
                 >
-                  {range(-20, 19.75, 0.25).map(el => {
+                  {range(-20, 20, 0.25).map(el => {
                     return (
                       <React.Fragment key={`left-sph-${el}`}>
                         <option value={el}>{el}</option>
@@ -557,14 +593,19 @@ const Form = ({
                   })}
                 </select>
               </div>
-              <div className="rx-select">
+              <div
+                className="rx-select"
+                ref={el => {
+                  errorRefs.current["select-left-cyl"] = el
+                }}
+              >
                 <label htmlFor="left-cyl">CYL</label>
                 <select
                   id="left-cyl"
                   defaultValue={rxInfo.left.cyl}
                   onChange={evt => handleRx(evt)}
                 >
-                  {range(-20, 19.75, 0.25).map(el => {
+                  {range(-20, 20, 0.25).map(el => {
                     return (
                       <React.Fragment key={`left-sph-${el}`}>
                         <option value={el}>{el}</option>
@@ -674,7 +715,7 @@ const Form = ({
               <span>714-656-4796</span>
             </p>
           </div>
-          <div className="form-error" ref={messageRef}></div>
+          <ul className="form-error" ref={messageRef}></ul>
         </div>
       ) : null}
       <div className="row">

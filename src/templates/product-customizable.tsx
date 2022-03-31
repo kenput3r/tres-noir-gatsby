@@ -301,7 +301,7 @@ const ProductCustomizable = ({
                         />
                       ) : (
                         <StaticImage
-                          src="../images/empty-color.jpg"
+                          src="../images/empty-color.png"
                           alt="Tres Noir"
                           placeholder="tracedSVG"
                           layout="constrained"

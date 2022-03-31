@@ -32,13 +32,13 @@ const Page = styled.div`
         padding: 10px 0;
         .product-title {
           font-size: 2.5rem;
-          @media (max-width: 500px) {
+          @media (max-width: 580px) {
             font-size: 2rem;
           }
         }
         .details-shop {
           .grey-text {
-            @media (max-width: 500px) {
+            @media (max-width: 580px) {
               display: none;
             }
           }
@@ -47,7 +47,7 @@ const Page = styled.div`
       @media (max-width: 768px) {
         font-size: 2.5rem;
       }
-      @media (max-width: 500px) {
+      @media (max-width: 580px) {
         font-size: 2rem;
         .wrapper {
           padding-left: 5px;
