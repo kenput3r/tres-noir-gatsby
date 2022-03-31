@@ -27,7 +27,6 @@ function SEO({ description, lang, meta, title }) {
 
   const metaDescription = description || site.siteMetadata.description
   const defaultTitle = site.siteMetadata?.title
-  console.log("p.env", process.env.GATSBY_ENVIRONMENT)
   return (
     <Helmet
       htmlAttributes={{
