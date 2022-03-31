@@ -3,6 +3,7 @@ import styled from "styled-components"
 import { GatsbyImage, StaticImage, IGatsbyImageData } from "gatsby-plugin-image"
 import { CustomizeContext } from "../../contexts/customize"
 import { CartContext } from "../../contexts/cart"
+import { RxInfoContext } from "../../contexts/rxInfo"
 
 const Component = styled.div`
   padding: 10px;
@@ -106,6 +107,7 @@ const Step5 = (props: {
     setSelectedVariants,
   } = useContext(CustomizeContext)
   const { addProductsToCart } = useContext(CartContext)
+  const { isRxAble, setRxAble, rxInfo, dispatch } = useContext(RxInfoContext)
   const handleAddToCart = () => {
     const { step1, step2, step3, step4 } = selectedVariants
     const items = [
@@ -131,6 +133,9 @@ const Step5 = (props: {
       },
     ]
     addProductsToCart(items)
+    // attach rxInfo to main product
+    // reset context
+
     alert("ADDED TO CART")
   }
 

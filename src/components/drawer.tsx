@@ -70,7 +70,7 @@ const Drawer = ({ isDrawerOpen, setIsDrawerOpen }: DrawerProps) => {
       <a href="#" role="button" onClick={() => setIsDrawerOpen(!isDrawerOpen)}>
         &times;
       </a>
-      {items.forEach((item: Item) => {
+      {items.map((item: Item) => {
         if (item.url && !item.subListItems) {
           return (
             <Link key={item.id} to={item.url}>

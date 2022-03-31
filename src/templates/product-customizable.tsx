@@ -110,11 +110,15 @@ const Page = styled.div`
     flex-direction: column;
     align-items: flex-end;
     font-family: var(--sub-heading-font);
+    div {
+      display: flex;
+      flex-direction: column;
+    }
     button,
     a {
       background-color: #000;
       color: #fff;
-      border-radius: 0;
+      border-radius: 0%;
       font-size: 1.5rem;
       font-weight: normal;
       line-height: 0.7;
@@ -123,16 +127,15 @@ const Page = styled.div`
       max-width: 100% !important;
       text-decoration: none;
       text-align: center;
-      -webkit-appearance: button;
+      -webkit-appearance: button-bevel;
     }
     p {
       color: var(--color-grey-dark);
       font-size: 1.5rem;
       text-align: center;
-      margin: 1rem 0;
+      margin: 12px 0;
       &.small {
         font-size: 1rem;
-        margin: 0 0;
       }
     }
   }
@@ -291,10 +294,19 @@ const ProductCustomizable = ({
                           : "false"
                       }
                     >
-                      <Img
-                        image={variant.colorImage.data}
-                        alt={variant.colorImage.title}
-                      />
+                      {variant.colorImage ? (
+                        <Img
+                          image={variant.colorImage.data}
+                          alt={variant.colorImage.title}
+                        />
+                      ) : (
+                        <StaticImage
+                          src="../images/empty-color.png"
+                          alt="Tres Noir"
+                          placeholder="tracedSVG"
+                          layout="constrained"
+                        />
+                      )}
                     </button>
                   ))}
               </div>
@@ -318,6 +330,7 @@ const ProductCustomizable = ({
                   </button>
                   <p>- OR -</p>
                   <Link
+                    className="customize-btn"
                     to={
                       contentfulProduct &&
                       `/products/${contentfulProduct.handle}/customize?variant=${selectedVariant.shopify.sku}`

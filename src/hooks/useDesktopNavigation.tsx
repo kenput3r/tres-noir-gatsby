@@ -8,10 +8,18 @@ export const useDesktopNavigation = () => {
           id
           name
           url
+          image {
+            gatsbyImageData
+            title
+          }
           subListItems {
             id
             name
             url
+            image {
+              gatsbyImageData
+              title
+            }
           }
         }
       }
