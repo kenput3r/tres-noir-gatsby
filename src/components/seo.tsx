@@ -27,7 +27,6 @@ function SEO({ description, lang, meta, title }) {
 
   const metaDescription = description || site.siteMetadata.description
   const defaultTitle = site.siteMetadata?.title
-
   return (
     <Helmet
       htmlAttributes={{
@@ -67,6 +66,13 @@ function SEO({ description, lang, meta, title }) {
         {
           name: `twitter:description`,
           content: metaDescription,
+        },
+        {
+          name: `robots`,
+          content:
+            process.env.GATSBY_ENVIRONMENT === "STAGING"
+              ? `noindex, nofollow`
+              : ``,
         },
       ].concat(meta)}
     />
