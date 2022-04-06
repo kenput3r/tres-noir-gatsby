@@ -87,6 +87,8 @@ const Customize = ({
   const previewRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
+    const isBrowser = typeof window !== "undefined"
+    if (!isBrowser) return
     const urlParams = new URLSearchParams(window.location.search)
     const sku = urlParams.get("variant")
     const contentful = contentfulProduct.variants.find(
@@ -113,8 +115,8 @@ const Customize = ({
       }
     }
   }, [
-    contentfulProduct.handle,
-    contentfulProduct.variants,
+    contentfulProduct?.handle,
+    contentfulProduct?.variants,
     setProductUrl,
     shopifyProduct.variants,
   ])

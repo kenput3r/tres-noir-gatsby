@@ -28,7 +28,8 @@ const Account = () => {
   const [data, setData] = useState<any>(false)
   const [error, setError] = useState<boolean>(false)
   const { customerAccessToken } = useContext(CustomerContext)
-  if (!customerAccessToken) {
+  const isBrowser = typeof window !== "undefined"
+  if (!customerAccessToken && isBrowser) {
     navigate("/login")
   }
 

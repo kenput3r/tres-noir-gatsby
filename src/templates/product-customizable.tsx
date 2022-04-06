@@ -8,6 +8,7 @@ import ProductCarousel from "../components/product-carousel"
 import { SelectedVariantContext } from "../contexts/selectedVariant"
 import { CustomerContext } from "../contexts/customer"
 import { CartContext } from "../contexts/cart"
+import Product from "./product"
 import { addedToCart, viewedProduct } from "../helpers/klaviyo"
 
 const Page = styled.div`
@@ -186,6 +187,10 @@ const ProductCustomizable = ({
   data: { contentfulProduct, shopifyProduct },
 }: any) => {
   console.log("SHOPIFY PRODUCT", shopifyProduct)
+  console.log("CONTENTFUL PRODUCT", contentfulProduct)
+  if (!contentfulProduct) {
+    return Product
+  }
   const { selectedVariantContext, setSelectedVariantContext } = useContext(
     SelectedVariantContext
   )
@@ -214,7 +219,7 @@ const ProductCustomizable = ({
       }
     }
   }, [
-    contentfulProduct.variants,
+    contentfulProduct?.variants,
     selectedVariantContext,
     shopifyProduct.variants,
   ])
@@ -295,7 +300,7 @@ const ProductCustomizable = ({
         </div>
         <div className="row">
           <div className="col images">
-            {console.log("IMAGE SET", selectedVariant.contentful.imageSet)}
+            {console.log("IMAGE SET", selectedVariant?.contentful.imageSet)}
             <ProductCarousel
               imageSet={
                 selectedVariant?.contentful &&
