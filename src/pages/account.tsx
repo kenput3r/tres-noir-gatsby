@@ -35,35 +35,35 @@ const Account = () => {
   useEffect(() => {
     const getCustomer = async () => {
       const query = `
-      query customer($customerAccessToken: String!) {
-        customer(customerAccessToken: $customerAccessToken) {
-          id
-          email
-          firstName
-          lastName
-          defaultAddress {
-            address1
-            address2
-            city
-            province
-            country
-            zip
-            phone
-          }
-          orders(first: 10) {
-            edges {
-              node {
-                id
-                name
+        query customer($customerAccessToken: String!) {
+          customer(customerAccessToken: $customerAccessToken) {
+            id
+            email
+            firstName
+            lastName
+            defaultAddress {
+              address1
+              address2
+              city
+              province
+              country
+              zip
+              phone
+            }
+            orders(first: 10) {
+              edges {
+                node {
+                  id
+                  name
+                }
               }
             }
           }
         }
-      }
-    `
+      `
       try {
         const response = await fetch(
-          `https://tres-noir.myshopify.com/api/2022-01/graphql.json`,
+          `${process.env.GATSBY_STORE_ENDPOINT}.json`,
           {
             method: "POST",
             headers: {

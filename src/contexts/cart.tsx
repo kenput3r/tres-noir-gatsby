@@ -15,7 +15,29 @@ export const CartContext = createContext({
   isActive: "",
   setIsActive: (value: string) => {},
   closeDrawer: () => {},
-  checkout: {},
+  checkout: {
+    appliedGiftCards: [],
+    completedAt: null,
+    createdAt: "",
+    currencyCode: "",
+    customAttributes: [],
+    discountApplications: [],
+    email: null,
+    id: "",
+    lineItems: [],
+    lineItemsSubtotalPrice: {
+      amount: "",
+      currencyCode: "",
+    },
+    note: null,
+    subtotalPrice: "",
+    subtotalPriceV2: {
+      amount: "",
+      currencyCode: "",
+    },
+    totalPrice: "",
+    webUrl: "",
+  },
   addProductToCart: (variantId: string, quantity: number) => {},
   addProductsToCart: (
     lineItems: { variantId: string; quantity: number }[]

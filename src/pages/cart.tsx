@@ -7,6 +7,7 @@ import Loader from "../components/loader"
 import QuantitySelector from "../components/quantity-selector"
 import { CartContext } from "../contexts/cart"
 import { Checkout, LineItem } from "../types/checkout"
+import { startedCheckout } from "../helpers/klaviyo"
 
 const Page = styled.div`
   margin: 0 1.45rem;
@@ -82,7 +83,11 @@ const Cart = () => {
 
   useEffect(() => {
     if (checkout) {
-      setCart(checkout as Checkout)
+      console.log("CHECKOUT", checkout)
+      setCart(checkout)
+      if (checkout.lineItems.length > 0) {
+        startedCheckout(checkout)
+      }
     }
   }, [checkout])
 

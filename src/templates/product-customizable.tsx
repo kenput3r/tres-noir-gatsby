@@ -6,7 +6,9 @@ import Layout from "../components/layout"
 import SEO from "../components/seo"
 import ProductCarousel from "../components/product-carousel"
 import { SelectedVariantContext } from "../contexts/selectedVariant"
+import { CustomerContext } from "../contexts/customer"
 import { CartContext } from "../contexts/cart"
+import { addedToCart, viewedProduct } from "../helpers/klaviyo"
 
 const Page = styled.div`
   .shipping-message {
@@ -217,6 +219,28 @@ const ProductCustomizable = ({
     shopifyProduct.variants,
   ])
 
+  const { customerEmail } = useContext(CustomerContext)
+
+  useEffect(() => {
+    if (customerEmail) {
+      const product = {
+        title: shopifyProduct.title,
+        legacyResourceId: shopifyProduct.legacyResourceId,
+        sku: selectedVariant.shopify.sku,
+        productType: shopifyProduct.productType,
+        image: selectedVariant.shopify.image.originalSrc,
+        url: shopifyProduct.onlineStoreUrl,
+        vendor: shopifyProduct.vendor,
+        price: selectedVariant.shopify.price,
+        compareAtPrice: selectedVariant.shopify.compareAtPrice,
+        collections: shopifyProduct.collections.map(
+          (collection: { title: string }) => collection.title
+        ),
+      }
+      viewedProduct(customerEmail, product)
+    }
+  }, [selectedVariant])
+
   const selectVariant = (e: React.MouseEvent, variant: any) => {
     // e.currentTarget && (e.currentTarget as HTMLElement).blur()
     const shopify = shopifyProduct.variants.find(
@@ -236,6 +260,24 @@ const ProductCustomizable = ({
     console.log("ADDING TO CART", `${id} x 1`)
     addProductToCart(id, 1)
     alert("ADDED TO CART")
+    // klaviyo
+    if (customerEmail) {
+      const product = {
+        title: shopifyProduct.title,
+        legacyResourceId: shopifyProduct.legacyResourceId,
+        sku: selectedVariant.shopify.sku,
+        productType: shopifyProduct.productType,
+        image: selectedVariant.shopify.image.originalSrc,
+        url: shopifyProduct.onlineStoreUrl,
+        vendor: shopifyProduct.vendor,
+        price: selectedVariant.shopify.price,
+        compareAtPrice: selectedVariant.shopify.compareAtPrice,
+        collections: shopifyProduct.collections.map(
+          (collection: { title: string }) => collection.title
+        ),
+      }
+      addedToCart(customerEmail, product)
+    }
   }
   console.log("SELECTED VARIANT", selectedVariant)
   return (
@@ -377,7 +419,12 @@ export const query = graphql`
       }
     }
     shopifyProduct(handle: { eq: $handle }) {
+      collections {
+        title
+      }
       id
+      legacyResourceId
+      onlineStoreUrl
       priceRangeV2 {
         minVariantPrice {
           amount
@@ -386,11 +433,17 @@ export const query = graphql`
           amount
         }
       }
+      productType
       title
+      vendor
       variants {
         availableForSale
         compareAtPrice
         id
+        image {
+          originalSrc
+        }
+        legacyResourceId
         price
         sku
         storefrontId
