@@ -7,7 +7,7 @@ import SEO from "../components/seo"
 import ProductCarousel from "../components/product-carousel"
 import { SelectedVariantContext } from "../contexts/selectedVariant"
 import { CartContext } from "../contexts/cart"
-
+import Product from "./product"
 const Page = styled.div`
   .shipping-message {
     text-align: center;
@@ -184,6 +184,10 @@ const ProductCustomizable = ({
   data: { contentfulProduct, shopifyProduct },
 }: any) => {
   console.log("SHOPIFY PRODUCT", shopifyProduct)
+  console.log("CONTENTFUL PRODUCT", contentfulProduct)
+  if (!contentfulProduct) {
+    return Product
+  }
   const { selectedVariantContext, setSelectedVariantContext } = useContext(
     SelectedVariantContext
   )
@@ -212,7 +216,7 @@ const ProductCustomizable = ({
       }
     }
   }, [
-    contentfulProduct.variants,
+    contentfulProduct?.variants,
     selectedVariantContext,
     shopifyProduct.variants,
   ])
@@ -253,7 +257,7 @@ const ProductCustomizable = ({
         </div>
         <div className="row">
           <div className="col images">
-            {console.log("IMAGE SET", selectedVariant.contentful.imageSet)}
+            {console.log("IMAGE SET", selectedVariant?.contentful.imageSet)}
             <ProductCarousel
               imageSet={
                 selectedVariant?.contentful &&
