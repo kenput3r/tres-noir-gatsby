@@ -341,6 +341,8 @@ const Form = ({
         return
       }
       errorRefs.current[`select-${subId}-axis`].classList.add("disable")
+      errorRefs.current[`select-${subId}-axis`].querySelector("select").value =
+        ""
       dispatch({ type: `${subId}-axis`, payload: "" })
     }
     if (isFormValid === true || !messageRef.current) return
