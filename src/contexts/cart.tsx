@@ -9,7 +9,7 @@ const client = Client.buildClient({
 
 const isBrowser = typeof window !== "undefined"
 
-export const CartContext = createContext({
+const DefaultContext = {
   isDrawerOpen: false,
   setIsDrawerOpen: (value: boolean) => {},
   isActive: "",
@@ -46,7 +46,9 @@ export const CartContext = createContext({
   updateProductInCart: (variantId: string, quantity: number) => {},
   addDiscountCode: (code: string) => {},
   removeDiscountCode: () => {},
-})
+}
+
+export const CartContext = createContext(DefaultContext)
 
 export const CartProvider = ({ children }) => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)

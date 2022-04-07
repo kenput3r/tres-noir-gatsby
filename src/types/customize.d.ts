@@ -108,6 +108,9 @@ export interface ContentfulProductVariant {
 
 export interface ShopifyProduct {
   collections: { title: string }[]
+  featuredImage: {
+    originalSrc: string
+  }
   id: string
   legacyResourceId: string
   onlineStoreUrl: string
