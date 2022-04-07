@@ -573,8 +573,8 @@ const Form = ({
               </div>
               <div
                 className={
-                  rxInfo.right.axis === "0.00"
-                    ? "rx-select disabled"
+                  rxInfo.right.cyl === "0.00"
+                    ? "rx-select disable"
                     : "rx-select"
                 }
                 ref={el => {
@@ -661,8 +661,8 @@ const Form = ({
               </div>
               <div
                 className={
-                  rxInfo.left.axis === "0.00"
-                    ? "rx-select disabled"
+                  rxInfo.left.cyl === "0.00"
+                    ? "rx-select disable"
                     : "rx-select"
                 }
                 ref={el => {
