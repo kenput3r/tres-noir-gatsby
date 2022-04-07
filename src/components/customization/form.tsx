@@ -286,11 +286,14 @@ const Component = styled.form`
     }
   }
   .select-error {
-    //border: 1px solid red;
     outline: 2px solid red;
   }
   .hide {
     display: none;
+  }
+  .disable {
+    pointer-events: none;
+    opacity: 0.3;
   }
 `
 
@@ -312,7 +315,7 @@ const Form = ({
   stepMap.set(3, "LENS MATERIAL")
   stepMap.set(4, "LENS COATING")
   const { isRxAble, setRxAble, rxInfo, dispatch } = useContext(RxInfoContext)
-  const messageRef = useRef<HTMLElement>()
+  const messageRef = useRef<any>()
   const [isFormValid, setIsFormValid] = useState(true)
   const errorRefs = useRef({})
   const handleChange = (variant: ShopifyVariant) => {
@@ -330,6 +333,16 @@ const Form = ({
     dispatch({ type: evt.target.id, payload: evt.target.value })
   }
   const clearErrors = (evt: ChangeEvent<HTMLSelectElement>) => {
+    let id: string = evt.target.id
+    if (id.includes("cyl")) {
+      let subId = id.split("-")[0]
+      if (evt.target.value !== "0.00") {
+        errorRefs.current[`select-${subId}-axis`].classList.remove("disable")
+        return
+      }
+      errorRefs.current[`select-${subId}-axis`].classList.add("disable")
+      dispatch({ type: `${subId}-axis`, payload: "" })
+    }
     if (isFormValid === true || !messageRef.current) return
     const generalErrors: string[] = [
       "right-sph",
@@ -337,9 +350,14 @@ const Form = ({
       "left-sph",
       "left-cyl",
     ]
-    let id: string = evt.target.id
     if (id.includes("axis")) {
       evt.target.closest(".rx-select")?.classList.remove("select-error")
+    }
+    if (id.includes("cyl") && evt.target.value === "0.00") {
+      let subId = id.split("-")[0]
+      errorRefs.current[`select-${subId}-axis`].classList.remove("select-error")
+      let msg = messageRef.current.querySelector(`#error-${subId}-axis`)
+      if (msg) msg.remove()
     }
     if (generalErrors.indexOf(id) > -1) {
       let msg = messageRef.current.querySelector("#error-general")
@@ -552,7 +570,11 @@ const Form = ({
                 </select>
               </div>
               <div
-                className="rx-select"
+                className={
+                  rxInfo.right.axis === "0.00"
+                    ? "rx-select disabled"
+                    : "rx-select"
+                }
                 ref={el => {
                   errorRefs.current["select-right-axis"] = el
                 }}
@@ -636,7 +658,11 @@ const Form = ({
                 </select>
               </div>
               <div
-                className="rx-select"
+                className={
+                  rxInfo.left.axis === "0.00"
+                    ? "rx-select disabled"
+                    : "rx-select"
+                }
                 ref={el => {
                   errorRefs.current["select-left-axis"] = el
                 }}
