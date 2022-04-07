@@ -135,6 +135,7 @@ const Component = styled.form`
         .rx-select {
           border-bottom: 1px solid #808080;
           display: flex;
+          padding: 1px;
           label {
             color: #808080;
           }
@@ -227,12 +228,6 @@ const Component = styled.form`
         }
       }
     }
-    .form-error {
-      color: red;
-      li:first-of-type {
-        margin-top: 10px;
-      }
-    }
   }
   ul.variants {
     display: flex;
@@ -279,8 +274,19 @@ const Component = styled.form`
       }
     }
   }
+  .form-error {
+    font-family: var(--sub-heading-font);
+    font-size: 0.95rem;
+    color: red;
+    min-height: 65px;
+    margin-bottom: 0;
+    margin-top: 10px;
+    li {
+      margin: 0;
+    }
+  }
   .select-error {
-    border: 1px solid red;
+    //border: 1px solid red;
     outline: 2px solid red;
   }
   .hide {
@@ -311,6 +317,9 @@ const Form = ({
   const errorRefs = useRef({})
   const handleChange = (variant: ShopifyVariant) => {
     setRxAble(variant.product?.title !== "Non-Prescription Lens")
+    if (variant.product?.title === "Non-Prescription Lens") {
+      if (messageRef.current) removeChildNodes(messageRef.current)
+    }
     setSelectedVariants({
       ...selectedVariants,
       [`step${currentStep}`]: variant,
@@ -322,19 +331,29 @@ const Form = ({
   }
   const clearErrors = (evt: ChangeEvent<HTMLSelectElement>) => {
     if (isFormValid === true || !messageRef.current) return
-    const generalErrors: string[] = ["right-sph", "right-cyl", "left-sph", "left-cyl"]
+    const generalErrors: string[] = [
+      "right-sph",
+      "right-cyl",
+      "left-sph",
+      "left-cyl",
+    ]
     let id: string = evt.target.id
     if (id.includes("axis")) {
       evt.target.closest(".rx-select")?.classList.remove("select-error")
     }
     if (generalErrors.indexOf(id) > -1) {
-        let msg = messageRef.current.querySelector("#error-general")
-        if (msg) msg.remove()
+      let msg = messageRef.current.querySelector("#error-general")
+      if (msg) msg.remove()
     }
     let msg = messageRef.current.querySelector(`#error-${id}`)
     if (msg) msg.remove()
   }
-  const range = (start: number, end: number, step: number, id: string): string[] => {
+  const range = (
+    start: number,
+    end: number,
+    step: number,
+    id: string
+  ): string[] => {
     const arr: string[] = []
     const format: number = step % 1 === 0 ? 0 : 2
     for (let i = start; i < end + step; i += step) {
@@ -359,7 +378,8 @@ const Form = ({
       rxInfo.left.cyl === "0.00"
     ) {
       let node = document.createElement("li")
-      node.textContent = "Please add prescription information or choose non-prescription"
+      node.textContent =
+        "Please add prescription information or choose non-prescription"
       node.setAttribute("id", "error-general")
       messages.push(node)
       isValid = false
@@ -716,7 +736,6 @@ const Form = ({
               <span>714-656-4796</span>
             </p>
           </div>
-          <ul className="form-error" ref={messageRef}></ul>
         </div>
       ) : null}
       <div className="row">
@@ -733,6 +752,7 @@ const Form = ({
           CONTINUE
         </button>
       </div>
+      <ul className="form-error" ref={messageRef}></ul>
     </Component>
   )
 }

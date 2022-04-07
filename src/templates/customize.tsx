@@ -30,7 +30,7 @@ const Page = styled.div`
   .row {
     display: flex;
     flex-direction: row;
-    @media only screen and (max-width: 600px) {
+    @media only screen and (max-width: 750px) {
       &.product-customize {
         display: block;
       }
