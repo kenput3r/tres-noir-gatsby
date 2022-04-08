@@ -4,6 +4,7 @@ import { navigate } from "gatsby"
 import Layout from "../components/layout"
 import SEO from "../components/seo"
 import { CustomerContext } from "../contexts/customer"
+import { ErrorModalContext } from "../contexts/error"
 
 const Page = styled.div`
   width: 420px;
@@ -57,6 +58,7 @@ const Page = styled.div`
 `
 
 const Login = () => {
+  const { renderErrorModal } = useContext(ErrorModalContext)
   const { login } = useContext(CustomerContext)
   const [email, setEmail] = useState<string>("")
   const [password, setPassword] = useState<string>("")
@@ -102,16 +104,18 @@ const Login = () => {
         const { customerAccessToken, customerUserErrors } =
           json.data.customerAccessTokenCreate
         if (customerUserErrors.length) {
-          alert(`ERROR: ${customerUserErrors[0].message}`)
+          console.log("ERROR", JSON.stringify(customerUserErrors[0].message))
+          renderErrorModal(customerUserErrors[0].message)
         } else {
           login(customerAccessToken)
           navigate("/account")
         }
       } else {
-        alert("ERROR: please try again later...")
+        renderErrorModal("ERROR: please try again later...")
       }
     } catch (err: any) {
       console.log("ERROR", err.message)
+      renderErrorModal(err.message)
     }
   }
 
