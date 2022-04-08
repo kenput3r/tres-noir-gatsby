@@ -8,6 +8,7 @@ import ProductCarousel from "../components/product-carousel"
 import { SelectedVariantContext } from "../contexts/selectedVariant"
 import { CartContext } from "../contexts/cart"
 import Product from "./product"
+import { useQuantityQuery } from "../hooks/useQuantityQuery"
 const Page = styled.div`
   .shipping-message {
     text-align: center;
@@ -185,6 +186,11 @@ const ProductCustomizable = ({
 }: any) => {
   console.log("SHOPIFY PRODUCT", shopifyProduct)
   console.log("CONTENTFUL PRODUCT", contentfulProduct)
+  // return default Product Page if contentful values do not exist
+  console.log(
+    useQuantityQuery(contentfulProduct.handle, shopifyProduct.variants.length)
+  )
+
   if (!contentfulProduct) {
     return Product
   }
@@ -197,7 +203,6 @@ const ProductCustomizable = ({
   })
   // cart
   const { addProductToCart } = useContext(CartContext)
-
   useEffect(() => {
     const sku = selectedVariantContext
     if (sku) {
