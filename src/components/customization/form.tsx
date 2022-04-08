@@ -434,8 +434,8 @@ const Form = ({
     return isValid
   }
   const isNowValid = () => {
+    // will re enable the button once all form errors are cleared
     if (isFormValid) return
-    console.log(messageRef.current)
     if (!messageRef.current.hasChildNodes()) {
       continueBtn.current?.classList.remove("disable")
     }
