@@ -1,7 +1,14 @@
 import { useEffect, useState } from "react"
 
 export function useQuantityQuery(handle: string, size: number) {
-  const [productQuantities, setProductQuantities] = useState({})
+  const [productQuantities, setProductQuantities] = useState<{} | undefined>({})
+
+  const url: string = process.env.GATSBY_STORE_STOREFRONT_ENDPOINT
+    ? process.env.GATSBY_STORE_STOREFRONT_ENDPOINT
+    : ""
+  const storefrontToken: string = process.env.GATSBY_STORE_STOREFRONT_TOKEN
+    ? process.env.GATSBY_STORE_STOREFRONT_TOKEN
+    : ""
 
   const fetchQuery = async () => {
     try {
@@ -19,14 +26,14 @@ export function useQuantityQuery(handle: string, size: number) {
           }
         }
       `
-      const options = {
+      const headers: HeadersInit = new Headers({
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        "X-Shopify-Storefront-Access-Token": storefrontToken,
+      })
+      const params: RequestInit = {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-          "X-Shopify-Storefront-Access-Token":
-            process.env.GATSBY_STORE_STOREFRONT_TOKEN,
-        },
+        headers: headers,
         body: JSON.stringify({
           query: inventoryQuery,
           variables: {
@@ -35,10 +42,8 @@ export function useQuantityQuery(handle: string, size: number) {
           },
         }),
       }
-      const response = await fetch(
-        process.env.GATSBY_STORE_STOREFRONT_ENDPOINT,
-        options
-      )
+
+      const response = await fetch(url, params)
       const data = await response.json()
       return data
     } catch (error) {
