@@ -318,6 +318,7 @@ const Form = ({
   const messageRef = useRef<any>()
   const [isFormValid, setIsFormValid] = useState(true)
   const errorRefs = useRef({})
+  const continueBtn = useRef<HTMLButtonElement>(null)
   const handleChange = (variant: ShopifyVariant) => {
     setRxAble(variant.product?.title !== "Non-Prescription Lens")
     if (variant.product?.title === "Non-Prescription Lens") {
@@ -331,9 +332,11 @@ const Form = ({
   const handleRx = (evt: ChangeEvent<HTMLSelectElement>) => {
     clearErrors(evt)
     dispatch({ type: evt.target.id, payload: evt.target.value })
+    isNowValid()
   }
   const clearErrors = (evt: ChangeEvent<HTMLSelectElement>) => {
     let id: string = evt.target.id
+    // disable axis whether a cyl value is present or not
     if (id.includes("cyl")) {
       let subId = id.split("-")[0]
       if (evt.target.value !== "0.00") {
@@ -345,7 +348,6 @@ const Form = ({
         ""
       dispatch({ type: `${subId}-axis`, payload: "" })
     }
-    if (isFormValid === true || !messageRef.current) return
     const generalErrors: string[] = [
       "right-sph",
       "right-cyl",
@@ -425,8 +427,18 @@ const Form = ({
         messageRef.current?.appendChild(messages[i])
       }
     }
+    if (!isValid) {
+      continueBtn.current?.classList.add("disable")
+    }
     setIsFormValid(isValid)
     return isValid
+  }
+  const isNowValid = () => {
+    if (isFormValid) return
+    console.log(messageRef.current)
+    if (!messageRef.current.hasChildNodes()) {
+      continueBtn.current?.classList.remove("disable")
+    }
   }
   const handleSteps = (num: number) => {
     if (currentStep !== 1 || !isRxAble) {
@@ -661,9 +673,7 @@ const Form = ({
               </div>
               <div
                 className={
-                  rxInfo.left.cyl === "0.00"
-                    ? "rx-select disable"
-                    : "rx-select"
+                  rxInfo.left.cyl === "0.00" ? "rx-select disable" : "rx-select"
                 }
                 ref={el => {
                   errorRefs.current["select-left-axis"] = el
@@ -776,7 +786,7 @@ const Form = ({
             GO BACK
           </button>
         )}
-        <button type="button" onClick={() => handleSteps(1)}>
+        <button type="button" onClick={() => handleSteps(1)} ref={continueBtn}>
           CONTINUE
         </button>
       </div>
