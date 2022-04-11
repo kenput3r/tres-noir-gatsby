@@ -210,7 +210,7 @@ const Product = ({ data: { shopifyProduct } }: any) => {
     }
     let imageSet: iSet[] = []
     // single Product with images
-    if (hasSingleVariant && shopifyProduct.images) {
+    if (shopifyProduct.images && hasSingleVariant) {
       shopifyProduct.images.forEach(element => {
         const img = {
           data: element.localFile.childImageSharp.gatsbyImageData,
@@ -230,12 +230,19 @@ const Product = ({ data: { shopifyProduct } }: any) => {
           imageSet.push(img)
         }
       })
-      if (imageSet.length === 0 && shopifyProduct.featuredImage) {
-        console.log("last base case")
-        console.log("featuredImage object", shopifyProduct.featuredImage)
+      // variant with product images, not attached to variant
+      if (shopifyProduct.images && imageSet.length === 0) {
+        shopifyProduct.images.forEach(element => {
+          const img = {
+            data: element.localFile.childImageSharp.gatsbyImageData,
+            title: element.altText,
+          }
+          imageSet.push(img)
+        })
       }
     }
     console.log("image Set", imageSet)
+    console.log("image")
     return imageSet
   }
 

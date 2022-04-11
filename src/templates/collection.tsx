@@ -46,7 +46,7 @@ export const query = graphql`
       title
       products {
         handle
-        images {
+        featuredImage {
           altText
           localFile {
             childImageSharp {
