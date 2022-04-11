@@ -189,16 +189,17 @@ const Page = styled.div`
 const ProductCustomizable = ({
   data: { contentfulProduct, shopifyProduct },
 }: any) => {
-  console.log("SHOPIFY PRODUCT", shopifyProduct)
-  console.log("CONTENTFUL PRODUCT", contentfulProduct)
-  // return default Product Page if contentful values do not exist
-  console.log(
-    useQuantityQuery(contentfulProduct.handle, shopifyProduct.variants.length)
-  )
-
   if (!contentfulProduct) {
     return Product({ data: { shopifyProduct } })
   }
+
+  console.log("SHOPIFY PRODUCT", shopifyProduct)
+  console.log("CONTENTFUL PRODUCT", contentfulProduct)
+  // return default Product Page if contentful values do not exist
+
+  console.log(
+    useQuantityQuery(contentfulProduct.handle, shopifyProduct.variants.length)
+  )
   const { selectedVariantContext, setSelectedVariantContext } = useContext(
     SelectedVariantContext
   )
@@ -207,7 +208,7 @@ const ProductCustomizable = ({
     shopify: shopifyProduct.variants[0],
   })
   // cart
-  const { addProductToCart } = useContext(CartContext)
+  const { addProductToCart, checkout } = useContext(CartContext)
   useEffect(() => {
     const sku = selectedVariantContext
     if (sku) {
@@ -440,6 +441,7 @@ export const query = graphql`
         originalSrc
       }
       id
+      handle
       legacyResourceId
       onlineStoreUrl
       priceRangeV2 {
@@ -459,6 +461,12 @@ export const query = graphql`
         id
         image {
           originalSrc
+          altText
+          localFile {
+            childImageSharp {
+              gatsbyImageData
+            }
+          }
         }
         legacyResourceId
         price
