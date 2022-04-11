@@ -135,6 +135,7 @@ const Component = styled.form`
         .rx-select {
           border-bottom: 1px solid #808080;
           display: flex;
+          padding: 1px;
           label {
             color: #808080;
           }
@@ -227,12 +228,6 @@ const Component = styled.form`
         }
       }
     }
-    .form-error {
-      color: red;
-      li:first-of-type {
-        margin-top: 10px;
-      }
-    }
   }
   ul.variants {
     display: flex;
@@ -279,12 +274,26 @@ const Component = styled.form`
       }
     }
   }
+  .form-error {
+    font-family: var(--sub-heading-font);
+    font-size: 0.95rem;
+    color: red;
+    min-height: 65px;
+    margin-bottom: 0;
+    margin-top: 10px;
+    li {
+      margin: 0;
+    }
+  }
   .select-error {
-    border: 1px solid red;
     outline: 2px solid red;
   }
   .hide {
     display: none;
+  }
+  .disable {
+    pointer-events: none;
+    opacity: 0.3;
   }
 `
 
@@ -306,11 +315,15 @@ const Form = ({
   stepMap.set(3, "LENS MATERIAL")
   stepMap.set(4, "LENS COATING")
   const { isRxAble, setRxAble, rxInfo, dispatch } = useContext(RxInfoContext)
-  const messageRef = useRef<HTMLElement>()
+  const messageRef = useRef<any>()
   const [isFormValid, setIsFormValid] = useState(true)
   const errorRefs = useRef({})
+  const continueBtn = useRef<HTMLButtonElement>(null)
   const handleChange = (variant: ShopifyVariant) => {
     setRxAble(variant.product?.title !== "Non-Prescription Lens")
+    if (variant.product?.title === "Non-Prescription Lens") {
+      if (messageRef.current) removeChildNodes(messageRef.current)
+    }
     setSelectedVariants({
       ...selectedVariants,
       [`step${currentStep}`]: variant,
@@ -319,22 +332,50 @@ const Form = ({
   const handleRx = (evt: ChangeEvent<HTMLSelectElement>) => {
     clearErrors(evt)
     dispatch({ type: evt.target.id, payload: evt.target.value })
+    isNowValid()
   }
   const clearErrors = (evt: ChangeEvent<HTMLSelectElement>) => {
-    if (isFormValid === true || !messageRef.current) return
-    const generalErrors: string[] = ["right-sph", "right-cyl", "left-sph", "left-cyl"]
     let id: string = evt.target.id
+    // disable axis whether a cyl value is present or not
+    if (id.includes("cyl")) {
+      let subId = id.split("-")[0]
+      if (evt.target.value !== "0.00") {
+        errorRefs.current[`select-${subId}-axis`].classList.remove("disable")
+        return
+      }
+      errorRefs.current[`select-${subId}-axis`].classList.add("disable")
+      errorRefs.current[`select-${subId}-axis`].querySelector("select").value =
+        ""
+      dispatch({ type: `${subId}-axis`, payload: "" })
+    }
+    const generalErrors: string[] = [
+      "right-sph",
+      "right-cyl",
+      "left-sph",
+      "left-cyl",
+    ]
     if (id.includes("axis")) {
       evt.target.closest(".rx-select")?.classList.remove("select-error")
     }
+    if (id.includes("cyl") && evt.target.value === "0.00") {
+      let subId = id.split("-")[0]
+      errorRefs.current[`select-${subId}-axis`].classList.remove("select-error")
+      let msg = messageRef.current.querySelector(`#error-${subId}-axis`)
+      if (msg) msg.remove()
+    }
     if (generalErrors.indexOf(id) > -1) {
-        let msg = messageRef.current.querySelector("#error-general")
-        if (msg) msg.remove()
+      let msg = messageRef.current.querySelector("#error-general")
+      if (msg) msg.remove()
     }
     let msg = messageRef.current.querySelector(`#error-${id}`)
     if (msg) msg.remove()
   }
-  const range = (start: number, end: number, step: number, id: string): string[] => {
+  const range = (
+    start: number,
+    end: number,
+    step: number,
+    id: string
+  ): string[] => {
     const arr: string[] = []
     const format: number = step % 1 === 0 ? 0 : 2
     for (let i = start; i < end + step; i += step) {
@@ -359,7 +400,8 @@ const Form = ({
       rxInfo.left.cyl === "0.00"
     ) {
       let node = document.createElement("li")
-      node.textContent = "Please add prescription information or choose non-prescription"
+      node.textContent =
+        "Please add prescription information or choose non-prescription"
       node.setAttribute("id", "error-general")
       messages.push(node)
       isValid = false
@@ -385,8 +427,18 @@ const Form = ({
         messageRef.current?.appendChild(messages[i])
       }
     }
+    if (!isValid) {
+      continueBtn.current?.classList.add("disable")
+    }
     setIsFormValid(isValid)
     return isValid
+  }
+  const isNowValid = () => {
+    // will re enable the button once all form errors are cleared
+    if (isFormValid) return
+    if (!messageRef.current.hasChildNodes()) {
+      continueBtn.current?.classList.remove("disable")
+    }
   }
   const handleSteps = (num: number) => {
     if (currentStep !== 1 || !isRxAble) {
@@ -532,7 +584,11 @@ const Form = ({
                 </select>
               </div>
               <div
-                className="rx-select"
+                className={
+                  rxInfo.right.cyl === "0.00"
+                    ? "rx-select disable"
+                    : "rx-select"
+                }
                 ref={el => {
                   errorRefs.current["select-right-axis"] = el
                 }}
@@ -616,7 +672,9 @@ const Form = ({
                 </select>
               </div>
               <div
-                className="rx-select"
+                className={
+                  rxInfo.left.cyl === "0.00" ? "rx-select disable" : "rx-select"
+                }
                 ref={el => {
                   errorRefs.current["select-left-axis"] = el
                 }}
@@ -716,7 +774,6 @@ const Form = ({
               <span>714-656-4796</span>
             </p>
           </div>
-          <ul className="form-error" ref={messageRef}></ul>
         </div>
       ) : null}
       <div className="row">
@@ -729,10 +786,11 @@ const Form = ({
             GO BACK
           </button>
         )}
-        <button type="button" onClick={() => handleSteps(1)}>
+        <button type="button" onClick={() => handleSteps(1)} ref={continueBtn}>
           CONTINUE
         </button>
       </div>
+      <ul className="form-error" ref={messageRef}></ul>
     </Component>
   )
 }
