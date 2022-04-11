@@ -9,6 +9,43 @@ const contentfulConfig = {
     process.env.CONTENTFUL_DELIVERY_TOKEN,
 }
 
+/**
+ * The currently active environment.
+ * This is used to set the corresponding Tag Manager environment config.
+ */
+const activeEnv =
+  process.env.GATSBY_ACTIVE_ENV || process.env.NODE_ENV || "development"
+console.log(`Using environment config: '${activeEnv}'`)
+
+// The Tag Manager Container ID.
+const gtmContainerId = "GTM-M4NKFMS"
+
+/**
+ * Tag Manager Environment values to configure gatsby-plugin-google-tagmanager.
+ * null values will cause the default (live/production) snippet to load.
+ */
+const gtmEnv = {
+  // If tag manager plugin is configured with includeInDevelopment set to
+  // true then you should create a corresponding Development environment in
+  // Tag Manager and replace the null values with the container environment
+  // auth and preview values. Otherwise the production snippet will load.
+  development: {
+    gtmAuth: "GVUwAlmsy-yQ4la6OJngkQ",
+    gtmPreview: "env-6",
+  },
+
+  staging: {
+    gtmAuth: "GVUwAlmsy-yQ4la6OJngkQ",
+    gtmPreview: "env-6",
+  },
+
+  // According to GTM docs you should use standard tag for prod so we'll set to null.
+  production: {
+    gtmAuth: null,
+    gtmPreview: null,
+  },
+}
+
 module.exports = {
   siteMetadata: {
     title: `Tres Noir`,
@@ -34,8 +71,8 @@ module.exports = {
         defaultDataLayer: { platform: "gatsby" },
 
         // Specify optional GTM environment details.
-        // gtmAuth: "YOUR_GOOGLE_TAGMANAGER_ENVIRONMENT_AUTH_STRING",
-        // gtmPreview: "YOUR_GOOGLE_TAGMANAGER_ENVIRONMENT_PREVIEW_NAME",
+        gtmAuth: gtmEnv[activeEnv].gtmAuth,
+        gtmPreview: gtmEnv[activeEnv].gtmPreview,
         // dataLayerName: "YOUR_DATA_LAYER_NAME",
 
         // Name of the event that is triggered
