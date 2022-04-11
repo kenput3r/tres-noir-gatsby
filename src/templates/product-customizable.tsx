@@ -189,8 +189,6 @@ const Page = styled.div`
 const ProductCustomizable = ({
   data: { contentfulProduct, shopifyProduct },
 }: any) => {
-  console.log("SHOPIFY PRODUCT", shopifyProduct)
-  console.log("CONTENTFUL PRODUCT", contentfulProduct)
   if (!contentfulProduct) {
     return Product
   }
@@ -231,7 +229,6 @@ const ProductCustomizable = ({
 
   useEffect(() => {
     if (customerEmail) {
-      console.log("SELECTED VARIANT", selectedVariant)
       const productData = {
         title: shopifyProduct.title,
         legacyResourceId: shopifyProduct.legacyResourceId,
@@ -268,7 +265,6 @@ const ProductCustomizable = ({
 
   const handleAddToCart = () => {
     const id = selectedVariant.shopify.storefrontId
-    console.log("ADDING TO CART", `${id} x 1`)
     addProductToCart(id, 1)
     alert("ADDED TO CART")
     // klaviyo
@@ -292,7 +288,7 @@ const ProductCustomizable = ({
       addedToCartKlaviyoEvent(productData, checkout)
     }
   }
-  console.log("SELECTED VARIANT", selectedVariant)
+
   return (
     <Layout>
       <SEO title={shopifyProduct.title} />
@@ -308,7 +304,6 @@ const ProductCustomizable = ({
         </div>
         <div className="row">
           <div className="col images">
-            {console.log("IMAGE SET", selectedVariant?.contentful.imageSet)}
             <ProductCarousel
               imageSet={
                 selectedVariant?.contentful &&

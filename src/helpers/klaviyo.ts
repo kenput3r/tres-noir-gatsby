@@ -39,7 +39,6 @@ export const viewedProductKlaviyoEvent = (item: ShopifyProductInfo) => {
     SKU: item.sku,
     Url: item.url,
   }
-
   _learnq.push(["track", "Viewed Product", payload])
 }
 
@@ -47,7 +46,6 @@ export const addedToCartKlaviyoEvent = (
   item: ShopifyProductInfo,
   checkout: Checkout
 ) => {
-  console.log("UPDATED CHECKOUT", checkout)
   let _learnq = klaviyo()
   // get cart  to track request where cart already contains items
   // build data
