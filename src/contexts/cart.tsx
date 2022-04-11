@@ -9,13 +9,35 @@ const client = Client.buildClient({
 
 const isBrowser = typeof window !== "undefined"
 
-export const CartContext = createContext({
+const DefaultContext = {
   isDrawerOpen: false,
   setIsDrawerOpen: (value: boolean) => {},
   isActive: "",
   setIsActive: (value: string) => {},
   closeDrawer: () => {},
-  checkout: {},
+  checkout: {
+    appliedGiftCards: [],
+    completedAt: null,
+    createdAt: "",
+    currencyCode: "",
+    customAttributes: [],
+    discountApplications: [],
+    email: null,
+    id: "",
+    lineItems: [],
+    lineItemsSubtotalPrice: {
+      amount: "",
+      currencyCode: "",
+    },
+    note: null,
+    subtotalPrice: "",
+    subtotalPriceV2: {
+      amount: "",
+      currencyCode: "",
+    },
+    totalPrice: "",
+    webUrl: "",
+  },
   addProductToCart: (variantId: string, quantity: number) => {},
   addProductsToCart: (
     lineItems: { variantId: string; quantity: number }[]
@@ -24,7 +46,9 @@ export const CartContext = createContext({
   updateProductInCart: (variantId: string, quantity: number) => {},
   addDiscountCode: (code: string) => {},
   removeDiscountCode: () => {},
-})
+}
+
+export const CartContext = createContext(DefaultContext)
 
 export const CartProvider = ({ children }) => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
@@ -64,7 +88,6 @@ export const CartProvider = ({ children }) => {
         JSON.stringify({ value: newCheckout, expiry: now.getTime() + 2592000 })
       )
     }
-    console.log("NEW CHECKOUT", newCheckout)
     return newCheckout
     // try {
     //   const newCheckout = await client.checkout.create()
@@ -92,56 +115,45 @@ export const CartProvider = ({ children }) => {
       const validateLocalCheckout = async (localCheckout: LocalCheckout) => {
         const now = new Date()
         if (now.getTime() > localCheckout.expiry) {
-          console.log("LOCAL STORAGE CHECKOUT EXPIRED")
           localStorage.removeItem("checkout")
           // eslint-disable-next-line no-return-await
           return await getNewCheckout()
         }
-        console.log("LOCAL STORAGE CHECKOUT NOT EXPIRED")
         return localCheckout.value
       }
       try {
         // Check if checkout exists
         const checkoutId = isBrowser ? getCheckoutCookie() : null
-        let _checkout: Cart | Checkout
+        let checkout: Cart | Checkout
         // if Checkout exists, fetch it from Shopify
         if (checkoutId) {
           // Get Local Checkout
           let localCheckout: string | null | LocalCheckout =
             localStorage.getItem("checkout")
-          console.log("CHECK IF LOCAL CHECKOUT EXISTS")
           if (localCheckout) {
-            console.log("LOCAL CHECKOUT EXISTS")
             localCheckout = JSON.parse(localCheckout as string) as LocalCheckout
-            console.log("VALIDATING EXPIRY")
-            _checkout = await validateLocalCheckout(localCheckout)
+            checkout = await validateLocalCheckout(localCheckout)
           } else {
-            _checkout = await client.checkout.fetch(checkoutId)
-            console.log(
-              "LOCAL CHECKOUT DOESN'T EXIST, FETCH IT FROM SHOPIFY",
-              _checkout
-            )
+            checkout = await client.checkout.fetch(checkoutId)
             if (isBrowser) {
               const now = new Date()
               localStorage.setItem(
                 "checkout",
                 JSON.stringify({
-                  value: _checkout,
+                  value: checkout,
                   expiry: now.getTime() + 259200,
                 })
               )
             }
           }
-          if (_checkout.completedAt) {
-            _checkout = await getNewCheckout()
-            console.log("CHECKOUT EXPIRED, LETS CREATE A NEW ONE", _checkout)
+          if (checkout.completedAt) {
+            checkout = await getNewCheckout()
           }
           // if no Checkout exists, create a new one
         } else {
-          _checkout = await getNewCheckout()
-          console.log("NO CHECKOUT EXISTS, LETS CREATE ONE", _checkout)
+          checkout = await getNewCheckout()
         }
-        setCheckout(_checkout)
+        setCheckout(checkout)
       } catch (err: any) {
         console.error("ERROR", err.message)
       }
@@ -166,7 +178,6 @@ export const CartProvider = ({ children }) => {
           checkout.id,
           lineItems
         )
-        console.log("ADDED PRODUCT TO CART", updatedCheckout)
         if (isBrowser) {
           const now = new Date()
           localStorage.setItem(
@@ -191,7 +202,6 @@ export const CartProvider = ({ children }) => {
           checkout.id,
           lineItems
         )
-        console.log("ADDED PRODUCT TO CART", updatedCheckout)
         if (isBrowser) {
           const now = new Date()
           localStorage.setItem(
@@ -214,7 +224,6 @@ export const CartProvider = ({ children }) => {
           checkout.id,
           [lineItemId]
         )
-        console.log("REMOVED PRODUCT FROM CART", updatedCheckout)
         if (isBrowser) {
           const now = new Date()
           localStorage.setItem(
@@ -243,7 +252,6 @@ export const CartProvider = ({ children }) => {
           checkout.id,
           lineItems
         )
-        console.log("ADDED PRODUCT TO CART", updatedCheckout)
         if (isBrowser) {
           const now = new Date()
           localStorage.setItem(
@@ -266,7 +274,6 @@ export const CartProvider = ({ children }) => {
           checkout.id,
           code
         )
-        console.log("ADDED DISCOUNT TO CART", updatedCheckout)
         if (isBrowser) {
           const now = new Date()
           localStorage.setItem(
@@ -289,7 +296,6 @@ export const CartProvider = ({ children }) => {
           checkout.id
           // code
         )
-        console.log("REMOVED DISCOUNT FROM CART", updatedCheckout)
         if (isBrowser) {
           const now = new Date()
           localStorage.setItem(
