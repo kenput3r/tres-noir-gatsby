@@ -28,43 +28,42 @@ const Account = () => {
   const [data, setData] = useState<any>(false)
   const [error, setError] = useState<boolean>(false)
   const { customerAccessToken } = useContext(CustomerContext)
-  const isBrowser = typeof window !== "undefined"
-  if (!customerAccessToken && isBrowser) {
+  if (!customerAccessToken) {
     navigate("/login")
   }
 
   useEffect(() => {
     const getCustomer = async () => {
       const query = `
-        query customer($customerAccessToken: String!) {
-          customer(customerAccessToken: $customerAccessToken) {
-            id
-            email
-            firstName
-            lastName
-            defaultAddress {
-              address1
-              address2
-              city
-              province
-              country
-              zip
-              phone
-            }
-            orders(first: 10) {
-              edges {
-                node {
-                  id
-                  name
-                }
+      query customer($customerAccessToken: String!) {
+        customer(customerAccessToken: $customerAccessToken) {
+          id
+          email
+          firstName
+          lastName
+          defaultAddress {
+            address1
+            address2
+            city
+            province
+            country
+            zip
+            phone
+          }
+          orders(first: 10) {
+            edges {
+              node {
+                id
+                name
               }
             }
           }
         }
-      `
+      }
+    `
       try {
         const response = await fetch(
-          `${process.env.GATSBY_STORE_ENDPOINT}.json`,
+          `https://tres-noir.myshopify.com/api/2022-01/graphql.json`,
           {
             method: "POST",
             headers: {

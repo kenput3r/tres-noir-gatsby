@@ -1,4 +1,4 @@
-import React, { useEffect, useContext } from "react"
+import React, { useState, useEffect, useContext } from "react"
 import { Link } from "gatsby"
 import styled from "styled-components"
 import Layout from "../components/layout"
@@ -6,9 +6,7 @@ import SEO from "../components/seo"
 import Loader from "../components/loader"
 import QuantitySelector from "../components/quantity-selector"
 import { CartContext } from "../contexts/cart"
-import { CustomerContext } from "../contexts/customer"
-import { LineItem } from "../types/checkout"
-import { startedCheckoutKlaviyoEvent } from "../helpers/klaviyo"
+import { Checkout, LineItem } from "../types/checkout"
 
 const Page = styled.div`
   margin: 0 1.45rem;
@@ -80,16 +78,11 @@ const Page = styled.div`
 const Cart = () => {
   const { checkout, removeProductFromCart, updateProductInCart } =
     useContext(CartContext)
-
-  const { associateCheckout } = useContext(CustomerContext)
+  const [cart, setCart] = useState<Checkout>()
 
   useEffect(() => {
     if (checkout) {
-      console.log("CHECKOUT EXISTS", checkout)
-      if (checkout.lineItems.length > 0) {
-        startedCheckoutKlaviyoEvent(checkout)
-      }
-      associateCheckout(checkout.id)
+      setCart(checkout as Checkout)
     }
   }, [checkout])
 
@@ -98,15 +91,15 @@ const Cart = () => {
   }
 
   const renderContent = () => {
-    if (checkout) {
-      if (checkout?.lineItems.length === 0) {
+    if (cart) {
+      if (cart?.lineItems.length === 0) {
         return <p className="text-center">Your cart is currently empty.</p>
       } else {
         return (
           <>
             <ul>
-              {checkout?.lineItems &&
-                checkout?.lineItems.map((line: LineItem) => (
+              {cart?.lineItems &&
+                cart?.lineItems.map((line: LineItem) => (
                   <li key={line.id}>
                     <div>
                       <img
@@ -148,11 +141,11 @@ const Cart = () => {
                 <span>Delivery & Taxes are calculated at checkout.</span>
               </div>
               <div>
-                <h2 className="total">${checkout.subtotalPrice}</h2>
+                <h2 className="total">${cart.subtotalPrice}</h2>
               </div>
             </div>
             <div className="checkout-container">
-              <a href={checkout.webUrl} className="button">
+              <a href={cart.webUrl} className="button">
                 Checkout
               </a>
               <Link to="/">Continue Shopping</Link>
@@ -171,6 +164,69 @@ const Cart = () => {
       <Page>
         <h1>Cart</h1>
         {renderContent()}
+        {/* {cart ? (
+          cart?.lineItems.length === 0 ? (
+            <p className="text-center">Your cart is currently empty.</p>
+          ) : (
+            <>
+              <ul>
+                {cart?.lineItems &&
+                  cart?.lineItems.map((line: LineItem) => (
+                    <li key={line.id}>
+                      <div>
+                        <img
+                          src={line.variant.image.src}
+                          alt={line.variant.image.altText}
+                        />
+                      </div>
+                      <div>
+                        <p className="title">
+                          <Link to={`/products/${line.variant.product.handle}`}>
+                            {line.title}
+                          </Link>
+                        </p>
+                        <span className="sub-title">{line.variant.title}</span>
+                      </div>
+                      <QuantitySelector
+                        lineId={line.id}
+                        quantity={line.quantity}
+                        updateQuantity={updateQuantity}
+                      />
+                      <div>
+                        <p className="price">${line.variant.price}</p>
+                      </div>
+                      <div>
+                        <a
+                          className="remove-item"
+                          href="#"
+                          onClick={() => removeProductFromCart(line.id)}
+                        >
+                          X Remove
+                        </a>
+                      </div>
+                    </li>
+                  ))}
+              </ul>
+              <div className="subtotal">
+                <div>
+                  <h2>Subtotal</h2>
+                  <span>Delivery & Taxes are calculated at checkout.</span>
+                </div>
+                <div>
+                  <h2 className="total">${cart.subtotalPrice}</h2>
+                </div>
+              </div>
+              <div className="checkout-container">
+                <a href={cart.webUrl} className="button">
+                  Checkout
+                </a>
+                <Link to="/">Continue Shopping</Link>
+              </div>
+            </>
+          )
+        ) : (
+          <Loader />
+        )} */}
       </Page>
     </Layout>
   )

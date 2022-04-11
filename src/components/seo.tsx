@@ -75,13 +75,7 @@ function SEO({ description, lang, meta, title }) {
               : ``,
         },
       ].concat(meta)}
-    >
-      <script
-        type="application/javascript"
-        async
-        src="https://static.klaviyo.com/onsite/js/klaviyo.js?company_id=TpAWEe"
-      ></script>
-    </Helmet>
+    />
   )
 }
 
