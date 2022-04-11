@@ -6,8 +6,14 @@ import Layout from "../components/layout"
 import SEO from "../components/seo"
 import ProductCarousel from "../components/product-carousel"
 import { SelectedVariantContext } from "../contexts/selectedVariant"
+import { CustomerContext } from "../contexts/customer"
 import { CartContext } from "../contexts/cart"
 import Product from "./product"
+import {
+  addedToCartKlaviyoEvent,
+  viewedProductKlaviyoEvent,
+} from "../helpers/klaviyo"
+
 const Page = styled.div`
   .shipping-message {
     text-align: center;
@@ -183,8 +189,6 @@ const Page = styled.div`
 const ProductCustomizable = ({
   data: { contentfulProduct, shopifyProduct },
 }: any) => {
-  console.log("SHOPIFY PRODUCT", shopifyProduct)
-  console.log("CONTENTFUL PRODUCT", contentfulProduct)
   if (!contentfulProduct) {
     return Product
   }
@@ -196,7 +200,7 @@ const ProductCustomizable = ({
     shopify: shopifyProduct.variants[0],
   })
   // cart
-  const { addProductToCart } = useContext(CartContext)
+  const { addProductToCart, checkout } = useContext(CartContext)
 
   useEffect(() => {
     const sku = selectedVariantContext
@@ -221,6 +225,30 @@ const ProductCustomizable = ({
     shopifyProduct.variants,
   ])
 
+  const { customerEmail } = useContext(CustomerContext)
+
+  useEffect(() => {
+    if (customerEmail) {
+      const productData = {
+        title: shopifyProduct.title,
+        legacyResourceId: shopifyProduct.legacyResourceId,
+        sku: selectedVariant.shopify.sku,
+        productType: shopifyProduct.productType,
+        image: selectedVariant?.shopify?.image?.originalSrc
+          ? selectedVariant.shopify.image?.originalSrc
+          : shopifyProduct.featuredImage.originalSrc,
+        url: shopifyProduct.onlineStoreUrl,
+        vendor: shopifyProduct.vendor,
+        price: selectedVariant.shopify.price,
+        compareAtPrice: selectedVariant.shopify.compareAtPrice,
+        collections: shopifyProduct.collections.map(
+          (collection: { title: string }) => collection.title
+        ),
+      }
+      viewedProductKlaviyoEvent(productData)
+    }
+  }, [selectedVariant])
+
   const selectVariant = (e: React.MouseEvent, variant: any) => {
     // e.currentTarget && (e.currentTarget as HTMLElement).blur()
     const shopify = shopifyProduct.variants.find(
@@ -237,11 +265,30 @@ const ProductCustomizable = ({
 
   const handleAddToCart = () => {
     const id = selectedVariant.shopify.storefrontId
-    console.log("ADDING TO CART", `${id} x 1`)
     addProductToCart(id, 1)
     alert("ADDED TO CART")
+    // klaviyo
+    if (customerEmail) {
+      const productData = {
+        title: shopifyProduct.title,
+        legacyResourceId: shopifyProduct.legacyResourceId,
+        sku: selectedVariant.shopify.sku,
+        productType: shopifyProduct.productType,
+        image: selectedVariant?.shopify?.image?.originalSrc
+          ? selectedVariant.shopify.image?.originalSrc
+          : shopifyProduct.featuredImage.originalSrc,
+        url: shopifyProduct.onlineStoreUrl,
+        vendor: shopifyProduct.vendor,
+        price: selectedVariant.shopify.price,
+        compareAtPrice: selectedVariant.shopify.compareAtPrice,
+        collections: shopifyProduct.collections.map(
+          (collection: { title: string }) => collection.title
+        ),
+      }
+      addedToCartKlaviyoEvent(productData, checkout)
+    }
   }
-  console.log("SELECTED VARIANT", selectedVariant)
+
   return (
     <Layout>
       <SEO title={shopifyProduct.title} />
@@ -257,7 +304,6 @@ const ProductCustomizable = ({
         </div>
         <div className="row">
           <div className="col images">
-            {console.log("IMAGE SET", selectedVariant?.contentful.imageSet)}
             <ProductCarousel
               imageSet={
                 selectedVariant?.contentful &&
@@ -381,7 +427,15 @@ export const query = graphql`
       }
     }
     shopifyProduct(handle: { eq: $handle }) {
+      collections {
+        title
+      }
+      featuredImage {
+        originalSrc
+      }
       id
+      legacyResourceId
+      onlineStoreUrl
       priceRangeV2 {
         minVariantPrice {
           amount
@@ -390,11 +444,17 @@ export const query = graphql`
           amount
         }
       }
+      productType
       title
+      vendor
       variants {
         availableForSale
         compareAtPrice
         id
+        image {
+          originalSrc
+        }
+        legacyResourceId
         price
         sku
         storefrontId

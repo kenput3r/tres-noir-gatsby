@@ -65,57 +65,13 @@ const Login = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    console.log("MUTATION", { variables: { email, password } })
-    const query = `
-      mutation customerAccessTokenCreate($input: CustomerAccessTokenCreateInput!) {
-        customerAccessTokenCreate(input: $input) {
-          customerAccessToken {
-            accessToken
-            expiresAt
-          }
-          customerUserErrors {
-            code
-            field
-            message
-          }
-        }
-      }
-    `
-    try {
-      const response = await fetch(
-        `https://tres-noir.myshopify.com/api/2022-01/graphql.json`,
-        {
-          method: "POST",
-          headers: {
-            "X-Shopify-Storefront-Access-Token": process.env
-              .GATSBY_STORE_STOREFRONT_TOKEN as string,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            query,
-            variables: { input: { email, password } },
-          }),
-        }
-      )
-      console.log("RESPONSE", response)
-      const json = await response.json()
-      console.log("json", json)
-      if (json.data) {
-        const { customerAccessToken, customerUserErrors } =
-          json.data.customerAccessTokenCreate
-        if (customerUserErrors.length) {
-          console.log("ERROR", JSON.stringify(customerUserErrors[0].message))
-          renderErrorModal(customerUserErrors[0].message)
-        } else {
-          login(customerAccessToken)
-          navigate("/account")
-        }
-      } else {
-        renderErrorModal("ERROR: please try again later...")
-      }
-    } catch (err: any) {
-      console.log("ERROR", err.message)
-      renderErrorModal(err.message)
+    const response = await login(email, password)
+    if (response.loggedIn) {
+      navigate("/account")
+    } else {
+      let message = "Incorrect Login Information"
+      if (response.message) message = response.message
+      renderErrorModal(message)
     }
   }
 

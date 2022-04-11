@@ -1,46 +1,184 @@
 import React, { createContext, ReactChild, useState, useMemo } from "react"
 import Cookies from "js-cookie"
 
-interface CC {
+const customerAccessTokenCookie = "tn_g_auth"
+const customerEmailCookie = "tn_g_customer"
+
+interface DefaultContext {
   customerAccessToken: null | string
   setCustomerAccessToken: (value: null | string) => void
-  login: (data: { accessToken: string; expiresAt: string }) => void
+  customerEmail: null | string
+  login: (
+    email: string,
+    password: string
+  ) => Promise<{ loggedIn: boolean; message?: string }>
   logout: () => void
+  associateCheckout: (checkoutId: string) => Promise<void>
 }
 
-const defaultContext: CC = {
-  customerAccessToken: "",
+const defaultContext: DefaultContext = {
+  customerAccessToken: null,
   setCustomerAccessToken: (customerAccessToken: string | null) => {},
-  login: (data: { accessToken: string; expiresAt: string }) => {},
+  customerEmail: null,
+  login: async (email: string, password: string) => {
+    return { loggedIn: false, message: "" }
+  },
   logout: () => {},
+  associateCheckout: async (checkoutId: string) => {},
 }
 
 export const CustomerContext = createContext(defaultContext)
 
 export const CustomerProvider = ({ children }: { children: ReactChild }) => {
-  const accessToken = Cookies.get("tn-login")
+  const accessToken = Cookies.get(customerAccessTokenCookie)
+  const email = Cookies.get(customerEmailCookie)
   const [customerAccessToken, setCustomerAccessToken] = useState<null | string>(
     accessToken || null
   )
+  const [customerEmail, setCustomerEmail] = useState<null | string>(
+    email || null
+  )
 
   const logout = () => {
-    Cookies.remove("tn-login")
+    Cookies.remove(customerAccessTokenCookie)
+    Cookies.remove(customerEmailCookie)
     setCustomerAccessToken(null)
   }
 
-  const login = (data: { accessToken: string; expiresAt: string }) => {
-    Cookies.set("tn-login", data.accessToken, {
-      expires: new Date(data.expiresAt),
-    })
-    setCustomerAccessToken(data.accessToken)
+  const login = async (email: string, password: string) => {
+    console.log("LOGGING IN")
+    const query = `
+      mutation customerAccessTokenCreate($input: CustomerAccessTokenCreateInput!) {
+        customerAccessTokenCreate(input: $input) {
+          customerAccessToken {
+            accessToken
+            expiresAt
+          }
+          customerUserErrors {
+            code
+            field
+            message
+          }
+        }
+      }
+    `
+    try {
+      const response = await fetch(
+        `${process.env.GATSBY_STORE_ENDPOINT}.json`,
+        {
+          method: "POST",
+          headers: {
+            "X-Shopify-Storefront-Access-Token": process.env
+              .GATSBY_STORE_STOREFRONT_TOKEN as string,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            query,
+            variables: { input: { email, password } },
+          }),
+        }
+      )
+      const json = await response.json()
+      let loggedIn = false
+      if (json.data) {
+        console.log("JSON DATA", json.data)
+        const { customerAccessToken, customerUserErrors } =
+          json.data.customerAccessTokenCreate
+        if (customerUserErrors.length > 0) {
+          throw new Error(customerUserErrors[0].message)
+        } else {
+          console.log("TOKEN", customerAccessToken)
+          console.log("CREATING AUTH COOKIE")
+          Cookies.set(
+            customerAccessTokenCookie,
+            customerAccessToken.accessToken,
+            {
+              expires: new Date(customerAccessToken.expiresAt),
+            }
+          )
+          console.log("CREATING EMAIL COOKIE")
+          Cookies.set(customerEmailCookie, email, {
+            expires: new Date(customerAccessToken.expiresAt),
+          })
+          setCustomerAccessToken(customerAccessToken.accessToken)
+          setCustomerEmail(email)
+          loggedIn = true
+        }
+      } else {
+        alert("ERROR: please try again later...")
+      }
+      return { loggedIn }
+    } catch (err: any) {
+      console.log("ERROR", err.message)
+      return {
+        loggedIn: false,
+        message: err.message,
+      }
+    }
+  }
+
+  const associateCheckout = async (checkoutId: string) => {
+    if (!customerAccessToken) return
+    console.log("ASSSOCIATING CHECKOUT")
+    const query = `
+      mutation associateCustomerWithCheckout($checkoutId: ID!, $customerAccessToken: String!) {
+        checkoutCustomerAssociateV2(checkoutId: $checkoutId, customerAccessToken: $customerAccessToken) {
+          checkout {
+            id
+          }
+          checkoutUserErrors {
+            code
+            field
+            message
+          }
+          customer {
+            id
+          }
+        }
+      }
+    `
+    try {
+      const response = await fetch(
+        `${process.env.GATSBY_STORE_ENDPOINT}.json`,
+        {
+          method: "POST",
+          headers: {
+            "X-Shopify-Storefront-Access-Token": process.env
+              .GATSBY_STORE_STOREFRONT_TOKEN as string,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            query,
+            variables: { checkoutId, customerAccessToken },
+          }),
+        }
+      )
+      const json = await response.json()
+      if (json.data) {
+        const { checkout, checkoutUserErrors, customer } =
+          json.data.checkoutCustomerAssociateV2
+        if (checkoutUserErrors.lengh > 0) {
+          alert(`ERRROR: ${checkoutUserErrors[0].message}`)
+          throw new Error(checkoutUserErrors[0].message)
+        } else {
+          console.log(
+            `ASSOCIATED CHECKOUT: ${checkout.id} TO CUSTOMER: ${customer.id}`
+          )
+        }
+      }
+    } catch (err: any) {
+      console.log("ERROR", err.message)
+    }
   }
 
   const value = useMemo(
     () => ({
       customerAccessToken,
       setCustomerAccessToken,
+      customerEmail,
       login,
       logout,
+      associateCheckout,
     }),
     [customerAccessToken]
   )
