@@ -18,6 +18,7 @@ export interface Checkout {
     amount: string
     currencyCode: string
   }
+  totalPrice: string
   webUrl: string
 }
 
