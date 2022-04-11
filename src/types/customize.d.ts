@@ -107,33 +107,20 @@ export interface ContentfulProductVariant {
 }
 
 export interface ShopifyProduct {
-  collections: { title: string }[]
-  featuredImage: {
-    originalSrc: string
-  }
-  id: string
-  legacyResourceId: string
-  onlineStoreUrl: string
   priceRangeV2: {
     minVariantPrice: number
     maxVariantPrice: number
   }
-  productType: string
   title: string
   variants: ShopifyProductVariant[]
-  vendor: string
 }
 
 export interface ShopifyProductVariant {
   availableForSale: boolean
-  compareAtPrice: number | null
+  compareAtPriceV2: number | null
   id: string
-  legacyResourceId: string
   price: number
   sku: string
   storefrontId: string
   title: string
-  image: {
-    originalSrc: string
-  }
 }

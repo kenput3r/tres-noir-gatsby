@@ -30,7 +30,7 @@ const Page = styled.div`
   .row {
     display: flex;
     flex-direction: row;
-    @media only screen and (max-width: 750px) {
+    @media only screen and (max-width: 600px) {
       &.product-customize {
         display: block;
       }
@@ -87,8 +87,6 @@ const Customize = ({
   const previewRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    const isBrowser = typeof window !== "undefined"
-    if (!isBrowser) return
     const urlParams = new URLSearchParams(window.location.search)
     const sku = urlParams.get("variant")
     const contentful = contentfulProduct.variants.find(
@@ -115,8 +113,8 @@ const Customize = ({
       }
     }
   }, [
-    contentfulProduct?.handle,
-    contentfulProduct?.variants,
+    contentfulProduct.handle,
+    contentfulProduct.variants,
     setProductUrl,
     shopifyProduct.variants,
   ])
