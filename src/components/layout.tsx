@@ -1,5 +1,7 @@
-import React, { useState } from "react"
+import React, { useState, useEffect, useContext } from "react"
 import { useStaticQuery, graphql } from "gatsby"
+import { CustomerContext } from "../contexts/customer"
+import { identifyCustomerKlaviyoEvent } from "../helpers/klaviyo"
 
 import Header from "./header"
 import Drawer from "./drawer"
@@ -22,6 +24,13 @@ const Layout = ({ children }: LayoutProps) => {
       }
     }
   `)
+
+  const { customerEmail } = useContext(CustomerContext)
+
+  useEffect(() => {
+    if (customerEmail) identifyCustomerKlaviyoEvent(customerEmail)
+  }, [customerEmail])
+
   return (
     <>
       <Header

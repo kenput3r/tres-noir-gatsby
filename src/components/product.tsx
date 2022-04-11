@@ -13,10 +13,10 @@ const Product = ({ data }: { data: ShopifyProduct }) => {
   return (
     <Component>
       <h3>{data.title}</h3>
-      <Image
+      {/* <Image
         image={data.images[0].localFile.childImageSharp.gatsbyImageData}
         alt=""
-      />
+      /> */}
     </Component>
   )
 }
