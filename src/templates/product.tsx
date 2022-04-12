@@ -325,21 +325,23 @@ const Product = ({ data: { shopifyProduct } }: any) => {
               <h1>{shopifyProduct.title}</h1>
               <form>
                 <div className="product-dropdown">
-                  <p>{selectedVariant.selectedOptions[0].name}</p>
                   {!hasSingleVariant ? (
-                    <div className="select-dropdown">
-                      <select
-                        id="product-variants"
-                        onChange={evt => handleVariant(evt)}
-                      >
-                        {shopifyProduct.variants.map(element => {
-                          return (
-                            <option key={element.sku} value={element.sku}>
-                              {element.title}
-                            </option>
-                          )
-                        })}
-                      </select>
+                    <div>
+                      <p>{selectedVariant.selectedOptions[0].name}</p>
+                      <div className="select-dropdown">
+                        <select
+                          id="product-variants"
+                          onChange={evt => handleVariant(evt)}
+                        >
+                          {shopifyProduct.variants.map(element => {
+                            return (
+                              <option key={element.sku} value={element.sku}>
+                                {element.title}
+                              </option>
+                            )
+                          })}
+                        </select>
+                      </div>
                     </div>
                   ) : (
                     <div></div>
