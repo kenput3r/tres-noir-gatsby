@@ -2,7 +2,7 @@ import React, { createContext, ReactChild, useState, useMemo } from "react"
 
 interface DefaultContext {
   errorModalIsOpen: boolean
-  renderErrorModal: (error: string) => void
+  renderErrorModal: (error?: string) => void
   closeErrorModal: () => void
   afterOpenErrorModal: (cb: any) => void
   errorMsg: string
@@ -22,7 +22,9 @@ export const ErrorModalProvider = ({ children }: { children: ReactChild }) => {
   const [errorModalIsOpen, setErrorModalIsOpen] = useState<boolean>(false)
   const [errorMsg, setErrorMsg] = useState<string>("")
 
-  const renderErrorModal = (error: string) => {
+  const renderErrorModal = (error?: string) => {
+    if (error === undefined)
+      error = "There's been a problem, please try again later."
     setErrorMsg(error)
     setErrorModalIsOpen(true)
     afterOpenErrorModal(console.log("Modal is Open"))
