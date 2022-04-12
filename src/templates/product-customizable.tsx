@@ -385,7 +385,7 @@ const ProductCustomizable = ({
               </div>
               <div className="actions">
                 {quantityLevels &&
-                quantityLevels[selectedVariant.shopify.sku] !== 0 ? (
+                quantityLevels[selectedVariant.shopify.sku] === 0 ? (
                   <div className="align-start">
                     <button type="button" className="sold-out">
                       SOLD OUT
