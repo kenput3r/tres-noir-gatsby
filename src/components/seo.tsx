@@ -70,7 +70,8 @@ function SEO({ description, lang, meta, title }) {
         {
           name: `robots`,
           content:
-            process.env.GATSBY_ENVIRONMENT === "STAGING"
+            process.env.GATSBY_ENVIRONMENT === "STAGING" ||
+            process.env.GATSBY_ENVIRONMENT === "staging"
               ? `noindex, nofollow`
               : ``,
         },

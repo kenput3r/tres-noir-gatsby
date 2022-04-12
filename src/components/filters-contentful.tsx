@@ -213,7 +213,7 @@ const FiltersContentful = ({
 
   // React Spring
   const isBrowser = typeof window !== "undefined"
-  if (!isBrowser) return
+  if (!isBrowser) return null
   const [heightRef, height] = useHeight()
   const slideInStyles = useSpring({
     config: { ...config.stiff },
