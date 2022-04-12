@@ -141,6 +141,7 @@ const Page = styled.div`
       text-decoration: none;
       text-align: center;
       -webkit-appearance: button-bevel;
+      cursor: pointer;
     }
     p {
       color: var(--color-grey-dark);
@@ -196,19 +197,20 @@ const Product = ({ data: { shopifyProduct } }: any) => {
   const [selectedVariant, setSelectedVariant] = useState(
     shopifyProduct.variants[0]
   )
-  const hasSingleVariant = shopifyProduct.variants.length === 1 ? true : false
-
+  const hasSingleVariant: boolean =
+    shopifyProduct.variants.length === 1 ? true : false
+  const useVariantSwiper: boolean = false
   const quantityLevels = useQuantityQuery(
     shopifyProduct.handle,
     shopifyProduct.variants.length
   )
 
   const createImageSet = () => {
-    interface iSet {
+    interface ImageSet {
       data: any
       title: string
     }
-    let imageSet: iSet[] = []
+    let imageSet: ImageSet[] = []
     // single Product with images
     if (shopifyProduct.images && hasSingleVariant) {
       shopifyProduct.images.forEach(element => {

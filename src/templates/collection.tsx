@@ -69,6 +69,9 @@ export const query = graphql`
         productType
         storefrontId
         title
+        variants {
+          title
+        }
       }
     }
   }
