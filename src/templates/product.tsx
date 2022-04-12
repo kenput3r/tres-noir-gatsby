@@ -53,6 +53,20 @@ const Page = styled.div`
   .heading {
     align-self: flex-start;
   }
+  .product-dropdown {
+    font-family: var(--sub-heading-font);
+    p {
+      margin-bottom: 0;
+      font-size: 0.875rem;
+      color: var(--color-grey-dark);
+    }
+    select {
+      width: 210px;
+      height: 40px;
+      border: 1px solid #e1e3e4;
+      color: #8a8f93;
+    }
+  }
   h1 {
     font-weight: normal;
     font-size: 3rem;
@@ -115,9 +129,9 @@ const Page = styled.div`
     }
   }
   .actions {
-    //display: flex;
-    //flex-direction: column;
-    //align-items: flex-end;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
     font-family: var(--sub-heading-font);
     .sold-out {
       opacity: 0.5;
@@ -197,6 +211,7 @@ const Product = ({ data: { shopifyProduct } }: any) => {
   const [selectedVariant, setSelectedVariant] = useState(
     shopifyProduct.variants[0]
   )
+  console.log("SELECTED VARIANT", selectedVariant)
   const hasSingleVariant: boolean =
     shopifyProduct.variants.length === 1 ? true : false
   const useVariantSwiper: boolean = false
@@ -243,11 +258,8 @@ const Product = ({ data: { shopifyProduct } }: any) => {
         })
       }
     }
-    console.log("image Set", imageSet)
-    console.log("image")
     return imageSet
   }
-
   const imageSetArr = createImageSet()
 
   const { addProductToCart, checkout } = useContext(CartContext)
@@ -313,19 +325,22 @@ const Product = ({ data: { shopifyProduct } }: any) => {
               <h1>{shopifyProduct.title}</h1>
               <form>
                 <div className="product-dropdown">
+                  <p>{selectedVariant.selectedOptions[0].name}</p>
                   {!hasSingleVariant ? (
-                    <select
-                      id="product-variants"
-                      onChange={evt => handleVariant(evt)}
-                    >
-                      {shopifyProduct.variants.map(element => {
-                        return (
-                          <option key={element.sku} value={element.sku}>
-                            {element.title}
-                          </option>
-                        )
-                      })}
-                    </select>
+                    <div className="select-dropdown">
+                      <select
+                        id="product-variants"
+                        onChange={evt => handleVariant(evt)}
+                      >
+                        {shopifyProduct.variants.map(element => {
+                          return (
+                            <option key={element.sku} value={element.sku}>
+                              {element.title}
+                            </option>
+                          )
+                        })}
+                      </select>
+                    </div>
                   ) : (
                     <div></div>
                   )}
@@ -403,6 +418,9 @@ export const query = graphql`
               gatsbyImageData
             }
           }
+        }
+        selectedOptions {
+          name
         }
         legacyResourceId
         price

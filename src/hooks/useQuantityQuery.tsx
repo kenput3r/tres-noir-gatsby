@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useState, useLayoutEffect } from "react"
 
 export function useQuantityQuery(handle: string, size: number) {
   const [productQuantities, setProductQuantities] = useState<{} | undefined>({})
@@ -68,7 +68,7 @@ export function useQuantityQuery(handle: string, size: number) {
     }
   }
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const isBrowser = typeof window !== "undefined"
     if (isBrowser) {
       createQuantityData().then(result => setProductQuantities(result))

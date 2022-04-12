@@ -145,6 +145,9 @@ const Page = styled.div`
       }
     }
   }
+  .align-start {
+    align-self: start;
+  }
   @media (max-width: 500px) {
     .shipping-message {
       .h3 {
@@ -196,9 +199,9 @@ const ProductCustomizable = ({
   console.log("SHOPIFY PRODUCT", shopifyProduct)
   console.log("CONTENTFUL PRODUCT", contentfulProduct)
   // return default Product Page if contentful values do not exist
-
-  console.log(
-    useQuantityQuery(contentfulProduct.handle, shopifyProduct.variants.length)
+  const quantityLevels = useQuantityQuery(
+    shopifyProduct.handle,
+    shopifyProduct.variants.length
   )
   const { selectedVariantContext, setSelectedVariantContext } = useContext(
     SelectedVariantContext
@@ -381,22 +384,31 @@ const ProductCustomizable = ({
                 </p>
               </div>
               <div className="actions">
-                <div>
-                  <button type="button" onClick={handleAddToCart}>
-                    ADD TO CART
-                  </button>
-                  <p>- OR -</p>
-                  <Link
-                    className="customize-btn"
-                    to={
-                      contentfulProduct &&
-                      `/products/${contentfulProduct.handle}/customize?variant=${selectedVariant.shopify.sku}`
-                    }
-                  >
-                    CUSTOMIZE
-                  </Link>
-                  <p className="small">Click for Polarized, Rx, and more</p>
-                </div>
+                {quantityLevels &&
+                quantityLevels[selectedVariant.shopify.sku] !== 0 ? (
+                  <div className="align-start">
+                    <button type="button" className="sold-out">
+                      SOLD OUT
+                    </button>
+                  </div>
+                ) : (
+                  <div>
+                    <button type="button" onClick={handleAddToCart}>
+                      ADD TO CART
+                    </button>
+                    <p>- OR -</p>
+                    <Link
+                      className="customize-btn"
+                      to={
+                        contentfulProduct &&
+                        `/products/${contentfulProduct.handle}/customize?variant=${selectedVariant.shopify.sku}`
+                      }
+                    >
+                      CUSTOMIZE
+                    </Link>
+                    <p className="small">Click for Polarized, Rx, and more</p>
+                  </div>
+                )}
               </div>
             </form>
           </div>
@@ -473,6 +485,9 @@ export const query = graphql`
         sku
         storefrontId
         title
+        selectedOptions {
+          name
+        }
       }
     }
   }
