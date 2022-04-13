@@ -85,7 +85,6 @@ const Cart = () => {
 
   useEffect(() => {
     if (checkout) {
-      console.log("CHECKOUT EXISTS", checkout)
       if (checkout.lineItems.length > 0) {
         startedCheckoutKlaviyoEvent(checkout)
       }

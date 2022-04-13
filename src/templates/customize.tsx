@@ -105,7 +105,6 @@ const Customize = ({
         const previewImage = previewRef.current.querySelector(
           ".gatsby-image-wrapper img[data-main-image]"
         )
-        console.log(previewImage)
         // previewImage.addEventListener("loadstart", function (e) {
         //   console.log("Preview Image Load Started")
         // })
@@ -124,7 +123,6 @@ const Customize = ({
   /* UPDATE PRICING */
   useEffect(() => {
     let { price } = variant.shopify
-    console.log("SELECTED VARIANTS", selectedVariants)
     Object.keys(selectedVariants).forEach(key => {
       // @ts-ignore
       // price += selectedVariants[key].price
