@@ -10,17 +10,52 @@ import {
 } from "../types/contentful"
 
 import "swiper/css"
-import "swiper/css/navigation"
+// import "swiper/css/navigation"
 
-const Component = styled.div``
+const Component = styled.div`
+  .navigation {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    a:hover {
+      cursor: pointer;
+    }
+  }
+  .prev {
+    flex: 1 15%;
+  }
+  .next {
+    flex: 1 15%;
+  }
+  .options-swiper {
+    flex: 1 70%;
+  }
+`
 
-const OptionImage = styled(GatsbyImage)`
-  cursor: pointer;
+const OptionImage = styled.div`
+  background-color: transparent;
+  border: 1px solid #fff;
+  border-radius: 50%;
+  line-height: 0;
+  margin-right: 5px;
+  padding: 5px;
+  max-width: 40px;
+  &[data-active="true"] {
+    border-color: #000;
+  }
+  :hover {
+    cursor: pointer;
+  }
+  .gatsby-image-wrapper {
+    border-radius: 50%;
+  }
 `
 
 const StyledSwiper = styled(Swiper)`
-  .swiper-slide-active {
-    border: 1px solid #000;
+  .active-option {
+    .option-image {
+      border-color: #000;
+    }
   }
 `
 
@@ -40,6 +75,8 @@ const ProductOptionsCarousel = ({
   const sliderRef = useRef(null)
   const mounted = useRef(false)
   const swiperRef = useRef(null) as any
+
+  const [activeIndex, setActiveIndex] = useState<number>(0)
 
   useEffect(() => {
     mounted.current = true
@@ -66,52 +103,72 @@ const ProductOptionsCarousel = ({
         if (swiperRef.current) {
           // console.log(`${uniqueId} SET SLIDE TO`, index)
           swiperRef.current.slideTo(index, 200, false)
+          setActiveIndex(index)
         }
-
-        // option.click()
-        // swiperRef.current.update()
       }
     })
   }
 
   return (
     <Component ref={sliderRef}>
-      <StyledSwiper
-        centerInsufficientSlides
-        className="options-swiper"
-        grabCursor
-        initialSlide={0}
-        modules={[Navigation]}
-        navigation
-        onInit={(swiper: any) => {
-          swiperRef.current = swiper
-        }}
-        slidesPerView={6}
-        slideToClickedSlide={true}
-        spaceBetween={3}
-        // watchOverflow
-        watchSlidesProgress
-      >
-        {variants.map((variant: ContentfulProductVariant, i: number) => (
-          <SwiperSlide
-            key={i}
-            onClick={e => {
-              clickHandler(variant)
-              swiperRef.current.slideTo(i, 200, true)
-            }}
-            className="option"
-            data-option={variant.frameColor}
-            data-index={i}
-            virtualIndex={i}
-          >
-            <OptionImage
-              image={variant.colorImage.data}
-              alt={variant.colorName}
-              loading="eager"
-            />
-          </SwiperSlide>
-        ))}
-      </StyledSwiper>
+      <div className="navigation">
+        {variants.length > 6 && (
+          <a className={`${uniqueId}-prev`} role="button">
+            <Left />
+          </a>
+        )}
+
+        <StyledSwiper
+          centerInsufficientSlides
+          className="options-swiper"
+          grabCursor
+          initialSlide={0}
+          modules={[Navigation]}
+          navigation={
+            variants.length > 6
+              ? {
+                  nextEl: `.${uniqueId}-next`,
+                  prevEl: `.${uniqueId}-prev`,
+                }
+              : false
+          }
+          onInit={(swiper: any) => {
+            swiperRef.current = swiper
+          }}
+          slidesPerView={6}
+          slideToClickedSlide={true}
+          spaceBetween={3}
+          watchOverflow
+          watchSlidesProgress
+        >
+          {variants.map((variant: ContentfulProductVariant, i: number) => (
+            <SwiperSlide
+              key={i}
+              onClick={e => {
+                clickHandler(variant)
+                setActiveIndex(i)
+              }}
+              className={`option ${i === activeIndex ? "active-option" : ""}`}
+              data-option={variant.frameColor}
+              data-index={i}
+              virtualIndex={i}
+            >
+              <OptionImage className="option-image">
+                <GatsbyImage
+                  image={variant.colorImage.data}
+                  alt={variant.colorName}
+                  loading="eager"
+                />
+              </OptionImage>
+            </SwiperSlide>
+          ))}
+        </StyledSwiper>
+        {variants.length > 6 && (
+          <a className={`${uniqueId}-next`} role="button">
+            <Right />
+          </a>
+        )}
+      </div>
     </Component>
   )
 }
