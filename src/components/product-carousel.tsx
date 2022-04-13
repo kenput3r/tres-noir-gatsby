@@ -1,7 +1,6 @@
 import React, { useState } from "react"
 import { Swiper, SwiperSlide } from "swiper/react"
 import { Thumbs, Navigation } from "swiper"
-// import SwiperCore, { Thumbs, Navigation } from "swiper/core"
 import { GatsbyImage } from "gatsby-plugin-image"
 import { BsChevronLeft as Left, BsChevronRight as Right } from "react-icons/bs"
 import styled from "styled-components"
@@ -74,7 +73,6 @@ const ProductCarousel = ({ imageSet }: { imageSet: [ImageSet] }) => {
           spaceBetween={10}
           slidesPerView={3}
           onSwiper={swiper => setThumbsSwiper(swiper)}
-          // watchSlidesVisibility
           watchSlidesProgress
         >
           {imageSet.map((image: ImageSet, i: number) => (
