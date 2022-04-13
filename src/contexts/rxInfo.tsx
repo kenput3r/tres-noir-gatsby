@@ -78,7 +78,6 @@ const reducer = (state, action) => {
     case actionList.LEFT_PD:
       return { ...state, left: { ...state.left, pd: action.payload } }
     default:
-      console.log("error, no value found")
       return state
   }
 }

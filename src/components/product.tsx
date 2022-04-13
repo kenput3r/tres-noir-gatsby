@@ -9,7 +9,6 @@ const Component = styled.article`
 `
 
 const Product = ({ data }: { data: ShopifyProduct }) => {
-  console.log(data)
   return (
     <Component>
       <h3>{data.title}</h3>

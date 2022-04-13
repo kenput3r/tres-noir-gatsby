@@ -43,7 +43,6 @@ export const CustomerProvider = ({ children }: { children: ReactChild }) => {
   }
 
   const login = async (email: string, password: string) => {
-    console.log("LOGGING IN")
     const query = `
       mutation customerAccessTokenCreate($input: CustomerAccessTokenCreateInput!) {
         customerAccessTokenCreate(input: $input) {
@@ -78,15 +77,12 @@ export const CustomerProvider = ({ children }: { children: ReactChild }) => {
       const json = await response.json()
       let loggedIn = false
       if (json.data) {
-        console.log("JSON DATA", json.data)
         const { customerAccessToken, customerUserErrors } =
           json.data.customerAccessTokenCreate
         if (customerUserErrors.length > 0) {
           alert(`ERROR: ${customerUserErrors[0].message}`)
           throw new Error(customerUserErrors[0].message)
         } else {
-          console.log("TOKEN", customerAccessToken)
-          console.log("CREATING AUTH COOKIE")
           Cookies.set(
             customerAccessTokenCookie,
             customerAccessToken.accessToken,
@@ -94,7 +90,6 @@ export const CustomerProvider = ({ children }: { children: ReactChild }) => {
               expires: new Date(customerAccessToken.expiresAt),
             }
           )
-          console.log("CREATING EMAIL COOKIE")
           Cookies.set(customerEmailCookie, email, {
             expires: new Date(customerAccessToken.expiresAt),
           })
@@ -114,7 +109,6 @@ export const CustomerProvider = ({ children }: { children: ReactChild }) => {
 
   const associateCheckout = async (checkoutId: string) => {
     if (!customerAccessToken) return
-    console.log("ASSSOCIATING CHECKOUT")
     const query = `
       mutation associateCustomerWithCheckout($checkoutId: ID!, $customerAccessToken: String!) {
         checkoutCustomerAssociateV2(checkoutId: $checkoutId, customerAccessToken: $customerAccessToken) {
@@ -155,10 +149,6 @@ export const CustomerProvider = ({ children }: { children: ReactChild }) => {
         if (checkoutUserErrors.lengh > 0) {
           alert(`ERRROR: ${checkoutUserErrors[0].message}`)
           throw new Error(checkoutUserErrors[0].message)
-        } else {
-          console.log(
-            `ASSOCIATED CHECKOUT: ${checkout.id} TO CUSTOMER: ${customer.id}`
-          )
         }
       }
     } catch (err: any) {

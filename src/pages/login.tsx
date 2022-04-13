@@ -4,7 +4,6 @@ import { navigate } from "gatsby"
 import Layout from "../components/layout"
 import SEO from "../components/seo"
 import { CustomerContext } from "../contexts/customer"
-import { identifyCustomer } from "../helpers/klaviyo"
 
 const Page = styled.div`
   width: 420px;
