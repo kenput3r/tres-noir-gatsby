@@ -1,6 +1,6 @@
 import React from "react"
 import styled from "styled-components"
-import { GatsbyImage as Image } from "gatsby-plugin-image"
+// import { GatsbyImage as Image } from "gatsby-plugin-image"
 import { ShopifyProduct } from "../types/shopify"
 import { Link } from "gatsby"
 //import { useQuantityQuery } from "../hooks/useQuantityQuery"
@@ -11,11 +11,6 @@ const Component = styled.article`
 `
 
 const Product = ({ data }: { data: ShopifyProduct }) => {
-<<<<<<< HEAD
-  console.log(data)
-  //const productQuantities = useQuantityQuery(data.handle, data.variants.length)
-=======
->>>>>>> f77eba1706b620527d5708150f30c5a8778fc1e7
   return (
     <Component>
       <h3>{data.title}</h3>

@@ -13,7 +13,7 @@ module.exports = {
   siteMetadata: {
     title: `Tres Noir`,
     description: `Tres Noir is an independent eyewear company located in Santa Ana, Calif.`,
-    author: `@kenput3r`,
+    author: `@SuavecitoInc`,
   },
   plugins: [
     `gatsby-plugin-react-helmet`,
@@ -25,7 +25,15 @@ module.exports = {
       },
     },
     `gatsby-transformer-sharp`,
-    `gatsby-plugin-sharp`,
+    {
+      resolve: `gatsby-plugin-sharp`,
+      options: {
+        defaults: {
+          formats: [`webp`, `auto`],
+          quality: 80,
+        },
+      },
+    },
     `gatsby-plugin-image`,
     {
       resolve: `gatsby-plugin-manifest`,
@@ -39,6 +47,7 @@ module.exports = {
         icon: `src/images/tres-noir-favicon.png`, // This path is relative to the root of the site.
       },
     },
+    `gatsby-plugin-netlify`,
     `gatsby-plugin-gatsby-cloud`,
     {
       resolve: `gatsby-source-shopify`,

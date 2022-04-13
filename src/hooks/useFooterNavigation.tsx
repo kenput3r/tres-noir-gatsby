@@ -5,9 +5,11 @@ export const useFooterNavigation = () => {
     query FooterMenuQuery {
       contentfulMenu(name: { eq: "Footer" }) {
         items {
-          id
           name
-          url
+          subListItems {
+            name
+            url
+          }
         }
       }
     }

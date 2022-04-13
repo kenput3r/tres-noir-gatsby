@@ -3,12 +3,14 @@ import { useState, useLayoutEffect } from "react"
 export function useQuantityQuery(handle: string, size: number) {
   const [productQuantities, setProductQuantities] = useState<{} | undefined>({})
 
-  const url: string = process.env.GATSBY_STORE_STOREFRONT_ENDPOINT
-    ? process.env.GATSBY_STORE_STOREFRONT_ENDPOINT
+  const url: string = process.env.GATSBY_STORE_ENDPOINT
+    ? `${process.env.GATSBY_STORE_ENDPOINT}.json`
     : ""
   const storefrontToken: string = process.env.GATSBY_STORE_STOREFRONT_TOKEN
     ? process.env.GATSBY_STORE_STOREFRONT_TOKEN
     : ""
+
+  const abortController = new AbortController()
 
   const fetchQuery = async () => {
     try {
@@ -41,6 +43,7 @@ export function useQuantityQuery(handle: string, size: number) {
             size: size,
           },
         }),
+        signal: abortController.signal,
       }
 
       const response = await fetch(url, params)
@@ -56,13 +59,18 @@ export function useQuantityQuery(handle: string, size: number) {
 
   const createQuantityData = async () => {
     try {
-      const data = await fetchQuery()
-      const variants = data.data.product.variants.edges
-      const quantities = {}
-      variants.forEach(element => {
-        quantities[element.node.sku] = element.node.quantityAvailable
-      })
-      return quantities
+      const json = await fetchQuery()
+      if (json.data) {
+        const variants = json.data.product.variants.edges
+        const quantities = {}
+        variants.forEach(element => {
+          quantities[element.node.sku] = element.node.quantityAvailable
+        })
+        return quantities
+      } else {
+        console.log("Error while calling quantity fetch, error")
+        return {}
+      }
     } catch (error) {
       console.log("Error while calling fetch", error)
     }
@@ -72,6 +80,9 @@ export function useQuantityQuery(handle: string, size: number) {
     const isBrowser = typeof window !== "undefined"
     if (isBrowser) {
       createQuantityData().then(result => setProductQuantities(result))
+    }
+    return () => {
+      abortController.abort()
     }
   }, [])
   return productQuantities
