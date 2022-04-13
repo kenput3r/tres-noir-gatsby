@@ -39,7 +39,6 @@ module.exports = {
         icon: `src/images/tres-noir-favicon.png`, // This path is relative to the root of the site.
       },
     },
-    `gatsby-plugin-netlify`,
     `gatsby-plugin-gatsby-cloud`,
     {
       resolve: `gatsby-source-shopify`,
