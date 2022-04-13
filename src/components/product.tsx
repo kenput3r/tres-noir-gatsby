@@ -11,8 +11,6 @@ const Component = styled.article`
 `
 
 const Product = ({ data }: { data: ShopifyProduct }) => {
-  console.log(data)
-  //const productQuantities = useQuantityQuery(data.handle, data.variants.length)
   return (
     <Component>
       <h3>{data.title}</h3>

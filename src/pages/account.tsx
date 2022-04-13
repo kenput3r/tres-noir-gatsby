@@ -80,11 +80,9 @@ const Account = () => {
             }),
           }
         )
-        console.log("RESPONSE", response)
+
         const json = await response.json()
-        console.log("json", json)
         if (json.data) {
-          console.log("SETTING JSON DATA && LOADING TO FALSE")
           setData(json.data)
           setLoading(false)
         }
