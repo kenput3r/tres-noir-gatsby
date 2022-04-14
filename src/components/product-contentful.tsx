@@ -94,7 +94,7 @@ const ProductContentful = ({ data, color }: Props) => {
           </button>
         ))}
       </div>
-      <hr />
+
       <ProductOptionsCarousel
         uniqueId={`Product-${data.title
           .toLowerCase()

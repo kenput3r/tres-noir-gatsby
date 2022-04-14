@@ -46,7 +46,7 @@ interface ImageSet {
   title: string
 }
 
-const ProductCarousel = ({ imageSet }: { imageSet: [ImageSet] }) => {
+const ProductCarousel = ({ imageSet }: { imageSet: ImageSet[] }) => {
   const [thumbsSwiper, setThumbsSwiper] = useState<any>(null)
   return (
     <Component>
@@ -73,7 +73,6 @@ const ProductCarousel = ({ imageSet }: { imageSet: [ImageSet] }) => {
           spaceBetween={10}
           slidesPerView={3}
           onSwiper={swiper => setThumbsSwiper(swiper)}
-          // watchSlidesVisibility
           watchSlidesProgress
         >
           {imageSet.map((image: ImageSet, i: number) => (

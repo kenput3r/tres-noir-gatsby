@@ -2,7 +2,7 @@ import { IGatsbyImageData } from "gatsby-plugin-image"
 
 export interface ShopifyProduct {
   handle: string
-  images: {
+  featuredImage: {
     altText: string
     localFile: {
       childImageSharp: {
