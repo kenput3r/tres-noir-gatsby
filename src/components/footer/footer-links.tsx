@@ -29,6 +29,11 @@ const Component = styled.nav`
         text-transform: uppercase;
       }
     }
+    :first-child {
+      @media (min-width: 100px) {
+        margin-right: 3.2vw;
+      }
+    }
     :nth-child(2) {
       margin-left: 22px;
     }

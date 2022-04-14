@@ -28,9 +28,6 @@ const Component = styled.div`
     border-style: solid;
     width: 40px;
     border-radius: 0;
-    /* display: flex;
-    justify-content: center;
-    align-items: center; */
     display: grid;
     place-items: center;
     cursor: pointer;
