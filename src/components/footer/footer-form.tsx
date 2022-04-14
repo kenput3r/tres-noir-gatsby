@@ -28,13 +28,18 @@ const Component = styled.div`
     border-style: solid;
     width: 40px;
     border-radius: 0;
-    display: flex;
+    /* display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: center; */
+    display: grid;
+    place-items: center;
     cursor: pointer;
     border-width: 4px;
+    --webkit-appearance: button-bevel;
+    padding: 5px 3px;
     svg {
       font-size: 1rem;
+      fill: white;
     }
   }
   input {
@@ -98,7 +103,8 @@ const FooterForm = () => {
     const response = await fetchReq(emailInput)
     console.log(response)
     if (response && response.status === 200) {
-      if (emailMsg.current) emailMsg.current.textContent = "Sent"
+      if (emailMsg.current)
+        emailMsg.current.textContent = "You are now subscribed!"
     } else {
       if (emailMsg.current)
         emailMsg.current.textContent = "An error has occured, please try again"
