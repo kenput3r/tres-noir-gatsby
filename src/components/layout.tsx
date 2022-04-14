@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useContext } from "react"
 import { useStaticQuery, graphql } from "gatsby"
+import ErrorBoundary from "../components/errorBoundary"
+import ErrorModal from "../components/errorModal"
 import { CustomerContext } from "../contexts/customer"
 import { identifyCustomerKlaviyoEvent } from "../helpers/klaviyo"
 
@@ -33,14 +35,17 @@ const Layout = ({ children }: LayoutProps) => {
 
   return (
     <>
-      <Header
-        siteTitle={data.site.siteMetadata?.title || `Title`}
-        isDrawerOpen={isDrawerOpen}
-        setIsDrawerOpen={setIsDrawerOpen}
-      />
-      <Drawer isDrawerOpen={isDrawerOpen} setIsDrawerOpen={setIsDrawerOpen} />
-      <main>{children}</main>
-      <Footer />
+      <ErrorBoundary>
+        <Header
+          siteTitle={data.site.siteMetadata?.title || `Title`}
+          isDrawerOpen={isDrawerOpen}
+          setIsDrawerOpen={setIsDrawerOpen}
+        />
+        <Drawer isDrawerOpen={isDrawerOpen} setIsDrawerOpen={setIsDrawerOpen} />
+        <main>{children}</main>
+        <Footer />
+        <ErrorModal />
+      </ErrorBoundary>
     </>
   )
 }
