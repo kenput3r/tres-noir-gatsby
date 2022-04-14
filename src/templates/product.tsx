@@ -211,7 +211,6 @@ const Product = ({ data: { shopifyProduct } }: any) => {
   const [selectedVariant, setSelectedVariant] = useState(
     shopifyProduct.variants[0]
   )
-  console.log("SELECTED VARIANT", selectedVariant)
   const hasSingleVariant: boolean =
     shopifyProduct.variants.length === 1 ? true : false
   const useVariantSwiper: boolean = false

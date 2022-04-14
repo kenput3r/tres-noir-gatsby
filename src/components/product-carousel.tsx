@@ -46,7 +46,7 @@ interface ImageSet {
   title: string
 }
 
-const ProductCarousel = ({ imageSet }: { imageSet: [ImageSet] }) => {
+const ProductCarousel = ({ imageSet }: { imageSet: ImageSet[] }) => {
   const [thumbsSwiper, setThumbsSwiper] = useState<any>(null)
   return (
     <Component>
