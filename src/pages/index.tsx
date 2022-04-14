@@ -2,9 +2,9 @@ import React from "react"
 import { StaticImage, GatsbyImage, IGatsbyImageData } from "gatsby-plugin-image"
 import { Link, graphql } from "gatsby"
 import styled from "styled-components"
+import Carousel from "../components/carousel"
 import Layout from "../components/layout-index"
 import SEO from "../components/seo"
-import Carousel from "../components/carousel"
 
 const Page = styled.div`
   margin: auto;

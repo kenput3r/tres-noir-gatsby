@@ -2,18 +2,19 @@ import React, { useState, useEffect, useContext } from "react"
 import { Link, graphql } from "gatsby"
 import { StaticImage, GatsbyImage as Img } from "gatsby-plugin-image"
 import styled from "styled-components"
+import { useQuantityQuery } from "../hooks/useQuantityQuery"
+import ProductCarousel from "../components/product-carousel"
 import Layout from "../components/layout"
 import SEO from "../components/seo"
-import ProductCarousel from "../components/product-carousel"
-import { SelectedVariantContext } from "../contexts/selectedVariant"
-import { CustomerContext } from "../contexts/customer"
 import { CartContext } from "../contexts/cart"
-import Product from "./product"
-import { useQuantityQuery } from "../hooks/useQuantityQuery"
+import { CustomerContext } from "../contexts/customer"
+import { SelectedVariantContext } from "../contexts/selectedVariant"
 import {
   addedToCartKlaviyoEvent,
   viewedProductKlaviyoEvent,
 } from "../helpers/klaviyo"
+import Product from "./product"
+
 const Page = styled.div`
   .shipping-message {
     text-align: center;
@@ -196,8 +197,6 @@ const ProductCustomizable = ({
     return Product({ data: { shopifyProduct } })
   }
 
-  console.log("SHOPIFY PRODUCT", shopifyProduct)
-  console.log("CONTENTFUL PRODUCT", contentfulProduct)
   // return default Product Page if contentful values do not exist
   const quantityLevels = useQuantityQuery(
     shopifyProduct.handle,

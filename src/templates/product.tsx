@@ -1,10 +1,6 @@
-import React, { useState, useContext, useEffect, ChangeEvent } from "react"
-import { Link, graphql, useStaticQuery } from "gatsby"
-import {
-  StaticImage,
-  GatsbyImage as Img,
-  GatsbyImage,
-} from "gatsby-plugin-image"
+import React, { useState, useContext, ChangeEvent } from "react"
+import { graphql } from "gatsby"
+import { StaticImage } from "gatsby-plugin-image"
 import { CustomerContext } from "../contexts/customer"
 import { CartContext } from "../contexts/cart"
 import styled from "styled-components"
@@ -12,10 +8,7 @@ import ProductCarousel from "../components/product-carousel"
 import Layout from "../components/layout"
 import SEO from "../components/seo"
 import { useQuantityQuery } from "../hooks/useQuantityQuery"
-import {
-  addedToCartKlaviyoEvent,
-  viewedProductKlaviyoEvent,
-} from "../helpers/klaviyo"
+import { addedToCartKlaviyoEvent } from "../helpers/klaviyo"
 
 const Page = styled.div`
   .shipping-message {
@@ -211,7 +204,6 @@ const Product = ({ data: { shopifyProduct } }: any) => {
   const [selectedVariant, setSelectedVariant] = useState(
     shopifyProduct.variants[0]
   )
-  console.log("SELECTED VARIANT", selectedVariant)
   const hasSingleVariant: boolean =
     shopifyProduct.variants.length === 1 ? true : false
   const useVariantSwiper: boolean = false
