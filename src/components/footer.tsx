@@ -1,5 +1,4 @@
 import React from "react"
-import { Link } from "gatsby"
 import styled from "styled-components"
 import { FaFacebookF as F } from "react-icons/fa"
 import { FaInstagram as I } from "react-icons/fa"
@@ -12,7 +11,7 @@ const Component = styled.footer`
   color: #fff;
   font-family: var(--sub-heading-font);
   padding: 30px 45px;
-  @media (max-width: 768px) {
+  @media (max-width: 910px) {
     padding: 15px 0;
   }
   svg {
@@ -22,36 +21,7 @@ const Component = styled.footer`
     display: flex;
     flex-direction: column;
   }
-  nav {
-    display: flex;
-    align-items: baseline;
-    span {
-      padding-bottom: 10px;
-    }
-    ul {
-      display: flex;
-      flex-direction: column;
-      flex-wrap: wrap;
-      justify-content: center;
-      margin-left: 0;
-      flex: 1;
-      li {
-        margin-bottom: 0.2rem;
-        @media (max-width: 800px) {
-          font-size: 0.95rem;
-        }
-        //font-size: 1rem;
-        a {
-          white-space: pre;
-          padding: 3px;
-          text-transform: uppercase;
-        }
-      }
-      :nth-child(2) {
-        margin-left: 1.35rem;
-      }
-    }
-  }
+
   .store-details {
     p,
     a {
@@ -82,10 +52,14 @@ const Component = styled.footer`
       }
     }
     p {
-      margin-bottom: 0.4rem;
+      margin-bottom: 6px;
       color: black;
       text-transform: uppercase;
       font-family: var(--heading-font);
+      text-align: right;
+      @media (max-width: 600px) {
+        text-align: initial;
+      }
     }
   }
   span {
@@ -103,28 +77,32 @@ const Component = styled.footer`
   .row {
     display: flex;
     justify-content: space-between;
-    column-gap: 1rem;
+    column-gap: 16px;
     @media (max-width: 600px) {
       flex-direction: column;
     }
+    :first-child {
+      margin-left: 5px;
+      margin-right: 5px;
+    }
     :nth-child(2) {
-      margin-top: -1rem;
+      margin-top: -16px;
       @media (max-width: 600px) {
-        margin-top: 1rem;
+        margin-top: 2px;
       }
       @media (min-width: 601px) and (max-width: 899px) {
-        margin-top: -0.5rem;
+        margin-top: -8px;
       }
     }
   }
   .page-width {
     max-width: 1200px;
     margin: 0 auto;
-    @media (max-width: 749px) {
+    @media (max-width: 768px) {
       padding-left: 22px;
       padding-right: 22px;
     }
-    @media (min-width: 750px) and (max-width: 821px) {
+    @media (min-width: 769px) and (max-width: 821px) {
       padding-left: 45px;
       padding-right: 45px;
     }

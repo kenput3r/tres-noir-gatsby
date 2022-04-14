@@ -1,56 +1,60 @@
 import React, { MouseEvent, useState, useRef } from "react"
-import { Link } from "gatsby"
 import styled from "styled-components"
 import { FaChevronRight } from "react-icons/fa"
 
-const FooterForm = () => {
-  const Component = styled.div`
-    p {
-      margin-bottom: 5px;
-      color: black;
-      text-transform: uppercase;
-      font-family: var(--heading-font);
-      @media (max-width: 600px) {
-        margin-top: 10px;
-      }
+const Component = styled.div`
+  p {
+    margin-bottom: 5px;
+    color: black;
+    text-transform: uppercase;
+    font-family: var(--heading-font);
+    text-align: right;
+    @media (max-width: 600px) {
+      margin-top: 10px;
+      text-align: initial;
     }
-    .form-group {
-      display: flex;
+  }
+  .form-group {
+    display: flex;
+  }
+  button {
+    background-color: #000;
+    color: #fff;
+    border-color: #000;
+    border-style: solid;
+    width: 40px;
+    border-radius: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    border-width: 4px;
+    svg {
+      font-size: 1rem;
     }
-    button {
-      background-color: #000;
-      color: #fff;
-      border-color: #000;
-      border-style: solid;
-      width: 40px;
-      border-radius: 0;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      cursor: pointer;
-      svg {
-        font-size: 1rem;
-      }
+  }
+  input {
+    width: 100%;
+    border-radius: 0;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    border: none;
+    @media (max-width: 600px) {
+      width: 275px;
     }
-    input {
-      width: 100%;
-      border-radius: 0;
-      -webkit-appearance: none;
-      -moz-appearance: none;
-      @media (max-width: 600px) {
-        width: 275px;
-      }
-      padding: 2px 5px;
-      :placeholder-shown {
-        font-style: italic;
-      }
-    }
-    .email-error {
-      font-size: 0.85rem;
+    padding: 2px 5px;
+    :placeholder-shown {
       font-style: italic;
-      min-height: 29px;
     }
-  `
+  }
+  .email-error {
+    font-size: 0.85rem;
+    font-style: italic;
+    min-height: 29px;
+  }
+`
+
+const FooterForm = () => {
   const [emailInput, setEmailInput] = useState("")
   const emailMsg = useRef<HTMLDivElement>(null)
 
