@@ -22,6 +22,9 @@ const Component = styled.nav`
       }
       a {
         white-space: pre;
+        @media (max-width: 365px) {
+          white-space: normal;
+        }
         padding: 3px;
         text-transform: uppercase;
       }

@@ -16,6 +16,10 @@ const Component = styled.div`
   }
   .form-group {
     display: flex;
+    line-height: 28px;
+    @media (max-width: 600px) {
+      line-height: 25px;
+    }
   }
   button {
     background-color: #000;
