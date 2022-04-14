@@ -2,7 +2,7 @@ import React from "react"
 import { Link } from "gatsby"
 import styled from "styled-components"
 import { FaFacebookF as F } from "react-icons/fa"
-import { TiSocialInstagram as I } from "react-icons/ti"
+import { FaInstagram as I } from "react-icons/fa"
 import FooterLinks from "./footer/footer-links"
 import FooterForm from "./footer/footer-form"
 import { StaticImage } from "gatsby-plugin-image"
@@ -12,7 +12,7 @@ const Component = styled.footer`
   color: #fff;
   font-family: var(--sub-heading-font);
   padding: 30px 45px;
-  @media (max-width: 600px) {
+  @media (max-width: 768px) {
     padding: 15px 0;
   }
   svg {
@@ -42,12 +42,13 @@ const Component = styled.footer`
         }
         //font-size: 1rem;
         a {
+          white-space: pre;
           padding: 3px;
           text-transform: uppercase;
         }
       }
       :nth-child(2) {
-        margin-left: 1.3rem;
+        margin-left: 1.35rem;
       }
     }
   }
@@ -119,10 +120,19 @@ const Component = styled.footer`
       border-style: solid;
       width: 40px;
       border-radius: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      svg {
+        font-size: 1rem;
+      }
     }
     input {
       width: 100%;
       border-radius: 0;
+      -webkit-appearance: none;
+      -moz-appearance: none;
       @media (max-width: 600px) {
         width: 275px;
       }
@@ -130,6 +140,11 @@ const Component = styled.footer`
       :placeholder-shown {
         font-style: italic;
       }
+    }
+    .email-error {
+      font-size: 0.85rem;
+      font-style: italic;
+      min-height: 29px;
     }
   }
   .row {
@@ -144,6 +159,9 @@ const Component = styled.footer`
       @media (max-width: 600px) {
         margin-top: 1rem;
       }
+      @media (min-width: 601px) and (max-width: 899px) {
+        margin-top: -0.5rem;
+      }
     }
   }
   .page-width {
@@ -152,6 +170,10 @@ const Component = styled.footer`
     @media (max-width: 749px) {
       padding-left: 22px;
       padding-right: 22px;
+    }
+    @media (min-width: 750px) and (max-width: 821px) {
+      padding-left: 45px;
+      padding-right: 45px;
     }
     padding-left: 55px;
     padding-right: 55px;
@@ -209,7 +231,7 @@ const Footer = () => {
                 <StaticImage
                   src="../images/tres-noir-independent-eyewear-co.png"
                   alt="Tres Noir Independent Eyewear Co"
-                  height={50}
+                  height={55}
                 ></StaticImage>
               </picture>
             </figure>
