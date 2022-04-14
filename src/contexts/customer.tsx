@@ -8,7 +8,10 @@ interface DefaultContext {
   customerAccessToken: null | string
   setCustomerAccessToken: (value: null | string) => void
   customerEmail: null | string
-  login: (email: string, password: string) => Promise<boolean>
+  login: (
+    email: string,
+    password: string
+  ) => Promise<{ loggedIn: boolean; message?: string }>
   logout: () => void
   associateCheckout: (checkoutId: string) => Promise<void>
 }
@@ -18,7 +21,7 @@ const defaultContext: DefaultContext = {
   setCustomerAccessToken: (customerAccessToken: string | null) => {},
   customerEmail: null,
   login: async (email: string, password: string) => {
-    return false
+    return { loggedIn: false, message: "" }
   },
   logout: () => {},
   associateCheckout: async (checkoutId: string) => {},
@@ -80,7 +83,6 @@ export const CustomerProvider = ({ children }: { children: ReactChild }) => {
         const { customerAccessToken, customerUserErrors } =
           json.data.customerAccessTokenCreate
         if (customerUserErrors.length > 0) {
-          alert(`ERROR: ${customerUserErrors[0].message}`)
           throw new Error(customerUserErrors[0].message)
         } else {
           Cookies.set(
@@ -100,10 +102,13 @@ export const CustomerProvider = ({ children }: { children: ReactChild }) => {
       } else {
         alert("ERROR: please try again later...")
       }
-      return loggedIn
+      return { loggedIn }
     } catch (err: any) {
       console.log("ERROR", err.message)
-      return false
+      return {
+        loggedIn: false,
+        message: err.message,
+      }
     }
   }
 
