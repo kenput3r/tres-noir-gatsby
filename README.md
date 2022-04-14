@@ -6,4 +6,7 @@
 <!-- <h1 align="center">
   Tres Noir
 </h1> -->
-Staging: [![Netlify Status](https://api.netlify.com/api/v1/badges/9f0468ef-95c3-4672-b4da-25e64b884895/deploy-status)](https://app.netlify.com/sites/staging-tresnoir/deploys)
+
+<p align="center" style="display:flex;justify-content:center;align-items:center;">
+  <span style="padding-right: 1rem;">Staging:</span><img src="https://api.netlify.com/api/v1/badges/9f0468ef-95c3-4672-b4da-25e64b884895/deploy-status">
+</p>
