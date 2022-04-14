@@ -31,12 +31,12 @@ const gtmEnv = {
   // auth and preview values. Otherwise the production snippet will load.
   development: {
     gtmAuth: process.env.GATSBY_GTM_STAGING_AUTH,
-    gtmPreview: process.env.GATSBY_STAGING_PREVIEW,
+    gtmPreview: process.env.GATSBY_GTM_STAGING_PREVIEW,
   },
 
   staging: {
     gtmAuth: process.env.GATSBY_GTM_STAGING_AUTH,
-    gtmPreview: process.env.GATSBY_STAGING_PREVIEW,
+    gtmPreview: process.env.GATSBY_GTM_STAGING_PREVIEW,
   },
 
   // According to GTM docs you should use standard tag for prod so we'll set to null.
