@@ -100,53 +100,6 @@ const Component = styled.footer`
     color: #fff;
     text-decoration: none;
   }
-  .newsletter-form {
-    p {
-      margin-bottom: 5px;
-      color: black;
-      text-transform: uppercase;
-      font-family: var(--heading-font);
-      @media (max-width: 600px) {
-        margin-top: 10px;
-      }
-    }
-    .form-group {
-      display: flex;
-    }
-    button {
-      background-color: #000;
-      color: #fff;
-      border-color: #000;
-      border-style: solid;
-      width: 40px;
-      border-radius: 0;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      cursor: pointer;
-      svg {
-        font-size: 1rem;
-      }
-    }
-    input {
-      width: 100%;
-      border-radius: 0;
-      -webkit-appearance: none;
-      -moz-appearance: none;
-      @media (max-width: 600px) {
-        width: 275px;
-      }
-      padding: 2px 5px;
-      :placeholder-shown {
-        font-style: italic;
-      }
-    }
-    .email-error {
-      font-size: 0.85rem;
-      font-style: italic;
-      min-height: 29px;
-    }
-  }
   .row {
     display: flex;
     justify-content: space-between;
