@@ -14,11 +14,11 @@ const contentfulConfig = {
  * This is used to set the corresponding Tag Manager environment config.
  */
 const activeEnv =
-  process.env.GATSBY_ACTIVE_ENV || process.env.NODE_ENV || "development"
+  process.env.GATSBY_ENVIRONMENT || process.env.NODE_ENV || "development"
 console.log(`Using environment config: '${activeEnv}'`)
 
 // The Tag Manager Container ID.
-const gtmContainerId = "GTM-M4NKFMS"
+const gtmContainerId = process.env.GATSBY_GTM_CONTAINER_ID
 
 /**
  * Tag Manager Environment values to configure gatsby-plugin-google-tagmanager.
@@ -30,19 +30,19 @@ const gtmEnv = {
   // Tag Manager and replace the null values with the container environment
   // auth and preview values. Otherwise the production snippet will load.
   development: {
-    gtmAuth: "GVUwAlmsy-yQ4la6OJngkQ",
-    gtmPreview: "env-6",
+    gtmAuth: process.env.GATSBY_GTM_STAGING_AUTH,
+    gtmPreview: process.env.GATSBY_STAGING_PREVIEW,
   },
 
   staging: {
-    gtmAuth: "GVUwAlmsy-yQ4la6OJngkQ",
-    gtmPreview: "env-6",
+    gtmAuth: process.env.GATSBY_GTM_STAGING_AUTH,
+    gtmPreview: process.env.GATSBY_STAGING_PREVIEW,
   },
 
   // According to GTM docs you should use standard tag for prod so we'll set to null.
   production: {
-    gtmAuth: null,
-    gtmPreview: null,
+    gtmAuth: process.env.GATSBY_GTM_LIVE_AUTH,
+    gtmPreview: process.env.GATSBY_GTM_LIVE_PREVIEW,
   },
 }
 
@@ -50,7 +50,7 @@ module.exports = {
   siteMetadata: {
     title: `Tres Noir`,
     description: `Tres Noir is an independent eyewear company located in Santa Ana, Calif.`,
-    author: `@kenput3r`,
+    author: `@SuavecitoInc`,
   },
   plugins: [
     `gatsby-plugin-react-helmet`,
@@ -94,7 +94,15 @@ module.exports = {
       },
     },
     `gatsby-transformer-sharp`,
-    `gatsby-plugin-sharp`,
+    {
+      resolve: `gatsby-plugin-sharp`,
+      options: {
+        defaults: {
+          formats: [`webp`, `auto`],
+          quality: 80,
+        },
+      },
+    },
     `gatsby-plugin-image`,
     {
       resolve: `gatsby-plugin-manifest`,
@@ -108,6 +116,7 @@ module.exports = {
         icon: `src/images/tres-noir-favicon.png`, // This path is relative to the root of the site.
       },
     },
+    `gatsby-plugin-netlify`,
     `gatsby-plugin-gatsby-cloud`,
     {
       resolve: `gatsby-source-shopify`,
@@ -123,6 +132,7 @@ module.exports = {
       resolve: `gatsby-source-contentful`,
       options: contentfulConfig,
     },
+    `gatsby-plugin-styled-components`,
     // this (optional) plugin enables Progressive Web App + Offline functionality
     // To learn more, visit: https://gatsby.dev/offline
     // `gatsby-plugin-offline`,

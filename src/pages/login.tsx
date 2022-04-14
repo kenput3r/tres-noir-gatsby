@@ -4,7 +4,7 @@ import { navigate } from "gatsby"
 import Layout from "../components/layout"
 import SEO from "../components/seo"
 import { CustomerContext } from "../contexts/customer"
-import { identifyCustomer } from "../helpers/klaviyo"
+import { ErrorModalContext } from "../contexts/error"
 
 const Page = styled.div`
   width: 420px;
@@ -58,6 +58,7 @@ const Page = styled.div`
 `
 
 const Login = () => {
+  const { renderErrorModal } = useContext(ErrorModalContext)
   const { login } = useContext(CustomerContext)
   const [email, setEmail] = useState<string>("")
   const [password, setPassword] = useState<string>("")
@@ -65,7 +66,13 @@ const Login = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     const response = await login(email, password)
-    if (response) navigate("/account")
+    if (response.loggedIn) {
+      navigate("/account")
+    } else {
+      let message = "Incorrect Login Information"
+      if (response.message) message = response.message
+      renderErrorModal(message)
+    }
   }
 
   const handleEmailChange = (e: {
