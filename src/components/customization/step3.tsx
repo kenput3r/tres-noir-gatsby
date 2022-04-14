@@ -13,7 +13,6 @@ const Step3 = () => {
       }
     }
   `)
-  console.log(shopifyCollection)
   return <Form shopifyCollection={shopifyCollection} />
 }
 
