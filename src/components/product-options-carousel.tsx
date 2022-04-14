@@ -10,7 +10,6 @@ import {
 } from "../types/contentful"
 
 import "swiper/css"
-// import "swiper/css/navigation"
 
 const Component = styled.div`
   .navigation {
