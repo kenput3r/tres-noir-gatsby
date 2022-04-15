@@ -114,8 +114,6 @@ const Component = styled.footer`
     padding-left: 55px;
     padding-right: 55px;
   }
-  @media (min-width: 600px) and (max-width: 850px) {
-  }
 `
 
 const Footer = () => {
