@@ -10,7 +10,7 @@ const Component = styled.footer`
   background-color: var(--color-grey-dark);
   color: #fff;
   font-family: var(--sub-heading-font);
-  padding: 30px 45px;
+  padding: 30px 45px 5px 45px;
   @media (max-width: 910px) {
     padding: 15px 0;
   }
@@ -28,6 +28,10 @@ const Component = styled.footer`
       color: black;
       font-style: initial;
     }
+  }
+  address,
+  figure {
+    margin-bottom: 0px;
   }
   .social-media {
     display: flex;
@@ -109,6 +113,8 @@ const Component = styled.footer`
     }
     padding-left: 55px;
     padding-right: 55px;
+  }
+  @media (min-width: 600px) and (max-width: 850px) {
   }
 `
 

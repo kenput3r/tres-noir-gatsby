@@ -33,6 +33,9 @@ const Component = styled.nav`
       @media (min-width: 100px) {
         margin-right: 3.2vw;
       }
+      @media (min-width: 600px) and (max-width: 850px) {
+        margin-right: 0;
+      }
     }
     :nth-child(2) {
       margin-left: 22px;
