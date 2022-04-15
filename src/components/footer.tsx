@@ -22,10 +22,11 @@ const Component = styled.footer`
     flex-direction: column;
   }
 
-  .store-details {
+  address {
     p,
     a {
       color: black;
+      font-style: initial;
     }
   }
   .social-media {
@@ -148,13 +149,13 @@ const Footer = () => {
         </div>
         <div className="row">
           <div className="flex-child">
-            <div className="store-details">
+            <address>
               <p>
                 <a href="tel:1-714-656-4796">714.656.4796</a>
                 <br />
                 2831 W 1st St, Santa Ana, CA 92703
               </p>
-            </div>
+            </address>
           </div>
           <div className="flex-child">
             <figure>
