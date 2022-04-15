@@ -75,25 +75,6 @@ const ProductContentful = ({ data, color }: Props) => {
         <Img image={variantImage} alt={data.title} />
       </Link>
       <h3>{data.title}</h3>
-      <div className="options" style={{ display: "none" }}>
-        {data.variants.map((variant: ContentfulProductVariant) => (
-          <button
-            key={variant.id}
-            className="color-option"
-            type="button"
-            data-active={variant.id === selectedVariant.contentful.id}
-            onClick={e => selectVariant(variant)}
-            aria-label={`Color option ${variant.colorName}`}
-            aria-pressed={
-              variant.id === selectedVariant.contentful.id ? "true" : "false"
-            }
-            title={variant.colorName}
-            data-frame-color={variant.frameColor}
-          >
-            <Img image={variant.colorImage.data} alt={variant.colorName} />
-          </button>
-        ))}
-      </div>
 
       <ProductOptionsCarousel
         uniqueId={`Product-${data.title

@@ -43,40 +43,6 @@ const CollectionContentful = ({
     collection.products
   )
 
-  useEffect(() => {
-    console.log("PRODUCTS CHANGED", products)
-  }, [products])
-
-  // const selectColors = (color: string): void => {
-  //   console.log("SELECTING COLOR: ", color)
-  //   const options: HTMLElement[] = Array.from(
-  //     document.querySelectorAll(".color-option")
-  //   )
-  //   options.forEach(option => {
-  //     if (option.getAttribute("data-frame-color")?.includes(color)) {
-  //       option.click()
-  //     }
-  //   })
-  // }
-
-  // const selectColors = (color: string): void => {
-  //   console.log("SELECTING COLOR: ", color)
-  //   const options: HTMLElement[] = Array.from(
-  //     document.querySelectorAll(".option")
-  //   )
-  //   options.forEach(option => {
-  //     if (option.getAttribute("data-option")?.includes(color)) {
-  //       option.click()
-  //     }
-  //   })
-  // }
-
-  // useEffect(() => {
-  //   if (filters.colorName) {
-  //     selectColors(filters.colorName)
-  //   }
-  // }, [filters.fitType, filters.colorName])
-
   return (
     <Layout>
       <SEO title={collection.name} />

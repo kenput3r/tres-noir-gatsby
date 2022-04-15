@@ -137,6 +137,7 @@ const ProductOptionsCarousel = ({
           slidesPerView={6}
           slideToClickedSlide={true}
           spaceBetween={3}
+          touchRatio={1}
           watchOverflow
           watchSlidesProgress
         >
