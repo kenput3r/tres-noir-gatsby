@@ -62,6 +62,9 @@ const Component = styled.div`
   .outline-red {
     outline: 1.5px solid red;
   }
+  .outline-green {
+    outline: 1.5px solid lawngreen;
+  }
   .red-text {
     color: darkred;
   }
@@ -115,18 +118,26 @@ const FooterForm = () => {
     var regex = new RegExp(
       /^(("[\w-\s]+")|([\w-]+(?:\.[\w-]+)*)|("[\w-\s]+")([\w-]+(?:\.[\w-]+)*))(@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$)|(@\[?((25[0-5]\.|2[0-4][0-9]\.|1[0-9]{2}\.|[0-9]{1,2}\.))((25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\.){2}(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\]?$)/i
     )
-    if (regex.test(email)) {
-      return true
+    if (!regex.test(email)) {
+      return false
     }
-    return false
+    return true
   }
 
   const submitNewletter = async evt => {
     evt.preventDefault()
+    if (formRef.current && buttonRef.current) {
+      formRef.current.classList.remove("outline-green")
+      buttonRef.current.querySelector(".btn-check")?.classList.add("hide")
+      buttonRef.current
+        .querySelector(".btn-chevron-right")
+        ?.classList.remove("hide")
+    }
     if (!validEmail(emailInput)) {
       if (emailMsg.current) {
         emailMsg.current.textContent = "Please enter a valid email"
         emailMsg.current.classList.add("red-text")
+        emailMsg.current.classList.remove("green-text")
         if (formRef.current) {
           formRef.current.classList.add("outline-red")
         }
@@ -138,6 +149,7 @@ const FooterForm = () => {
       buttonRef.current
         .querySelector(".btn-chevron-right")
         ?.classList.add("hide")
+      buttonRef.current.querySelector(".btn-check")?.classList.add("hide")
       buttonRef.current.querySelector(".btn-spinner")?.classList.remove("hide")
       formRef.current.classList.add("disable")
     }
@@ -149,6 +161,8 @@ const FooterForm = () => {
         buttonRef.current.querySelector(".btn-check")?.classList.remove("hide")
         formRef.current.classList.remove("disable")
         emailMsg.current.classList.add("green-text")
+        emailMsg.current.classList.remove("red-text")
+        formRef.current.classList.add("outline-green")
         emailMsg.current.textContent = "You are now subscribed!"
       }
     } else {
@@ -165,7 +179,12 @@ const FooterForm = () => {
   return (
     <Component>
       <p>Sign up for our newsletter</p>
-      <form className="form-group" onSubmit={submitNewletter} ref={formRef}>
+      <form
+        className="form-group"
+        onSubmit={submitNewletter}
+        ref={formRef}
+        noValidate
+      >
         <input
           type="email"
           placeholder="Email Address"
