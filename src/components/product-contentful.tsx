@@ -8,6 +8,8 @@ import {
 } from "../types/contentful"
 import { SelectedVariantContext } from "../contexts/selectedVariant"
 
+import ProductOptionsCarousel from "../components/product-options-carousel"
+
 const Component = styled.article`
   margin-bottom: 1.45rem;
   width: 33.33%;
@@ -42,9 +44,10 @@ const Component = styled.article`
 
 interface Props {
   data: ContentfulProduct
+  color: null | string
 }
 
-const ProductContentful = ({ data }: Props) => {
+const ProductContentful = ({ data, color }: Props) => {
   const { setSelectedVariantContext } = useContext(SelectedVariantContext)
   const defaultImage = data.variants[0].featuredImage.data
   const [variantImage, setVariantImage] =
@@ -55,7 +58,7 @@ const ProductContentful = ({ data }: Props) => {
   })
 
   const selectVariant = (
-    e: React.MouseEvent,
+    // e: React.MouseEvent,
     variant: ContentfulProductVariant
   ) => {
     // e.currentTarget && (e.currentTarget as HTMLElement).blur()
@@ -72,25 +75,16 @@ const ProductContentful = ({ data }: Props) => {
         <Img image={variantImage} alt={data.title} />
       </Link>
       <h3>{data.title}</h3>
-      <div className="options">
-        {data.variants.map((variant: ContentfulProductVariant) => (
-          <button
-            key={variant.id}
-            className="color-option"
-            type="button"
-            data-active={variant.id === selectedVariant.contentful.id}
-            onClick={e => selectVariant(e, variant)}
-            aria-label={`Color option ${variant.colorName}`}
-            aria-pressed={
-              variant.id === selectedVariant.contentful.id ? "true" : "false"
-            }
-            title={variant.colorName}
-            data-frame-color={variant.frameColor}
-          >
-            <Img image={variant.colorImage.data} alt={variant.colorName} />
-          </button>
-        ))}
-      </div>
+
+      <ProductOptionsCarousel
+        uniqueId={`Product-${data.title
+          .toLowerCase()
+          .replace(" ", "-")
+          .replace(/[^a-z0-9]/gi, "")}`}
+        variants={data.variants}
+        clickHandler={selectVariant}
+        color={color}
+      />
     </Component>
   )
 }

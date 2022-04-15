@@ -2,9 +2,9 @@ import React, { useState, useEffect } from "react"
 import { graphql } from "gatsby"
 import styled from "styled-components"
 import { GatsbyImage } from "gatsby-plugin-image"
+import Product from "../components/product-contentful"
 import Layout from "../components/layout"
 import SEO from "../components/seo"
-import Product from "../components/product-contentful"
 import Filters from "../components/filters-contentful"
 import { ContentfulCollection, ContentfulProduct } from "../types/contentful"
 
@@ -43,23 +43,6 @@ const CollectionContentful = ({
     collection.products
   )
 
-  const selectColors = (color: string): void => {
-    const options: HTMLElement[] = Array.from(
-      document.querySelectorAll(".color-option")
-    )
-    options.forEach(option => {
-      if (option.getAttribute("data-frame-color")?.includes(color)) {
-        option.click()
-      }
-    })
-  }
-
-  useEffect(() => {
-    if (filters.colorName) {
-      selectColors(filters.colorName)
-    }
-  }, [filters.fitType, filters.colorName])
-
   return (
     <Layout>
       <SEO title={collection.name} />
@@ -82,7 +65,11 @@ const CollectionContentful = ({
         <div className="grid">
           {products.length ? (
             products.map((product: ContentfulProduct) => (
-              <Product key={product.handle} data={product} />
+              <Product
+                key={product.handle}
+                data={product}
+                color={filters.colorName}
+              />
             ))
           ) : (
             <p>No Products found please remove filters and try again.</p>
