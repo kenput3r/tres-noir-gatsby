@@ -93,9 +93,9 @@ const Component = styled.div`
 
 const FooterForm = () => {
   const [emailInput, setEmailInput] = useState("")
-  const emailMsg = useRef<HTMLDivElement>(null)
-  const formRef = useRef<HTMLFormElement>(null)
-  const buttonRef = useRef<HTMLButtonElement>(null)
+  const emailMsg = useRef<null | HTMLDivElement>(null)
+  const formRef = useRef<null | HTMLFormElement>(null)
+  const buttonRef = useRef<null | HTMLButtonElement>(null)
 
   const fetchReq = async (inEmail: string) => {
     try {
@@ -126,53 +126,48 @@ const FooterForm = () => {
 
   const submitNewletter = async evt => {
     evt.preventDefault()
-    if (formRef.current && buttonRef.current) {
-      formRef.current.classList.remove("outline-green")
-      buttonRef.current.querySelector(".btn-check")?.classList.add("hide")
-      buttonRef.current
-        .querySelector(".btn-chevron-right")
-        ?.classList.remove("hide")
-    }
+    formRef.current?.classList.remove("outline-green")
+    buttonRef.current?.querySelector(".btn-check")?.classList.add("hide")
+    buttonRef.current
+      ?.querySelector(".btn-chevron-right")
+      ?.classList.remove("hide")
+
     if (!validEmail(emailInput)) {
-      if (emailMsg.current) {
+      if (emailMsg.current)
         emailMsg.current.textContent = "Please enter a valid email"
-        emailMsg.current.classList.add("red-text")
-        emailMsg.current.classList.remove("green-text")
-        if (formRef.current) {
-          formRef.current.classList.add("outline-red")
-        }
-      }
+      emailMsg.current?.classList.add("red-text")
+      emailMsg.current?.classList.remove("green-text")
+      formRef.current?.classList.add("outline-red")
       return
     }
-    if (buttonRef.current && formRef.current) {
-      formRef.current.classList.remove("outline-red")
-      buttonRef.current
-        .querySelector(".btn-chevron-right")
-        ?.classList.add("hide")
-      buttonRef.current.querySelector(".btn-check")?.classList.add("hide")
-      buttonRef.current.querySelector(".btn-spinner")?.classList.remove("hide")
-      formRef.current.classList.add("disable")
-    }
+    formRef.current?.classList.remove("outline-red")
+    buttonRef.current
+      ?.querySelector(".btn-chevron-right")
+      ?.classList.add("hide")
+    buttonRef.current?.querySelector(".btn-check")?.classList.add("hide")
+    buttonRef.current?.querySelector(".btn-spinner")?.classList.remove("hide")
+    formRef.current?.classList.add("disable")
+
     const response = await fetchReq(emailInput)
-    console.log(response)
     if (response && response.status === 200) {
-      if (emailMsg.current && formRef.current && buttonRef.current) {
-        buttonRef.current.querySelector(".btn-spinner")?.classList.add("hide")
-        buttonRef.current.querySelector(".btn-check")?.classList.remove("hide")
-        formRef.current.classList.remove("disable")
-        emailMsg.current.classList.add("green-text")
-        emailMsg.current.classList.remove("red-text")
-        formRef.current.classList.add("outline-green")
+      buttonRef.current?.querySelector(".btn-spinner")?.classList.add("hide")
+      buttonRef.current?.querySelector(".btn-check")?.classList.remove("hide")
+      formRef.current?.classList.remove("disable")
+      emailMsg.current?.classList.add("green-text")
+      emailMsg.current?.classList.remove("red-text")
+      formRef.current?.classList.add("outline-green")
+      if (emailMsg.current)
         emailMsg.current.textContent = "You are now subscribed!"
-      }
     } else {
-      if (emailMsg.current) {
+      if (emailMsg.current)
         emailMsg.current.textContent = "An error has occured, please try again"
-        emailMsg.current.classList.add("red-text")
-        if (formRef.current) {
-          formRef.current.classList.add("outline-red")
-        }
-      }
+      formRef.current?.classList.remove("disable")
+      buttonRef.current?.querySelector(".btn-spinner")?.classList.add("hide")
+      buttonRef.current
+        ?.querySelector(".btn-chevron-right")
+        ?.classList.remove("hide")
+      emailMsg.current?.classList.add("red-text")
+      formRef.current?.classList.add("outline-red")
     }
   }
 
