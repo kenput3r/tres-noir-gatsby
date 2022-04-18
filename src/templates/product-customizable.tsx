@@ -392,7 +392,11 @@ const ProductCustomizable = ({
                   </div>
                 ) : (
                   <div>
-                    <button type="button" onClick={handleAddToCart}>
+                    <button
+                      type="button"
+                      onClick={handleAddToCart}
+                      className="add-to-cart"
+                    >
                       ADD TO CART
                     </button>
                     <p>- OR -</p>

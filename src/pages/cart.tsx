@@ -151,7 +151,7 @@ const Cart = () => {
               </div>
             </div>
             <div className="checkout-container">
-              <a href={checkout.webUrl} className="button">
+              <a href={checkout.webUrl} className="button checkout">
                 Checkout
               </a>
               <Link to="/">Continue Shopping</Link>
