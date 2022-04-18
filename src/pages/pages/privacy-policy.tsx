@@ -95,6 +95,10 @@ const Page = styled.div`
       }
     }
   }
+  address {
+    margin-bottom: none;
+    font-style: normal;
+  }
 `
 
 const PrivacyPolicy = () => (
