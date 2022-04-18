@@ -41,7 +41,7 @@ const ShippingInfo = () => (
     <Page className="wrapper">
       <SEO title="Shipping Info" />
       <h1>Shipping &amp; Returns</h1>
-      <section>
+      <article>
         <h3>Shipping</h3>
         <p>
           Free U.S shipping on all orders over $50. Most orders ship same day if
@@ -63,8 +63,8 @@ const ShippingInfo = () => (
           by country. Expect to pay additional govt. fees before receiving your
           order. Orders typically arrive within 5-10 days.
         </p>
-      </section>
-      <section>
+      </article>
+      <article>
         <h3>Return Policy</h3>
         <p>
           <span>Rx & Custom Lenses are NON-REFUNDABLE.</span> The return policy
@@ -95,7 +95,7 @@ const ShippingInfo = () => (
             RETURN FORM
           </a>
         </p>
-      </section>
+      </article>
     </Page>
   </Layout>
 )
