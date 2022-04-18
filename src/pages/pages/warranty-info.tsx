@@ -14,7 +14,7 @@ const Page = styled.div`
     font-weight: normal;
   }
   h2 {
-    padding-top: 16px;
+    padding-top: 10px;
     font-size: 1.4em;
     margin-bottom: 15px;
   }
