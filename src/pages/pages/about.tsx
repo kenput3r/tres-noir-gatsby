@@ -48,8 +48,11 @@ const Page = styled.div`
       li {
         list-style-position: inside;
         display: flex;
-        align-items: center;
+        align-items: baseline;
         column-gap: 10px;
+        div {
+          flex-shrink: 0;
+        }
       }
     }
   }
