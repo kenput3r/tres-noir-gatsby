@@ -12,6 +12,7 @@ const Page = styled.div`
   h3 {
     font-weight: normal;
     text-transform: uppercase;
+    margin-bottom: 18px;
   }
   h3 {
     font-size: 1.41rem;
