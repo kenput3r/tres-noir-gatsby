@@ -6,7 +6,6 @@ import SEO from "../../components/seo"
 const Page = styled.div`
   h1 {
     text-align: center;
-    padding-top: 10px;
   }
   h1,
   h4 {
@@ -21,7 +20,7 @@ const Page = styled.div`
     text-decoration: none;
   }
   table {
-    margin-bottom: 50px;
+    margin-bottom: 30px;
   }
   p,
   li,
@@ -92,7 +91,6 @@ const Page = styled.div`
   section {
     p {
       :first-of-type {
-        padding-top: 10px;
         padding-bottom: 5px;
       }
     }

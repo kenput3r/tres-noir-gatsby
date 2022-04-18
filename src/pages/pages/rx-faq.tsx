@@ -6,7 +6,6 @@ import SEO from "../../components/seo"
 const Page = styled.div`
   h1 {
     text-align: center;
-    padding-top: 10px;
   }
   a {
     text-decoration: none;
