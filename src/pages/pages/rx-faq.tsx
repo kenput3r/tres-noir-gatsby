@@ -4,18 +4,153 @@ import Layout from "../../components/layout"
 import SEO from "../../components/seo"
 
 const Page = styled.div`
-  h1,
-  p {
+  h1 {
     text-align: center;
+  }
+  a {
+    text-decoration: none;
+    color: black;
+    :focus,
+    :hover,
+    :visited {
+      color: black;
+    }
+    :focus,
+    :hover {
+      text-decoration: underline;
+    }
+  }
+  h1,
+  h4 {
+    font-weight: normal;
+  }
+  h4 {
+    margin-bottom: 16px;
+  }
+  ol {
+    li,
+    p {
+      font-family: var(--sub-heading-font);
+    }
+    p {
+      color: #808080;
+    }
+    strong {
+      color: black;
+    }
+    h4,
+    li::marker {
+      font-size: 1.35rem;
+    }
+    li {
+      margin-bottom: 30px;
+    }
   }
 `
 
 const RxFAQ = () => (
   <Layout>
     <Page>
-      <SEO title="Rx FAQ" />
-      <h1>Rx FAQ</h1>
-      <p>FAQ Here</p>
+      <article className="wrapper">
+        <SEO title="Rx FAQ" />
+        <h1>Rx FAQ</h1>
+        <section>
+          <ol>
+            <li>
+              <h4>Do I have Single Vision, Progressive, or Bifocal?</h4>
+              <p>
+                A Single Vision lens is a standard Rx lens. Single Vision is
+                used to correct one field of vision, the entire lens has ONE
+                correction. If your prescription does not include and "ADD", you
+                have a single vision prescription.
+              </p>
+              <p>
+                A Bifocal or Progressive lens has TWO areas of correction on the
+                lens. On a Bifocal lens, these two areas are separated by a
+                line, usually somewhere on the bottom half of the lens. A
+                Progressive lens is a no-line bifocal. The two areas are
+                separated by a smooth transition, and no line is visible. If
+                your prescription includes an "ADD" your lenses will be
+                Progressive or Bifocal.
+              </p>
+            </li>
+            <li>
+              <h4>What is PD? How do I obtain it?</h4>
+              <p>
+                The PD (Pupilary Distance) is the measurement of the distance
+                between your pupils. This measurement is essential in order to
+                properly make your Rx lenses. If it is not on your prescription
+                you can ask your eye doctor, they may have it on file. Otherwise
+                you can measure it yourself or visit any optometry office.
+              </p>
+              <p>
+                Check out this video for easy instructions:&nbsp;
+                <a href="https://www.youtube.com/watch?v=_Ev2Vw_7_Xg">
+                  PD VIDEO
+                </a>
+              </p>
+            </li>
+            <li>
+              <h4>
+                What is the difference between CR-39, Polycarbonate (PC) and
+                Hi-Index?
+              </h4>
+              <p>
+                <strong>CR-39</strong> is a standard lens. It is the least
+                expensive. It is shatterproof and offers adequate scratch
+                resistance.
+              </p>
+              <p>
+                <strong>Polycarbonate (PC)</strong> is recommended for
+                prescriptions above +2.50 or below -2.50. PC is a lighter,
+                thinner and more scratch resistant lens than a CR-39.
+              </p>
+              <p>
+                <strong>Hi-Index</strong> is an ultra thin lens and recommended
+                for prescriptions above +5.00 or below -5.00.
+              </p>
+            </li>
+            <li>
+              <h4>How long will it take to make my lenses?</h4>
+              <p>
+                Rx and custom lenses take 7-10 business days. We will call or
+                email when they are ready.
+              </p>
+            </li>
+            <li>
+              <h4>What is your return policy for Rx lenses?</h4>
+              <p>
+                Since they are custom made to your specific prescription, Rx
+                lenses are non-refundable. All sales are final for Rx orders.
+              </p>
+            </li>
+            <li>
+              <h4>Do you accept insurance?</h4>
+              <p>
+                Unfortunately, we do not accept insurance, however, we can
+                provide an itemized receipt which may be used for reimbursement.
+              </p>
+            </li>
+            <li>
+              <h4>
+                I want something that isn't an option on your website, can I
+                order it?
+              </h4>
+              <p>
+                We offer additional Rx and lens customization options that may
+                not be listed on our website. Please email us at{" "}
+                <a
+                  href="mailto:info@tresnoir.com"
+                  aria-describedby="a11y-external-message"
+                >
+                  info@tresnoir.com
+                </a>{" "}
+                with your request and we will send you a quote.
+              </p>
+            </li>
+          </ol>
+        </section>
+      </article>
     </Page>
   </Layout>
 )
