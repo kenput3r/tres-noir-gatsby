@@ -192,7 +192,7 @@ const Step5 = (props: {
         <button type="button" onClick={() => setCurrentStep(currentStep - 1)}>
           GO BACK
         </button>
-        <button type="button" onClick={handleAddToCart}>
+        <button type="button" onClick={handleAddToCart} className="add-to-cart">
           ADD TO CART
         </button>
       </div>

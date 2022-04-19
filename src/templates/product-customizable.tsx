@@ -2,17 +2,18 @@ import React, { useState, useEffect, useContext } from "react"
 import { Link, graphql } from "gatsby"
 import { StaticImage, GatsbyImage as Img } from "gatsby-plugin-image"
 import styled from "styled-components"
+import { useQuantityQuery } from "../hooks/useQuantityQuery"
+import ProductCarousel from "../components/product-carousel"
 import Layout from "../components/layout"
 import SEO from "../components/seo"
-import ProductCarousel from "../components/product-carousel"
-import { SelectedVariantContext } from "../contexts/selectedVariant"
-import { CustomerContext } from "../contexts/customer"
 import { CartContext } from "../contexts/cart"
-import Product from "./product"
+import { CustomerContext } from "../contexts/customer"
+import { SelectedVariantContext } from "../contexts/selectedVariant"
 import {
   addedToCartKlaviyoEvent,
   viewedProductKlaviyoEvent,
 } from "../helpers/klaviyo"
+import Product from "./product"
 
 const Page = styled.div`
   .shipping-message {
@@ -145,6 +146,9 @@ const Page = styled.div`
       }
     }
   }
+  .align-start {
+    align-self: start;
+  }
   @media (max-width: 500px) {
     .shipping-message {
       .h3 {
@@ -190,8 +194,14 @@ const ProductCustomizable = ({
   data: { contentfulProduct, shopifyProduct },
 }: any) => {
   if (!contentfulProduct) {
-    return Product
+    return Product({ data: { shopifyProduct } })
   }
+
+  // return default Product Page if contentful values do not exist
+  const quantityLevels = useQuantityQuery(
+    shopifyProduct.handle,
+    shopifyProduct.variants.length
+  )
   const { selectedVariantContext, setSelectedVariantContext } = useContext(
     SelectedVariantContext
   )
@@ -201,7 +211,6 @@ const ProductCustomizable = ({
   })
   // cart
   const { addProductToCart, checkout } = useContext(CartContext)
-
   useEffect(() => {
     const sku = selectedVariantContext
     if (sku) {
@@ -374,22 +383,35 @@ const ProductCustomizable = ({
                 </p>
               </div>
               <div className="actions">
-                <div>
-                  <button type="button" onClick={handleAddToCart}>
-                    ADD TO CART
-                  </button>
-                  <p>- OR -</p>
-                  <Link
-                    className="customize-btn"
-                    to={
-                      contentfulProduct &&
-                      `/products/${contentfulProduct.handle}/customize?variant=${selectedVariant.shopify.sku}`
-                    }
-                  >
-                    CUSTOMIZE
-                  </Link>
-                  <p className="small">Click for Polarized, Rx, and more</p>
-                </div>
+                {quantityLevels &&
+                quantityLevels[selectedVariant.shopify.sku] === 0 ? (
+                  <div className="align-start">
+                    <button type="button" className="sold-out">
+                      SOLD OUT
+                    </button>
+                  </div>
+                ) : (
+                  <div>
+                    <button
+                      type="button"
+                      onClick={handleAddToCart}
+                      className="add-to-cart"
+                    >
+                      ADD TO CART
+                    </button>
+                    <p>- OR -</p>
+                    <Link
+                      className="customize-btn"
+                      to={
+                        contentfulProduct &&
+                        `/products/${contentfulProduct.handle}/customize?variant=${selectedVariant.shopify.sku}`
+                      }
+                    >
+                      CUSTOMIZE
+                    </Link>
+                    <p className="small">Click for Polarized, Rx, and more</p>
+                  </div>
+                )}
               </div>
             </form>
           </div>
@@ -434,6 +456,7 @@ export const query = graphql`
         originalSrc
       }
       id
+      handle
       legacyResourceId
       onlineStoreUrl
       priceRangeV2 {
@@ -453,12 +476,21 @@ export const query = graphql`
         id
         image {
           originalSrc
+          altText
+          localFile {
+            childImageSharp {
+              gatsbyImageData
+            }
+          }
         }
         legacyResourceId
         price
         sku
         storefrontId
         title
+        selectedOptions {
+          name
+        }
       }
     }
   }

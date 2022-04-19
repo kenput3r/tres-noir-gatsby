@@ -1,14 +1,12 @@
 import React from "react"
 import { Link } from "gatsby"
 import { Swiper, SwiperSlide } from "swiper/react"
-import SwiperCore, { Navigation } from "swiper/core"
+import { Navigation } from "swiper"
 import { GatsbyImage } from "gatsby-plugin-image"
 import { BsChevronLeft as Left, BsChevronRight as Right } from "react-icons/bs"
 import styled from "styled-components"
 
-import "swiper/swiper-bundle.min.css"
-import "swiper/components/pagination/pagination.min.css"
-import "swiper/components/navigation/navigation.min.css"
+import "swiper/css"
 
 const Component = styled.div`
   .navigation {
@@ -47,8 +45,6 @@ interface ImageSet {
   title: string
 }
 
-SwiperCore.use([Navigation])
-
 const Carousel = ({
   imageSet,
   imageLinks,
@@ -81,6 +77,7 @@ const Carousel = ({
             spaceBetween: 30,
           },
         }}
+        modules={[Navigation]}
       >
         {imageSet.map((image: ImageSet, i: number) => (
           <SwiperSlide key={`thumb-${i}`}>

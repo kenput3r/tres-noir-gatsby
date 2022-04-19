@@ -1,11 +1,11 @@
 import React, { useState } from "react"
 import { Swiper, SwiperSlide } from "swiper/react"
-import SwiperCore, { Thumbs, Navigation } from "swiper/core"
+import { Thumbs, Navigation } from "swiper"
 import { GatsbyImage } from "gatsby-plugin-image"
 import { BsChevronLeft as Left, BsChevronRight as Right } from "react-icons/bs"
 import styled from "styled-components"
 
-import "swiper/swiper-bundle.min.css"
+import "swiper/css"
 
 const Component = styled.div`
   .navigation {
@@ -46,9 +46,7 @@ interface ImageSet {
   title: string
 }
 
-SwiperCore.use([Thumbs, Navigation])
-
-const ProductCarousel = ({ imageSet }: { imageSet: [ImageSet] }) => {
+const ProductCarousel = ({ imageSet }: { imageSet: ImageSet[] }) => {
   const [thumbsSwiper, setThumbsSwiper] = useState<any>(null)
   return (
     <Component>
@@ -58,6 +56,7 @@ const ProductCarousel = ({ imageSet }: { imageSet: [ImageSet] }) => {
         thumbs={{ swiper: thumbsSwiper }}
         loop
         navigation={{ nextEl: ".next", prevEl: ".prev" }}
+        modules={[Thumbs, Navigation]}
         grabCursor
       >
         {imageSet.map((image: ImageSet, i: number) => (
@@ -74,7 +73,6 @@ const ProductCarousel = ({ imageSet }: { imageSet: [ImageSet] }) => {
           spaceBetween={10}
           slidesPerView={3}
           onSwiper={swiper => setThumbsSwiper(swiper)}
-          watchSlidesVisibility
           watchSlidesProgress
         >
           {imageSet.map((image: ImageSet, i: number) => (

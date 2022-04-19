@@ -7,8 +7,8 @@ import { identifyCustomerKlaviyoEvent } from "../helpers/klaviyo"
 import Header from "./header"
 import Drawer from "./drawer"
 import Footer from "./footer"
-import "./layout.css"
 import "./fonts.css"
+import "./layout.css"
 
 const Main = styled.main`
   max-width: 100%;
