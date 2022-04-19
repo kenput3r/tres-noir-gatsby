@@ -86,8 +86,8 @@ h1,
   padding-bottom: 0;
   padding-left: 0;
   padding-right: 0;
-  padding-top: 0;
-  margin-bottom: 1.45rem;
+  padding-top: 0.5rem;
+  margin-bottom: 1.75rem;
   color: inherit;
   font-family: var(--heading-font);
   font-weight: bold;

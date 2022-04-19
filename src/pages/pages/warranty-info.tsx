@@ -4,12 +4,8 @@ import Layout from "../../components/layout"
 import SEO from "../../components/seo"
 
 const Page = styled.div`
-  margin: auto;
-  width: 640px;
-  max-width: 100%;
   h1 {
     text-align: center;
-    padding-top: 10px;
   }
   h1,
   h2 {
@@ -17,7 +13,6 @@ const Page = styled.div`
     font-weight: normal;
   }
   h2 {
-    padding-top: 16px;
     font-size: 1.4em;
     margin-bottom: 15px;
   }

@@ -12,7 +12,6 @@ const Page = styled.div`
     font-weight: normal;
   }
   h1 {
-    padding-top: 10px;
     text-align: center;
   }
   h2 {
@@ -34,7 +33,7 @@ const Page = styled.div`
     flex-direction: row;
     .col {
       flex: 1;
-      padding: 30px;
+      padding: 0 30px 30px 30px;
       @media (max-width: 899px) {
         padding: 0 15px;
       }
@@ -49,8 +48,11 @@ const Page = styled.div`
       li {
         list-style-position: inside;
         display: flex;
-        align-items: center;
+        align-items: baseline;
         column-gap: 10px;
+        div {
+          flex-shrink: 0;
+        }
       }
     }
   }
