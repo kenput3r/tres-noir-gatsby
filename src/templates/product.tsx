@@ -8,7 +8,7 @@ import ProductCarousel from "../components/product-carousel"
 import Layout from "../components/layout"
 import SEO from "../components/seo"
 import { useQuantityQuery } from "../hooks/useQuantityQuery"
-import { addedToCartKlaviyoEvent } from "../helpers/klaviyo"
+import { addedToCartGTMEvent } from "../helpers/gtm"
 
 const Page = styled.div`
   .shipping-message {
@@ -269,26 +269,24 @@ const Product = ({ data: { shopifyProduct } }: any) => {
     const id = selectedVariant.storefrontId
     addProductToCart(id, 1)
     alert("ADDED TO CART")
-    // klaviyo
-    if (customerEmail) {
-      const productData = {
-        title: shopifyProduct.title,
-        legacyResourceId: shopifyProduct.legacyResourceId,
-        sku: selectedVariant.sku,
-        productType: shopifyProduct.productType,
-        image: selectedVariant?.image?.originalSrc
-          ? selectedVariant.image?.originalSrc
-          : shopifyProduct.featuredImage.originalSrc,
-        url: shopifyProduct.onlineStoreUrl,
-        vendor: shopifyProduct.vendor,
-        price: selectedVariant.price,
-        compareAtPrice: selectedVariant.compareAtPrice,
-        collections: shopifyProduct.collections.map(
-          (collection: { title: string }) => collection.title
-        ),
-      }
-      addedToCartKlaviyoEvent(productData, checkout)
+
+    const productData = {
+      title: shopifyProduct.title,
+      legacyResourceId: shopifyProduct.legacyResourceId,
+      sku: selectedVariant.sku,
+      productType: shopifyProduct.productType,
+      image: selectedVariant?.image?.originalSrc
+        ? selectedVariant.image?.originalSrc
+        : shopifyProduct.featuredImage.originalSrc,
+      url: shopifyProduct.onlineStoreUrl,
+      vendor: shopifyProduct.vendor,
+      price: selectedVariant.price,
+      compareAtPrice: selectedVariant.compareAtPrice,
+      collections: shopifyProduct.collections.map(
+        (collection: { title: string }) => collection.title
+      ),
     }
+    addedToCartGTMEvent(productData)
   }
 
   return (

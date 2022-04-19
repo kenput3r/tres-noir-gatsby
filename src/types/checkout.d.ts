@@ -34,6 +34,10 @@ export interface LineItem {
     name: string
     kind: string
   }
+  product: {
+    id: string
+    handle: string
+  }
   variant: {
     available: boolean
     compareAtPrice: null | string

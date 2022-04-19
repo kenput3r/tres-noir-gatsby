@@ -8,7 +8,7 @@ import QuantitySelector from "../components/quantity-selector"
 import { CartContext } from "../contexts/cart"
 import { CustomerContext } from "../contexts/customer"
 import { LineItem } from "../types/checkout"
-import { startedCheckoutKlaviyoEvent } from "../helpers/klaviyo"
+import { startedCheckoutGTMEvent } from "../helpers/gtm"
 
 const Page = styled.div`
   margin: 0 1.45rem;
@@ -85,8 +85,9 @@ const Cart = () => {
 
   useEffect(() => {
     if (checkout) {
+      console.log("CHECKOUT", checkout)
       if (checkout.lineItems.length > 0) {
-        startedCheckoutKlaviyoEvent(checkout)
+        startedCheckoutGTMEvent(checkout)
       }
       associateCheckout(checkout.id)
     }
