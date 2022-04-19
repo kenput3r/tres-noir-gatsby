@@ -72,11 +72,19 @@ const Drawer = ({ isDrawerOpen, setIsDrawerOpen }: DrawerProps) => {
       </a>
       {items.map((item: Item) => {
         if (item.url && !item.subListItems) {
-          return (
-            <Link key={item.id} to={item.url}>
-              {item.name}
-            </Link>
-          )
+          if (item.name === "Wholesale") {
+            return (
+              <a key={item.id} href={item.url}>
+                {item.name}
+              </a>
+            )
+          } else {
+            return (
+              <Link key={item.id} to={item.url}>
+                {item.name}
+              </Link>
+            )
+          }
         }
         if (item.subListItems) {
           return (
