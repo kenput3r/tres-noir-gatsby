@@ -109,9 +109,13 @@ const DesktopNavigation = () => {
             key={item.id}
             className={item.id === visibleSubNav ? `active` : ``}
           >
-            {item.url && !item.subListItems && (
+            {item.url && item.name === "Wholesale" && (
+              <a href={item.url}>{item.name}</a>
+            )}
+            {item.url && !item.subListItems && item.name !== "Wholesale" && (
               <Link to={item.url}>{item.name}</Link>
             )}
+
             {item.subListItems && (
               <>
                 <a
