@@ -55,6 +55,22 @@ const Filters = styled.div`
   background-color: rgb(239, 239, 239);
   padding: 25px;
   margin-bottom: 25px;
+  .frame-options {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    gap: 20px;
+  }
+  .color-options {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    gap: 20px;
+  }
   a {
     text-decoration: none;
     color: var(--color-grey-dark);
@@ -79,7 +95,7 @@ const Filters = styled.div`
     }
     &.filter {
       padding: 8px 12px;
-      margin: 20px;
+      // margin: 20px;
       border-radius: 15px;
       color: #000;
       &[data-active="true"] {
@@ -270,7 +286,7 @@ const FiltersContentful = ({
               </ul>
             </div>
             {panel === FilterTypes.FitType && (
-              <div>
+              <div className="frame-options">
                 {fitTypes.length &&
                   fitTypes.map((fitType: string) => (
                     <button
@@ -296,7 +312,7 @@ const FiltersContentful = ({
               </div>
             )}
             {panel === FilterTypes.ColorName && (
-              <div>
+              <div className="color-options">
                 {colors.length &&
                   colors.map((colorName: string) => {
                     const image = frameColors[colorName.replace("-", "_")]
