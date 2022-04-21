@@ -13,8 +13,7 @@ import { VscClose } from "react-icons/vsc"
 import Upsell from "../components/upsell"
 
 const Page = styled.div`
-  background: #e0e0e0;
-  section > section {
+  .cart-wrapper {
     max-width: 860px;
     h2 {
       font-weight: normal;
@@ -136,6 +135,12 @@ const Page = styled.div`
       font-family: var(--heading-font);
       text-transform: uppercase;
     }
+    :nth-child(1) {
+      background: #e0e0e0;
+    }
+    :nth-child(2) {
+      background: white;
+    }
   }
 `
 
@@ -174,7 +179,7 @@ const Cart = () => {
         console.log(checkout)
         return (
           <section>
-            <section className="cart-items wrapper">
+            <section className="cart-items cart-wrapper wrapper">
               <h2>
                 Your cart:{" "}
                 <span className="total">${checkout.subtotalPrice}</span>
@@ -244,7 +249,9 @@ const Cart = () => {
                 </a>
               </div>
             </section>
-            <Upsell></Upsell>
+            <section className="cart-wrapper wrapper">
+              <Upsell></Upsell>
+            </section>
           </section>
         )
       }

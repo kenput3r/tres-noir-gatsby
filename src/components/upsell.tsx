@@ -11,6 +11,9 @@ const Component = styled.section`
     display: flex;
     > div {
       flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
     }
   }
   h6 {
@@ -81,13 +84,15 @@ const Upsell = () => {
                 <div>
                   <p>${product.variants[0].price}</p>
                 </div>
-                <button
-                  className="btn"
-                  type="button"
-                  onClick={evt => handleAddToCart(product)}
-                >
-                  ADD TO CART
-                </button>
+                <div>
+                  <button
+                    className="btn"
+                    type="button"
+                    onClick={evt => handleAddToCart(product)}
+                  >
+                    ADD TO CART
+                  </button>
+                </div>
               </div>
             )
           })}
