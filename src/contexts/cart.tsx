@@ -39,6 +39,11 @@ const DefaultContext = {
     webUrl: "",
   },
   addProductToCart: (variantId: string, quantity: number) => {},
+  addProductPrescription: (
+    variantId: string,
+    quantity: number,
+    customAttributes: any[]
+  ) => {},
   addProductsToCart: (
     lineItems: { variantId: string; quantity: number }[]
   ) => {},
@@ -46,6 +51,8 @@ const DefaultContext = {
   updateProductInCart: (variantId: string, quantity: number) => {},
   addDiscountCode: (code: string) => {},
   removeDiscountCode: () => {},
+  bundledVariants: [],
+  setBundledVariants: (value) =>  {}
 }
 
 export const CartContext = createContext(DefaultContext)
@@ -54,6 +61,7 @@ export const CartProvider = ({ children }) => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
   const [isActive, setIsActive] = useState("shop")
   const [checkout, setCheckout] = useState<any>()
+  const [bundledVariants, setBundledVariants] = useState<any>()
 
   /**
    * @function getCheckoutCookie - gets the current non-expired chechout cookie
@@ -194,6 +202,40 @@ export const CartProvider = ({ children }) => {
       }
     }
 
+    const addProductPrescription = async (
+      variantId: string,
+      quantity: number,
+      customAttributes: any[]
+    ) => {
+      try {
+        const lineItems = [
+          {
+            variantId,
+            quantity,
+            customAttributes,
+          },
+        ]
+        console.log(" line", lineItems)
+        const updatedCheckout = await client.checkout.addLineItems(
+          checkout.id,
+          lineItems
+        )
+        console.log("updated chceckout", updatedCheckout)
+        if (isBrowser) {
+          const now = new Date()
+          localStorage.setItem(
+            "checkout",
+            JSON.stringify({
+              value: updatedCheckout,
+              expiry: now.getTime() + 259200,
+            })
+          )
+        }
+        setCheckout(updatedCheckout)
+      } catch (e) {
+        console.error(e)
+      }
+    }
     const addProductsToCart = async (
       lineItems: { variantId: string; quantity: number }[]
     ) => {
@@ -202,6 +244,7 @@ export const CartProvider = ({ children }) => {
           checkout.id,
           lineItems
         )
+        console.log("updated chceckout normal", updatedCheckout)
         if (isBrowser) {
           const now = new Date()
           localStorage.setItem(
@@ -319,11 +362,14 @@ export const CartProvider = ({ children }) => {
       closeDrawer,
       checkout,
       addProductToCart,
+      addProductPrescription,
       addProductsToCart,
       removeProductFromCart,
       updateProductInCart,
       addDiscountCode,
       removeDiscountCode,
+      bundledVariants,
+      setBundledVariants
     }
   }, [isDrawerOpen, setIsDrawerOpen, isActive, setIsActive, checkout])
 

@@ -106,15 +106,12 @@ const Step5 = (props: {
     selectedVariants,
     setSelectedVariants,
   } = useContext(CustomizeContext)
-  const { addProductsToCart } = useContext(CartContext)
+  const { addProductToCart, addProductsToCart, addProductPrescription, bundledVariants, setBundledVariants } =
+    useContext(CartContext)
   const { isRxAble, setRxAble, rxInfo, dispatch } = useContext(RxInfoContext)
   const handleAddToCart = () => {
     const { step1, step2, step3, step4 } = selectedVariants
-    const items = [
-      {
-        variantId: variant.storefrontId,
-        quantity: 1,
-      },
+    const stepItems = [
       {
         variantId: step1.storefrontId,
         quantity: 1,
@@ -132,7 +129,23 @@ const Step5 = (props: {
         quantity: 1,
       },
     ]
-    addProductsToCart(items)
+
+    // const stepsMap = {
+    //   {
+    //     step1.storefrontId: 1, 
+    //   }
+    // }
+    
+    if (isRxAble) {
+      console.log(rxInfo)
+      addProductPrescription(variant.storefrontId, 1, [
+        { key: "foo", value: "bar" },
+      ])
+    } else {
+      addProductToCart(variant.storefrontId, 1)
+    }
+    setBundledVariants(stepItems)
+    addProductsToCart(stepItems)
     // attach rxInfo to main product
     // reset context
 

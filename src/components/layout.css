@@ -612,13 +612,16 @@ pre tt:after {
 
 .btn {
   background-color: #000;
-  box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.6);
+  /* box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.6); */
   color: #fff;
   display: inline-block;
   font-family: var(--heading-font);
-  font-size: 2rem;
-  padding: 1rem 1.45rem;
+  font-size: 1rem;
+  padding: 8px 15px;
   text-decoration: none;
+  cursor: pointer;
+  -webkit-appearance: button-bevel;
+  border: none;
 }
 
 main {
