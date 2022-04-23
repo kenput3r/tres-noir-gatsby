@@ -170,6 +170,7 @@ const Customize = ({
                   productTitle={shopifyProduct.title}
                   variant={variant.shopify}
                   currentPrice={currentPrice}
+                  productImage={currentImage}
                 />
               )}
             </div>

@@ -5,6 +5,7 @@ import { CartProvider } from "./src/contexts/cart"
 import { CustomerProvider } from "./src/contexts/customer"
 import { RxInfoContextProvider } from "./src/contexts/rxInfo"
 import { ErrorModalProvider } from "./src/contexts/error"
+import { CustomProductsContextProvider } from "./src/contexts/customProducts"
 
 export const wrapRootElement = ({ element }) => (
   <ErrorModalProvider>
@@ -12,7 +13,9 @@ export const wrapRootElement = ({ element }) => (
       <CartProvider>
         <CustomizeProvider>
           <SelectedVariantProvider>
-            <RxInfoContextProvider>{element}</RxInfoContextProvider>
+            <CustomProductsContextProvider>
+              <RxInfoContextProvider>{element}</RxInfoContextProvider>
+            </CustomProductsContextProvider>
           </SelectedVariantProvider>
         </CustomizeProvider>
       </CartProvider>

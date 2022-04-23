@@ -66,7 +66,6 @@ const Upsell = () => {
       <div className="row">
         <div className="upsell-cards">
           {upsellItems.products.map(product => {
-            console.log(product)
             return (
               <div className="upsell-product" key={product.id}>
                 <div>

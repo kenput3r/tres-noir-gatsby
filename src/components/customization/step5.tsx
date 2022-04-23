@@ -4,6 +4,7 @@ import { GatsbyImage, StaticImage, IGatsbyImageData } from "gatsby-plugin-image"
 import { CustomizeContext } from "../../contexts/customize"
 import { CartContext } from "../../contexts/cart"
 import { RxInfoContext } from "../../contexts/rxInfo"
+import { CustomProductsContext } from "../../contexts/customProducts"
 
 const Component = styled.div`
   padding: 10px;
@@ -97,8 +98,10 @@ const Step5 = (props: {
   productTitle: string
   currentPrice: number
   variant: any
+  productImage: any
 }) => {
-  const { productTitle, currentPrice, variant } = props
+  const { productTitle, currentPrice, variant, productImage } = props
+  console.log(props)
   const {
     currentStep,
     setCurrentStep,
@@ -106,49 +109,111 @@ const Step5 = (props: {
     selectedVariants,
     setSelectedVariants,
   } = useContext(CustomizeContext)
-  const { addProductToCart, addProductsToCart, addProductPrescription, bundledVariants, setBundledVariants } =
-    useContext(CartContext)
+
+  const { bundledCustoms, bundledDispatch } = useContext(CustomProductsContext)
+  const {
+    addProductToCart,
+    addProductsToCart,
+    addProductPrescription,
+    addProductCustomToCart,
+  } = useContext(CartContext)
   const { isRxAble, setRxAble, rxInfo, dispatch } = useContext(RxInfoContext)
+
+  const addToBundle = (newCheckout, key: string, customImage) => {
+    console.log("in function", newCheckout)
+
+    console.log("image", customImage)
+
+    bundledDispatch({ type: "SET_CHECKOUT", payload: newCheckout.id })
+
+    let tempItems: any[] = []
+    newCheckout.lineItems.forEach(item => {
+      if (item.customAttributes.length !== 0) {
+        item.customAttributes.forEach(attr => {
+          if (attr.key === "customizationId" && attr.value === key) {
+            tempItems.push(item)
+          }
+        })
+      }
+    })
+    if (tempItems.length > 0) {
+      console.log("here")
+      bundledDispatch({
+        type: "ADD",
+        payload: {
+          id: key,
+          value: tempItems,
+          image: customImage,
+        },
+      })
+    }
+
+    console.log("temp items", tempItems)
+    console.log("current bundle context", bundledCustoms)
+  }
   const handleAddToCart = () => {
+    console.log("var", variant)
     const { step1, step2, step3, step4 } = selectedVariants
+
+    const today = new Date()
+    const matchingKey: string = today.valueOf().toString()
     const stepItems = [
       {
         variantId: step1.storefrontId,
         quantity: 1,
+        customAttributes: [
+          {
+            key: "customizationId",
+            value: matchingKey,
+          },
+        ],
       },
       {
         variantId: step2.storefrontId,
         quantity: 1,
+        customAttributes: [
+          {
+            key: "customizationId",
+            value: matchingKey,
+          },
+        ],
       },
       {
         variantId: step3.storefrontId,
         quantity: 1,
+        customAttributes: [
+          {
+            key: "customizationId",
+            value: matchingKey,
+          },
+        ],
       },
       {
         variantId: step4.storefrontId,
         quantity: 1,
+        customAttributes: [
+          {
+            key: "customizationId",
+            value: matchingKey,
+          },
+        ],
       },
     ]
-
-    // const stepsMap = {
-    //   {
-    //     step1.storefrontId: 1, 
-    //   }
-    // }
-    
-    if (isRxAble) {
-      console.log(rxInfo)
-      addProductPrescription(variant.storefrontId, 1, [
-        { key: "foo", value: "bar" },
-      ])
-    } else {
-      addProductToCart(variant.storefrontId, 1)
+    const frameVariant = {
+      variantId: variant.storefrontId,
+      quantity: 1,
+      customAttributes: [
+        {
+          key: "customizationId",
+          value: matchingKey,
+        },
+      ],
     }
-    setBundledVariants(stepItems)
-    addProductsToCart(stepItems)
-    // attach rxInfo to main product
-    // reset context
+    stepItems.unshift(frameVariant)
 
+    const newCheckout = addProductCustomToCart(stepItems).then(result =>
+      addToBundle(result, matchingKey, productImage)
+    )
     alert("ADDED TO CART")
   }
 

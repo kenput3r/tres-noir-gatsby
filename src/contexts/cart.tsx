@@ -47,12 +47,14 @@ const DefaultContext = {
   addProductsToCart: (
     lineItems: { variantId: string; quantity: number }[]
   ) => {},
+  addProductCustomToCart: (
+    lineItems: { variantId: string; quantity: number; customAttributes: [] }[]
+  ) => {},
   removeProductFromCart: (lineItemId: string) => {},
+  removeProductsFromCart: (lineItemIds: []) => {},
   updateProductInCart: (variantId: string, quantity: number) => {},
   addDiscountCode: (code: string) => {},
   removeDiscountCode: () => {},
-  bundledVariants: [],
-  setBundledVariants: (value) =>  {}
 }
 
 export const CartContext = createContext(DefaultContext)
@@ -61,7 +63,6 @@ export const CartProvider = ({ children }) => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
   const [isActive, setIsActive] = useState("shop")
   const [checkout, setCheckout] = useState<any>()
-  const [bundledVariants, setBundledVariants] = useState<any>()
 
   /**
    * @function getCheckoutCookie - gets the current non-expired chechout cookie
@@ -220,7 +221,7 @@ export const CartProvider = ({ children }) => {
           checkout.id,
           lineItems
         )
-        console.log("updated chceckout", updatedCheckout)
+
         if (isBrowser) {
           const now = new Date()
           localStorage.setItem(
@@ -261,11 +262,59 @@ export const CartProvider = ({ children }) => {
       }
     }
 
+    const addProductCustomToCart = async (
+      lineItems: { variantId: string; quantity: number; customAttributes: [] }[]
+    ) => {
+      try {
+        const updatedCheckout = await client.checkout.addLineItems(
+          checkout.id,
+          lineItems
+        )
+        console.log("updated chceckout normal", updatedCheckout)
+        if (isBrowser) {
+          const now = new Date()
+          localStorage.setItem(
+            "checkout",
+            JSON.stringify({
+              value: updatedCheckout,
+              expiry: now.getTime() + 259200,
+            })
+          )
+        }
+        setCheckout(updatedCheckout)
+        return updatedCheckout
+      } catch (e) {
+        console.error(e)
+      }
+    }
+
     const removeProductFromCart = async (lineItemId: string) => {
       try {
         const updatedCheckout = await client.checkout.removeLineItems(
           checkout.id,
           [lineItemId]
+        )
+        if (isBrowser) {
+          const now = new Date()
+          localStorage.setItem(
+            "checkout",
+            JSON.stringify({
+              value: updatedCheckout,
+              expiry: now.getTime() + 259200,
+            })
+          )
+        }
+        setCheckout(updatedCheckout)
+      } catch (e) {
+        console.error(e)
+      }
+    }
+
+    const removeProductsFromCart = async lineItemIds => {
+      try {
+        const updatedCheckout = await client.checkout.removeLineItems(
+          checkout.id,
+          lineItemIds
         )
         if (isBrowser) {
           const now = new Date()
@@ -364,12 +413,12 @@ export const CartProvider = ({ children }) => {
       addProductToCart,
       addProductPrescription,
       addProductsToCart,
+      addProductCustomToCart,
       removeProductFromCart,
+      removeProductsFromCart,
       updateProductInCart,
       addDiscountCode,
       removeDiscountCode,
-      bundledVariants,
-      setBundledVariants
     }
   }, [isDrawerOpen, setIsDrawerOpen, isActive, setIsActive, checkout])
 
