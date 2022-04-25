@@ -17,6 +17,9 @@ import { CustomProductsContext } from "../contexts/customProducts"
 const Page = styled.div`
   .cart-wrapper {
     max-width: 860px;
+    width: 100%;
+    padding-left: 22px;
+    padding-right: 22px;
     h2 {
       font-weight: normal;
     }
@@ -27,6 +30,7 @@ const Page = styled.div`
       }
       margin: 0;
       li {
+        padding: 5px;
         border-radius: 10px;
         .close-btn {
           text-align: right;
@@ -49,10 +53,17 @@ const Page = styled.div`
             flex: 1;
             padding: 0 10px;
           }
+          @media (max-width: 600px) {
+            flex-direction: column;
+            .card-image {
+              max-width: 280px;
+              align-self: center;
+            }
+          }
         }
         .title {
           /* font-weight: bold; */
-          margin-bottom: 5px;
+          margin-bottom: 0;
           a {
             color: #000;
             text-decoration: none;
@@ -150,6 +161,11 @@ const Page = styled.div`
       margin: 5px 0 5px 0;
     }
   }
+  .customized {
+    .step-name {
+      color: black;
+    }
+  }
 `
 
 const Cart = () => {
@@ -159,8 +175,6 @@ const Cart = () => {
     updateProductInCart,
     removeProductsFromCart,
   } = useContext(CartContext)
-  const [bundleState, setBundleState] = useState<any>([])
-  let bundle: any = []
 
   const { associateCheckout } = useContext(CustomerContext)
 
@@ -180,64 +194,30 @@ const Cart = () => {
       associateCheckout(checkout.id)
       // bundle customized frames
       console.log("checkout", checkout.lineItems)
-
-      // checkout.lineItems.forEach(item => {
-      //   if (item.customAttributes.length !== 0) {
-      //     item.customAttributes.forEach(attr => {
-      //       if (attr.key === "customizationId") {
-      //         if (bundle.length === 0) {
-      //           const mapItem = {
-      //             id: attr.value,
-      //             values: [item],
-      //           }
-      //           bundle.push(mapItem)
-      //         } else {
-      //           addToBundle(attr.value, item)
-      //         }
-      //       }
-      //     })
-      //   }
-      // })
-      // console.log("bundle", bundle)
-      // setBundleState(bundle)
-      console.log("bundled", bundledCustoms)
+      console.log("bundledItems", bundledCustoms)
     }
   }, [checkout])
 
-  const removeMultipleProducts = async lineItems => {
-    const lineIds = lineItems.map(item => {
-      return item.id
+  const removeMultipleProducts = async selectedCustom => {
+    console.log("REMOVING", selectedCustom)
+    const lineIds = selectedCustom.lineItems.map(item => {
+      return item.shopifyItem.id
     })
-    removeProductsFromCart(lineIds)
+    bundledDispatch({
+      type: "DELETE",
+      payload: { id: selectedCustom.customizationId },
+    })
+    await removeProductsFromCart(lineIds)
   }
 
   const updateQuantity = (lineId: string, quantity: number) => {
     updateProductInCart(lineId, quantity)
   }
 
-  // const addToBundle = (key: string, lineItem: any) => {
-  //   bundle.forEach(val => {
-  //     // check if key exists in bundle
-  //     if (val.id === key) {
-  //       val.values.push(lineItem)
-  //     }
-  //     console.log("op", val)
-  //   })
-  // }
-
-  // const existsInBundle = (key: string) => {
-  //   bundle.forEach(item => {
-  //     if (item.id === key) {
-  //       return item.id
-  //     }
-  //   })
-  //   return ""
-  // }
-
   const totalSum = lineItems => {
     let sum = 0
     lineItems.forEach(item => {
-      sum += parseFloat(item.variant.price)
+      sum += parseFloat(item.shopifyItem.variant.price)
     })
     return sum.toFixed(2)
   }
@@ -250,150 +230,157 @@ const Cart = () => {
         console.log(checkout)
         return (
           <section>
-            <section className="cart-items cart-wrapper wrapper">
-              <h2>
-                Your cart:{" "}
-                <span className="total">${checkout.subtotalPrice}</span>
-              </h2>
-              <ul>
-                {bundledCustoms.items.length !== 0 &&
-                  bundledCustoms.items.map(item => {
-                    console.log("item 1", item)
-                    return (
-                      <li key={item.customizationId}>
-                        <div className="close-btn">
-                          <a
-                            className="remove-item"
-                            href="#"
-                            onClick={() =>
-                              removeMultipleProducts(item.lineItems)
-                            }
-                          >
-                            <VscClose />
-                          </a>
-                        </div>
+            <div>
+              <section className="cart-items cart-wrapper wrapper">
+                <h2>
+                  Your cart:{" "}
+                  <span className="total">${checkout.subtotalPrice}</span>
+                </h2>
+                <ul>
+                  {bundledCustoms.items.length !== 0 &&
+                    bundledCustoms.items.map(item => {
+                      if (item) {
+                        return (
+                          <li key={item.customizationId} className="customized">
+                            <div className="close-btn">
+                              <a
+                                className="remove-item"
+                                href="#"
+                                onClick={() => removeMultipleProducts(item)}
+                              >
+                                <VscClose />
+                              </a>
+                            </div>
 
-                        <div className="card">
-                          <div>
-                            <GatsbyImage
-                              image={item.customImage.data}
-                              alt={item.customImage.altText}
-                            ></GatsbyImage>
-                          </div>
-                          <div>
-                            <div>
-                              <p className="title">
-                                <Link
-                                  to={`/products/${item.lineItems[0].variant.product.handle}`}
-                                >
-                                  {item.lineItems[0].title}
-                                </Link>
-                              </p>
-                              <div className="sub-title-customize">
-                                {item.lineItems.map((subItem, subIndex) => {
-                                  return (
-                                    <div className="sub-item" key={subItem.id}>
-                                      <div className="step-name">
-                                        <p>{stepMap.get(subIndex)}</p>
-                                      </div>
-                                      <div
-                                        className="sub-title"
-                                        key={subItem.id}
-                                      >
-                                        <span key={subItem.id}>
-                                          {subItem.title}
-                                        </span>
-                                        <span className="price">
-                                          ${subItem.variant.price}
-                                        </span>
-                                      </div>
-                                    </div>
-                                  )
-                                })}
-                                <hr />
-                                <span className="price total-price">
-                                  ${totalSum(item.lineItems)}
-                                </span>
+                            <div className="card">
+                              <div className="card-image">
+                                <GatsbyImage
+                                  image={item.customImage.data}
+                                  alt={item.customImage.altText}
+                                ></GatsbyImage>
                               </div>
-                            </div>
-                            {/* <QuantitySelector
-                          lineId={line.id}
-                          quantity={line.quantity}
-                          updateQuantity={updateQuantity}
-                        /> */}
-                          </div>
-                        </div>
-                      </li>
-                    )
-                  })}
-                {checkout?.lineItems &&
-                  checkout?.lineItems.map((line: LineItem) => {
-                    if (line.customAttributes.length === 0) {
-                      return (
-                        <li key={line.id}>
-                          <div className="close-btn">
-                            <a
-                              className="remove-item"
-                              href="#"
-                              onClick={() => removeProductFromCart(line.id)}
-                            >
-                              <VscClose />
-                            </a>
-                          </div>
-
-                          <div className="card">
-                            <div>
-                              <img
-                                src={line.variant.image.src}
-                                alt={line.variant.image.altText}
-                              />
-                            </div>
-                            <div>
                               <div>
-                                <p className="title">
-                                  <Link
-                                    to={`/products/${line.variant.product.handle}`}
-                                  >
-                                    {line.title}
-                                  </Link>
-                                </p>
-                                <div className="sub-title">
-                                  <span>
-                                    {line.variant.title !== "Default Title"
-                                      ? line.variant.title
-                                      : ""}
-                                  </span>
-
-                                  <span className="price">
-                                    ${line.variant.price}
-                                  </span>
+                                <div>
+                                  <p className="title">
+                                    <Link
+                                      to={`/products/${item.lineItems[0].shopifyItem.variant.product.handle}`}
+                                    >
+                                      {item.lineItems[0].shopifyItem.title}
+                                    </Link>
+                                  </p>
+                                  <div className="sub-title-customize">
+                                    {item.lineItems.map((subItem, subIndex) => {
+                                      return (
+                                        <div
+                                          className="sub-item"
+                                          key={subItem.shopifyItem.id}
+                                        >
+                                          <div className="step-name">
+                                            <p>{stepMap.get(subIndex)}</p>
+                                          </div>
+                                          <div
+                                            className="sub-title"
+                                            key={subItem.shopifyItem.id}
+                                          >
+                                            <span key={subItem.shopifyItem.id}>
+                                              {subItem.shopifyItem.variant
+                                                .title === "Default Title"
+                                                ? subItem.shopifyItem.title
+                                                : subItem.shopifyItem.variant
+                                                    .title}
+                                            </span>
+                                            <span className="price">
+                                              $
+                                              {
+                                                subItem.shopifyItem.variant
+                                                  .price
+                                              }
+                                            </span>
+                                          </div>
+                                        </div>
+                                      )
+                                    })}
+                                    <hr />
+                                    <span className="price total-price">
+                                      ${totalSum(item.lineItems)}
+                                    </span>
+                                  </div>
                                 </div>
                               </div>
-                              {/* <QuantitySelector
+                            </div>
+                          </li>
+                        )
+                      }
+                    })}
+                  {checkout?.lineItems &&
+                    checkout?.lineItems.map((line: LineItem) => {
+                      if (line.customAttributes.length === 0) {
+                        return (
+                          <li key={line.id}>
+                            <div className="close-btn">
+                              <a
+                                className="remove-item"
+                                href="#"
+                                onClick={() => removeProductFromCart(line.id)}
+                              >
+                                <VscClose />
+                              </a>
+                            </div>
+
+                            <div className="card">
+                              <div className="card-image">
+                                <img
+                                  src={line.variant.image.src}
+                                  alt={line.variant.image.altText}
+                                />
+                              </div>
+                              <div>
+                                <div>
+                                  <p className="title">
+                                    <Link
+                                      to={`/products/${line.variant.product.handle}`}
+                                    >
+                                      {line.title}
+                                    </Link>
+                                  </p>
+                                  <div className="sub-title">
+                                    <span>
+                                      {line.variant.title !== "Default Title"
+                                        ? line.variant.title
+                                        : ""}
+                                    </span>
+
+                                    <span className="price">
+                                      ${line.variant.price}
+                                    </span>
+                                  </div>
+                                </div>
+                                {/* <QuantitySelector
                           lineId={line.id}
                           quantity={line.quantity}
                           updateQuantity={updateQuantity}
                         /> */}
+                              </div>
                             </div>
-                          </div>
-                        </li>
-                      )
-                    }
-                  })}
-              </ul>
-              <div className="subtotal">
-                <p>
-                  Subtotal:{" "}
-                  <span className="total">${checkout.subtotalPrice}</span>
-                </p>
-                <p>Delivery & Taxes are calculated at checkout.</p>
-              </div>
-              <div className="btn-container">
-                <a href={checkout.webUrl} className="btn checkout">
-                  Check Out
-                </a>
-              </div>
-            </section>
+                          </li>
+                        )
+                      }
+                    })}
+                </ul>
+                <div className="subtotal">
+                  <p>
+                    Subtotal:{" "}
+                    <span className="total">${checkout.subtotalPrice}</span>
+                  </p>
+                  <p>Delivery & Taxes are calculated at checkout.</p>
+                </div>
+                <div className="btn-container">
+                  <a href={checkout.webUrl} className="btn checkout">
+                    Check Out
+                  </a>
+                </div>
+              </section>
+            </div>
             <section className="cart-wrapper wrapper">
               <Upsell></Upsell>
             </section>

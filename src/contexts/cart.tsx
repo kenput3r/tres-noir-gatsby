@@ -142,6 +142,8 @@ export const CartProvider = ({ children }) => {
           if (localCheckout) {
             localCheckout = JSON.parse(localCheckout as string) as LocalCheckout
             checkout = await validateLocalCheckout(localCheckout)
+            //
+            console.log("build custom context")
           } else {
             checkout = await client.checkout.fetch(checkoutId)
             if (isBrowser) {

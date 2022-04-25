@@ -31,10 +31,6 @@ const defaultContext = {
   bundledDispatch: Dispatch => {},
 }
 
-// const actionList = {
-//   ADD: "add",
-//   REMOVE: "remove",
-// }
 const reducer = (state, action) => {
   switch (action.type) {
     case "ADD":
@@ -43,7 +39,6 @@ const reducer = (state, action) => {
       )
       if (findId === -1) {
         //create new item
-        console.log("create new item then add")
         return {
           ...state,
           items: [
@@ -57,24 +52,37 @@ const reducer = (state, action) => {
         }
       } else {
         // append line item to array
-        console.log("add existing item")
         return {
           ...state,
           items: [
-            ...state.items.splice(0, findId),
+            ...state.items.slice(0, findId),
             (state.items[findId] = {
               customizationId: action.payload.id,
               lineItems: action.payload.value,
               customImage: action.payload.image,
             }),
-            ...state.slice(findId),
+            ...state.items.slice(findId),
           ],
         }
       }
+    case "DELETE":
+      const filteredDelete = state.items.filter(
+        item => item.customizationId !== action.payload.id
+      )
+      if (state.items.length === 1) {
+        return {
+          ...state,
+          items: [],
+        }
+      } else {
+        return {
+          ...state,
+          items: filteredDelete,
+        }
+      }
+
     case "SET_CHECKOUT":
       return { ...state, checkoutId: action.payload }
-    case "SET_CUSTOM_IMAGE":
-      return { ...state }
     default:
       return state
   }

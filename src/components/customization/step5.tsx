@@ -101,7 +101,6 @@ const Step5 = (props: {
   productImage: any
 }) => {
   const { productTitle, currentPrice, variant, productImage } = props
-  console.log(props)
   const {
     currentStep,
     setCurrentStep,
@@ -120,24 +119,30 @@ const Step5 = (props: {
   const { isRxAble, setRxAble, rxInfo, dispatch } = useContext(RxInfoContext)
 
   const addToBundle = (newCheckout, key: string, customImage) => {
-    console.log("in function", newCheckout)
-
-    console.log("image", customImage)
-
-    bundledDispatch({ type: "SET_CHECKOUT", payload: newCheckout.id })
-
     let tempItems: any[] = []
     newCheckout.lineItems.forEach(item => {
       if (item.customAttributes.length !== 0) {
+        let found = false
         item.customAttributes.forEach(attr => {
           if (attr.key === "customizationId" && attr.value === key) {
-            tempItems.push(item)
+            found = true
+          }
+          if (attr.key === "customizationStep" && found) {
+            tempItems.push({
+              stepNumber: attr.value,
+              shopifyItem: item,
+            })
           }
         })
       }
     })
+    // sort tempItems by stepNumber
+    console.log("before sort", tempItems)
+    tempItems.sort((a, b) => {
+      return a.stepNumber - b.stepNumber
+    })
+    console.log("after sort", tempItems)
     if (tempItems.length > 0) {
-      console.log("here")
       bundledDispatch({
         type: "ADD",
         payload: {
@@ -147,12 +152,8 @@ const Step5 = (props: {
         },
       })
     }
-
-    console.log("temp items", tempItems)
-    console.log("current bundle context", bundledCustoms)
   }
   const handleAddToCart = () => {
-    console.log("var", variant)
     const { step1, step2, step3, step4 } = selectedVariants
 
     const today = new Date()
@@ -166,6 +167,10 @@ const Step5 = (props: {
             key: "customizationId",
             value: matchingKey,
           },
+          {
+            key: "customizationStep",
+            value: "1",
+          },
         ],
       },
       {
@@ -175,6 +180,10 @@ const Step5 = (props: {
           {
             key: "customizationId",
             value: matchingKey,
+          },
+          {
+            key: "customizationStep",
+            value: "2",
           },
         ],
       },
@@ -186,6 +195,10 @@ const Step5 = (props: {
             key: "customizationId",
             value: matchingKey,
           },
+          {
+            key: "customizationStep",
+            value: "3",
+          },
         ],
       },
       {
@@ -195,6 +208,10 @@ const Step5 = (props: {
           {
             key: "customizationId",
             value: matchingKey,
+          },
+          {
+            key: "customizationStep",
+            value: "4",
           },
         ],
       },
@@ -206,6 +223,10 @@ const Step5 = (props: {
         {
           key: "customizationId",
           value: matchingKey,
+        },
+        {
+          key: "customizationStep",
+          value: "0",
         },
       ],
     }
