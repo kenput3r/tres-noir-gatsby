@@ -25,8 +25,7 @@ const Component = styled.section`
       margin: 15px;
       text-align: center;
       @media (max-width: 600px) {
-        margin-top: 20px;
-        margin-bottom: 20px;
+        margin: 20px 11px 20px 11px;
       }
       a {
         color: black;
@@ -49,6 +48,12 @@ const Component = styled.section`
     font-size: 1.6rem;
     font-weight: normal;
     text-transform: uppercase;
+  }
+  .btn {
+    @media (max-width: 600px) {
+      font-size: 0.9rem;
+      padding: 8px 10px;
+    }
   }
 `
 

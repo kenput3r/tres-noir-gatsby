@@ -1,6 +1,6 @@
 import React, { useEffect, useContext, useState } from "react"
 import { Link } from "gatsby"
-import { GatsbyImage } from "gatsby-plugin-image"
+import { GatsbyImage, StaticImage } from "gatsby-plugin-image"
 import styled from "styled-components"
 import Layout from "../components/layout"
 import SEO from "../components/seo"
@@ -12,7 +12,6 @@ import { LineItem } from "../types/checkout"
 import { startedCheckoutKlaviyoEvent } from "../helpers/klaviyo"
 import { VscBeaker, VscClose } from "react-icons/vsc"
 import Upsell from "../components/upsell"
-import { CustomProductsContext } from "../contexts/customProducts"
 
 const Page = styled.div`
   .cart-wrapper {
@@ -166,6 +165,28 @@ const Page = styled.div`
       color: black;
     }
   }
+  .grey-background {
+    background: #e0e0e0;
+  }
+  .empty-cart {
+    p {
+      font-family: var(--heading-font);
+      color: var(--color-grey-dark);
+      font-size: 130%;
+    }
+    h1 {
+      text-transform: uppercase;
+      font-weight: normal;
+      text-align: center;
+    }
+    .empty-flex {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 40px 0;
+    }
+  }
 `
 
 const Cart = () => {
@@ -174,6 +195,8 @@ const Cart = () => {
     removeProductFromCart,
     updateProductInCart,
     removeProductsFromCart,
+    bundledCustoms,
+    bundledDispatch,
   } = useContext(CartContext)
 
   const { associateCheckout } = useContext(CustomerContext)
@@ -184,7 +207,7 @@ const Cart = () => {
   stepMap.set(3, "LENS MATERIAL")
   stepMap.set(4, "LENS COATING")
 
-  const { bundledCustoms, bundledDispatch } = useContext(CustomProductsContext)
+  // const {} = useContext(CustomProductsContext)
 
   useEffect(() => {
     if (checkout) {
@@ -225,12 +248,33 @@ const Cart = () => {
   const renderContent = () => {
     if (checkout) {
       if (checkout?.lineItems.length === 0) {
-        return <p className="text-center">Your cart is currently empty.</p>
+        return (
+          <section className="empty-cart">
+            <h1>Cart</h1>
+            <div className="grey-background">
+              <div className="empty-flex">
+                <figure>
+                  <picture>
+                    <StaticImage
+                      src="../images/empty-cart.png"
+                      alt="Empty cart icon."
+                      height={225}
+                    ></StaticImage>
+                  </picture>
+                </figure>
+                <p>Your cart is empty.</p>
+                <Link to={"/"} className="btn">
+                  CONTINUE SHOPPING
+                </Link>
+              </div>
+            </div>
+          </section>
+        )
       } else {
         console.log(checkout)
         return (
           <section>
-            <div>
+            <div className="grey-background">
               <section className="cart-items cart-wrapper wrapper">
                 <h2>
                   Your cart:{" "}

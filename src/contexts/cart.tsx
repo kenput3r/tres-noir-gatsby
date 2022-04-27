@@ -1,6 +1,101 @@
-import React, { createContext, useState, useEffect, useMemo } from "react"
+import React, {
+  createContext,
+  useState,
+  useEffect,
+  useMemo,
+  useReducer,
+} from "react"
 import Client, { Cart } from "shopify-buy"
 import { Checkout } from "../types/checkout"
+import { IGatsbyImageData } from "gatsby-plugin-image"
+import { dispatch } from "gatsby-cli/lib/reporter/redux"
+
+interface BundleCustomsItemType {
+  customizationId: string
+  lineItems: {
+    [x: string]: any
+    stepNumber: string
+    shopifyItem: Checkout
+  }
+  customImage: {
+    data: IGatsbyImageData
+    altText: string
+  }
+}
+
+interface BundleCustomsType {
+  checkoutId: string
+  items: BundleCustomsItemType[]
+}
+
+const bundleInit: BundleCustomsType = {
+  checkoutId: "",
+  items: [],
+}
+
+interface BundleLocalStorageType {
+  expiry: number
+  value: BundleCustomsType
+}
+
+const customLensesReducer = (state, action) => {
+  switch (action.type) {
+    case "ADD":
+      const findId = state.items.findIndex(
+        srch => srch.customizationId === action.payload.id
+      )
+      if (findId === -1) {
+        //create new item
+        return {
+          ...state,
+          items: [
+            ...state.items,
+            {
+              customizationId: action.payload.id,
+              lineItems: action.payload.value,
+              customImage: action.payload.image,
+            },
+          ],
+        }
+      } else {
+        // append line item to array
+        return {
+          ...state,
+          items: [
+            ...state.items.slice(0, findId),
+            (state.items[findId] = {
+              customizationId: action.payload.id,
+              lineItems: action.payload.value,
+              customImage: action.payload.image,
+            }),
+            ...state.items.slice(findId),
+          ],
+        }
+      }
+    case "DELETE":
+      const filteredDelete = state.items.filter(
+        item => item.customizationId !== action.payload.id
+      )
+      if (state.items.length === 1) {
+        return {
+          ...state,
+          items: [],
+        }
+      } else {
+        return {
+          ...state,
+          items: filteredDelete,
+        }
+      }
+
+    case "SET_CHECKOUT":
+      return { ...state, checkoutId: action.payload }
+    case "UPDATED":
+      return state
+    default:
+      return state
+  }
+}
 
 const client = Client.buildClient({
   domain: process.env.GATSBY_STORE_MY_SHOPIFY as string,
@@ -39,11 +134,6 @@ const DefaultContext = {
     webUrl: "",
   },
   addProductToCart: (variantId: string, quantity: number) => {},
-  addProductPrescription: (
-    variantId: string,
-    quantity: number,
-    customAttributes: any[]
-  ) => {},
   addProductsToCart: (
     lineItems: { variantId: string; quantity: number }[]
   ) => {},
@@ -55,6 +145,10 @@ const DefaultContext = {
   updateProductInCart: (variantId: string, quantity: number) => {},
   addDiscountCode: (code: string) => {},
   removeDiscountCode: () => {},
+  // Customized Product functions
+  bundledCustoms: bundleInit,
+  bundledDispatch: Dispatch => {},
+  addCustomsToLocalStorage: () => {},
 }
 
 export const CartContext = createContext(DefaultContext)
@@ -63,6 +157,10 @@ export const CartProvider = ({ children }) => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
   const [isActive, setIsActive] = useState("shop")
   const [checkout, setCheckout] = useState<any>()
+  const [bundledCustoms, bundledDispatch] = useReducer(
+    customLensesReducer,
+    bundleInit
+  )
 
   /**
    * @function getCheckoutCookie - gets the current non-expired chechout cookie
@@ -140,12 +238,40 @@ export const CartProvider = ({ children }) => {
           let localCheckout: string | null | LocalCheckout =
             localStorage.getItem("checkout")
           if (localCheckout) {
+            bundledDispatch({
+              type: "SET_CHECKOUT",
+              payload: checkoutId,
+            })
             localCheckout = JSON.parse(localCheckout as string) as LocalCheckout
             checkout = await validateLocalCheckout(localCheckout)
-            //
-            console.log("build custom context")
+            // initialize context
+            // console.log("current checkout", checkout)
+            const customs = localStorage.getItem("customs")
+            if (customs) {
+              const parsedCustoms = JSON.parse(
+                customs
+              ) as BundleLocalStorageType
+              if (parsedCustoms.value.checkoutId === checkoutId) {
+                console.log("parsed", parsedCustoms.value)
+                parsedCustoms.value.items.forEach(item => {
+                  console.log("here", item)
+                  bundledDispatch({
+                    type: "ADD",
+                    payload: {
+                      id: item.customizationId,
+                      value: item.lineItems,
+                      image: item.customImage,
+                    },
+                  })
+                })
+              }
+            }
           } else {
             checkout = await client.checkout.fetch(checkoutId)
+            bundledDispatch({
+              type: "SET_CHECKOUT",
+              payload: checkoutId,
+            })
             if (isBrowser) {
               const now = new Date()
               localStorage.setItem(
@@ -205,40 +331,6 @@ export const CartProvider = ({ children }) => {
       }
     }
 
-    const addProductPrescription = async (
-      variantId: string,
-      quantity: number,
-      customAttributes: any[]
-    ) => {
-      try {
-        const lineItems = [
-          {
-            variantId,
-            quantity,
-            customAttributes,
-          },
-        ]
-        console.log(" line", lineItems)
-        const updatedCheckout = await client.checkout.addLineItems(
-          checkout.id,
-          lineItems
-        )
-
-        if (isBrowser) {
-          const now = new Date()
-          localStorage.setItem(
-            "checkout",
-            JSON.stringify({
-              value: updatedCheckout,
-              expiry: now.getTime() + 259200,
-            })
-          )
-        }
-        setCheckout(updatedCheckout)
-      } catch (e) {
-        console.error(e)
-      }
-    }
     const addProductsToCart = async (
       lineItems: { variantId: string; quantity: number }[]
     ) => {
@@ -247,7 +339,6 @@ export const CartProvider = ({ children }) => {
           checkout.id,
           lineItems
         )
-        console.log("updated chceckout normal", updatedCheckout)
         if (isBrowser) {
           const now = new Date()
           localStorage.setItem(
@@ -287,6 +378,19 @@ export const CartProvider = ({ children }) => {
         return updatedCheckout
       } catch (e) {
         console.error(e)
+      }
+    }
+
+    const addCustomsToLocalStorage = () => {
+      if (isBrowser) {
+        const now = new Date()
+        localStorage.setItem(
+          "customs",
+          JSON.stringify({
+            value: bundledCustoms,
+            expiry: now.getTime() + 25900,
+          })
+        )
       }
     }
 
@@ -413,7 +517,6 @@ export const CartProvider = ({ children }) => {
       closeDrawer,
       checkout,
       addProductToCart,
-      addProductPrescription,
       addProductsToCart,
       addProductCustomToCart,
       removeProductFromCart,
@@ -421,8 +524,19 @@ export const CartProvider = ({ children }) => {
       updateProductInCart,
       addDiscountCode,
       removeDiscountCode,
+      // customized products
+      bundledCustoms,
+      bundledDispatch,
+      addCustomsToLocalStorage,
     }
-  }, [isDrawerOpen, setIsDrawerOpen, isActive, setIsActive, checkout])
+  }, [
+    isDrawerOpen,
+    setIsDrawerOpen,
+    isActive,
+    setIsActive,
+    checkout,
+    bundledCustoms,
+  ])
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>
 }

@@ -4,7 +4,6 @@ import { GatsbyImage, StaticImage, IGatsbyImageData } from "gatsby-plugin-image"
 import { CustomizeContext } from "../../contexts/customize"
 import { CartContext } from "../../contexts/cart"
 import { RxInfoContext } from "../../contexts/rxInfo"
-import { CustomProductsContext } from "../../contexts/customProducts"
 
 const Component = styled.div`
   padding: 10px;
@@ -96,7 +95,7 @@ const Component = styled.div`
 
 const Step5 = (props: {
   productTitle: string
-  currentPrice: number
+  currentPrice: any
   variant: any
   productImage: any
 }) => {
@@ -109,12 +108,14 @@ const Step5 = (props: {
     setSelectedVariants,
   } = useContext(CustomizeContext)
 
-  const { bundledCustoms, bundledDispatch } = useContext(CustomProductsContext)
+  // const { bundledCustoms, bundledDispatch } = useContext(CustomProductsContext)
   const {
     addProductToCart,
     addProductsToCart,
-    addProductPrescription,
     addProductCustomToCart,
+    bundledCustoms,
+    bundledDispatch,
+    addCustomsToLocalStorage,
   } = useContext(CartContext)
   const { isRxAble, setRxAble, rxInfo, dispatch } = useContext(RxInfoContext)
 
@@ -236,6 +237,9 @@ const Step5 = (props: {
       addToBundle(result, matchingKey, productImage)
     )
     alert("ADDED TO CART")
+    setTimeout(() => {
+      addCustomsToLocalStorage()
+    }, 100)
   }
 
   return (
