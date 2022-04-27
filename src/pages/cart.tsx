@@ -207,22 +207,16 @@ const Cart = () => {
   stepMap.set(3, "LENS MATERIAL")
   stepMap.set(4, "LENS COATING")
 
-  // const {} = useContext(CustomProductsContext)
-
   useEffect(() => {
     if (checkout) {
       if (checkout.lineItems.length > 0) {
         startedCheckoutKlaviyoEvent(checkout)
       }
       associateCheckout(checkout.id)
-      // bundle customized frames
-      console.log("checkout", checkout.lineItems)
-      console.log("bundledItems", bundledCustoms)
     }
   }, [checkout])
 
   const removeMultipleProducts = async selectedCustom => {
-    console.log("REMOVING", selectedCustom)
     const lineIds = selectedCustom.lineItems.map(item => {
       return item.shopifyItem.id
     })
@@ -230,7 +224,7 @@ const Cart = () => {
       type: "DELETE",
       payload: { id: selectedCustom.customizationId },
     })
-    await removeProductsFromCart(lineIds)
+    removeProductsFromCart(lineIds)
   }
 
   const updateQuantity = (lineId: string, quantity: number) => {
@@ -271,7 +265,6 @@ const Cart = () => {
           </section>
         )
       } else {
-        console.log(checkout)
         return (
           <section>
             <div className="grey-background">

@@ -1,4 +1,4 @@
-import React, { useContext } from "react"
+import React, { useContext, useEffect, useState } from "react"
 import styled from "styled-components"
 import { GatsbyImage, StaticImage, IGatsbyImageData } from "gatsby-plugin-image"
 import { CustomizeContext } from "../../contexts/customize"
@@ -106,6 +106,7 @@ const Step5 = (props: {
     productUrl,
     selectedVariants,
     setSelectedVariants,
+    setSelectedVariantsToDefault,
   } = useContext(CustomizeContext)
 
   // const { bundledCustoms, bundledDispatch } = useContext(CustomProductsContext)
@@ -118,6 +119,16 @@ const Step5 = (props: {
     addCustomsToLocalStorage,
   } = useContext(CartContext)
   const { isRxAble, setRxAble, rxInfo, dispatch } = useContext(RxInfoContext)
+  const [addedToCart, setAddedToCart] = useState(false)
+
+  useEffect(() => {
+    return () => {
+      if (addedToCart) {
+        setCurrentStep(1)
+        setSelectedVariantsToDefault()
+      }
+    }
+  }, [addedToCart])
 
   const addToBundle = (newCheckout, key: string, customImage) => {
     let tempItems: any[] = []
@@ -138,11 +149,9 @@ const Step5 = (props: {
       }
     })
     // sort tempItems by stepNumber
-    console.log("before sort", tempItems)
     tempItems.sort((a, b) => {
       return a.stepNumber - b.stepNumber
     })
-    console.log("after sort", tempItems)
     if (tempItems.length > 0) {
       bundledDispatch({
         type: "ADD",
@@ -236,10 +245,8 @@ const Step5 = (props: {
     const newCheckout = addProductCustomToCart(stepItems).then(result =>
       addToBundle(result, matchingKey, productImage)
     )
+    setAddedToCart(true)
     alert("ADDED TO CART")
-    setTimeout(() => {
-      addCustomsToLocalStorage()
-    }, 100)
   }
 
   return (

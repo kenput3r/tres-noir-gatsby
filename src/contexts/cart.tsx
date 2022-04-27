@@ -38,65 +38,6 @@ interface BundleLocalStorageType {
   value: BundleCustomsType
 }
 
-const customLensesReducer = (state, action) => {
-  switch (action.type) {
-    case "ADD":
-      const findId = state.items.findIndex(
-        srch => srch.customizationId === action.payload.id
-      )
-      if (findId === -1) {
-        //create new item
-        return {
-          ...state,
-          items: [
-            ...state.items,
-            {
-              customizationId: action.payload.id,
-              lineItems: action.payload.value,
-              customImage: action.payload.image,
-            },
-          ],
-        }
-      } else {
-        // append line item to array
-        return {
-          ...state,
-          items: [
-            ...state.items.slice(0, findId),
-            (state.items[findId] = {
-              customizationId: action.payload.id,
-              lineItems: action.payload.value,
-              customImage: action.payload.image,
-            }),
-            ...state.items.slice(findId),
-          ],
-        }
-      }
-    case "DELETE":
-      const filteredDelete = state.items.filter(
-        item => item.customizationId !== action.payload.id
-      )
-      if (state.items.length === 1) {
-        return {
-          ...state,
-          items: [],
-        }
-      } else {
-        return {
-          ...state,
-          items: filteredDelete,
-        }
-      }
-
-    case "SET_CHECKOUT":
-      return { ...state, checkoutId: action.payload }
-    case "UPDATED":
-      return state
-    default:
-      return state
-  }
-}
-
 const client = Client.buildClient({
   domain: process.env.GATSBY_STORE_MY_SHOPIFY as string,
   storefrontAccessToken: process.env.GATSBY_STORE_STOREFRONT_TOKEN as string,
@@ -148,7 +89,110 @@ const DefaultContext = {
   // Customized Product functions
   bundledCustoms: bundleInit,
   bundledDispatch: Dispatch => {},
-  addCustomsToLocalStorage: () => {},
+  addCustomsToLocalStorage: (bundle: BundleCustomsType) => {},
+}
+
+const addCustomsToLocalStorage = (currentBundle: BundleCustomsType) => {
+  if (isBrowser) {
+    const now = new Date()
+    localStorage.setItem(
+      "customs",
+      JSON.stringify({
+        value: currentBundle,
+        expiry: now.getTime() + 25900,
+      })
+    )
+  }
+}
+
+const customLensesReducer = (state, action) => {
+  switch (action.type) {
+    case "ADD":
+      const findId = state.items.findIndex(
+        srch => srch.customizationId === action.payload.id
+      )
+      if (findId === -1) {
+        //create new item
+        addCustomsToLocalStorage({
+          ...state,
+          items: [
+            ...state.items,
+            {
+              customizationId: action.payload.id,
+              lineItems: action.payload.value,
+              customImage: action.payload.image,
+            },
+          ],
+        })
+        return {
+          ...state,
+          items: [
+            ...state.items,
+            {
+              customizationId: action.payload.id,
+              lineItems: action.payload.value,
+              customImage: action.payload.image,
+            },
+          ],
+        }
+      } else {
+        // append line item to array
+        // addCustomsToLocalStorage({
+        //   ...state,
+        //   items: [
+        //     ...state.items.slice(0, findId),
+        //     (state.items[findId] = {
+        //       customizationId: action.payload.id,
+        //       lineItems: action.payload.value,
+        //       customImage: action.payload.image,
+        //     }),
+        //     ...state.items.slice(findId),
+        //   ],
+        // })
+        return {
+          ...state,
+          items: [
+            ...state.items.slice(0, findId),
+            (state.items[findId] = {
+              customizationId: action.payload.id,
+              lineItems: action.payload.value,
+              customImage: action.payload.image,
+            }),
+            ...state.items.slice(findId),
+          ],
+        }
+      }
+    case "DELETE":
+      const filteredDelete = state.items.filter(
+        item => item.customizationId !== action.payload.id
+      )
+      if (state.items.length === 1) {
+        addCustomsToLocalStorage({
+          ...state,
+          items: [],
+        })
+        return {
+          ...state,
+          items: [],
+        }
+      } else {
+        addCustomsToLocalStorage({
+          ...state,
+          items: filteredDelete,
+        })
+        return {
+          ...state,
+          items: filteredDelete,
+        }
+      }
+
+    case "SET_CHECKOUT":
+      return { ...state, checkoutId: action.payload }
+    case "UPDATED":
+      return state
+    default:
+      return state
+  }
 }
 
 export const CartContext = createContext(DefaultContext)
@@ -190,6 +234,10 @@ export const CartProvider = ({ children }) => {
     if (isBrowser) {
       document.cookie = `shopifyCheckout=${newCheckout.id};max-age=2592000;SameSite=Strict;`
       const now = new Date()
+      bundledDispatch({
+        type: "SET_CHECKOUT",
+        payload: newCheckout.id,
+      })
       localStorage.setItem(
         "checkout",
         JSON.stringify({ value: newCheckout, expiry: now.getTime() + 2592000 })
@@ -238,23 +286,20 @@ export const CartProvider = ({ children }) => {
           let localCheckout: string | null | LocalCheckout =
             localStorage.getItem("checkout")
           if (localCheckout) {
+            localCheckout = JSON.parse(localCheckout as string) as LocalCheckout
             bundledDispatch({
               type: "SET_CHECKOUT",
               payload: checkoutId,
             })
-            localCheckout = JSON.parse(localCheckout as string) as LocalCheckout
             checkout = await validateLocalCheckout(localCheckout)
             // initialize context
-            // console.log("current checkout", checkout)
             const customs = localStorage.getItem("customs")
             if (customs) {
               const parsedCustoms = JSON.parse(
                 customs
               ) as BundleLocalStorageType
               if (parsedCustoms.value.checkoutId === checkoutId) {
-                console.log("parsed", parsedCustoms.value)
                 parsedCustoms.value.items.forEach(item => {
-                  console.log("here", item)
                   bundledDispatch({
                     type: "ADD",
                     payload: {
@@ -378,19 +423,6 @@ export const CartProvider = ({ children }) => {
         return updatedCheckout
       } catch (e) {
         console.error(e)
-      }
-    }
-
-    const addCustomsToLocalStorage = () => {
-      if (isBrowser) {
-        const now = new Date()
-        localStorage.setItem(
-          "customs",
-          JSON.stringify({
-            value: bundledCustoms,
-            expiry: now.getTime() + 25900,
-          })
-        )
       }
     }
 
