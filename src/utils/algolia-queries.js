@@ -129,10 +129,8 @@ function productToAlgoliaRecord({
 const queries = [
   {
     query: productsQuery,
-    // transformer: ({ data }) => data.pages.edges.map(productToAlgoliaRecord),
     transformer: ({ data }) => {
       const p = products(data)
-      console.log("P ===>", JSON.stringify(p))
       return p.map(productToAlgoliaRecord)
     },
     indexName,
