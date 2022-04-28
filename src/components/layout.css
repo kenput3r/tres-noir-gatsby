@@ -624,6 +624,7 @@ pre tt:after {
 main {
   max-width: 1440px;
   margin: auto;
+  padding: 0 15px;
 }
 
 .text-center {

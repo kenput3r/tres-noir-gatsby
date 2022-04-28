@@ -19,7 +19,6 @@ interface Props {
 }
 
 const Component = styled.article`
-  padding: 15px;
   .product-title {
     font-weight: bold;
     text-transform: uppercase;

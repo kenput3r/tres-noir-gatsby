@@ -7,7 +7,6 @@ const Component = styled.div`
   display: block;
   max-width: 480px;
   margin: 0 auto;
-  padding: 0 15px;
   input {
     border: 1px solid #555;
     border-radius: 5px;
