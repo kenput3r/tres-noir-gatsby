@@ -1,12 +1,11 @@
 import React, { useState } from "react"
-import { navigate } from "gatsby"
 import styled from "styled-components"
 import { connectSearchBox } from "react-instantsearch-dom"
 
 const Component = styled.div`
   display: block;
   max-width: 480px;
-  margin: 0 auto;
+  margin: 0 auto 2rem auto;
   input {
     border: 1px solid #555;
     border-radius: 5px;
@@ -19,77 +18,15 @@ const Component = styled.div`
   }
 `
 
-const Actions = styled.div`
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-`
-
-const BackButton = styled.button`
-  background-color: #000;
-  color: #fff;
-  font-size: 1.5rem;
-  padding: 0.75rem 2rem;
-  border: none;
-  margin: 1rem;
-  text-align: center;
-  cursor: pointer;
-`
-
-const SearchButton = styled.button`
-  background-color: #000;
-  color: #fff;
-  font-size: 1.5rem;
-  padding: 0.75rem 2rem;
-  border: none;
-  margin: 1rem;
-  text-align: center;
-  cursor: pointer;
-`
-
-const SearchBox = ({ currentRefinement, refine, prevPath }) => {
-  const [query, setQuery] = useState<string>("")
-
-  const handleSubmit = (evt: { preventDefault: () => void }) => {
-    evt.preventDefault()
-    refine(query)
-  }
-
-  const handleChange = (evt: {
-    currentTarget: { value: React.SetStateAction<string> }
-  }) => {
-    setQuery(evt.currentTarget.value)
-  }
-
+const SearchBox = ({ currentRefinement, refine }) => {
   return (
-    // <Component>
-    //   <input
-    //     type="search"
-    //     value={currentRefinement}
-    //     placeholder="Search..."
-    //     onChange={event => refine(event.currentTarget.value)}
-    //   />
-    // </Component>
     <Component>
-      <form onSubmit={handleSubmit}>
-        <input
-          type="search"
-          value={query}
-          placeholder="Search..."
-          onChange={handleChange}
-        />
-        <Actions>
-          {prevPath && (
-            <BackButton type="button" onClick={() => navigate(prevPath)}>
-              GO BACK
-            </BackButton>
-          )}
-          <SearchButton type="button" onClick={() => refine(query)}>
-            SEARCH
-          </SearchButton>
-        </Actions>
-      </form>
+      <input
+        type="search"
+        value={currentRefinement}
+        placeholder="Search..."
+        onChange={event => refine(event.currentTarget.value)}
+      />
     </Component>
   )
 }

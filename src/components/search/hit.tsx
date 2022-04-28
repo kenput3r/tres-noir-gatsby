@@ -38,15 +38,6 @@ const Component = styled.article`
   }
 `
 
-const StyledHighlight = styled(Highlight)`
-  .ais-Highlight-highlighted,
-  .ais-Snippet-highlighted {
-    background-color: rgba(253, 218, 13, 0.1);
-    color: #fdda0d;
-    font-style: normal;
-  }
-`
-
 const Hit = ({ hit }: { hit: Props }) => {
   const pricing =
     hit.price !== "" ? `$${hit.price}` : `From $${hit.min_variant_price}`
@@ -58,7 +49,7 @@ const Hit = ({ hit }: { hit: Props }) => {
       </Link>
       <h3 className="product-title">
         <Link to={`/products/${hit.handle}`}>
-          <StyledHighlight attribute="title" hit={hit} />
+          <Highlight attribute="title" hit={hit} />
         </Link>
       </h3>
       <p className="product-price">{pricing}</p>
