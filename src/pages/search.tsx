@@ -84,7 +84,7 @@ const Search = ({ location: { state } }: Location) => {
         <Page>
           <h1 className="text-center">SEARCH</h1>
           <div className="text-center">
-            <SearchBox prevPath={state?.prevPath} />
+            <SearchBox />
           </div>
           <Results />
         </Page>

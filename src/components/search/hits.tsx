@@ -19,7 +19,7 @@ interface HitProps {
 }
 
 const Component = styled.ul`
-  margin: 0;
+  margin: 1.75rem auto;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 2rem;
