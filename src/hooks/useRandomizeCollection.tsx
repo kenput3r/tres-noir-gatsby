@@ -1,5 +1,6 @@
 import { useEffect } from "react"
 import { useStaticQuery, graphql } from "gatsby"
+import { useQuantityQuery } from "./useQuantityQuery"
 
 export function useRandomizeCollection() {
   function getRandom(arr: any[], n: number) {

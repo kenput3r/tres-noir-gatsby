@@ -379,6 +379,7 @@ export const query = graphql`
         originalSrc
         altText
         localFile {
+          id
           childImageSharp {
             gatsbyImageData
           }
@@ -403,6 +404,7 @@ export const query = graphql`
       images {
         altText
         localFile {
+          id
           childImageSharp {
             gatsbyImageData
           }
@@ -416,6 +418,7 @@ export const query = graphql`
           originalSrc
           altText
           localFile {
+            id
             childImageSharp {
               gatsbyImageData
             }
