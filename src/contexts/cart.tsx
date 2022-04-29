@@ -9,6 +9,7 @@ import Client, { Cart } from "shopify-buy"
 import { Checkout } from "../types/checkout"
 import { IGatsbyImageData } from "gatsby-plugin-image"
 import { dispatch } from "gatsby-cli/lib/reporter/redux"
+import { parse } from "path"
 
 interface BundleCustomsItemType {
   customizationId: string
@@ -79,7 +80,11 @@ const DefaultContext = {
     lineItems: { variantId: string; quantity: number }[]
   ) => {},
   addProductCustomToCart: (
-    lineItems: { variantId: string; quantity: number; customAttributes: [] }[]
+    lineItems: {
+      variantId: string
+      quantity: number
+      customAttributes: { key: string; value: string }[]
+    }[]
   ) => {},
   removeProductFromCart: (lineItemId: string) => {},
   removeProductsFromCart: (lineItemIds: []) => {},
@@ -99,7 +104,7 @@ const addCustomsToLocalStorage = (currentBundle: BundleCustomsType) => {
       "customs",
       JSON.stringify({
         value: currentBundle,
-        expiry: now.getTime() + 25900,
+        expiry: now.getTime() + 259200,
       })
     )
   }
@@ -271,6 +276,7 @@ export const CartProvider = ({ children }) => {
         const now = new Date()
         if (now.getTime() > localCheckout.expiry) {
           localStorage.removeItem("checkout")
+          localStorage.removeItem("customs")
           // eslint-disable-next-line no-return-await
           return await getNewCheckout()
         }
@@ -287,10 +293,10 @@ export const CartProvider = ({ children }) => {
             localStorage.getItem("checkout")
           if (localCheckout) {
             localCheckout = JSON.parse(localCheckout as string) as LocalCheckout
-            bundledDispatch({
-              type: "SET_CHECKOUT",
-              payload: checkoutId,
-            })
+            // bundledDispatch({
+            //   type: "SET_CHECKOUT",
+            //   payload: checkoutId,
+            // })
             checkout = await validateLocalCheckout(localCheckout)
             // initialize context
             const customs = localStorage.getItem("customs")
@@ -298,7 +304,25 @@ export const CartProvider = ({ children }) => {
               const parsedCustoms = JSON.parse(
                 customs
               ) as BundleLocalStorageType
-              if (parsedCustoms.value.checkoutId === checkoutId) {
+              console.log("here1")
+              console.log("checkoutId", checkoutId)
+              console.log(
+                "parsedCustoms.value.checkoutId",
+                parsedCustoms.value.checkoutId
+              )
+              let newCustomCheckoutId = ""
+              if (parsedCustoms.value.checkoutId === "") {
+                bundledDispatch({
+                  type: "SET_CHECKOUT",
+                  payload: checkoutId,
+                })
+                newCustomCheckoutId = checkoutId
+              }
+              if (
+                parsedCustoms.value.checkoutId === checkoutId ||
+                newCustomCheckoutId === checkoutId
+              ) {
+                console.log("here2")
                 parsedCustoms.value.items.forEach(item => {
                   bundledDispatch({
                     type: "ADD",
@@ -401,7 +425,11 @@ export const CartProvider = ({ children }) => {
     }
 
     const addProductCustomToCart = async (
-      lineItems: { variantId: string; quantity: number; customAttributes: [] }[]
+      lineItems: {
+        variantId: string
+        quantity: number
+        customAttributes: { key: string; value: string }[]
+      }[]
     ) => {
       try {
         const updatedCheckout = await client.checkout.addLineItems(

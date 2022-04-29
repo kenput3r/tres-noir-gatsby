@@ -1,4 +1,4 @@
-import React, { useEffect, useContext, useState } from "react"
+import React, { useEffect, useContext, useRef } from "react"
 import { Link } from "gatsby"
 import { GatsbyImage, StaticImage } from "gatsby-plugin-image"
 import styled from "styled-components"
@@ -187,6 +187,10 @@ const Page = styled.div`
       padding: 40px 0;
     }
   }
+  .no-events {
+    pointer-events: none;
+    opacity: 0.5;
+  }
 `
 
 const Cart = () => {
@@ -206,7 +210,7 @@ const Cart = () => {
   stepMap.set(2, "LENS TYPE")
   stepMap.set(3, "LENS MATERIAL")
   stepMap.set(4, "LENS COATING")
-
+  const loadingOverlay = useRef<HTMLDivElement>(null)
   useEffect(() => {
     if (checkout) {
       if (checkout.lineItems.length > 0) {
@@ -220,11 +224,13 @@ const Cart = () => {
     const lineIds = selectedCustom.lineItems.map(item => {
       return item.shopifyItem.id
     })
+    loadingOverlay.current?.classList.add("no-events")
+    await removeProductsFromCart(lineIds)
     bundledDispatch({
       type: "DELETE",
       payload: { id: selectedCustom.customizationId },
     })
-    removeProductsFromCart(lineIds)
+    loadingOverlay.current?.classList.remove("no-events")
   }
 
   const updateQuantity = (lineId: string, quantity: number) => {
@@ -267,7 +273,7 @@ const Cart = () => {
       } else {
         return (
           <section>
-            <div className="grey-background">
+            <div className="grey-background" ref={loadingOverlay}>
               <section className="cart-items cart-wrapper wrapper">
                 <h2>
                   Your cart:{" "}

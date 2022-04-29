@@ -130,7 +130,7 @@ const Step5 = (props: {
     }
   }, [addedToCart])
 
-  const addToBundle = (newCheckout, key: string, customImage) => {
+  const addToBundle = (newCheckout: any, key: string, customImage) => {
     let tempItems: any[] = []
     newCheckout.lineItems.forEach(item => {
       if (item.customAttributes.length !== 0) {
@@ -163,7 +163,7 @@ const Step5 = (props: {
       })
     }
   }
-  const handleAddToCart = () => {
+  const handleAddToCart = async () => {
     const { step1, step2, step3, step4 } = selectedVariants
 
     const today = new Date()
@@ -242,9 +242,9 @@ const Step5 = (props: {
     }
     stepItems.unshift(frameVariant)
 
-    const newCheckout = addProductCustomToCart(stepItems).then(result =>
-      addToBundle(result, matchingKey, productImage)
-    )
+    const result = await addProductCustomToCart(stepItems)
+    addToBundle(result, matchingKey, productImage)
+
     setAddedToCart(true)
     alert("ADDED TO CART")
   }
