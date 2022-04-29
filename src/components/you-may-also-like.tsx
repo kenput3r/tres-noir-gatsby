@@ -4,6 +4,7 @@ import { useStaticQuery, graphql, Link } from "gatsby"
 import { GatsbyImage } from "gatsby-plugin-image"
 import { CartContext } from "../contexts/cart"
 import { CustomerContext } from "../contexts/customer"
+import { useQuantityQuery } from "../hooks/useQuantityQuery"
 
 const Component = styled.section`
   background: white;
@@ -83,6 +84,12 @@ const YouMayAlsoLike = (props: { collectionItems: any }) => {
     alert("ADDED TO CART")
   }
 
+  const quantityLevelsAll = collectionItems.map(element => {
+    console.log("element", element)
+    return useQuantityQuery(element.handle, element.variants.length)
+  })
+  console.log("qu", quantityLevelsAll)
+
   return (
     <Component>
       <div className="hr-wrapper">
@@ -91,7 +98,7 @@ const YouMayAlsoLike = (props: { collectionItems: any }) => {
       <h6>You May Also Like</h6>
       <div className="row">
         <div className="upsell-cards">
-          {collectionItems.map(product => {
+          {collectionItems.map((product, index) => {
             return (
               <div className="upsell-product" key={product.id}>
                 <Link to={`/products/${product.handle}`}>
@@ -112,13 +119,21 @@ const YouMayAlsoLike = (props: { collectionItems: any }) => {
                   <p>${product.variants[0].price}</p>
                 </div>
                 <div>
-                  <button
-                    className="btn"
-                    type="button"
-                    onClick={evt => handleAddToCart(product)}
-                  >
-                    ADD TO CART
-                  </button>
+                  {quantityLevelsAll &&
+                  quantityLevelsAll[index] &&
+                  quantityLevelsAll[index][product.variants[0].sku] !== 0 ? (
+                    <button
+                      type="button"
+                      className="btn"
+                      onClick={evt => handleAddToCart(product)}
+                    >
+                      ADD TO CART
+                    </button>
+                  ) : (
+                    <button type="button" className="sold-out btn">
+                      SOLD OUT
+                    </button>
+                  )}
                 </div>
               </div>
             )

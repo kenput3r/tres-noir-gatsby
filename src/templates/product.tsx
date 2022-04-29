@@ -135,10 +135,6 @@ const Page = styled.div`
     column-gap: 20px;
     align-items: center;
     font-family: var(--sub-heading-font);
-    .sold-out {
-      opacity: 0.5;
-      pointer-events: none;
-    }
     div {
       display: flex;
       flex-direction: column;
