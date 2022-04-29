@@ -1,6 +1,6 @@
 import React, { useState } from "react"
 import styled from "styled-components"
-import { GatsbyImage } from "gatsby-plugin-image"
+import { GatsbyImage, StaticImage } from "gatsby-plugin-image"
 
 const Component = styled.section`
   .image-grid {
@@ -28,7 +28,7 @@ const ProductImageGrid = (props: {
   const createImageSet = () => {
     let imageSet: ImageSet[] = []
     // single Product with images
-    if (product.featuredImage) {
+    if (product.featuredImage && product.featuredImage.localFile) {
       imageSet.push({
         data: product.featuredImage.localFile.childImageSharp.gatsbyImageData,
         title: product.featuredImage.altText,
@@ -36,10 +36,6 @@ const ProductImageGrid = (props: {
     }
     if (product.images) {
       product.images.forEach(element => {
-        const img = {
-          data: element.localFile.childImageSharp.gatsbyImageData,
-          title: element.altText,
-        }
         if (element.localFile.id !== product.featuredImage.localFile.id)
           imageSet.push({
             data: element.localFile.childImageSharp.gatsbyImageData,
@@ -81,10 +77,17 @@ const ProductImageGrid = (props: {
   return (
     <Component>
       <div className="featured-image">
-        <GatsbyImage
-          image={featuredImage.data}
-          alt={featuredImage.title}
-        ></GatsbyImage>
+        {featuredImage && featuredImage.data ? (
+          <GatsbyImage
+            image={featuredImage.data}
+            alt={featuredImage.title}
+          ></GatsbyImage>
+        ) : (
+          <StaticImage
+            src="../images/product-no-image.jpg"
+            alt="No image available"
+          ></StaticImage>
+        )}
       </div>
       <div className="image-grid">
         {imageSetArr.length !== 0 &&

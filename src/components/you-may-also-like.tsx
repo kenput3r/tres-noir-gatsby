@@ -83,10 +83,8 @@ const YouMayAlsoLike = (props: { collectionItems: any }) => {
   }
 
   const quantityLevelsAll = collectionItems.map(element => {
-    console.log("element", element)
     return useQuantityQuery(element.handle, element.variants.length)
   })
-  console.log("qu", quantityLevelsAll)
 
   return (
     <Component>

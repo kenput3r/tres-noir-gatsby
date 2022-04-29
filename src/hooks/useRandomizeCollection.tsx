@@ -1,6 +1,6 @@
 import { useStaticQuery, graphql } from "gatsby"
 
-export function useRandomizeCollection() {
+export function useRandomizeCollection(currentProduct) {
   function getRandom(arr: any[], n: number) {
     var result = new Array(n),
       len = arr.length,
@@ -18,7 +18,17 @@ export function useRandomizeCollection() {
   const getCollectionItems = () => {
     const { shopifyCollection } = useStaticQuery(graphql`
       query GetYouMayAlsoLikeProducts {
-        shopifyCollection(handle: { eq: "clothing" }) {
+        shopifyCollection(
+          handle: { eq: "clothing" }
+          products: {
+            elemMatch: {
+              variants: {
+                elemMatch: { inventoryQuantity: { gt: 0 }, price: {} }
+              }
+              totalInventory: { gt: 0 }
+            }
+          }
+        ) {
           products {
             id
             featuredImage {
@@ -33,7 +43,9 @@ export function useRandomizeCollection() {
             variants {
               storefrontId
               price
+              inventoryQuantity
             }
+            tags
             storefrontId
           }
         }
@@ -43,6 +55,15 @@ export function useRandomizeCollection() {
   }
 
   const queriedCollection = getCollectionItems()
-  const randomItems = getRandom(queriedCollection.products, 4)
+  const filteredCollection = queriedCollection.products.filter(el => {
+    console.log("el", el.variants[0].inventoryQuantity > 0)
+    return (
+      el.id !== currentProduct.id &&
+      !el.tags.includes("upsell_item") &&
+      el.variants[0].inventoryQuantity > 0
+    )
+  })
+
+  const randomItems = getRandom(filteredCollection, 4)
   return randomItems
 }

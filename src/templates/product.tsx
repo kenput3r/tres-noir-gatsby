@@ -211,7 +211,6 @@ const Product = ({ data: { shopifyProduct } }: any) => {
   const [selectedVariantQuantity, setSelectedVariantQuantity] =
     useState<string>("1")
 
-  const useVariantSwiper: boolean = false
   const quantityLevels = useQuantityQuery(
     shopifyProduct.handle,
     shopifyProduct.variants.length
@@ -230,7 +229,10 @@ const Product = ({ data: { shopifyProduct } }: any) => {
     setSelectedVariant(newVariant)
   }
 
-  const randomCollection = useMemo(() => useRandomizeCollection(), [])
+  const randomCollection = useMemo(
+    () => useRandomizeCollection(shopifyProduct),
+    []
+  )
 
   const quantityRange = () => {
     let minRange = 0
