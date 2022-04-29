@@ -293,10 +293,6 @@ export const CartProvider = ({ children }) => {
             localStorage.getItem("checkout")
           if (localCheckout) {
             localCheckout = JSON.parse(localCheckout as string) as LocalCheckout
-            // bundledDispatch({
-            //   type: "SET_CHECKOUT",
-            //   payload: checkoutId,
-            // })
             checkout = await validateLocalCheckout(localCheckout)
             // initialize context
             const customs = localStorage.getItem("customs")
@@ -304,12 +300,6 @@ export const CartProvider = ({ children }) => {
               const parsedCustoms = JSON.parse(
                 customs
               ) as BundleLocalStorageType
-              console.log("here1")
-              console.log("checkoutId", checkoutId)
-              console.log(
-                "parsedCustoms.value.checkoutId",
-                parsedCustoms.value.checkoutId
-              )
               let newCustomCheckoutId = ""
               if (parsedCustoms.value.checkoutId === "") {
                 bundledDispatch({
@@ -436,7 +426,7 @@ export const CartProvider = ({ children }) => {
           checkout.id,
           lineItems
         )
-        console.log("updated chceckout normal", updatedCheckout)
+
         if (isBrowser) {
           const now = new Date()
           localStorage.setItem(

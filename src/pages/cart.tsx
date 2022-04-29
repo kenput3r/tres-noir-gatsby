@@ -271,6 +271,7 @@ const Cart = () => {
           </section>
         )
       } else {
+        console.log("cart checkout", checkout)
         return (
           <section>
             <div className="grey-background" ref={loadingOverlay}>
@@ -339,6 +340,22 @@ const Cart = () => {
                                                   .price
                                               }
                                             </span>
+                                          </div>
+                                          <div>{subItem.shopifyItem.id}</div>
+                                          <div>
+                                            <span>Custom Attributes:</span>
+                                            {subItem.shopifyItem.customAttributes.map(
+                                              attr => {
+                                                return (
+                                                  <div
+                                                    key={attr.key + attr.value}
+                                                  >
+                                                    <span>{attr.key}: </span>
+                                                    <span>{attr.value}</span>
+                                                  </div>
+                                                )
+                                              }
+                                            )}
                                           </div>
                                         </div>
                                       )
