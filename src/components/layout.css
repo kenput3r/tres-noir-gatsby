@@ -627,6 +627,20 @@ pre tt:after {
 main {
   max-width: 1440px;
   margin: auto;
+  padding: 0 15px;
+  min-height: calc(100vh - 251px - 335px);
+}
+
+@media only screen and (max-width: 768px) {
+  main {
+    min-height: calc(100vh - 295px - 338px);
+  }
+}
+
+@media only screen and (max-width: 468px) {
+  main {
+    min-height: calc(100vh - 152px - 514px);
+  }
 }
 
 .text-center {
