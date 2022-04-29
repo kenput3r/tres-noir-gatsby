@@ -101,6 +101,16 @@ const DesktopNavigation = () => {
   useClickAway(ref, () => {
     setVisibleSubNav("none")
   })
+
+  const hasImage = subListItems => {
+    let found = false
+    subListItems.forEach(element => {
+      if (element.image) {
+        found = true
+      }
+    })
+    return found
+  }
   return (
     <Component ref={ref}>
       <ul>
@@ -127,7 +137,7 @@ const DesktopNavigation = () => {
                   <span className="toggle">{item.name}</span>
                 </a>
                 {item.id === visibleSubNav &&
-                  (!item.name.toLowerCase().includes("glasses") ? (
+                  (!hasImage(item.subListItems) ? (
                     <ul className="sub-nav">
                       {item.subListItems.map((_item: Item) => (
                         <li key={_item.id}>

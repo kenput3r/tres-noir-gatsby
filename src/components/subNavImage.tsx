@@ -47,7 +47,9 @@ const Component = styled.div`
         align-items: center;
         .name {
           position: absolute;
-          color: #000;
+          color: white;
+          padding: 1px 5px;
+          background: rgba(0, 0, 0, 0.65);
           font-weight: bold;
           top: 1rem;
           right: 1.5rem;
