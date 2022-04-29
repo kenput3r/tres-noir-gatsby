@@ -1,9 +1,8 @@
 import React, { useContext, useEffect } from "react"
 import styled from "styled-components"
-import { useStaticQuery, graphql, Link } from "gatsby"
+import { Link } from "gatsby"
 import { GatsbyImage } from "gatsby-plugin-image"
 import { CartContext } from "../contexts/cart"
-import { CustomerContext } from "../contexts/customer"
 import { useQuantityQuery } from "../hooks/useQuantityQuery"
 
 const Component = styled.section`
@@ -76,8 +75,7 @@ const Component = styled.section`
 
 const YouMayAlsoLike = (props: { collectionItems: any }) => {
   const { collectionItems } = props
-  const { addProductToCart, checkout } = useContext(CartContext)
-  const { customerEmail } = useContext(CustomerContext)
+  const { addProductToCart } = useContext(CartContext)
 
   const handleAddToCart = product => {
     addProductToCart(product.variants[0].storefrontId, 1)

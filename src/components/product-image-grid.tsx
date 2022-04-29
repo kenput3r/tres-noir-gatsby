@@ -1,6 +1,5 @@
 import React, { useState } from "react"
 import styled from "styled-components"
-import { useStaticQuery, graphql, Link } from "gatsby"
 import { GatsbyImage } from "gatsby-plugin-image"
 
 const Component = styled.section`
