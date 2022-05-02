@@ -40,10 +40,16 @@ export function useRandomizeCollection(currentProduct) {
             }
             title
             handle
+            hasOnlyDefaultVariant
             variants {
+              title
+              sku
               storefrontId
               price
               inventoryQuantity
+              selectedOptions {
+                name
+              }
             }
             tags
             storefrontId

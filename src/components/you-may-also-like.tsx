@@ -1,11 +1,11 @@
-import React, { useContext, useEffect } from "react"
+import React, { useContext, useState } from "react"
 import styled from "styled-components"
-import { Link } from "gatsby"
-import { GatsbyImage } from "gatsby-plugin-image"
 import { CartContext } from "../contexts/cart"
 import { useQuantityQuery } from "../hooks/useQuantityQuery"
+import UpsellProduct from "./upsell-product"
 
 const Component = styled.section`
+  margin-bottom: 40px;
   background: white;
   .hr-wrapper {
     margin-right: 15px;
@@ -27,29 +27,6 @@ const Component = styled.section`
       grid-template-columns: repeat(2, 1fr);
       grid-template-rows: repeat(2, 1fr);
     }
-    place-items: center;
-    > div {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      margin: 15px;
-      text-align: center;
-      @media (max-width: 600px) {
-        margin: 20px 11px 20px 11px;
-      }
-      a {
-        color: black;
-        text-decoration: none;
-        :visited {
-          text-decoration: none;
-          color: black;
-        }
-      }
-      p {
-        margin-bottom: 5px;
-      }
-    }
   }
   .upsell-image {
     max-width: 280px;
@@ -59,16 +36,6 @@ const Component = styled.section`
     text-align: center;
     font-size: 1.6rem;
     font-weight: normal;
-    text-transform: uppercase;
-  }
-  .btn {
-    @media (max-width: 600px) {
-      font-size: 0.9rem;
-      padding: 8px 10px;
-    }
-  }
-  p {
-    font-family: var(--heading-font);
     text-transform: uppercase;
   }
 `
@@ -94,45 +61,8 @@ const YouMayAlsoLike = (props: { collectionItems: any }) => {
       <h6>You May Also Like</h6>
       <div className="row">
         <div className="upsell-cards">
-          {collectionItems.map((product, index) => {
-            return (
-              <div className="upsell-product" key={product.id}>
-                <Link to={`/products/${product.handle}`}>
-                  <div className="upsell-image">
-                    <GatsbyImage
-                      image={
-                        product.featuredImage.localFile.childImageSharp
-                          .gatsbyImageData
-                      }
-                      alt={product.title}
-                    ></GatsbyImage>
-                  </div>
-                  <div>
-                    <p>{product.title}</p>
-                  </div>
-                </Link>
-                <div>
-                  <p>${product.variants[0].price}</p>
-                </div>
-                <div>
-                  {quantityLevelsAll &&
-                  quantityLevelsAll[index] &&
-                  quantityLevelsAll[index][product.variants[0].sku] !== 0 ? (
-                    <button
-                      type="button"
-                      className="btn"
-                      onClick={evt => handleAddToCart(product)}
-                    >
-                      ADD TO CART
-                    </button>
-                  ) : (
-                    <button type="button" className="sold-out btn">
-                      SOLD OUT
-                    </button>
-                  )}
-                </div>
-              </div>
-            )
+          {collectionItems.map(product => {
+            return <UpsellProduct key={product.id} product={product} />
           })}
         </div>
       </div>
