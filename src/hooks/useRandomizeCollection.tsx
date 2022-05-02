@@ -56,7 +56,6 @@ export function useRandomizeCollection(currentProduct) {
 
   const queriedCollection = getCollectionItems()
   const filteredCollection = queriedCollection.products.filter(el => {
-    console.log("el", el.variants[0].inventoryQuantity > 0)
     return (
       el.id !== currentProduct.id &&
       !el.tags.includes("upsell_item") &&
