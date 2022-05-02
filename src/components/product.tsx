@@ -3,7 +3,6 @@ import { Link } from "gatsby"
 import { GatsbyImage as Image } from "gatsby-plugin-image"
 import styled from "styled-components"
 import { ShopifyProduct } from "../types/shopify"
-//import { useQuantityQuery } from "../hooks/useQuantityQuery"
 
 const Component = styled.article`
   margin-bottom: 1.45rem;
