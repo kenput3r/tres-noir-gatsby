@@ -6,17 +6,31 @@ const Component = styled.ul`
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 1rem;
+  gap: 1.5rem;
   li {
     list-style: none;
     display: inline;
     flex: 1;
+    a {
+      text-decoration: none;
+      text-transform: uppercase;
+      color: #000;
+      &:hover {
+        color: #808086;
+      }
+      &.active {
+        color: #808086;
+      }
+      span {
+        display: flex;
+      }
+    }
   }
 `
 
 const Pagination = ({ currentRefinement, nbPages, refine, createURL }) => (
   <Component>
-    {currentRefinement === 0 && (
+    {currentRefinement !== 1 && (
       <li>
         <a
           href={createURL(currentRefinement - 1)}
@@ -25,22 +39,19 @@ const Pagination = ({ currentRefinement, nbPages, refine, createURL }) => (
             refine(currentRefinement - 1)
           }}
         >
-          Prev
+          &#171;&nbsp;Previous
         </a>
       </li>
     )}
 
     {new Array(nbPages).fill(null).map((_, index) => {
       const page = index + 1
-      const style = {
-        fontWeight: currentRefinement === page ? "bold" : "",
-      }
 
       return (
         <li key={index}>
           <a
             href={createURL(page)}
-            style={style}
+            className={currentRefinement === page ? "active" : ""}
             onClick={event => {
               event.preventDefault()
               refine(page)
@@ -61,7 +72,7 @@ const Pagination = ({ currentRefinement, nbPages, refine, createURL }) => (
             refine(currentRefinement + 1)
           }}
         >
-          Next
+          Next&nbsp;&#187;
         </a>
       </li>
     )}
