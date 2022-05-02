@@ -8,7 +8,7 @@ const Component = styled.article`
   p {
     font-family: var(--heading-font);
     text-transform: uppercase;
-    font-size: 1.1rem;
+    font-size: 1.09rem;
     margin-bottom: 0;
   }
   .product-price {

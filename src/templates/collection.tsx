@@ -47,6 +47,8 @@ const Page = styled.section`
     }
   }
   .collection-image {
+    margin: 0 -15px;
+    height: 435px;
     @media screen and (max-width: 600px) {
       height: 300px;
     }
@@ -67,8 +69,6 @@ const Collection = ({
   } = data
   const collectionSize = collection.products.length
 
-  console.log("a", collectionImages)
-  console.log("collection length", collectionSize)
   return (
     <Layout>
       <SEO title={collection.title} />
