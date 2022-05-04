@@ -1,4 +1,4 @@
-import { useState, useLayoutEffect } from "react"
+import { useState, useEffect } from "react"
 
 export function useQuantityQuery(handle: string, size: number) {
   const [productQuantities, setProductQuantities] = useState<{} | undefined>({})
@@ -60,7 +60,7 @@ export function useQuantityQuery(handle: string, size: number) {
   const createQuantityData = async () => {
     try {
       const json = await fetchQuery()
-      if (json.data) {
+      if (json.data.product) {
         const variants = json.data.product.variants.edges
         const quantities = {}
         variants.forEach(element => {
@@ -76,12 +76,13 @@ export function useQuantityQuery(handle: string, size: number) {
     }
   }
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     const isBrowser = typeof window !== "undefined"
     if (isBrowser) {
       createQuantityData().then(result => setProductQuantities(result))
     }
     return () => {
+      console.log("ABORTING?")
       abortController.abort()
     }
   }, [])

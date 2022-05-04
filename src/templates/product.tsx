@@ -143,9 +143,6 @@ const Page = styled.div`
       position: relative;
       select {
         font-family: var(--sub-heading-font);
-        padding: 5px 5px;
-        --webkit-appearance: none;
-        --moz-appearance: none;
       }
     }
     p {
@@ -198,10 +195,6 @@ const Page = styled.div`
     display: grid;
     grid-template-columns: repeat(3, 1fr);
   }
-  select {
-    border: 1px solid #e1e3e4;
-    color: #8a8f93;
-  }
 `
 const Product = ({ data: { shopifyProduct } }: any) => {
   const [selectedVariant, setSelectedVariant] = useState(
@@ -215,8 +208,6 @@ const Product = ({ data: { shopifyProduct } }: any) => {
     shopifyProduct.handle,
     shopifyProduct.variants.length
   )
-  const hasSingleVariant: boolean =
-    shopifyProduct.variants.length === 1 ? true : false
 
   const { addProductToCart, checkout } = useContext(CartContext)
   const { customerEmail } = useContext(CustomerContext)
@@ -229,10 +220,11 @@ const Product = ({ data: { shopifyProduct } }: any) => {
     setSelectedVariant(newVariant)
   }
 
-  const randomCollection = useMemo(
-    () => useRandomizeCollection(shopifyProduct),
-    []
-  )
+  // const randomCollection = useMemo(
+  //   () => useRandomizeCollection(shopifyProduct),
+  //   []
+  // )
+  // const randomCollection = useRandomizeCollection(shopifyProduct)
 
   const quantityRange = () => {
     let minRange = 0
@@ -279,17 +271,14 @@ const Product = ({ data: { shopifyProduct } }: any) => {
       <Page>
         <div className="row">
           <div className="col images">
-            <ProductImageGrid
-              product={shopifyProduct}
-              hasSingleVariant={hasSingleVariant}
-            ></ProductImageGrid>
+            <ProductImageGrid product={shopifyProduct}></ProductImageGrid>
           </div>
           <div className="col">
             <div className="heading">
               <h1>{shopifyProduct.title}</h1>
               <form>
                 <div className="product-dropdown">
-                  {!hasSingleVariant ? (
+                  {!shopifyProduct.hasOnlyDefaultVariant ? (
                     <div>
                       <p>{selectedVariant.selectedOptions[0].name}</p>
                       <div className="select-dropdown">
@@ -358,7 +347,7 @@ const Product = ({ data: { shopifyProduct } }: any) => {
             </div>
           </div>
         </div>
-        <YouMayAlsoLike collectionItems={randomCollection}></YouMayAlsoLike>
+        <YouMayAlsoLike shopifyProduct={shopifyProduct}></YouMayAlsoLike>
       </Page>
     </Layout>
   )
@@ -388,6 +377,7 @@ export const query = graphql`
       handle
       legacyResourceId
       onlineStoreUrl
+      hasOnlyDefaultVariant
       priceRangeV2 {
         minVariantPrice {
           amount

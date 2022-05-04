@@ -14,11 +14,8 @@ const Component = styled.section`
   }
 `
 
-const ProductImageGrid = (props: {
-  product: any
-  hasSingleVariant: boolean
-}) => {
-  const { product, hasSingleVariant } = props
+const ProductImageGrid = (props: { product: any }) => {
+  const { product } = props
 
   interface ImageSet {
     data: any
