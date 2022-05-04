@@ -21,6 +21,9 @@ const Page = styled.section`
       padding: 0 10px;
     }
     grid-template-rows: auto;
+    @media screen and (max-width: 600px) {
+      gap: 30px 20px;
+    }
     gap: 40px 30px;
     margin: 40px 0;
     padding: 0 22px;
@@ -35,6 +38,16 @@ const Page = styled.section`
       top: 8px;
       right: 16px;
       color: white;
+      @media screen and (max-width: 600px) {
+        top: unset;
+        right: unset;
+        position: static;
+        text-align: center;
+        h1,
+        p {
+          color: black;
+        }
+      }
       h1 {
         font-weight: normal;
         text-transform: uppercase;
@@ -43,6 +56,7 @@ const Page = styled.section`
       }
       p {
         font-family: var(--sub-heading-font);
+        margin-bottom: 0;
       }
     }
   }
@@ -50,7 +64,7 @@ const Page = styled.section`
     margin: 0 -15px;
     height: 435px;
     @media screen and (max-width: 600px) {
-      height: 300px;
+      height: 200px;
     }
   }
 `

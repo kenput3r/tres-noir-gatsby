@@ -9,6 +9,9 @@ const Component = styled.article`
     font-family: var(--heading-font);
     text-transform: uppercase;
     font-size: 1.09rem;
+    @media screen and (max-width: 600px) {
+      font-size: 0.98rem;
+    }
     margin-bottom: 0;
   }
   .product-price {
