@@ -148,7 +148,7 @@ const Header = ({
   setIsDrawerOpen,
   isIndex,
 }: HeaderProps) => {
-  const { customerAccessToken, logout } = useContext(CustomerContext)
+  const { customerAccessToken } = useContext(CustomerContext)
   const [currentPath, setCurrentPath] = useState("/")
   const [visibleAccountSubNav, setVisibileAccountSubNav] =
     useState<boolean>(false)
@@ -225,9 +225,12 @@ const Header = ({
               <FaSearch />
             </Link>
             {!customerAccessToken ? (
-              <Link to="/login" className="login-text">
+              <a
+                href="https://www.tresnoir.com/account/login"
+                className="login-text"
+              >
                 LOG IN
-              </Link>
+              </a>
             ) : (
               <span className="accounts">
                 <a
@@ -240,13 +243,15 @@ const Header = ({
                 {visibleAccountSubNav && (
                   <ul ref={ref} className="accounts-sub-nav sub-nav">
                     <li>
-                      <Link to="/account">YOUR ACCOUNT</Link>
+                      <a href="https://www.tresnoir.com/account">
+                        YOUR ACCOUNT
+                      </a>
                     </li>
-                    <li>
+                    {/* <li>
                       <a href="#" onClick={logout}>
                         LOG OUT
                       </a>
-                    </li>
+                    </li> */}
                   </ul>
                 )}
               </span>
