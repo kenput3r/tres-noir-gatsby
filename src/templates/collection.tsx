@@ -89,33 +89,41 @@ const Collection = ({
       <FreeShipping />
       <Page>
         <div className="container">
-          <div className="image-container">
-            <div>
-              <GatsbyImage
-                className="collection-image"
-                image={collectionImages.collectionImageTop?.gatsbyImageData}
-                alt={collectionImages.collectionImageTop?.title}
-              />
+          {collectionImages && (
+            <div className="image-container">
+              <div>
+                <GatsbyImage
+                  className="collection-image"
+                  image={collectionImages.collectionImageTop?.gatsbyImageData}
+                  alt={collectionImages.collectionImageTop?.title}
+                />
+              </div>
+              <div className="top-right">
+                <h1>{collection.title}</h1>
+                <p>{collectionImages.description}</p>
+              </div>
             </div>
-            <div className="top-right">
-              <h1>{collection.title}</h1>
-              <p>{collectionImages.description}</p>
-            </div>
-          </div>
+          )}
+
           <div className="grid">
             {collection.products.slice(0, 8).map((product: ShopifyProduct) => (
               <Product key={product.handle} data={product} />
             ))}
           </div>
-          <div className="image-container">
-            <div>
-              <GatsbyImage
-                className="collection-image"
-                image={collectionImages.collectionImageMiddle?.gatsbyImageData}
-                alt={collectionImages.collectionImageMiddle?.title}
-              />
+          {collectionImages && (
+            <div className="image-container">
+              <div>
+                <GatsbyImage
+                  className="collection-image"
+                  image={
+                    collectionImages.collectionImageMiddle?.gatsbyImageData
+                  }
+                  alt={collectionImages.collectionImageMiddle?.title}
+                />
+              </div>
             </div>
-          </div>
+          )}
+
           <div className="grid">
             {collectionSize >= 8 &&
               collection.products
