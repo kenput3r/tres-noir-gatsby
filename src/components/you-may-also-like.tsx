@@ -3,6 +3,7 @@ import styled from "styled-components"
 import { CartContext } from "../contexts/cart"
 import { useQuantityQuery } from "../hooks/useQuantityQuery"
 import UpsellProduct from "./upsell-product"
+import { useRandomizeCollection } from "../hooks/useRandomizeCollection"
 
 const Component = styled.section`
   margin-bottom: 40px;
@@ -40,8 +41,10 @@ const Component = styled.section`
   }
 `
 
-const YouMayAlsoLike = (props: { collectionItems: any }) => {
-  const { collectionItems } = props
+const YouMayAlsoLike = (props: { shopifyProduct: any }) => {
+  const { shopifyProduct } = props
+
+  const collectionItems = useRandomizeCollection(shopifyProduct)
   const { addProductToCart } = useContext(CartContext)
 
   const handleAddToCart = product => {

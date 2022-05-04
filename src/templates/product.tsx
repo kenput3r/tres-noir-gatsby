@@ -220,10 +220,11 @@ const Product = ({ data: { shopifyProduct } }: any) => {
     setSelectedVariant(newVariant)
   }
 
-  const randomCollection = useMemo(
-    () => useRandomizeCollection(shopifyProduct),
-    []
-  )
+  // const randomCollection = useMemo(
+  //   () => useRandomizeCollection(shopifyProduct),
+  //   []
+  // )
+  // const randomCollection = useRandomizeCollection(shopifyProduct)
 
   const quantityRange = () => {
     let minRange = 0
@@ -346,7 +347,7 @@ const Product = ({ data: { shopifyProduct } }: any) => {
             </div>
           </div>
         </div>
-        <YouMayAlsoLike collectionItems={randomCollection}></YouMayAlsoLike>
+        <YouMayAlsoLike shopifyProduct={shopifyProduct}></YouMayAlsoLike>
       </Page>
     </Layout>
   )
