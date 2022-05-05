@@ -95,6 +95,7 @@ const DefaultContext = {
   bundledCustoms: bundleInit,
   bundledDispatch: Dispatch => {},
   addCustomsToLocalStorage: (bundle: BundleCustomsType) => {},
+  removeCustomProduct: (customizationId: string) => {},
 }
 
 const addCustomsToLocalStorage = (currentBundle: BundleCustomsType) => {
@@ -141,7 +142,6 @@ const customLensesReducer = (state, action) => {
           ],
         }
       } else {
-        // append line item to array
         // addCustomsToLocalStorage({
         //   ...state,
         //   items: [
@@ -154,18 +154,19 @@ const customLensesReducer = (state, action) => {
         //     ...state.items.slice(findId),
         //   ],
         // })
-        return {
-          ...state,
-          items: [
-            ...state.items.slice(0, findId),
-            (state.items[findId] = {
-              customizationId: action.payload.id,
-              lineItems: action.payload.value,
-              customImage: action.payload.image,
-            }),
-            ...state.items.slice(findId),
-          ],
-        }
+        // return {
+        //   ...state,
+        //   items: [
+        //     ...state.items.slice(0, findId),
+        //     (state.items[findId] = {
+        //       customizationId: action.payload.id,
+        //       lineItems: action.payload.value,
+        //       customImage: action.payload.image,
+        //     }),
+        //     ...state.items.slice(findId),
+        //   ],
+        // }
+        return state
       }
     case "DELETE":
       const filteredDelete = state.items.filter(
@@ -193,8 +194,10 @@ const customLensesReducer = (state, action) => {
 
     case "SET_CHECKOUT":
       return { ...state, checkoutId: action.payload }
-    case "UPDATED":
+    case "UPDATE":
       return state
+    case "DELETE_ALL":
+      return { ...state, items: [] }
     default:
       return state
   }
@@ -277,6 +280,7 @@ export const CartProvider = ({ children }) => {
         if (now.getTime() > localCheckout.expiry) {
           localStorage.removeItem("checkout")
           localStorage.removeItem("customs")
+          bundledDispatch({ type: "DELETE_ALL" })
           // eslint-disable-next-line no-return-await
           return await getNewCheckout()
         }
@@ -309,10 +313,10 @@ export const CartProvider = ({ children }) => {
                 newCustomCheckoutId = checkoutId
               }
               if (
-                parsedCustoms.value.checkoutId === checkoutId ||
-                newCustomCheckoutId === checkoutId
+                // parsedCustoms.value.checkoutId === checkoutId ||
+                // newCustomCheckoutId === checkoutId
+                true
               ) {
-                console.log("here2")
                 parsedCustoms.value.items.forEach(item => {
                   bundledDispatch({
                     type: "ADD",
@@ -327,10 +331,39 @@ export const CartProvider = ({ children }) => {
             }
           } else {
             checkout = await client.checkout.fetch(checkoutId)
-            bundledDispatch({
-              type: "SET_CHECKOUT",
-              payload: checkoutId,
-            })
+            // bundledDispatch({
+            //   type: "SET_CHECKOUT",
+            //   payload: checkoutId,
+            // })
+            // const customs = localStorage.getItem("customs")
+            // if (customs) {
+            //   const parsedCustoms = JSON.parse(
+            //     customs
+            //   ) as BundleLocalStorageType
+            //   let newCustomCheckoutId = ""
+            //   if (parsedCustoms.value.checkoutId === "") {
+            //     bundledDispatch({
+            //       type: "SET_CHECKOUT",
+            //       payload: checkoutId,
+            //     })
+            //     newCustomCheckoutId = checkoutId
+            //   }
+            //   if (
+            //     parsedCustoms.value.checkoutId === checkoutId ||
+            //     newCustomCheckoutId === checkoutId
+            //   ) {
+            //     parsedCustoms.value.items.forEach(item => {
+            //       bundledDispatch({
+            //         type: "ADD",
+            //         payload: {
+            //           id: item.customizationId,
+            //           value: item.lineItems,
+            //           image: item.customImage,
+            //         },
+            //       })
+            //     })
+            //   }
+            // }
             if (isBrowser) {
               const now = new Date()
               localStorage.setItem(
@@ -348,6 +381,10 @@ export const CartProvider = ({ children }) => {
           // if no Checkout exists, create a new one
         } else {
           checkout = await getNewCheckout()
+          bundledDispatch({
+            type: "SET_CHECKOUT",
+            payload: checkout.id,
+          })
         }
         setCheckout(checkout)
       } catch (err: any) {
@@ -488,6 +525,30 @@ export const CartProvider = ({ children }) => {
       }
     }
 
+    const removeCustomProduct = async (customizationId: string) => {
+      let lineIds: string[] = []
+      checkout.lineItems.forEach(item => {
+        if (item.customAttributes.length !== 0) {
+          item.customAttributes.forEach(attr => {
+            if (
+              attr.key === "customizationId" &&
+              attr.value === customizationId
+            ) {
+              lineIds.push(item.id)
+            }
+          })
+        }
+      })
+      if (lineIds.length !== 0) {
+        await removeProductsFromCart(lineIds)
+        bundledDispatch({
+          type: "DELETE",
+          payload: { id: customizationId },
+        })
+      }
+      return lineIds
+    }
+
     const updateProductInCart = async (id: string, quantity: number) => {
       try {
         const lineItems = [
@@ -578,6 +639,7 @@ export const CartProvider = ({ children }) => {
       bundledCustoms,
       bundledDispatch,
       addCustomsToLocalStorage,
+      removeCustomProduct,
     }
   }, [
     isDrawerOpen,

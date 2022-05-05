@@ -631,15 +631,9 @@ pre tt:after {
   /* box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.6); */
   color: #fff;
   display: inline-block;
-<<<<<<< HEAD
-  font-family: var(--heading-font);
-  font-size: 1rem;
-  padding: 8px 15px;
-=======
   font-family: var(--sub-heading-font);
   font-size: 1rem;
   padding: 8px 25px;
->>>>>>> 4995a06e8f9d1701808fb5892075557887e6dfda
   text-decoration: none;
   cursor: pointer;
   -webkit-appearance: button-bevel;

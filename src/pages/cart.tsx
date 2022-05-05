@@ -60,6 +60,19 @@ const Page = styled.div`
             }
           }
         }
+        .card-items {
+          .quantity-selector {
+            margin-top: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            .price {
+              color: var(--color-grey-dark);
+              font-size: 100%;
+              font-family: var(--sub-heading-font);
+            }
+          }
+        }
         .title {
           /* font-weight: bold; */
           margin-bottom: 0;
@@ -198,9 +211,8 @@ const Cart = () => {
     checkout,
     removeProductFromCart,
     updateProductInCart,
-    removeProductsFromCart,
     bundledCustoms,
-    bundledDispatch,
+    removeCustomProduct,
   } = useContext(CartContext)
 
   const { associateCheckout } = useContext(CustomerContext)
@@ -220,16 +232,9 @@ const Cart = () => {
     }
   }, [checkout])
 
-  const removeMultipleProducts = async selectedCustom => {
-    const lineIds = selectedCustom.lineItems.map(item => {
-      return item.shopifyItem.id
-    })
+  const removeMultipleProducts = async (customizationId: string) => {
     loadingOverlay.current?.classList.add("no-events")
-    await removeProductsFromCart(lineIds)
-    bundledDispatch({
-      type: "DELETE",
-      payload: { id: selectedCustom.customizationId },
-    })
+    await removeCustomProduct(customizationId)
     loadingOverlay.current?.classList.remove("no-events")
   }
 
@@ -243,6 +248,10 @@ const Cart = () => {
       sum += parseFloat(item.shopifyItem.variant.price)
     })
     return sum.toFixed(2)
+  }
+
+  const priceTimesQuantity = (price: string, quantity: number) => {
+    return (Number(price) * quantity).toFixed(2)
   }
 
   const renderContent = () => {
@@ -289,7 +298,9 @@ const Cart = () => {
                               <a
                                 className="remove-item"
                                 href="#"
-                                onClick={() => removeMultipleProducts(item)}
+                                onClick={() =>
+                                  removeMultipleProducts(item.customizationId)
+                                }
                               >
                                 <VscClose />
                               </a>
@@ -377,7 +388,7 @@ const Cart = () => {
                                   alt={line.variant.image.altText}
                                 />
                               </div>
-                              <div>
+                              <div className="card-items">
                                 <div>
                                   <p className="title">
                                     <Link
@@ -398,11 +409,21 @@ const Cart = () => {
                                     </span>
                                   </div>
                                 </div>
-                                {/* <QuantitySelector
-                          lineId={line.id}
-                          quantity={line.quantity}
-                          updateQuantity={updateQuantity}
-                        /> */}
+                                <hr />
+                                <div className="quantity-selector">
+                                  <QuantitySelector
+                                    lineId={line.id}
+                                    quantity={line.quantity}
+                                    updateQuantity={updateQuantity}
+                                  />
+                                  <span className="price total-price">
+                                    $
+                                    {priceTimesQuantity(
+                                      line.variant.price,
+                                      line.quantity
+                                    )}
+                                  </span>
+                                </div>
                               </div>
                             </div>
                           </li>
