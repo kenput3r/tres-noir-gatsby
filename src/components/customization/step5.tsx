@@ -1,4 +1,4 @@
-import React, { useContext } from "react"
+import React, { useContext, useEffect, useState } from "react"
 import styled from "styled-components"
 import { GatsbyImage, StaticImage, IGatsbyImageData } from "gatsby-plugin-image"
 import { CustomizeContext } from "../../contexts/customize"
@@ -95,47 +95,156 @@ const Component = styled.div`
 
 const Step5 = (props: {
   productTitle: string
-  currentPrice: number
+  currentPrice: any
   variant: any
+  productImage: any
 }) => {
-  const { productTitle, currentPrice, variant } = props
+  const { productTitle, currentPrice, variant, productImage } = props
   const {
     currentStep,
     setCurrentStep,
     productUrl,
     selectedVariants,
     setSelectedVariants,
+    setSelectedVariantsToDefault,
   } = useContext(CustomizeContext)
-  const { addProductsToCart } = useContext(CartContext)
+
+  // const { bundledCustoms, bundledDispatch } = useContext(CustomProductsContext)
+  const {
+    addProductToCart,
+    addProductsToCart,
+    addProductCustomToCart,
+    bundledCustoms,
+    bundledDispatch,
+  } = useContext(CartContext)
   const { isRxAble, setRxAble, rxInfo, dispatch } = useContext(RxInfoContext)
-  const handleAddToCart = () => {
+  const [addedToCart, setAddedToCart] = useState(false)
+
+  useEffect(() => {
+    return () => {
+      if (addedToCart) {
+        setCurrentStep(1)
+        setSelectedVariantsToDefault()
+      }
+    }
+  }, [addedToCart])
+
+  const addToBundle = (newCheckout: any, key: string, customImage) => {
+    let tempItems: any[] = []
+    newCheckout.lineItems.forEach(item => {
+      if (item.customAttributes.length !== 0) {
+        let found = false
+        item.customAttributes.forEach(attr => {
+          if (attr.key === "customizationId" && attr.value === key) {
+            found = true
+          }
+          if (attr.key === "customizationStep" && found) {
+            tempItems.push({
+              stepNumber: attr.value,
+              shopifyItem: item,
+            })
+          }
+        })
+      }
+    })
+    // sort tempItems by stepNumber
+    tempItems.sort((a, b) => {
+      return a.stepNumber - b.stepNumber
+    })
+    if (tempItems.length > 0) {
+      bundledDispatch({
+        type: "ADD",
+        payload: {
+          id: key,
+          value: tempItems,
+          image: customImage,
+        },
+      })
+    }
+  }
+  const handleAddToCart = async () => {
     const { step1, step2, step3, step4 } = selectedVariants
-    const items = [
-      {
-        variantId: variant.storefrontId,
-        quantity: 1,
-      },
+
+    const today = new Date()
+    const matchingKey: string = today.valueOf().toString()
+    const stepItems = [
       {
         variantId: step1.storefrontId,
         quantity: 1,
+        customAttributes: [
+          {
+            key: "customizationId",
+            value: matchingKey,
+          },
+          {
+            key: "customizationStep",
+            value: "1",
+          },
+        ],
       },
       {
         variantId: step2.storefrontId,
         quantity: 1,
+        customAttributes: [
+          {
+            key: "customizationId",
+            value: matchingKey,
+          },
+          {
+            key: "customizationStep",
+            value: "2",
+          },
+        ],
       },
       {
         variantId: step3.storefrontId,
         quantity: 1,
+        customAttributes: [
+          {
+            key: "customizationId",
+            value: matchingKey,
+          },
+          {
+            key: "customizationStep",
+            value: "3",
+          },
+        ],
       },
       {
         variantId: step4.storefrontId,
         quantity: 1,
+        customAttributes: [
+          {
+            key: "customizationId",
+            value: matchingKey,
+          },
+          {
+            key: "customizationStep",
+            value: "4",
+          },
+        ],
       },
     ]
-    addProductsToCart(items)
-    // attach rxInfo to main product
-    // reset context
+    const frameVariant = {
+      variantId: variant.storefrontId,
+      quantity: 1,
+      customAttributes: [
+        {
+          key: "customizationId",
+          value: matchingKey,
+        },
+        {
+          key: "customizationStep",
+          value: "0",
+        },
+      ],
+    }
+    stepItems.unshift(frameVariant)
 
+    const result = await addProductCustomToCart(stepItems)
+    addToBundle(result, matchingKey, productImage)
+
+    setAddedToCart(true)
     alert("ADDED TO CART")
   }
 

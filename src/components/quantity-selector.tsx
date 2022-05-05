@@ -5,8 +5,9 @@ const Selector = styled.div`
   div {
     display: inline-block;
     line-height: 1.5em;
-    border: 1px solid var(--color-grey-dark);
+    /* border: 1px solid var(--color-grey-dark); */
     padding: 3px 7px;
+    font-family: var(--sub-heading-font);
     /* @media only screen and (max-width: 480px) {
       padding: 1px 4px;
     } */
@@ -14,11 +15,13 @@ const Selector = styled.div`
       border: none;
       text-align: center;
       width: 2em;
+      vertical-align: top;
       /* @media only screen and (max-width: 480px) {
         width: 1em;
       } */
     }
-    a {
+    .qty {
+      cursor: pointer;
       text-decoration: none;
       font-weight: bold;
       color: #000;
@@ -38,21 +41,19 @@ const QuantitySelector = (props: Props) => {
   return (
     <Selector>
       <div>
-        <a
-          href="#"
-          className="quantity-down"
+        <span
+          className="quantity-down qty"
           onClick={() => updateQuantity(lineId, quantity - 1)}
         >
           -
-        </a>
+        </span>
         <input className="quantity" type="text" value={quantity} readOnly />
-        <a
-          href="#"
-          className="quantity-up"
+        <span
+          className="quantity-up qty"
           onClick={() => updateQuantity(lineId, quantity + 1)}
         >
           +
-        </a>
+        </span>
       </div>
     </Selector>
   )

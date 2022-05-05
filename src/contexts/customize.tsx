@@ -105,6 +105,7 @@ const defaultContext = {
     },
   },
   setSelectedVariants: (selectedVariants: SelectedVariants) => {},
+  setSelectedVariantsToDefault: () => {},
 }
 
 export const CustomizeContext = createContext(defaultContext)
@@ -211,6 +212,107 @@ export const CustomizeProvider = ({ children }: { children: ReactChild }) => {
     },
   })
 
+  const setSelectedVariantsToDefault = () => {
+    setSelectedVariants({
+      step1: {
+        image: {
+          altText: "",
+          localFile: {
+            childImageSharp: {
+              gatsbyImageData: {},
+            },
+          },
+        },
+        price: 0,
+        product: {
+          title: "",
+          description: "",
+        },
+        selectedOptions: [
+          {
+            name: "",
+            value: "",
+          },
+        ],
+        storefrontId: "",
+        sku: "",
+        title: "",
+      },
+      step2: {
+        image: {
+          altText: "",
+          localFile: {
+            childImageSharp: {
+              gatsbyImageData: {},
+            },
+          },
+        },
+        price: 0,
+        product: {
+          title: "",
+          description: "",
+        },
+        selectedOptions: [
+          {
+            name: "",
+            value: "",
+          },
+        ],
+        storefrontId: "",
+        sku: "",
+        title: "",
+      },
+      step3: {
+        image: {
+          altText: "",
+          localFile: {
+            childImageSharp: {
+              gatsbyImageData: {},
+            },
+          },
+        },
+        price: 0,
+        product: {
+          title: "",
+          description: "",
+        },
+        selectedOptions: [
+          {
+            name: "",
+            value: "",
+          },
+        ],
+        storefrontId: "",
+        sku: "",
+        title: "",
+      },
+      step4: {
+        image: {
+          altText: "",
+          localFile: {
+            childImageSharp: {
+              gatsbyImageData: {},
+            },
+          },
+        },
+        price: 0,
+        product: {
+          title: "",
+          description: "",
+        },
+        selectedOptions: [
+          {
+            name: "",
+            value: "",
+          },
+        ],
+        storefrontId: "",
+        sku: "",
+        title: "",
+      },
+    })
+  }
+
   const value = useMemo(
     () => ({
       currentStep,
@@ -219,6 +321,7 @@ export const CustomizeProvider = ({ children }: { children: ReactChild }) => {
       setProductUrl,
       selectedVariants,
       setSelectedVariants,
+      setSelectedVariantsToDefault,
     }),
     [
       currentStep,
