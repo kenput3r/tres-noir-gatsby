@@ -2,7 +2,6 @@ import { Link } from "gatsby"
 import React, {
   useState,
   useEffect,
-  useContext,
   useRef,
   SetStateAction,
   Dispatch,
@@ -13,7 +12,6 @@ import { FaSearch, FaFacebookF, FaBars } from "react-icons/fa"
 import { useClickAway } from "react-use"
 import { TiSocialInstagram } from "react-icons/ti"
 import DesktopNavigation from "./desktopNavigation"
-import { CustomerContext } from "../contexts/customer"
 
 const Component = styled.header`
   font-family: var(--sub-heading-font);
@@ -148,7 +146,6 @@ const Header = ({
   setIsDrawerOpen,
   isIndex,
 }: HeaderProps) => {
-  const { customerAccessToken } = useContext(CustomerContext)
   const [currentPath, setCurrentPath] = useState("/")
   const [visibleAccountSubNav, setVisibileAccountSubNav] =
     useState<boolean>(false)
@@ -165,13 +162,6 @@ const Header = ({
   }, [])
 
   const ref = useRef(null)
-
-  const toggleAccountSubNav = (
-    e: React.MouseEvent<HTMLAnchorElement, MouseEvent>
-  ) => {
-    e.preventDefault()
-    setVisibileAccountSubNav(!visibleAccountSubNav)
-  }
 
   useClickAway(ref, () => {
     setVisibileAccountSubNav(false)
@@ -224,38 +214,19 @@ const Header = ({
             <Link to="/search" state={{ prevPath: currentPath }}>
               <FaSearch />
             </Link>
-            {!customerAccessToken ? (
-              <a
-                href="https://www.tresnoir.com/account/login"
-                className="login-text"
-              >
-                LOG IN
-              </a>
-            ) : (
-              <span className="accounts">
-                <a
-                  href="#"
-                  onClick={e => toggleAccountSubNav(e)}
-                  className={visibleAccountSubNav ? `active` : ``}
-                >
-                  ACCOUNT
-                </a>
-                {visibleAccountSubNav && (
-                  <ul ref={ref} className="accounts-sub-nav sub-nav">
-                    <li>
-                      <a href="https://www.tresnoir.com/account">
-                        YOUR ACCOUNT
-                      </a>
-                    </li>
-                    {/* <li>
-                      <a href="#" onClick={logout}>
-                        LOG OUT
-                      </a>
-                    </li> */}
-                  </ul>
-                )}
-              </span>
-            )}
+
+            <a
+              href="https://www.tresnoir.com/account/login"
+              className="login-text"
+            >
+              <StaticImage
+                src="../images/icon-user.png"
+                alt="User"
+                placeholder="tracedSVG"
+                style={{ marginBottom: 0, maxWidth: 26 }}
+              />
+            </a>
+
             <Link to="/cart">
               <StaticImage
                 src="../images/cart.png"
