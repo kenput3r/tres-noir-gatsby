@@ -116,7 +116,6 @@ const Step5 = (props: {
     addProductCustomToCart,
     bundledCustoms,
     bundledDispatch,
-    addCustomsToLocalStorage,
   } = useContext(CartContext)
   const { isRxAble, setRxAble, rxInfo, dispatch } = useContext(RxInfoContext)
   const [addedToCart, setAddedToCart] = useState(false)
