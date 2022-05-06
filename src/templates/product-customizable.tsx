@@ -189,9 +189,22 @@ const Page = styled.div`
 
 const ProductCustomizable = ({
   data: { contentfulProduct, shopifyProduct },
+  location: any,
 }: any) => {
   if (!contentfulProduct) {
     return Product({ data: { shopifyProduct } })
+  }
+
+  // check if lens type is set
+  enum LensType {
+    GLASSES = "glasses",
+    SUNGLASSES = "sunglasses",
+  }
+  const isBrowser = typeof window !== "undefined"
+  let lensType: null | string = null
+  if (isBrowser) {
+    const params = new URLSearchParams(location.search)
+    lensType = params.get("lens_type")
   }
 
   // return default Product Page if contentful values do not exist
@@ -206,6 +219,29 @@ const ProductCustomizable = ({
     contentful: contentfulProduct?.variants && contentfulProduct.variants[0],
     shopify: shopifyProduct.variants[0],
   })
+
+  const getImageSet = (variant: any) => {
+    let defaultImageSet
+    switch (lensType) {
+      case LensType.GLASSES:
+        defaultImageSet = variant.imageSetClear
+          ? variant.imageSetClear
+          : variant.imageSet
+        break
+      case LensType.SUNGLASSES:
+        defaultImageSet = variant.imageSet
+        break
+      case null:
+        defaultImageSet = variant.imageSet
+        break
+      default:
+        variant.imageSet
+    }
+    return defaultImageSet
+  }
+  const defaultImageSet = getImageSet(contentfulProduct.variants[0])
+
+  const [imageSet, setImageSet] = useState<any>(defaultImageSet)
   // cart
   const { addProductToCart, checkout } = useContext(CartContext)
   // initial
@@ -264,6 +300,10 @@ const ProductCustomizable = ({
     }
   }
 
+  useEffect(() => {
+    updateImageSet()
+  }, [selectedVariant])
+
   const handleAddToCart = () => {
     const id = selectedVariant.shopify.storefrontId
     addProductToCart(id, 1)
@@ -287,6 +327,11 @@ const ProductCustomizable = ({
     addedToCartGTMEvent(productData)
   }
 
+  const updateImageSet = () => {
+    const defaultImageSet = getImageSet(selectedVariant.contentful)
+    setImageSet(defaultImageSet)
+  }
+
   return (
     <Layout>
       <SEO title={shopifyProduct.title} />
@@ -303,10 +348,11 @@ const ProductCustomizable = ({
         <div className="row">
           <div className="col images">
             <ProductCarousel
-              imageSet={
-                selectedVariant?.contentful &&
-                selectedVariant.contentful.imageSet
-              }
+              // imageSet={
+              //   selectedVariant?.contentful &&
+              //   selectedVariant.contentful.imageSet
+              // }
+              imageSet={selectedVariant?.contentful && imageSet}
             />
           </div>
           <div className="col">
@@ -325,7 +371,12 @@ const ProductCustomizable = ({
             </div>
             <form className="options">
               <p className="selected-text-label">
-                Color: <span>{selectedVariant.shopify.title}</span>
+                Color:{" "}
+                <span>
+                  {lensType === LensType.GLASSES
+                    ? selectedVariant.shopify.title.replace("- Smoke Lens", "")
+                    : selectedVariant.shopify.title}
+                </span>
               </p>
               <div className="buttons">
                 {contentfulProduct &&
@@ -381,14 +432,20 @@ const ProductCustomizable = ({
                   </div>
                 ) : (
                   <div>
-                    <button
-                      type="button"
-                      onClick={handleAddToCart}
-                      className="add-to-cart"
-                    >
-                      ADD TO CART
-                    </button>
-                    <p>- OR -</p>
+                    {lensType !== LensType.GLASSES && (
+                      <>
+                        {" "}
+                        <button
+                          type="button"
+                          onClick={handleAddToCart}
+                          className="add-to-cart"
+                        >
+                          ADD TO CART
+                        </button>
+                        <p>- OR -</p>
+                      </>
+                    )}
+
                     <Link
                       className="customize-btn"
                       to={
@@ -426,6 +483,15 @@ export const query = graphql`
           title
         }
         imageSet {
+          data: gatsbyImageData(
+            layout: CONSTRAINED
+            placeholder: BLURRED
+            width: 2048
+            height: 1365
+          )
+          title
+        }
+        imageSetClear {
           data: gatsbyImageData(
             layout: CONSTRAINED
             placeholder: BLURRED

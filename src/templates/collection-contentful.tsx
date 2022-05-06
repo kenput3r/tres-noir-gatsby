@@ -69,6 +69,7 @@ const CollectionContentful = ({
                 key={product.handle}
                 data={product}
                 color={filters.colorName}
+                collectionHandle={collection.handle}
               />
             ))
           ) : (
@@ -104,6 +105,9 @@ export const query = graphql`
           id
           sku
           featuredImage {
+            data: gatsbyImageData(width: 600)
+          }
+          featuredImageClear {
             data: gatsbyImageData(width: 600)
           }
           colorName

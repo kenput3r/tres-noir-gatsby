@@ -45,11 +45,21 @@ const Component = styled.article`
 interface Props {
   data: ContentfulProduct
   color: null | string
+  collectionHandle: string
 }
 
-const ProductContentful = ({ data, color }: Props) => {
+const ProductContentful = ({ data, color, collectionHandle }: Props) => {
   const { setSelectedVariantContext } = useContext(SelectedVariantContext)
-  const defaultImage = data.variants[0].featuredImage.data
+
+  const isSunglasses = collectionHandle.includes("sunglasses")
+
+  const defaultImage = isSunglasses
+    ? data.variants[0].featuredImage.data
+    : data.variants[0].featuredImageClear?.data
+    ? data.variants[0].featuredImageClear.data
+    : data.variants[0].featuredImage.data
+
+  // const defaultImage = data.variants[0].featuredImage.data
   const [variantImage, setVariantImage] =
     useState<IGatsbyImageData>(defaultImage)
 
@@ -62,16 +72,26 @@ const ProductContentful = ({ data, color }: Props) => {
     variant: ContentfulProductVariant
   ) => {
     // e.currentTarget && (e.currentTarget as HTMLElement).blur()
-    setVariantImage(variant.featuredImage.data)
+    const defaultImage = isSunglasses
+      ? variant.featuredImage.data
+      : variant.featuredImageClear?.data
+      ? variant.featuredImageClear.data
+      : variant.featuredImage.data
+    setVariantImage(defaultImage)
+    // setVariantImage(variant.featuredImage.data)
     setSelectedVariant({
       contentful: variant,
     })
     setSelectedVariantContext(variant.sku)
   }
 
+  const productLink = isSunglasses
+    ? `/products/${data.handle}?lens_type=sunglasses`
+    : `/products/${data.handle}?lens_type=glasses`
+
   return (
     <Component>
-      <Link to={`/products/${data.handle}`}>
+      <Link to={productLink}>
         <Img image={variantImage} alt={data.title} />
       </Link>
       <h3>{data.title}</h3>
