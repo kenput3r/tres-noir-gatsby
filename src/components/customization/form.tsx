@@ -136,14 +136,15 @@ const Component = styled.form`
           border-bottom: 1px solid #808080;
           display: flex;
           padding: 1px;
+          align-items: center;
           label {
             color: #808080;
           }
           select {
             margin-left: 15px;
-            border: none;
             width: 100%;
-            background: none;
+            border: none;
+            color: black;
           }
         }
       }
@@ -322,7 +323,10 @@ const Form = ({
   const handleChange = (variant: ShopifyVariant) => {
     setRxAble(variant.product?.title !== "Non-Prescription Lens")
     if (variant.product?.title === "Non-Prescription Lens") {
-      if (messageRef.current) removeChildNodes(messageRef.current)
+      if (messageRef.current) {
+        removeChildNodes(messageRef.current)
+        continueBtn.current?.classList.remove("disable")
+      }
     }
     setSelectedVariants({
       ...selectedVariants,

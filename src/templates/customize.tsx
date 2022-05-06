@@ -133,6 +133,7 @@ const Customize = ({
       price = Number(price)
       price += Number(selectedVariants[key].price)
     })
+    price = Number(price.toFixed(2))
     setCurrentPrice(price)
     changeImage(
       currentStep,
@@ -170,6 +171,7 @@ const Customize = ({
                   productTitle={shopifyProduct.title}
                   variant={variant.shopify}
                   currentPrice={currentPrice}
+                  productImage={currentImage}
                 />
               )}
             </div>

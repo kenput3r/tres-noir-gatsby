@@ -1,6 +1,6 @@
 import React, { useState, useContext, ChangeEvent } from "react"
 import { graphql } from "gatsby"
-import { StaticImage } from "gatsby-plugin-image"
+import { GatsbyImage, StaticImage } from "gatsby-plugin-image"
 import { CustomerContext } from "../contexts/customer"
 import { CartContext } from "../contexts/cart"
 import styled from "styled-components"
@@ -9,6 +9,8 @@ import Layout from "../components/layout"
 import SEO from "../components/seo"
 import { useQuantityQuery } from "../hooks/useQuantityQuery"
 import { addedToCartGTMEvent } from "../helpers/gtm"
+import YouMayAlsoLike from "../components/you-may-also-like"
+import ProductImageGrid from "../components/product-image-grid"
 
 const Page = styled.div`
   .shipping-message {
@@ -28,41 +30,46 @@ const Page = styled.div`
   .row {
     display: flex;
     flex-direction: row;
-    flex-wrap: wrap;
     width: 1280px;
     max-width: 100%;
     margin: 0 auto;
+    @media (max-width: 600px) {
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
   }
   .col {
     display: flex;
     flex-direction: column;
     flex: 1;
     padding: 1.45rem;
-    &.images {
-      flex: 1.5;
-      max-width: 65%;
-    }
   }
   .heading {
     align-self: flex-start;
   }
+  .product-description {
+    max-width: 500px;
+    font-family: var(--sub-heading-font);
+    color: var(--color-grey-dark);
+    margin-top: 15px;
+  }
   .product-dropdown {
+    margin-top: 10px;
     font-family: var(--sub-heading-font);
     p {
       margin-bottom: 0;
-      font-size: 0.875rem;
+      font-size: 0.92rem;
       color: var(--color-grey-dark);
     }
     select {
       width: 210px;
       height: 40px;
-      border: 1px solid #e1e3e4;
-      color: #8a8f93;
     }
   }
   h1 {
     font-weight: normal;
-    font-size: 3rem;
+    font-size: 2rem;
     text-transform: uppercase;
     margin-bottom: 0;
   }
@@ -75,7 +82,7 @@ const Page = styled.div`
     }
   }
   .options {
-    button {
+    /* button {
       background-color: transparent;
       border: 1px solid #fff;
       border-radius: 50%;
@@ -92,7 +99,7 @@ const Page = styled.div`
       .gatsby-image-wrapper {
         border-radius: 50%;
       }
-    }
+    } */
   }
   .selected-text-label {
     font-size: 1.5rem;
@@ -102,7 +109,11 @@ const Page = styled.div`
     }
   }
   .price {
-    font-family: var(--sub-heading-font);
+    font-family: var(--heading-font);
+    p.value {
+      font-size: 1.5rem;
+    }
+
     margin-top: 1.45rem;
   }
   p.label {
@@ -110,45 +121,22 @@ const Page = styled.div`
     margin-bottom: 0;
     line-height: 1.5;
   }
-  p.value {
-    font-size: 2rem;
-    span {
-      float: right;
-      font-weight: normal;
-      a {
-        color: var(--color-grey-dark);
-        text-decoration: none;
-      }
-    }
-  }
   .actions {
     display: flex;
-    flex-direction: column;
-    align-items: flex-start;
+    //flex-direction: column;
+    //align-items: flex-start;
+    column-gap: 20px;
+    align-items: center;
     font-family: var(--sub-heading-font);
-    .sold-out {
-      opacity: 0.5;
-      pointer-events: none;
-    }
     div {
       display: flex;
       flex-direction: column;
     }
-    button,
-    a {
-      background-color: #000;
-      color: #fff;
-      border-radius: 0%;
-      font-size: 1.5rem;
-      font-weight: normal;
-      line-height: 0.7;
-      padding: 1rem 2rem;
-      width: 100% !important;
-      max-width: 100% !important;
-      text-decoration: none;
-      text-align: center;
-      -webkit-appearance: button-bevel;
-      cursor: pointer;
+    .select-wrapper {
+      position: relative;
+      select {
+        font-family: var(--sub-heading-font);
+      }
     }
     p {
       color: var(--color-grey-dark);
@@ -195,64 +183,24 @@ const Page = styled.div`
         max-width: 40px;
       }
     }
-    p.value {
-      font-size: 1.5rem;
-    }
+  }
+  .image-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
   }
 `
 const Product = ({ data: { shopifyProduct } }: any) => {
   const [selectedVariant, setSelectedVariant] = useState(
     shopifyProduct.variants[0]
   )
-  const hasSingleVariant: boolean =
-    shopifyProduct.variants.length === 1 ? true : false
-  const useVariantSwiper: boolean = false
+
+  const [selectedVariantQuantity, setSelectedVariantQuantity] =
+    useState<string>("1")
+
   const quantityLevels = useQuantityQuery(
     shopifyProduct.handle,
     shopifyProduct.variants.length
   )
-
-  const createImageSet = () => {
-    interface ImageSet {
-      data: any
-      title: string
-    }
-    let imageSet: ImageSet[] = []
-    // single Product with images
-    if (shopifyProduct.images && hasSingleVariant) {
-      shopifyProduct.images.forEach(element => {
-        const img = {
-          data: element.localFile.childImageSharp.gatsbyImageData,
-          title: element.altText,
-        }
-        imageSet.unshift(img)
-      })
-    }
-    // variant with images
-    else {
-      shopifyProduct.variants.forEach(element => {
-        if (element.image) {
-          const img = {
-            data: element.image.localFile.childImageSharp.gatsbyImageData,
-            title: element.image.altText,
-          }
-          imageSet.push(img)
-        }
-      })
-      // variant with product images, not attached to variant
-      if (shopifyProduct.images && imageSet.length === 0) {
-        shopifyProduct.images.forEach(element => {
-          const img = {
-            data: element.localFile.childImageSharp.gatsbyImageData,
-            title: element.altText,
-          }
-          imageSet.push(img)
-        })
-      }
-    }
-    return imageSet
-  }
-  const imageSetArr = createImageSet()
 
   const { addProductToCart, checkout } = useContext(CartContext)
   const { customerEmail } = useContext(CustomerContext)
@@ -265,9 +213,28 @@ const Product = ({ data: { shopifyProduct } }: any) => {
     setSelectedVariant(newVariant)
   }
 
+  // const randomCollection = useMemo(
+  //   () => useRandomizeCollection(shopifyProduct),
+  //   []
+  // )
+  // const randomCollection = useRandomizeCollection(shopifyProduct)
+
+  const quantityRange = () => {
+    let minRange = 0
+    if (quantityLevels) {
+      minRange = quantityLevels[selectedVariant.sku]
+    }
+    if (minRange === 0) {
+      return [0]
+    }
+    const range = minRange >= 10 ? 10 : minRange
+    return Array.from(Array(range), (_, index) => index + 1)
+  }
+
   const handleAddToCart = () => {
     const id = selectedVariant.storefrontId
-    addProductToCart(id, 1)
+    const qty: number = +selectedVariantQuantity
+    addProductToCart(id, qty)
     alert("ADDED TO CART")
 
     const productData = {
@@ -293,29 +260,16 @@ const Product = ({ data: { shopifyProduct } }: any) => {
     <Layout>
       <SEO title={shopifyProduct.title} />
       <Page>
-        <div className="shipping-message">
-          <StaticImage
-            src="../images/double-diamonds.png"
-            alt="double diamonds"
-            width={40}
-          />
-          <p className="h2">FREE SHIPPING IN USA</p>
-          <p className="h3">ALL ORDERS SHIP SAME OR NEXT BUSINESS DAY</p>
-        </div>
         <div className="row">
           <div className="col images">
-            {imageSetArr.length !== 0 ? (
-              <ProductCarousel imageSet={imageSetArr} />
-            ) : (
-              <p>Add placeholder, no image</p>
-            )}
+            <ProductImageGrid product={shopifyProduct}></ProductImageGrid>
           </div>
           <div className="col">
             <div className="heading">
               <h1>{shopifyProduct.title}</h1>
               <form>
                 <div className="product-dropdown">
-                  {!hasSingleVariant ? (
+                  {!shopifyProduct.hasOnlyDefaultVariant ? (
                     <div>
                       <p>{selectedVariant.selectedOptions[0].name}</p>
                       <div className="select-dropdown">
@@ -338,27 +292,53 @@ const Product = ({ data: { shopifyProduct } }: any) => {
                   )}
                 </div>
                 <div className="price">
-                  <p className="label">STARTING AT</p>
-                  <p className="value">{selectedVariant.price} USD</p>
+                  <p className="value">${selectedVariant.price} USD</p>
                 </div>
               </form>
               <div className="actions">
+                <div className="select-wrapper">
+                  <select
+                    name="quantity"
+                    id="quantity"
+                    disabled={
+                      quantityLevels &&
+                      quantityLevels[selectedVariant.sku] === 0
+                        ? true
+                        : false
+                    }
+                    onChange={evt =>
+                      setSelectedVariantQuantity(evt.target.value)
+                    }
+                  >
+                    {quantityRange().map(el => {
+                      return <option key={`quantity-${el}`}>{el}</option>
+                    })}
+                  </select>
+                </div>
                 <div>
                   {quantityLevels &&
                   quantityLevels[selectedVariant.sku] !== 0 ? (
-                    <button type="button" onClick={handleAddToCart}>
+                    <button
+                      type="button"
+                      className="btn"
+                      onClick={handleAddToCart}
+                    >
                       ADD TO CART
                     </button>
                   ) : (
-                    <button type="button" className="sold-out">
+                    <button type="button" className="sold-out btn">
                       SOLD OUT
                     </button>
                   )}
                 </div>
               </div>
+              <p className="product-description">
+                {shopifyProduct.description}
+              </p>
             </div>
           </div>
         </div>
+        <YouMayAlsoLike shopifyProduct={shopifyProduct}></YouMayAlsoLike>
       </Page>
     </Layout>
   )
@@ -370,15 +350,25 @@ export const query = graphql`
   query ProductQueryShopify($handle: String) {
     shopifyProduct(handle: { eq: $handle }) {
       collections {
+        handle
         title
       }
       featuredImage {
         originalSrc
+        altText
+        localFile {
+          id
+          childImageSharp {
+            gatsbyImageData
+          }
+        }
       }
+      description
       id
       handle
       legacyResourceId
       onlineStoreUrl
+      hasOnlyDefaultVariant
       priceRangeV2 {
         minVariantPrice {
           amount
@@ -393,6 +383,7 @@ export const query = graphql`
       images {
         altText
         localFile {
+          id
           childImageSharp {
             gatsbyImageData
           }
@@ -406,6 +397,7 @@ export const query = graphql`
           originalSrc
           altText
           localFile {
+            id
             childImageSharp {
               gatsbyImageData
             }

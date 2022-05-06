@@ -20,11 +20,13 @@ const Component = styled.div`
       cursor: pointer;
     }
   }
-  .prev {
+  .nav-prev {
     flex: 1 15%;
+    line-height: 0;
   }
-  .next {
+  .nav-next {
     flex: 1 15%;
+    line-height: 0;
   }
   .options-swiper {
     flex: 1 70%;
@@ -102,6 +104,7 @@ const ProductOptionsCarousel = ({
         if (swiperRef.current) {
           // console.log(`${uniqueId} SET SLIDE TO`, index)
           swiperRef.current.slideTo(index, 200, false)
+          // option.click()
           setActiveIndex(index)
         }
       }
@@ -111,15 +114,39 @@ const ProductOptionsCarousel = ({
   return (
     <Component ref={sliderRef}>
       <div className="navigation">
-        {variants.length > 6 && (
-          <a className={`${uniqueId}-prev`} role="button">
-            <Left />
-          </a>
+        {variants.length > 6 ? (
+          <div className="nav-prev">
+            <a className={`prev ${uniqueId}-prev`} role="button">
+              <Left />
+            </a>
+          </div>
+        ) : (
+          <div className="nav-prev"></div>
         )}
 
         <StyledSwiper
+          slidesPerView={4}
+          spaceBetween={1}
           centerInsufficientSlides
           className="options-swiper"
+          breakpoints={{
+            "480": {
+              slidesPerView: 4,
+              spaceBetween: 1,
+            },
+            "768": {
+              slidesPerView: 4,
+              spaceBetween: 1,
+            },
+            "1024": {
+              slidesPerView: 5,
+              spaceBetween: 1,
+            },
+            "1200": {
+              slidesPerView: 6,
+              spaceBetween: 1,
+            },
+          }}
           grabCursor
           initialSlide={0}
           modules={[Navigation]}
@@ -134,11 +161,11 @@ const ProductOptionsCarousel = ({
           onInit={(swiper: any) => {
             swiperRef.current = swiper
           }}
-          slidesPerView={6}
-          slideToClickedSlide={true}
-          spaceBetween={3}
+          swipeHandler=".options-swiper"
           touchRatio={1}
-          watchOverflow
+          touchReleaseOnEdges={true}
+          touchStartForcePreventDefault={true}
+          threshold={15}
           watchSlidesProgress
         >
           {variants.map((variant: ContentfulProductVariant, i: number) => (
@@ -151,7 +178,6 @@ const ProductOptionsCarousel = ({
               className={`option ${i === activeIndex ? "active-option" : ""}`}
               data-option={variant.frameColor}
               data-index={i}
-              virtualIndex={i}
             >
               <OptionImage className="option-image">
                 <GatsbyImage
@@ -163,10 +189,15 @@ const ProductOptionsCarousel = ({
             </SwiperSlide>
           ))}
         </StyledSwiper>
-        {variants.length > 6 && (
-          <a className={`${uniqueId}-next`} role="button">
-            <Right />
-          </a>
+
+        {variants.length > 6 ? (
+          <div className="nav-next">
+            <a className={`next ${uniqueId}-next`} role="button">
+              <Right />
+            </a>
+          </div>
+        ) : (
+          <div className="nav-next"></div>
         )}
       </div>
     </Component>

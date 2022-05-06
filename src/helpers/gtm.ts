@@ -22,7 +22,6 @@ export const viewedProductGTMEvent = (productInfo: ShopifyProductInfo) => {
       SKU: productInfo.sku,
       Url: productInfo.url,
     }
-    console.log("VIEWED PRODUCT GTM EVENT", payload)
     window.dataLayer.push({
       event: "view_item",
       viewed_product_payload: payload,
@@ -58,7 +57,6 @@ export const addedToCartGTMEvent = (productInfo: ShopifyProductInfo) => {
         },
       ],
     }
-    console.log("ADDED TO CART GTM EVENT", payload)
     window.dataLayer.push({
       event: "add_to_cart",
       added_to_cart_payload: payload,
