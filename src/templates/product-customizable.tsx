@@ -9,10 +9,7 @@ import SEO from "../components/seo"
 import { CartContext } from "../contexts/cart"
 import { CustomerContext } from "../contexts/customer"
 import { SelectedVariantContext } from "../contexts/selectedVariant"
-import {
-  addedToCartKlaviyoEvent,
-  viewedProductKlaviyoEvent,
-} from "../helpers/klaviyo"
+import { addedToCartGTMEvent, viewedProductGTMEvent } from "../helpers/gtm"
 import Product from "./product"
 
 const Page = styled.div`
@@ -211,6 +208,7 @@ const ProductCustomizable = ({
   })
   // cart
   const { addProductToCart, checkout } = useContext(CartContext)
+  // initial
   useEffect(() => {
     const sku = selectedVariantContext
     if (sku) {
@@ -228,34 +226,28 @@ const ProductCustomizable = ({
         })
       }
     }
-  }, [
-    contentfulProduct?.variants,
-    selectedVariantContext,
-    shopifyProduct.variants,
-  ])
+  }, [])
 
   const { customerEmail } = useContext(CustomerContext)
 
   useEffect(() => {
-    if (customerEmail) {
-      const productData = {
-        title: shopifyProduct.title,
-        legacyResourceId: shopifyProduct.legacyResourceId,
-        sku: selectedVariant.shopify.sku,
-        productType: shopifyProduct.productType,
-        image: selectedVariant?.shopify?.image?.originalSrc
-          ? selectedVariant.shopify.image?.originalSrc
-          : shopifyProduct.featuredImage.originalSrc,
-        url: shopifyProduct.onlineStoreUrl,
-        vendor: shopifyProduct.vendor,
-        price: selectedVariant.shopify.price,
-        compareAtPrice: selectedVariant.shopify.compareAtPrice,
-        collections: shopifyProduct.collections.map(
-          (collection: { title: string }) => collection.title
-        ),
-      }
-      viewedProductKlaviyoEvent(productData)
+    const productData = {
+      title: shopifyProduct.title,
+      legacyResourceId: shopifyProduct.legacyResourceId,
+      sku: selectedVariant.shopify.sku,
+      productType: shopifyProduct.productType,
+      image: selectedVariant?.shopify?.image?.originalSrc
+        ? selectedVariant.shopify.image?.originalSrc
+        : shopifyProduct.featuredImage.originalSrc,
+      url: shopifyProduct.onlineStoreUrl,
+      vendor: shopifyProduct.vendor,
+      price: selectedVariant.shopify.price,
+      compareAtPrice: selectedVariant.shopify.compareAtPrice,
+      collections: shopifyProduct.collections.map(
+        (collection: { title: string }) => collection.title
+      ),
     }
+    viewedProductGTMEvent(productData)
   }, [selectedVariant])
 
   const selectVariant = (e: React.MouseEvent, variant: any) => {
@@ -276,26 +268,23 @@ const ProductCustomizable = ({
     const id = selectedVariant.shopify.storefrontId
     addProductToCart(id, 1)
     alert("ADDED TO CART")
-    // klaviyo
-    if (customerEmail) {
-      const productData = {
-        title: shopifyProduct.title,
-        legacyResourceId: shopifyProduct.legacyResourceId,
-        sku: selectedVariant.shopify.sku,
-        productType: shopifyProduct.productType,
-        image: selectedVariant?.shopify?.image?.originalSrc
-          ? selectedVariant.shopify.image?.originalSrc
-          : shopifyProduct.featuredImage.originalSrc,
-        url: shopifyProduct.onlineStoreUrl,
-        vendor: shopifyProduct.vendor,
-        price: selectedVariant.shopify.price,
-        compareAtPrice: selectedVariant.shopify.compareAtPrice,
-        collections: shopifyProduct.collections.map(
-          (collection: { title: string }) => collection.title
-        ),
-      }
-      addedToCartKlaviyoEvent(productData, checkout)
+    const productData = {
+      title: shopifyProduct.title,
+      legacyResourceId: shopifyProduct.legacyResourceId,
+      sku: selectedVariant.shopify.sku,
+      productType: shopifyProduct.productType,
+      image: selectedVariant?.shopify?.image?.originalSrc
+        ? selectedVariant.shopify.image?.originalSrc
+        : shopifyProduct.featuredImage.originalSrc,
+      url: shopifyProduct.onlineStoreUrl,
+      vendor: shopifyProduct.vendor,
+      price: selectedVariant.shopify.price,
+      compareAtPrice: selectedVariant.shopify.compareAtPrice,
+      collections: shopifyProduct.collections.map(
+        (collection: { title: string }) => collection.title
+      ),
     }
+    addedToCartGTMEvent(productData)
   }
 
   return (

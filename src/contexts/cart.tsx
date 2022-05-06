@@ -345,6 +345,7 @@ export const CartProvider = ({ children }) => {
               }
             }
           } else {
+            // local checkout doesn't exist, get checkout and create local
             checkout = await client.checkout.fetch(checkoutId)
             if (isBrowser) {
               const now = new Date()

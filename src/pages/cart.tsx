@@ -9,7 +9,7 @@ import QuantitySelector from "../components/quantity-selector"
 import { CartContext } from "../contexts/cart"
 import { CustomerContext } from "../contexts/customer"
 import { LineItem } from "../types/checkout"
-import { startedCheckoutKlaviyoEvent } from "../helpers/klaviyo"
+import { startedCheckoutGTMEvent } from "../helpers/gtm"
 import { VscBeaker, VscClose } from "react-icons/vsc"
 import Upsell from "../components/upsell"
 
@@ -226,7 +226,7 @@ const Cart = () => {
   useEffect(() => {
     if (checkout) {
       if (checkout.lineItems.length > 0) {
-        startedCheckoutKlaviyoEvent(checkout)
+        startedCheckoutGTMEvent(checkout)
       }
       associateCheckout(checkout.id)
     }
