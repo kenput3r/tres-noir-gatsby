@@ -85,7 +85,6 @@ const Cart = () => {
 
   useEffect(() => {
     if (checkout) {
-      console.log("CHECKOUT", checkout)
       if (checkout.lineItems.length > 0) {
         startedCheckoutGTMEvent(checkout)
       }
