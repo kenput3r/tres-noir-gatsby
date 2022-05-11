@@ -29,7 +29,12 @@ export interface ContentfulCollection {
   name: string
   featuredImage: {
     data: IGatsbyImageData
+    description: string
   }
+  featuredImage2: {
+    data: IGatsbyImageData
+  }
+  featuredImageTextColor: string
   featuredImageClear: {
     data: IGatsbyImageData
   }

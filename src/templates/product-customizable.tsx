@@ -505,10 +505,17 @@ export const query = graphql`
     }
     shopifyProduct(handle: { eq: $handle }) {
       collections {
+        handle
         title
       }
       featuredImage {
         originalSrc
+        altText
+        localFile {
+          childImageSharp {
+            gatsbyImageData
+          }
+        }
       }
       id
       handle

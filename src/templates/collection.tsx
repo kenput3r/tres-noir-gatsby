@@ -43,6 +43,7 @@ const Page = styled.section`
         right: unset;
         position: static;
         text-align: center;
+        max-width: unset;
         h1,
         p {
           color: black;

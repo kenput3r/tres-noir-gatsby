@@ -27,7 +27,8 @@ const ProductImageGrid = (props: { product: any }) => {
     // single Product with images
     if (product.featuredImage && product.featuredImage.localFile) {
       imageSet.push({
-        data: product.featuredImage.localFile.childImageSharp.gatsbyImageData,
+        data: product.featuredImage?.localFile?.childImageSharp
+          ?.gatsbyImageData,
         title: product.featuredImage.altText,
       })
     }
