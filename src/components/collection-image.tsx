@@ -57,7 +57,6 @@ const CollectionImage = (props: {
     textColor,
     position,
   } = props
-  console.log(position)
   const inlineStyleText = {
     color: textColor,
     right: position === "right" ? "0" : "unset",
