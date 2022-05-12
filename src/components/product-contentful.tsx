@@ -13,12 +13,19 @@ import ProductOptionsCarousel from "../components/product-options-carousel"
 const Component = styled.article`
   margin-bottom: 1.45rem;
   width: 33.33%;
+  @media screen and (min-width: 601px) and (max-width: 1023px) {
+    width: 50%;
+  }
+  padding: 0 15px;
   text-align: center;
-  @media only screen and (max-width: 480px) {
+  font-family: var(--heading-font);
+  text-transform: uppercase;
+  @media only screen and (max-width: 600px) {
     width: 100%;
   }
   h3 {
     text-align: center;
+    font-weight: 400;
   }
   .options {
     button {

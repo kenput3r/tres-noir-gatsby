@@ -1,6 +1,6 @@
 import React, { useState, useContext, ChangeEvent, useEffect } from "react"
 import { useQuantityQuery } from "../hooks/useQuantityQuery"
-import { GatsbyImage } from "gatsby-plugin-image"
+import { GatsbyImage, StaticImage } from "gatsby-plugin-image"
 import { Link } from "gatsby"
 import { CartContext } from "../contexts/cart"
 import styled from "styled-components"
@@ -63,14 +63,14 @@ const Component = styled.article`
   }
 `
 
-const UpsellProduct = (props: { product: any }) => {
-  const { product } = props
+const UpsellProduct = (props: { upsellProduct: any }) => {
+  const { upsellProduct } = props
   const quantityLevels = useQuantityQuery(
-    product.handle,
-    product.variants.length
+    upsellProduct.handle,
+    upsellProduct.variants.length
   )
-  let initialVariant = product.variants[0]
-  if (!product.hasOnlyDefaultVariant) {
+  let initialVariant = upsellProduct.variants[0]
+  if (!upsellProduct.hasOnlyDefaultVariant) {
     for (let i in quantityLevels) {
       if (quantityLevels[i] > 0) {
         initialVariant = quantityLevels[i]
@@ -88,7 +88,7 @@ const UpsellProduct = (props: { product: any }) => {
 
   const handleVariant = (evt: ChangeEvent<HTMLSelectElement>) => {
     const sku = evt.target.value
-    const newVariant = product.variants.find(
+    const newVariant = upsellProduct.variants.find(
       (_variant: any) => _variant.sku === sku
     )
     setSelectedVariant(newVariant)
@@ -96,30 +96,38 @@ const UpsellProduct = (props: { product: any }) => {
 
   return (
     <Component>
-      <div className="upsell-product" key={product.id}>
-        <Link to={`/products/${product.handle}`}>
+      <div className="upsell-product" key={upsellProduct.id}>
+        <Link to={`/products/${upsellProduct.handle}`}>
           <div className="upsell-image">
-            <GatsbyImage
-              image={
-                product.featuredImage.localFile.childImageSharp.gatsbyImageData
-              }
-              alt={product.title}
-            ></GatsbyImage>
+            {upsellProduct.featuredImage?.localFile ? (
+              <GatsbyImage
+                image={
+                  upsellProduct.featuredImage.localFile.childImageSharp
+                    .gatsbyImageData
+                }
+                alt={upsellProduct.title}
+              ></GatsbyImage>
+            ) : (
+              <StaticImage
+                src="../images/product-no-image.jpg"
+                alt={upsellProduct.title}
+              ></StaticImage>
+            )}
           </div>
           <div>
-            <p>{product.title}</p>
+            <p>{upsellProduct.title}</p>
           </div>
         </Link>
         <div className="select-price">
           <div>
-            {!product.hasOnlyDefaultVariant && (
+            {!upsellProduct.hasOnlyDefaultVariant && (
               <div className="variant-select">
                 <div className="select-dropdown">
                   <select
                     id="product-variants"
                     onChange={evt => handleVariant(evt)}
                   >
-                    {product.variants.map(element => {
+                    {upsellProduct.variants.map(element => {
                       return (
                         <option key={element.sku} value={element.sku}>
                           {element.title}

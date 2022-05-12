@@ -12,14 +12,18 @@ const DisplayFilters = styled.div`
   flex-direction: row;
   flex-wrap: wrap;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: center;
   margin-top: 20px;
+  font-family: var(--heading-font);
   button {
+    font-size: 1.25rem;
+    @media (max-width: 600px) {
+      font-size: 1.2rem;
+    }
     border: none;
     background-color: transparent;
     color: #000;
     text-transform: uppercase;
-    font-size: 1.2em;
     cursor: pointer;
     &:hover {
       color: var(--color-grey-dark);
@@ -46,6 +50,12 @@ const Triangle = styled.div`
 `
 
 const Filters = styled.div`
+  font-family: var(--heading-font);
+  font-size: 0.98rem;
+  p,
+  span {
+    font-size: 0.9rem;
+  }
   display: flex;
   flex-direction: column;
   flex-wrap: wrap;
@@ -62,6 +72,9 @@ const Filters = styled.div`
     align-items: center;
     text-align: center;
     gap: 20px;
+    .reset {
+      margin-top: 10px;
+    }
   }
   .color-options {
     display: flex;
@@ -82,7 +95,6 @@ const Filters = styled.div`
     cursor: pointer;
     text-transform: uppercase;
     color: var(--color-grey-dark);
-    font-size: 1.2em;
     &:hover {
       border-radius: 15px;
       color: #000;
@@ -106,17 +118,26 @@ const Filters = styled.div`
       background-color: #fff;
     }
     &.frame-filter {
-      p {
-        margin: 0.65rem 0.65rem;
+      .fit-type {
+        margin-top: 8px;
+        font-family: var(--sub-heading-font);
+        position: relative;
+        span {
+          vertical-align: middle;
+        }
+        .text {
+          font-size: 1.05rem;
+        }
       }
     }
     &.color-filter {
       line-height: 50px;
+      font-family: var(--sub-heading-font);
     }
   }
   ul {
-    border-top: 3px solid #000;
-    border-bottom: 3px solid #000;
+    /* border-top: 3px solid #000;
+    border-bottom: 3px solid #000; */
     list-style-type: none;
     display: flex;
     flex-direction: row;
@@ -126,10 +147,19 @@ const Filters = styled.div`
     margin-left: 0;
     margin-bottom: 15px;
     padding: 0 10px;
-    position: relative;
     li {
+      font-size: 1.2rem;
       margin-bottom: 0;
       padding: 10px 25px;
+      white-space: nowrap;
+      flex: 1;
+      [data-active="true"] {
+        text-decoration: underline;
+      }
+      @media (max-width: 600px) {
+        padding: 10px 5px;
+        font-size: 0.97rem;
+      }
     }
   }
 `
@@ -244,7 +274,11 @@ const FiltersContentful = ({
   return (
     <>
       <DisplayFilters>
-        <button type="button" onClick={handleShowFilters}>
+        <button
+          className="filter-title"
+          type="button"
+          onClick={handleShowFilters}
+        >
           Filter +
         </button>
       </DisplayFilters>
@@ -306,7 +340,9 @@ const FiltersContentful = ({
                         style={{ marginBottom: 0 }}
                         width={150}
                       />
-                      <p>{fitType}</p>
+                      <div className="fit-type">
+                        <span className="text">&#8866; {fitType} &#8867;</span>
+                      </div>
                     </button>
                   ))}
               </div>

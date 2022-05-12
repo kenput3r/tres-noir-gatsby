@@ -45,16 +45,6 @@ const YouMayAlsoLike = (props: { shopifyProduct: any }) => {
   const { shopifyProduct } = props
 
   const collectionItems = useRandomizeCollection(shopifyProduct)
-  const { addProductToCart } = useContext(CartContext)
-
-  const handleAddToCart = product => {
-    addProductToCart(product.variants[0].storefrontId, 1)
-    alert("ADDED TO CART")
-  }
-
-  const quantityLevelsAll = collectionItems.map(element => {
-    return useQuantityQuery(element.handle, element.variants.length)
-  })
 
   return (
     <Component>
@@ -65,7 +55,7 @@ const YouMayAlsoLike = (props: { shopifyProduct: any }) => {
       <div className="row">
         <div className="upsell-cards">
           {collectionItems.map(product => {
-            return <UpsellProduct key={product.id} product={product} />
+            return <UpsellProduct key={product.id} upsellProduct={product} />
           })}
         </div>
       </div>
