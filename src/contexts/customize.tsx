@@ -1,5 +1,9 @@
 import React, { createContext, ReactChild, useState, useMemo } from "react"
-import { SelectedVariants, ShopifyVariant } from "../types/global"
+import {
+  SelectedVariants,
+  ShopifyVariant,
+  SavedCustomizeContexts,
+} from "../types/global"
 
 const defaultContext = {
   currentStep: 1,
@@ -106,6 +110,13 @@ const defaultContext = {
   },
   setSelectedVariants: (selectedVariants: SelectedVariants) => {},
   setSelectedVariantsToDefault: () => {},
+  hasSavedCustomized: {
+    step1: false,
+    step2: false,
+    step3: false,
+    step4: false,
+  },
+  setHasSavedCustomized: (hasSavedCustomized: SavedCustomizeContexts) => {},
 }
 
 export const CustomizeContext = createContext(defaultContext)
@@ -113,6 +124,12 @@ export const CustomizeContext = createContext(defaultContext)
 export const CustomizeProvider = ({ children }: { children: ReactChild }) => {
   const [currentStep, setCurrentStep] = useState(1)
   const [productUrl, setProductUrl] = useState("/")
+  const [hasSavedCustomized, setHasSavedCustomized] = useState({
+    step1: false,
+    step2: false,
+    step3: false,
+    step4: false,
+  })
   const [selectedVariants, setSelectedVariants] = useState<SelectedVariants>({
     step1: {
       image: {
@@ -322,6 +339,8 @@ export const CustomizeProvider = ({ children }: { children: ReactChild }) => {
       selectedVariants,
       setSelectedVariants,
       setSelectedVariantsToDefault,
+      hasSavedCustomized,
+      setHasSavedCustomized,
     }),
     [
       currentStep,
@@ -330,6 +349,8 @@ export const CustomizeProvider = ({ children }: { children: ReactChild }) => {
       setProductUrl,
       selectedVariants,
       setSelectedVariants,
+      hasSavedCustomized,
+      setHasSavedCustomized,
     ]
   )
 

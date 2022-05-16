@@ -56,3 +56,10 @@ export interface SelectedVariants {
   step3: any
   step4: any
 }
+
+export interface SavedCustomizeContexts {
+  step1: boolean
+  step2: boolean
+  step3: boolean
+  step4: boolean
+}
