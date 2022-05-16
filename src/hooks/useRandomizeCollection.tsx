@@ -5,17 +5,7 @@ export const useRandomizeCollection = currentProduct => {
   const getCollectionItems = () => {
     const { shopifyCollection } = useStaticQuery(graphql`
       query GetYouMayAlsoLikeProducts {
-        shopifyCollection(
-          handle: { eq: "clothing" }
-          products: {
-            elemMatch: {
-              variants: {
-                elemMatch: { inventoryQuantity: { gt: 0 }, price: {} }
-              }
-              totalInventory: { gt: 0 }
-            }
-          }
-        ) {
+        shopifyCollection(handle: { eq: "clothing" }) {
           products {
             id
             featuredImage {
@@ -26,8 +16,10 @@ export const useRandomizeCollection = currentProduct => {
               }
             }
             title
+            productType
             handle
             hasOnlyDefaultVariant
+            hasOutOfStockVariants
             variants {
               title
               sku
@@ -68,7 +60,8 @@ export const useRandomizeCollection = currentProduct => {
       return (
         el.id !== currentProduct.id &&
         !el.tags.includes("upsell_item") &&
-        el.variants[0].inventoryQuantity > 0
+        !el.hasOutOfStockVariants &&
+        el.productType !== "Gift Card"
       )
     })
 

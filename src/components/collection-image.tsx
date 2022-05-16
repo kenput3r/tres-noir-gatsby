@@ -11,6 +11,7 @@ const Component = styled.section`
       height: 435px;
       @media screen and (max-width: 600px) {
         height: 200px;
+        filter: unset !important;
       }
     }
     .inner-text {
@@ -27,9 +28,9 @@ const Component = styled.section`
       }
       position: absolute;
       top: 8px;
-      padding: 10px;
+      padding: 10px 5px;
       margin-bottom: 0;
-      max-width: 480px;
+      max-width: 490px;
       @media (max-width: 600px) {
         position: static;
         max-width: unset;
@@ -37,7 +38,7 @@ const Component = styled.section`
         top: unset;
         left: unset;
         right: unset;
-        color: black;
+        color: black !important;
       }
     }
   }
@@ -62,9 +63,9 @@ const CollectionImage = (props: {
     right: position === "right" ? "0" : "unset",
     left: position === "left" ? "15px" : "unset",
   }
-  const inlineStyleImage = {
-    filter: textColor === "white" ? "brightness(0.8)" : "unset",
-  }
+  // const inlineStyleImage = {
+  //   filter: textColor === "white" ? "brightness(0.8)" : "unset",
+  // }
   return (
     <Component>
       <div className="image-container">
@@ -72,7 +73,7 @@ const CollectionImage = (props: {
           className="collection-image"
           image={collectionImage}
           alt={collectionName}
-          style={inlineStyleImage}
+          // style={inlineStyleImage}
         ></GatsbyImage>
         <div className="inner-text" style={inlineStyleText}>
           <h1>{collectionName}</h1>

@@ -68,7 +68,7 @@ export function useQuantityQuery(handle: string, size: number) {
         })
         return quantities
       } else {
-        console.log("Error while calling quantity fetch, error")
+        console.log(`Error while calling quantity fetch, error on ${handle}`)
         return {}
       }
     } catch (error) {
@@ -82,7 +82,7 @@ export function useQuantityQuery(handle: string, size: number) {
       createQuantityData().then(result => setProductQuantities(result))
     }
     return () => {
-      console.log("ABORTING?")
+      //console.log("ABORTING?")
       abortController.abort()
     }
   }, [])

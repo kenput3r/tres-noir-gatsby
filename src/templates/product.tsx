@@ -1,4 +1,11 @@
-import React, { useState, useContext, ChangeEvent } from "react"
+import React, {
+  useState,
+  useContext,
+  ChangeEvent,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+} from "react"
 import { graphql } from "gatsby"
 import { GatsbyImage, StaticImage } from "gatsby-plugin-image"
 import { CustomerContext } from "../contexts/customer"
@@ -80,26 +87,6 @@ const Page = styled.div`
     span {
       float: right;
     }
-  }
-  .options {
-    /* button {
-      background-color: transparent;
-      border: 1px solid #fff;
-      border-radius: 50%;
-      line-height: 0;
-      margin-right: 5px;
-      padding: 5px;
-      max-width: 50px;
-      &[data-active="true"] {
-        border-color: #000;
-      }
-      :hover {
-        cursor: pointer;
-      }
-      .gatsby-image-wrapper {
-        border-radius: 50%;
-      }
-    } */
   }
   .selected-text-label {
     font-size: 1.5rem;
@@ -194,13 +181,27 @@ const Product = ({ data: { shopifyProduct } }: any) => {
     shopifyProduct.variants[0]
   )
 
-  const [selectedVariantQuantity, setSelectedVariantQuantity] =
-    useState<string>("1")
-
   const quantityLevels = useQuantityQuery(
     shopifyProduct.handle,
     shopifyProduct.variants.length
   )
+
+  useEffect(() => {
+    let firstVariant = shopifyProduct.variants[0]
+    for (let key in quantityLevels) {
+      if (quantityLevels[key] > 0) {
+        firstVariant = shopifyProduct.variants.find(
+          (_variant: any) => _variant.sku === key
+        )
+        break
+      }
+    }
+
+    setSelectedVariant(firstVariant)
+  }, [quantityLevels])
+
+  const [selectedVariantQuantity, setSelectedVariantQuantity] =
+    useState<string>("1")
 
   const { addProductToCart, checkout } = useContext(CartContext)
   const { customerEmail } = useContext(CustomerContext)
@@ -274,6 +275,7 @@ const Product = ({ data: { shopifyProduct } }: any) => {
                       <p>{selectedVariant.selectedOptions[0].name}</p>
                       <div className="select-dropdown">
                         <select
+                          value={selectedVariant.sku}
                           id="product-variants"
                           onChange={evt => handleVariant(evt)}
                         >
