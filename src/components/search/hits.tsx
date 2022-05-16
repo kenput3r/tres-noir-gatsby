@@ -23,11 +23,9 @@ const Component = styled.ul`
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 2rem;
-  @media only screen and (max-width: 1024px) {
-    gap: 1rem;
-  }
-  @media only screen and (min-width: 768px) and (max-width: 1023px) {
-    gap: 0;
+  @media only screen and (max-width: 768px) {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;
   }
   @media only screen and (max-width: 468px) {
     grid-template-columns: 1fr;

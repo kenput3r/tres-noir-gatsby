@@ -31,7 +31,7 @@ interface Location {
   }
 }
 
-const hitsPerPage = 15
+const hitsPerPage = 18
 
 const Page = styled.div``
 
