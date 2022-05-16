@@ -63,9 +63,9 @@ const CollectionImage = (props: {
     right: position === "right" ? "0" : "unset",
     left: position === "left" ? "15px" : "unset",
   }
-  // const inlineStyleImage = {
-  //   filter: textColor === "white" ? "brightness(0.8)" : "unset",
-  // }
+  const inlineStyleImage = {
+    filter: textColor === "white" ? "brightness(0.8)" : "unset",
+  }
   return (
     <Component>
       <div className="image-container">
@@ -73,7 +73,7 @@ const CollectionImage = (props: {
           className="collection-image"
           image={collectionImage}
           alt={collectionName}
-          // style={inlineStyleImage}
+          style={inlineStyleImage}
         ></GatsbyImage>
         <div className="inner-text" style={inlineStyleText}>
           <h1>{collectionName}</h1>
