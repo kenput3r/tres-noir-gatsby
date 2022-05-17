@@ -11,6 +11,7 @@ const Component = styled.section`
       height: 435px;
       @media screen and (max-width: 600px) {
         height: 200px;
+        filter: unset !important;
       }
     }
     .inner-text {
@@ -27,9 +28,9 @@ const Component = styled.section`
       }
       position: absolute;
       top: 8px;
-      padding: 10px;
+      padding: 10px 5px;
       margin-bottom: 0;
-      max-width: 480px;
+      max-width: 490px;
       @media (max-width: 600px) {
         position: static;
         max-width: unset;
@@ -37,7 +38,7 @@ const Component = styled.section`
         top: unset;
         left: unset;
         right: unset;
-        color: black;
+        color: black !important;
       }
     }
   }

@@ -1,4 +1,10 @@
-import React, { useContext, useRef, ChangeEvent, useState } from "react"
+import React, {
+  useContext,
+  useRef,
+  ChangeEvent,
+  useState,
+  useEffect,
+} from "react"
 import { Link } from "gatsby"
 import { GatsbyImage } from "gatsby-plugin-image"
 import styled from "styled-components"
@@ -309,6 +315,8 @@ const Form = ({
     productUrl,
     selectedVariants,
     setSelectedVariants,
+    hasSavedCustomized,
+    setHasSavedCustomized,
   } = useContext(CustomizeContext)
   const stepMap = new Map()
   stepMap.set(1, "RX TYPE")
@@ -320,7 +328,11 @@ const Form = ({
   const [isFormValid, setIsFormValid] = useState(true)
   const errorRefs = useRef({})
   const continueBtn = useRef<HTMLButtonElement>(null)
-  const handleChange = (variant: ShopifyVariant) => {
+  const handleChange = (
+    variant: ShopifyVariant,
+    isSetFromEvent: boolean = true
+  ) => {
+    console.log("setFromEvent", isSetFromEvent)
     setRxAble(variant.product?.title !== "Non-Prescription Lens")
     if (variant.product?.title === "Non-Prescription Lens") {
       if (messageRef.current) {
@@ -328,6 +340,10 @@ const Form = ({
         continueBtn.current?.classList.remove("disable")
       }
     }
+    setHasSavedCustomized({
+      ...hasSavedCustomized,
+      [`step${currentStep}`]: isSetFromEvent,
+    })
     setSelectedVariants({
       ...selectedVariants,
       [`step${currentStep}`]: variant,
@@ -454,12 +470,20 @@ const Form = ({
       return
     }
   }
+
+  useEffect(() => {
+    // console.log("hasSaved", hasSavedCustomized[`step${currentStep}`])
+    if (hasSavedCustomized[`step${currentStep}`] === false) {
+      handleChange(shopifyCollection.products[0].variants[0], false)
+    }
+  }, [])
+
   return (
     <Component>
       <div className="step-header">
         <p>Choose your {stepMap.get(currentStep)}</p>
       </div>
-      {shopifyCollection.products.map((product: ShopifyProduct) => (
+      {shopifyCollection.products.map((product: ShopifyProduct, index) => (
         <React.Fragment key={product.id}>
           {product.variants.length === 1 ? (
             <div className="product-option">

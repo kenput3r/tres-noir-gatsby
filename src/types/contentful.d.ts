@@ -35,6 +35,7 @@ export interface ContentfulCollection {
     data: IGatsbyImageData
   }
   featuredImageTextColor: string
+  featuredImageTextPosition: string
   featuredImageClear: {
     data: IGatsbyImageData
   }

@@ -69,17 +69,24 @@ const UpsellProduct = (props: { upsellProduct: any }) => {
     upsellProduct.handle,
     upsellProduct.variants.length
   )
-  let initialVariant = upsellProduct.variants[0]
-  if (!upsellProduct.hasOnlyDefaultVariant) {
-    for (let i in quantityLevels) {
-      if (quantityLevels[i] > 0) {
-        initialVariant = quantityLevels[i]
+
+  const [selectedVariant, setSelectedVariant] = useState(
+    upsellProduct.variants[0]
+  )
+
+  useEffect(() => {
+    let firstVariant = upsellProduct.variants[0]
+    for (let key in quantityLevels) {
+      if (quantityLevels[key] > 0) {
+        firstVariant = upsellProduct.variants.find(
+          (_variant: any) => _variant.sku === key
+        )
         break
       }
     }
-  }
 
-  const [selectedVariant, setSelectedVariant] = useState(initialVariant)
+    setSelectedVariant(firstVariant)
+  }, [quantityLevels])
   const { addProductToCart } = useContext(CartContext)
   const handleAddToCart = () => {
     addProductToCart(selectedVariant.storefrontId, 1)
@@ -126,6 +133,7 @@ const UpsellProduct = (props: { upsellProduct: any }) => {
                   <select
                     id="product-variants"
                     onChange={evt => handleVariant(evt)}
+                    value={selectedVariant.sku}
                   >
                     {upsellProduct.variants.map(element => {
                       return (
