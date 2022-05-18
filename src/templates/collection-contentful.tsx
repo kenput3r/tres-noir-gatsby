@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from "react"
+import React, { useContext, useState, useEffect } from "react"
 import { graphql } from "gatsby"
 import styled from "styled-components"
 import { GatsbyImage } from "gatsby-plugin-image"
+import { SelectedVariantContext } from "../contexts/selectedVariant"
 import Product from "../components/product-contentful"
 import Layout from "../components/layout"
 import SEO from "../components/seo"
@@ -73,6 +74,13 @@ const CollectionContentful = ({
   const [products, setProducts] = useState<ContentfulProduct[]>(
     collection.products
   )
+
+  const { setSelectedVariantContext } = useContext(SelectedVariantContext)
+
+  useEffect(() => {
+    // reset selected variant context
+    setSelectedVariantContext("")
+  }, [])
 
   return (
     <Layout>
