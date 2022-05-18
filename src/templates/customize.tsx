@@ -91,6 +91,7 @@ const Customize = ({
     if (!isBrowser) return
     const urlParams = new URLSearchParams(window.location.search)
     const sku = urlParams.get("variant")
+    const lensType = urlParams.get("lens_type")
     const contentful = contentfulProduct.variants.find(
       (_variant: ContentfulProductVariant) => _variant.sku === sku
     )
@@ -100,7 +101,9 @@ const Customize = ({
     if (contentful && shopify) {
       const _variant = { contentful, shopify }
       setVariant(_variant)
-      setProductUrl(`/products/${contentfulProduct.handle}`)
+      let handle = `/products/${contentfulProduct.handle}`
+      if (lensType) handle = `${handle}?lens_type=${lensType}`
+      setProductUrl(handle)
       if (previewRef.current) {
         const previewImage = previewRef.current.querySelector(
           ".gatsby-image-wrapper img[data-main-image]"
@@ -116,7 +119,7 @@ const Customize = ({
   }, [
     contentfulProduct?.handle,
     contentfulProduct?.variants,
-    setProductUrl,
+    // setProductUrl,
     shopifyProduct.variants,
   ])
 
@@ -124,12 +127,6 @@ const Customize = ({
   useEffect(() => {
     let { price } = variant.shopify
     Object.keys(selectedVariants).forEach(key => {
-      // @ts-ignore
-      // price += selectedVariants[key].price
-      // convert everything to int and divide by 100 at the end
-      // price = Number(price.toFixed(2)) * 100
-      // price += selectedVariants[key].price * 100
-      // price /= 100
       price = Number(price)
       price += Number(selectedVariants[key].price)
     })

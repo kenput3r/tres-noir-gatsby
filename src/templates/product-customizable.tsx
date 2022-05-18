@@ -7,7 +7,6 @@ import ProductCarousel from "../components/product-carousel"
 import Layout from "../components/layout"
 import SEO from "../components/seo"
 import { CartContext } from "../contexts/cart"
-import { CustomerContext } from "../contexts/customer"
 import { SelectedVariantContext } from "../contexts/selectedVariant"
 import { addedToCartGTMEvent, viewedProductGTMEvent } from "../helpers/gtm"
 import Product from "./product"
@@ -200,25 +199,11 @@ const ProductCustomizable = ({
     GLASSES = "glasses",
     SUNGLASSES = "sunglasses",
   }
-  const isBrowser = typeof window !== "undefined"
-  let lensType: null | string = null
-  if (isBrowser) {
-    const params = new URLSearchParams(location.search)
-    lensType = params.get("lens_type")
-  }
 
-  // return default Product Page if contentful values do not exist
-  const quantityLevels = useQuantityQuery(
-    shopifyProduct.handle,
-    shopifyProduct.variants.length
+  const [lensType, setLensType] = useState<string>("sunglasses")
+  const [imageSet, setImageSet] = useState<any>(
+    contentfulProduct.variants[0].imageSet
   )
-  const { selectedVariantContext, setSelectedVariantContext } = useContext(
-    SelectedVariantContext
-  )
-  const [selectedVariant, setSelectedVariant] = useState({
-    contentful: contentfulProduct?.variants && contentfulProduct.variants[0],
-    shopify: shopifyProduct.variants[0],
-  })
 
   const getImageSet = (variant: any) => {
     let defaultImageSet
@@ -239,9 +224,34 @@ const ProductCustomizable = ({
     }
     return defaultImageSet
   }
-  const defaultImageSet = getImageSet(contentfulProduct.variants[0])
 
-  const [imageSet, setImageSet] = useState<any>(defaultImageSet)
+  useEffect(() => {
+    const isBrowser = typeof window !== "undefined"
+    if (isBrowser) {
+      const params = new URLSearchParams(location.search)
+      if (params.get("lens_type"))
+        setLensType(params.get("lens_type") || "glasses")
+    }
+  }, [])
+
+  useEffect(() => {
+    const defaultImageSet = getImageSet(contentfulProduct.variants[0])
+    setImageSet(defaultImageSet)
+  }, [lensType])
+
+  // return default Product Page if contentful values do not exist
+  const quantityLevels = useQuantityQuery(
+    shopifyProduct.handle,
+    shopifyProduct.variants.length
+  )
+  const { selectedVariantContext, setSelectedVariantContext } = useContext(
+    SelectedVariantContext
+  )
+  const [selectedVariant, setSelectedVariant] = useState({
+    contentful: contentfulProduct?.variants && contentfulProduct.variants[0],
+    shopify: shopifyProduct.variants[0],
+  })
+
   // cart
   const { addProductToCart, checkout } = useContext(CartContext)
   // initial
@@ -263,8 +273,6 @@ const ProductCustomizable = ({
       }
     }
   }, [])
-
-  const { customerEmail } = useContext(CustomerContext)
 
   useEffect(() => {
     const productData = {
@@ -332,6 +340,10 @@ const ProductCustomizable = ({
     setImageSet(defaultImageSet)
   }
 
+  let customizeUrl = `/products/${contentfulProduct.handle}/customize?variant=${selectedVariant.shopify.sku}`
+  if (lensType !== LensType.SUNGLASSES)
+    customizeUrl = `${customizeUrl}&lens_type=${lensType}`
+
   return (
     <Layout>
       <SEO title={shopifyProduct.title} />
@@ -348,10 +360,6 @@ const ProductCustomizable = ({
         <div className="row">
           <div className="col images">
             <ProductCarousel
-              // imageSet={
-              //   selectedVariant?.contentful &&
-              //   selectedVariant.contentful.imageSet
-              // }
               imageSet={selectedVariant?.contentful && imageSet}
             />
           </div>
@@ -448,10 +456,7 @@ const ProductCustomizable = ({
 
                     <Link
                       className="customize-btn"
-                      to={
-                        contentfulProduct &&
-                        `/products/${contentfulProduct.handle}/customize?variant=${selectedVariant.shopify.sku}`
-                      }
+                      to={contentfulProduct && customizeUrl}
                     >
                       CUSTOMIZE
                     </Link>
