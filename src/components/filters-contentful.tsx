@@ -167,12 +167,12 @@ const Filters = styled.div`
 interface Props {
   collection: ContentfulCollection
   filters: {
-    fitType: null | string
-    colorName: null | string
+    frameWidth: string
+    colorName: string
   }
   setFilters: Dispatch<{
-    fitType: null | string
-    colorName: null | string
+    frameWidth: string
+    colorName: string
   }>
   setProducts: Dispatch<ContentfulProduct[]>
 }
@@ -180,7 +180,7 @@ interface Props {
 // eslint-disable-next-line no-unused-vars
 // eslint-disable-next-line no-shadow
 enum FilterTypes {
-  FitType = "fitType",
+  FrameWidth = "frameWidth",
   ColorName = "colorName",
 }
 
@@ -191,16 +191,16 @@ const FiltersContentful = ({
   setProducts,
 }: Props) => {
   const [showFilters, setShowFilters] = useState<boolean>(false)
-  const [panel, setPanel] = useState<string>(FilterTypes.FitType)
-  const [fitTypes, setFitTypes] = useState<string[]>([])
+  const [panel, setPanel] = useState<string>(FilterTypes.FrameWidth)
+  const [frameWidths, setFrameWidths] = useState<string[]>([])
   const [colors, setColors] = useState<string[]>([])
 
   const frameColors = useFrameColors()
 
   const generateFilters = (products: ContentfulProduct[]) => {
-    const { fitTypesList, colorsList } = getFilters(products)
+    const { frameWidthList, colorsList } = getFilters(products)
     // set values
-    setFitTypes(fitTypesList)
+    setFrameWidths(frameWidthList)
     setColors(colorsList)
   }
 
@@ -211,17 +211,18 @@ const FiltersContentful = ({
   const filter = (type: string, value: string): void => {
     let filteredProducts: ContentfulProduct[] = collection.products
     if (filters[type] === value) {
-      filters[type] = null
+      filters[type] = ""
     } else {
       filters[type] = value
     }
+
     const keys = Object.keys(filters)
     // eslint-disable-next-line no-shadow
     keys.forEach(filter => {
       if (filters[filter]) {
-        if (filter === FilterTypes.FitType) {
-          filteredProducts = filteredProducts.filter(
-            product => product.fitType === filters[filter]
+        if (filter === FilterTypes.FrameWidth) {
+          filteredProducts = filteredProducts.filter(product =>
+            product.frameWidth.includes(filters[filter])
           )
         }
         if (filter === FilterTypes.ColorName) {
@@ -244,7 +245,7 @@ const FiltersContentful = ({
   }
 
   const reset = (): void => {
-    setFilters({ fitType: null, colorName: null })
+    setFilters({ frameWidth: "", colorName: "" })
     setProducts(collection.products)
     generateFilters(collection.products)
   }
@@ -295,10 +296,10 @@ const FiltersContentful = ({
                   <button
                     className="filter-type"
                     type="button"
-                    onClick={() => handlePanel(FilterTypes.FitType)}
-                    data-active={panel === FilterTypes.FitType}
+                    onClick={() => handlePanel(FilterTypes.FrameWidth)}
+                    data-active={panel === FilterTypes.FrameWidth}
                     aria-pressed={
-                      panel === FilterTypes.FitType ? "true" : "false"
+                      panel === FilterTypes.FrameWidth ? "true" : "false"
                     }
                   >
                     FRAME WIDTH
@@ -319,29 +320,31 @@ const FiltersContentful = ({
                 </li>
               </ul>
             </div>
-            {panel === FilterTypes.FitType && (
+            {panel === FilterTypes.FrameWidth && (
               <div className="frame-options">
-                {fitTypes.length &&
-                  fitTypes.map((fitType: string) => (
+                {frameWidths.length &&
+                  frameWidths.map((frameWidth: string) => (
                     <button
                       className="filter frame-filter"
-                      key={fitType}
+                      key={frameWidth}
                       type="button"
-                      data-active={filters.fitType === fitType}
-                      onClick={() => filter(FilterTypes.FitType, fitType)}
+                      data-active={filters.frameWidth === frameWidth}
+                      onClick={() => filter(FilterTypes.FrameWidth, frameWidth)}
                       aria-pressed={
-                        filters.fitType === fitType ? "true" : "false"
+                        filters.frameWidth === frameWidth ? "true" : "false"
                       }
                     >
                       <StaticImage
                         src="../images/glasses-icon.png"
-                        alt={fitType}
+                        alt={frameWidth}
                         placeholder="tracedSVG"
                         style={{ marginBottom: 0 }}
                         width={150}
                       />
                       <div className="fit-type">
-                        <span className="text">&#8866; {fitType} &#8867;</span>
+                        <span className="text">
+                          &#8866; {frameWidth} &#8867;
+                        </span>
                       </div>
                     </button>
                   ))}

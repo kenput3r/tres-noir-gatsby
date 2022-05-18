@@ -21,6 +21,7 @@ export interface ContentfulProduct {
   id: string
   title: string
   fitType: string
+  frameWidth: string[]
   variants: ContentfulProductVariant[]
 }
 
