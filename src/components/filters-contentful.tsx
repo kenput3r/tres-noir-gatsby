@@ -168,11 +168,11 @@ interface Props {
   collection: ContentfulCollection
   filters: {
     frameWidth: string
-    colorName: null | string
+    colorName: string
   }
   setFilters: Dispatch<{
     frameWidth: string
-    colorName: null | string
+    colorName: string
   }>
   setProducts: Dispatch<ContentfulProduct[]>
 }
@@ -245,7 +245,7 @@ const FiltersContentful = ({
   }
 
   const reset = (): void => {
-    setFilters({ frameWidth: "", colorName: null })
+    setFilters({ frameWidth: "", colorName: "" })
     setProducts(collection.products)
     generateFilters(collection.products)
   }

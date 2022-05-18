@@ -66,10 +66,10 @@ const CollectionContentful = ({
   data: { contentfulCollection: ContentfulCollection }
 }) => {
   const { contentfulCollection: collection } = data
-  const defaultFilters = { frameWidth: "", colorName: null }
+  const defaultFilters = { frameWidth: "", colorName: "" }
   const [filters, setFilters] = useState<{
     frameWidth: string
-    colorName: null | string
+    colorName: string
   }>(defaultFilters)
   const [products, setProducts] = useState<ContentfulProduct[]>(
     collection.products
@@ -173,7 +173,6 @@ export const query = graphql`
         title
         handle
         id
-        fitType
         frameWidth
         variants {
           id

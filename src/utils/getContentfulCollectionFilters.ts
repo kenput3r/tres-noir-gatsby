@@ -2,7 +2,6 @@ import { ContentfulProduct } from "../types/contentful"
 
 export const getFilters = (products: ContentfulProduct[]) => {
   // get fit type
-
   let frameWidthList: string[] = []
   products.forEach(product => {
     if (product.frameWidth)
