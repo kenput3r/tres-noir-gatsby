@@ -12,16 +12,14 @@ import { dispatch } from "gatsby-cli/lib/reporter/redux"
 import { parse } from "path"
 
 interface BundleCustomsItemType {
-  customizationId: string
+  id: string
   lineItems: {
     [x: string]: any
-    stepNumber: string
+    stepNumber?: string
     shopifyItem: Checkout
   }
-  customImage: {
-    data: IGatsbyImageData
-    altText: string
-  }
+  image: IGatsbyImageData
+  isCustom: boolean
 }
 
 interface BundleCustomsType {
@@ -37,6 +35,24 @@ const bundleInit: BundleCustomsType = {
 interface BundleLocalStorageType {
   expiry: number
   value: BundleCustomsType
+}
+
+interface ImageHashTable {
+  checkoutId: string
+  images: {
+    [key: string]: IGatsbyImageData
+  }
+}
+
+interface ImageStorage {
+  value: ImageHashTable
+  expiry: string
+}
+
+interface CustomLineItem {
+  variantId: string
+  quantity: number
+  customAttributes: { key: string; value: string }[]
 }
 
 const client = Client.buildClient({
@@ -75,16 +91,19 @@ const DefaultContext = {
     totalPrice: "",
     webUrl: "",
   },
-  addProductToCart: (variantId: string, quantity: number) => {},
+  addProductToCart: (
+    variantId: string,
+    quantity: number,
+    sku: string,
+    image: IGatsbyImageData
+  ) => {},
   addProductsToCart: (
     lineItems: { variantId: string; quantity: number }[]
   ) => {},
   addProductCustomToCart: (
-    lineItems: {
-      variantId: string
-      quantity: number
-      customAttributes: { key: string; value: string }[]
-    }[]
+    items: CustomLineItem[],
+    key: string,
+    image: IGatsbyImageData
   ) => {},
   removeProductFromCart: (lineItemId: string) => {},
   removeProductsFromCart: (lineItemIds: []) => {},
@@ -128,29 +147,30 @@ const customLensesReducer = (state, action) => {
   switch (action.type) {
     case "ADD":
       const findId = state.items.findIndex(
-        srch => srch.customizationId === action.payload.id
+        srch => srch.id === action.payload.id
       )
       if (findId === -1) {
         //create new item
-        addCustomsToLocalStorage({
-          ...state,
-          items: [
-            ...state.items,
-            {
-              customizationId: action.payload.id,
-              lineItems: action.payload.value,
-              customImage: action.payload.image,
-            },
-          ],
-        })
+        // addCustomsToLocalStorage({
+        //   ...state,
+        //   items: [
+        //     ...state.items,
+        //     {
+        //       id: action.payload.id,
+        //       lineItems: action.payload.value,
+        //       customImage: action.payload.image,
+        //     },
+        //   ],
+        // })
         return {
           ...state,
           items: [
             ...state.items,
             {
-              customizationId: action.payload.id,
+              id: action.payload.id,
               lineItems: action.payload.value,
-              customImage: action.payload.image,
+              image: action.payload.image,
+              isCustom: action.payload.isCustom,
             },
           ],
         }
@@ -183,7 +203,7 @@ const customLensesReducer = (state, action) => {
       }
     case "DELETE":
       const filteredDelete = state.items.filter(
-        item => item.customizationId !== action.payload.id
+        item => item.id !== action.payload.id
       )
       if (state.items.length === 1) {
         addCustomsToLocalStorage({
@@ -269,6 +289,7 @@ export const CartProvider = ({ children }) => {
           id: newCheckout.id,
         },
       })
+      newCheckout["tnLineItems"] = []
       localStorage.setItem(
         "checkout",
         JSON.stringify({ value: newCheckout, expiry: now.getTime() + 2592000 })
@@ -286,6 +307,75 @@ export const CartProvider = ({ children }) => {
     // }
   }
 
+  const addToImageStorage = (
+    id: string,
+    image: IGatsbyImageData,
+    checkoutId: string
+  ) => {
+    if (isBrowser) {
+      const now = new Date()
+      let cartImages = localStorage.getItem("cart-images")
+      let parsedImages: ImageHashTable = {
+        checkoutId: checkoutId,
+        images: {},
+      }
+      if (cartImages) {
+        console.log("get")
+        const localImages = JSON.parse(cartImages) as ImageStorage
+        parsedImages = localImages.value
+      }
+      parsedImages.images[id] = image
+      console.log("parsed", parsedImages.images)
+      localStorage.setItem(
+        "cart-images",
+        JSON.stringify({
+          value: parsedImages,
+          expiry: now.getTime() + 2592000,
+        })
+      )
+    }
+  }
+
+  const getImageFromLocalStorage = (id: string) => {
+    if (isBrowser) {
+      let cartImages = localStorage.getItem("cart-images")
+      if (!cartImages) {
+        return null
+      }
+      const parsedImages = JSON.parse(cartImages) as ImageStorage
+      return parsedImages.value.images[id]
+    }
+  }
+
+  const getCustomLineItem = (key: string, newCheckout) => {
+    let tempItems: any[] = []
+    newCheckout.lineItems.forEach(item => {
+      if (item.customAttributes.length !== 0) {
+        let found = false
+        item.customAttributes.forEach(attr => {
+          if (attr.key === "customizationId" && attr.value === key) {
+            found = true
+          }
+          if (attr.key === "customizationStep" && found) {
+            tempItems.push({
+              stepNumber: attr.value,
+              shopifyItem: item,
+            })
+          }
+        })
+      }
+    })
+    // sort tempItems by stepNumber
+    tempItems.sort((a, b) => {
+      return a.stepNumber - b.stepNumber
+    })
+    if (tempItems.length > 0) {
+      return tempItems
+    }
+  }
+
+  const rebuildBundles = checkout => {}
+
   // Shopify Buy Cart types outdated
   interface LocalCheckout {
     value: Checkout
@@ -302,7 +392,7 @@ export const CartProvider = ({ children }) => {
         const now = new Date()
         if (now.getTime() > localCheckout.expiry) {
           localStorage.removeItem("checkout")
-          localStorage.removeItem("customs")
+          localStorage.removeItem("cart-images")
           bundledDispatch({ type: "DELETE_ALL" })
           // eslint-disable-next-line no-return-await
           return await getNewCheckout()
@@ -336,9 +426,9 @@ export const CartProvider = ({ children }) => {
                   bundledDispatch({
                     type: "ADD",
                     payload: {
-                      id: item.customizationId,
+                      id: item.id,
                       value: item.lineItems,
-                      image: item.customImage,
+                      image: item.image,
                     },
                   })
                 })
@@ -378,7 +468,12 @@ export const CartProvider = ({ children }) => {
       setIsDrawerOpen(false)
     }
 
-    const addProductToCart = async (variantId: string, quantity: number) => {
+    const addProductToCart = async (
+      variantId: string,
+      quantity: number,
+      sku: string,
+      image: IGatsbyImageData
+    ) => {
       try {
         const lineItems = [
           {
@@ -390,6 +485,8 @@ export const CartProvider = ({ children }) => {
           checkout.id,
           lineItems
         )
+        addToImageStorage(sku, image, checkout.id)
+
         if (isBrowser) {
           const now = new Date()
           localStorage.setItem(
@@ -400,16 +497,39 @@ export const CartProvider = ({ children }) => {
             })
           )
         }
-        setCheckout(updatedCheckout)
+        // rebuild tnLineItems
+        const bundledCheckout = rebuildBundles(updatedCheckout)
+        setCheckout(bundledCheckout)
+        console.log("updated", bundledCheckout)
+        const addedItem = updatedCheckout.lineItems.find(
+          el => el.variant.sku === sku
+        )
+        // add item to context
+        bundledDispatch({
+          type: "ADD",
+          payload: {
+            id: sku,
+            image: image,
+            value: {
+              shopifyProduct: addedItem,
+            },
+            isCustom: false,
+          },
+        })
       } catch (e) {
         console.error(e)
       }
     }
 
-    const addProductsToCart = async (
-      lineItems: { variantId: string; quantity: number }[]
-    ) => {
+    const addProductsToCart = async (variantId: string, quantity: number) => {
       try {
+        const lineItems = [
+          {
+            variantId,
+            quantity,
+          },
+        ]
+        console.log("lineItems", lineItems)
         const updatedCheckout = await client.checkout.addLineItems(
           checkout.id,
           lineItems
@@ -431,18 +551,15 @@ export const CartProvider = ({ children }) => {
     }
 
     const addProductCustomToCart = async (
-      lineItems: {
-        variantId: string
-        quantity: number
-        customAttributes: { key: string; value: string }[]
-      }[]
+      lineItems: CustomLineItem[],
+      key: string,
+      image: IGatsbyImageData
     ) => {
       try {
         const updatedCheckout = await client.checkout.addLineItems(
           checkout.id,
           lineItems
         )
-
         if (isBrowser) {
           const now = new Date()
           localStorage.setItem(
@@ -454,7 +571,18 @@ export const CartProvider = ({ children }) => {
           )
         }
         setCheckout(updatedCheckout)
-        return updatedCheckout
+        const customItem = getCustomLineItem(key, updatedCheckout)
+        // add item to context
+        bundledDispatch({
+          type: "ADD",
+          payload: {
+            id: key,
+            value: customItem,
+            image: image,
+          },
+        })
+        // add image to localStorage
+        addToImageStorage(key, image, checkout.id)
       } catch (e) {
         console.error(e)
       }

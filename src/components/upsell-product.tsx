@@ -89,7 +89,13 @@ const UpsellProduct = (props: { upsellProduct: any }) => {
   }, [quantityLevels])
   const { addProductToCart } = useContext(CartContext)
   const handleAddToCart = () => {
-    addProductToCart(selectedVariant.storefrontId, 1)
+    const id = selectedVariant.storefrontId
+    const sku = selectedVariant.sku
+    const image = selectedVariant.image
+      ? selectedVariant.image.localFile.childImageSharp.gatsbyImageData
+      : upsellProduct.featuredImage.localFile.childImageSharp.gatsbyImageData
+
+    addProductToCart(id, 1, sku, image)
     alert("ADDED TO CART")
   }
 

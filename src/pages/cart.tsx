@@ -11,7 +11,7 @@ import { CustomerContext } from "../contexts/customer"
 import { LineItem } from "../types/checkout"
 import { startedCheckoutGTMEvent } from "../helpers/gtm"
 import { VscBeaker, VscClose } from "react-icons/vsc"
-import Upsell from "../components/upsell"
+import UpsellCart from "../components/upsell-cart"
 
 const Page = styled.div`
   .cart-wrapper {
@@ -229,6 +229,7 @@ const Cart = () => {
         startedCheckoutGTMEvent(checkout)
       }
       associateCheckout(checkout.id)
+      console.log("checkout is currently", checkout)
     }
   }, [checkout])
 
@@ -252,6 +253,60 @@ const Cart = () => {
 
   const priceTimesQuantity = (price: string, quantity: number) => {
     return (Number(price) * quantity).toFixed(2)
+  }
+
+  const renderStandardProduct = item => {
+    const line = item.lineItems[0]
+    return (
+      <li key={line.id}>
+        <div className="close-btn">
+          <a
+            className="remove-item"
+            href="#"
+            onClick={() => removeProductFromCart(line.id)}
+          >
+            <VscClose />
+          </a>
+        </div>
+        <div className="card">
+          <div className="card-image">
+            <GatsbyImage
+              image={item.image}
+              alt={line.variant.title}
+            ></GatsbyImage>
+          </div>
+          <div className="card-items">
+            <div>
+              <p className="title">
+                <Link to={`/products/${line.variant.product.handle}`}>
+                  {line.title}
+                </Link>
+              </p>
+              <div className="sub-title">
+                <span>
+                  {line.variant.title !== "Default Title"
+                    ? line.variant.title
+                    : ""}
+                </span>
+
+                <span className="price">${line.variant.price}</span>
+              </div>
+            </div>
+            <hr />
+            <div className="quantity-selector">
+              <QuantitySelector
+                lineId={line.id}
+                quantity={line.quantity}
+                updateQuantity={updateQuantity}
+              />
+              <span className="price total-price">
+                ${priceTimesQuantity(line.variant.price, line.quantity)}
+              </span>
+            </div>
+          </div>
+        </div>
+      </li>
+    )
   }
 
   const renderContent = () => {
@@ -289,7 +344,7 @@ const Cart = () => {
                   <span className="total">${checkout.subtotalPrice}</span>
                 </h2>
                 <ul>
-                  {bundledCustoms.items.length !== 0 &&
+                  {/* {bundledCustoms.items.length !== 0 &&
                     bundledCustoms.items.map(item => {
                       if (item) {
                         return (
@@ -365,69 +420,11 @@ const Cart = () => {
                           </li>
                         )
                       }
-                    })}
-                  {checkout?.lineItems &&
-                    checkout?.lineItems.map((line: LineItem) => {
-                      if (line.customAttributes.length === 0) {
-                        return (
-                          <li key={line.id}>
-                            <div className="close-btn">
-                              <a
-                                className="remove-item"
-                                href="#"
-                                onClick={() => removeProductFromCart(line.id)}
-                              >
-                                <VscClose />
-                              </a>
-                            </div>
-
-                            <div className="card">
-                              <div className="card-image">
-                                <img
-                                  src={line.variant.image.src}
-                                  alt={line.variant.image.altText}
-                                />
-                              </div>
-                              <div className="card-items">
-                                <div>
-                                  <p className="title">
-                                    <Link
-                                      to={`/products/${line.variant.product.handle}`}
-                                    >
-                                      {line.title}
-                                    </Link>
-                                  </p>
-                                  <div className="sub-title">
-                                    <span>
-                                      {line.variant.title !== "Default Title"
-                                        ? line.variant.title
-                                        : ""}
-                                    </span>
-
-                                    <span className="price">
-                                      ${line.variant.price}
-                                    </span>
-                                  </div>
-                                </div>
-                                <hr />
-                                <div className="quantity-selector">
-                                  <QuantitySelector
-                                    lineId={line.id}
-                                    quantity={line.quantity}
-                                    updateQuantity={updateQuantity}
-                                  />
-                                  <span className="price total-price">
-                                    $
-                                    {priceTimesQuantity(
-                                      line.variant.price,
-                                      line.quantity
-                                    )}
-                                  </span>
-                                </div>
-                              </div>
-                            </div>
-                          </li>
-                        )
+                    })} */}
+                  {checkout?.tnLineItems &&
+                    checkout?.tnLineItems.map(item => {
+                      if (!item.isCustom) {
+                        return renderStandardProduct(item)
                       }
                     })}
                 </ul>
@@ -446,7 +443,7 @@ const Cart = () => {
               </section>
             </div>
             <section className="cart-wrapper wrapper">
-              <Upsell></Upsell>
+              <UpsellCart />
             </section>
           </section>
         )

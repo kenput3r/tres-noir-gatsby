@@ -1,3 +1,5 @@
+import { IGatsbyImageData } from "gatsby-plugin-image"
+
 export interface Checkout {
   appliedGiftCards: string[]
   completedAt: null | string
@@ -8,6 +10,11 @@ export interface Checkout {
   email: null | string
   id: string
   lineItems: LineItem[]
+  tnLineItems: {
+    isCustom: boolean
+    image: IGatsbyImageData
+    lineItems: LineItem
+  }[]
   lineItemsSubtotalPrice: {
     amount: string
     currencyCode: string

@@ -241,8 +241,8 @@ const Step5 = (props: {
     }
     stepItems.unshift(frameVariant)
 
-    const result = await addProductCustomToCart(stepItems)
-    addToBundle(result, matchingKey, productImage)
+    addProductCustomToCart(stepItems, matchingKey, productImage)
+    // addToBundle(result, matchingKey, productImage)
 
     setAddedToCart(true)
     alert("ADDED TO CART")
