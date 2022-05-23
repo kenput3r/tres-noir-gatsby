@@ -36,9 +36,6 @@ const Container = styled.div`
   @media only screen and (max-width: 468px) {
     width: 100%;
   }
-  .overlay {
-    z-index: 100;
-  }
   .content {
     display: flex;
     flex-direction: column;
