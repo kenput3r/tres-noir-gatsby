@@ -10,11 +10,7 @@ export interface Checkout {
   email: null | string
   id: string
   lineItems: LineItem[]
-  tnLineItems: {
-    isCustom: boolean
-    image: IGatsbyImageData
-    lineItems: LineItem
-  }[]
+  tnLineItems?: tnItem[]
   lineItemsSubtotalPrice: {
     amount: string
     currencyCode: string
@@ -62,4 +58,29 @@ export interface LineItem {
     sku: string
     title: string
   }
+}
+
+export interface tnItem {
+  id: string
+  lineItems: LineItem
+  image: IGatsbyImageData | null | undefined
+  isCustom: boolean
+}
+
+export interface ImageHashTable {
+  checkoutId: string
+  images: {
+    [key: string]: IGatsbyImageData
+  }
+}
+
+export interface ImageStorage {
+  value: ImageHashTable
+  expiry: string
+}
+
+export interface CustomLineItem {
+  variantId: string
+  quantity: number
+  customAttributes: { key: string; value: string }[]
 }

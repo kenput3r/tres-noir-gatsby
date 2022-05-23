@@ -8,9 +8,9 @@ import Loader from "../components/loader"
 import QuantitySelector from "../components/quantity-selector"
 import { CartContext } from "../contexts/cart"
 import { CustomerContext } from "../contexts/customer"
-import { LineItem } from "../types/checkout"
+import { tnItem } from "../types/checkout"
 import { startedCheckoutGTMEvent } from "../helpers/gtm"
-import { VscBeaker, VscClose } from "react-icons/vsc"
+import { VscClose } from "react-icons/vsc"
 import UpsellCart from "../components/upsell-cart"
 
 const Page = styled.div`
@@ -211,8 +211,7 @@ const Cart = () => {
     checkout,
     removeProductFromCart,
     updateProductInCart,
-    bundledCustoms,
-    removeCustomProduct,
+    removeProductsFromCart,
   } = useContext(CartContext)
 
   const { associateCheckout } = useContext(CustomerContext)
@@ -233,14 +232,21 @@ const Cart = () => {
     }
   }, [checkout])
 
-  const removeMultipleProducts = async (customizationId: string) => {
+  const removeMultipleProducts = async item => {
+    const lineIds = item.lineItems.map(item => {
+      return item.shopifyItem.id
+    })
     loadingOverlay.current?.classList.add("no-events")
-    await removeCustomProduct(customizationId)
+    await removeProductsFromCart(lineIds, item.id)
     loadingOverlay.current?.classList.remove("no-events")
   }
 
-  const updateQuantity = (lineId: string, quantity: number) => {
-    updateProductInCart(lineId, quantity)
+  const updateQuantity = (
+    lineId: string,
+    quantity: number,
+    imageId: string
+  ) => {
+    updateProductInCart(lineId, quantity, imageId)
   }
 
   const totalSum = lineItems => {
@@ -256,14 +262,14 @@ const Cart = () => {
   }
 
   const renderStandardProduct = item => {
-    const line = item.lineItems[0]
+    const line = item.lineItems[0].shopifyItem
     return (
       <li key={line.id}>
         <div className="close-btn">
           <a
             className="remove-item"
             href="#"
-            onClick={() => removeProductFromCart(line.id)}
+            onClick={() => removeProductFromCart(line.id, item.id)}
           >
             <VscClose />
           </a>
@@ -297,11 +303,69 @@ const Cart = () => {
               <QuantitySelector
                 lineId={line.id}
                 quantity={line.quantity}
+                imageId={item.id}
                 updateQuantity={updateQuantity}
               />
               <span className="price total-price">
                 ${priceTimesQuantity(line.variant.price, line.quantity)}
               </span>
+            </div>
+          </div>
+        </div>
+      </li>
+    )
+  }
+
+  const renderCustomProduct = item => {
+    return (
+      <li key={item.lineItems[0].id} className="customized">
+        <div className="close-btn">
+          <a
+            className="remove-item"
+            href="#"
+            onClick={() => removeMultipleProducts(item)}
+          >
+            <VscClose />
+          </a>
+        </div>
+        <div className="card">
+          <div className="card-image">
+            <GatsbyImage image={item.image} alt="temp"></GatsbyImage>
+          </div>
+          <div>
+            <div>
+              <p className="title">
+                <Link
+                  to={`/products/${item.lineItems[0].shopifyItem.variant.product.handle}`}
+                >
+                  {item.lineItems[0].shopifyItem.title}
+                </Link>
+              </p>
+              <div className="sub-title-customize">
+                {item.lineItems.map((subItem, subIndex) => {
+                  return (
+                    <div className="sub-item" key={subItem.shopifyItem.id}>
+                      <div className="step-name">
+                        <p>{stepMap.get(subIndex)}</p>
+                      </div>
+                      <div className="sub-title" key={subItem.shopifyItem.id}>
+                        <span key={subItem.shopifyItem.id}>
+                          {subItem.shopifyItem.variant.title === "Default Title"
+                            ? subItem.shopifyItem.title
+                            : subItem.shopifyItem.variant.title}
+                        </span>
+                        <span className="price">
+                          ${subItem.shopifyItem.variant.price}
+                        </span>
+                      </div>
+                    </div>
+                  )
+                })}
+                <hr />
+                <span className="price total-price">
+                  ${totalSum(item.lineItems)}
+                </span>
+              </div>
             </div>
           </div>
         </div>
@@ -344,86 +408,13 @@ const Cart = () => {
                   <span className="total">${checkout.subtotalPrice}</span>
                 </h2>
                 <ul>
-                  {/* {bundledCustoms.items.length !== 0 &&
-                    bundledCustoms.items.map(item => {
+                  {checkout &&
+                    checkout.tnLineItems &&
+                    checkout.tnLineItems.map((item: tnItem) => {
                       if (item) {
-                        return (
-                          <li key={item.customizationId} className="customized">
-                            <div className="close-btn">
-                              <a
-                                className="remove-item"
-                                href="#"
-                                onClick={() =>
-                                  removeMultipleProducts(item.customizationId)
-                                }
-                              >
-                                <VscClose />
-                              </a>
-                            </div>
-
-                            <div className="card">
-                              <div className="card-image">
-                                <GatsbyImage
-                                  image={item.customImage.data}
-                                  alt={item.customImage.altText}
-                                ></GatsbyImage>
-                              </div>
-                              <div>
-                                <div>
-                                  <p className="title">
-                                    <Link
-                                      to={`/products/${item.lineItems[0].shopifyItem.variant.product.handle}`}
-                                    >
-                                      {item.lineItems[0].shopifyItem.title}
-                                    </Link>
-                                  </p>
-                                  <div className="sub-title-customize">
-                                    {item.lineItems.map((subItem, subIndex) => {
-                                      return (
-                                        <div
-                                          className="sub-item"
-                                          key={subItem.shopifyItem.id}
-                                        >
-                                          <div className="step-name">
-                                            <p>{stepMap.get(subIndex)}</p>
-                                          </div>
-                                          <div
-                                            className="sub-title"
-                                            key={subItem.shopifyItem.id}
-                                          >
-                                            <span key={subItem.shopifyItem.id}>
-                                              {subItem.shopifyItem.variant
-                                                .title === "Default Title"
-                                                ? subItem.shopifyItem.title
-                                                : subItem.shopifyItem.variant
-                                                    .title}
-                                            </span>
-                                            <span className="price">
-                                              $
-                                              {
-                                                subItem.shopifyItem.variant
-                                                  .price
-                                              }
-                                            </span>
-                                          </div>
-                                        </div>
-                                      )
-                                    })}
-                                    <hr />
-                                    <span className="price total-price">
-                                      ${totalSum(item.lineItems)}
-                                    </span>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          </li>
-                        )
-                      }
-                    })} */}
-                  {checkout?.tnLineItems &&
-                    checkout?.tnLineItems.map(item => {
-                      if (!item.isCustom) {
+                        if (item.isCustom) {
+                          return renderCustomProduct(item)
+                        }
                         return renderStandardProduct(item)
                       }
                     })}
