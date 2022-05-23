@@ -1,7 +1,6 @@
 import React, { useState } from "react"
 import { useStaticQuery, graphql } from "gatsby"
-import ErrorBoundary from "../components/errorBoundary"
-import ErrorModal from "../components/errorModal"
+import ErrorModal from "./error-modal"
 
 import Header from "./header"
 import Drawer from "./drawer"
@@ -27,17 +26,15 @@ const Layout = ({ children }: LayoutProps) => {
 
   return (
     <>
-      <ErrorBoundary>
-        <Header
-          siteTitle={data.site.siteMetadata?.title || `Title`}
-          isDrawerOpen={isDrawerOpen}
-          setIsDrawerOpen={setIsDrawerOpen}
-        />
-        <Drawer isDrawerOpen={isDrawerOpen} setIsDrawerOpen={setIsDrawerOpen} />
-        <main>{children}</main>
-        <Footer />
-        <ErrorModal />
-      </ErrorBoundary>
+      <Header
+        siteTitle={data.site.siteMetadata?.title || `Title`}
+        isDrawerOpen={isDrawerOpen}
+        setIsDrawerOpen={setIsDrawerOpen}
+      />
+      <Drawer isDrawerOpen={isDrawerOpen} setIsDrawerOpen={setIsDrawerOpen} />
+      <main>{children}</main>
+      <Footer />
+      <ErrorModal />
     </>
   )
 }

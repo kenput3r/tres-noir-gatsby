@@ -1,6 +1,10 @@
 import React, { useState } from "react"
 import { useStaticQuery, graphql } from "gatsby"
 import styled from "styled-components"
+import ErrorModal from "./error-modal"
+
+// delete
+import FakeErrorButton from "./fake-error-button"
 
 import Header from "./header"
 import Drawer from "./drawer"
@@ -43,6 +47,8 @@ const Layout = ({ children }: LayoutProps) => {
       <Drawer isDrawerOpen={isDrawerOpen} setIsDrawerOpen={setIsDrawerOpen} />
       <Main>{children}</Main>
       <Footer />
+      <ErrorModal />
+      <FakeErrorButton />
     </>
   )
 }

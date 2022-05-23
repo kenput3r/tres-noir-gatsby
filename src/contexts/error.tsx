@@ -2,9 +2,10 @@ import React, { createContext, ReactChild, useState, useMemo } from "react"
 
 interface DefaultContext {
   errorModalIsOpen: boolean
-  renderErrorModal: (error?: string) => void
+  renderErrorModal: (error: string, callback?: any) => void
   closeErrorModal: () => void
-  afterOpenErrorModal: (cb: any) => void
+  onAfterOpen: (cb: any) => void
+  onAfterClose: (cb: any) => void
   errorMsg: string
 }
 
@@ -12,7 +13,8 @@ const defaultContext: DefaultContext = {
   errorModalIsOpen: false,
   renderErrorModal: error => {},
   closeErrorModal: () => {},
-  afterOpenErrorModal: cb => cb,
+  onAfterOpen: cb => cb,
+  onAfterClose: cb => cb,
   errorMsg: "",
 }
 
@@ -21,25 +23,38 @@ export const ErrorModalContext = createContext(defaultContext)
 export const ErrorModalProvider = ({ children }: { children: ReactChild }) => {
   const [errorModalIsOpen, setErrorModalIsOpen] = useState<boolean>(false)
   const [errorMsg, setErrorMsg] = useState<string>("")
+  const [cb, setCb] = useState<any>(undefined)
 
-  const renderErrorModal = (error?: string) => {
-    if (error === undefined)
-      error = "There's been a problem, please try again later."
+  const renderErrorModal = (
+    error: string = "Something Went Wrong",
+    callback: any = undefined
+  ) => {
     setErrorMsg(error)
     setErrorModalIsOpen(true)
-    afterOpenErrorModal(console.log("Modal is Open"))
+    if (callback) {
+      setCb(() => callback)
+    } else {
+      setCb(undefined)
+    }
   }
 
-  const closeErrorModal = () => setErrorModalIsOpen(false)
+  const closeErrorModal = () => {
+    setErrorModalIsOpen(false)
+  }
 
-  const afterOpenErrorModal = (cb: any) => cb
+  const onAfterOpen = (cb: any) => cb
+
+  const onAfterClose = () => {
+    if (cb) cb()
+  }
 
   const value = useMemo(
     () => ({
       errorModalIsOpen,
       renderErrorModal,
       closeErrorModal,
-      afterOpenErrorModal,
+      onAfterOpen,
+      onAfterClose,
       errorMsg,
     }),
     [errorModalIsOpen, errorMsg]
