@@ -3,9 +3,6 @@ import { useStaticQuery, graphql } from "gatsby"
 import styled from "styled-components"
 import ErrorModal from "./error-modal"
 
-// delete
-import FakeErrorButton from "./fake-error-button"
-
 import Header from "./header"
 import Drawer from "./drawer"
 import Footer from "./footer"
@@ -48,7 +45,6 @@ const Layout = ({ children }: LayoutProps) => {
       <Main>{children}</Main>
       <Footer />
       <ErrorModal />
-      <FakeErrorButton />
     </>
   )
 }

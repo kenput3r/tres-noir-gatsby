@@ -29,14 +29,21 @@ export const ErrorModalProvider = ({ children }: { children: ReactChild }) => {
     error: string = "Something Went Wrong",
     callback: any = undefined
   ) => {
-    setErrorMsg(error)
-    setErrorModalIsOpen(true)
-    if (callback) {
-      setCb(() => callback)
+    if (typeof error === "function") {
+      setCb(() => error)
     } else {
-      setCb(undefined)
+      setErrorMsg(error)
+      if (callback) {
+        setCb(() => callback)
+      } else {
+        setCb(undefined)
+      }
     }
+    setErrorModalIsOpen(true)
   }
+
+  const isBrowser = typeof window !== "undefined"
+  if (isBrowser) window.renderErrorModal = renderErrorModal
 
   const closeErrorModal = () => {
     setErrorModalIsOpen(false)
