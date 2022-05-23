@@ -96,7 +96,11 @@ const Collection = ({
                 <GatsbyImage
                   className="collection-image"
                   image={collectionImages.collectionImageTop?.gatsbyImageData}
-                  alt={collectionImages.collectionImageTop?.title}
+                  alt={
+                    collectionImages.collectionImageTop?.title
+                      ? collectionImages.collectionImageTop?.title
+                      : collection.title
+                  }
                 />
               </div>
               <div className="top-right">
@@ -111,19 +115,24 @@ const Collection = ({
               <Product key={product.handle} data={product} />
             ))}
           </div>
-          {collectionImages && (
-            <div className="image-container">
-              <div>
-                <GatsbyImage
-                  className="collection-image"
-                  image={
-                    collectionImages.collectionImageMiddle?.gatsbyImageData
-                  }
-                  alt={collectionImages.collectionImageMiddle?.title}
-                />
+          {collectionImages &&
+            collectionImages.collectionImageMiddle?.gatsbyImageData && (
+              <div className="image-container">
+                <div>
+                  <GatsbyImage
+                    className="collection-image"
+                    image={
+                      collectionImages.collectionImageMiddle?.gatsbyImageData
+                    }
+                    alt={
+                      collectionImages.collectionImageMiddle?.title
+                        ? collectionImages.collectionImageMiddle?.title
+                        : collection.title
+                    }
+                  />
+                </div>
               </div>
-            </div>
-          )}
+            )}
 
           <div className="grid">
             {collectionSize >= 8 &&

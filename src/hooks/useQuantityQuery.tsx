@@ -1,6 +1,9 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect, useContext } from "react"
+import { ErrorModalContext } from "../contexts/error"
 
 export function useQuantityQuery(handle: string, size: number) {
+  const { renderErrorModal } = useContext(ErrorModalContext)
+
   const [productQuantities, setProductQuantities] = useState<{} | undefined>({})
 
   const url: string = process.env.GATSBY_STORE_ENDPOINT
@@ -49,11 +52,12 @@ export function useQuantityQuery(handle: string, size: number) {
       const response = await fetch(url, params)
       const data = await response.json()
       return data
-    } catch (error) {
+    } catch (err: any) {
       console.log(
         "Error while fetching product inventory productQuantities",
-        error
+        err
       )
+      renderErrorModal()
     }
   }
 
@@ -71,8 +75,9 @@ export function useQuantityQuery(handle: string, size: number) {
         console.log(`Error while calling quantity fetch, error on ${handle}`)
         return {}
       }
-    } catch (error) {
-      console.log("Error while calling fetch", error)
+    } catch (err: any) {
+      console.log("Error while calling fetch", err)
+      renderErrorModal()
     }
   }
 
