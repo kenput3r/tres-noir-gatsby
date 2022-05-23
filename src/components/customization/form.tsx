@@ -323,7 +323,8 @@ const Form = ({
   stepMap.set(2, "LENS TYPE")
   stepMap.set(3, "LENS MATERIAL")
   stepMap.set(4, "LENS COATING")
-  const { isRxAble, setRxAble, rxInfo, dispatch } = useContext(RxInfoContext)
+  const { isRxAble, setRxAble, rxInfo, rxInfoDispatch } =
+    useContext(RxInfoContext)
   const messageRef = useRef<any>()
   const [isFormValid, setIsFormValid] = useState(true)
   const errorRefs = useRef({})
@@ -351,7 +352,7 @@ const Form = ({
   }
   const handleRx = (evt: ChangeEvent<HTMLSelectElement>) => {
     clearErrors(evt)
-    dispatch({ type: evt.target.id, payload: evt.target.value })
+    rxInfoDispatch({ type: evt.target.id, payload: evt.target.value })
     isNowValid()
   }
   const clearErrors = (evt: ChangeEvent<HTMLSelectElement>) => {
@@ -366,7 +367,7 @@ const Form = ({
       errorRefs.current[`select-${subId}-axis`].classList.add("disable")
       errorRefs.current[`select-${subId}-axis`].querySelector("select").value =
         ""
-      dispatch({ type: `${subId}-axis`, payload: "" })
+      rxInfoDispatch({ type: `${subId}-axis`, payload: "" })
     }
     const generalErrors: string[] = [
       "right-sph",

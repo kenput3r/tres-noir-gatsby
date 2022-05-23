@@ -314,7 +314,12 @@ const ProductCustomizable = ({
 
   const handleAddToCart = () => {
     const id = selectedVariant.shopify.storefrontId
-    addProductToCart(id, 1)
+    addProductToCart(
+      id,
+      1,
+      selectedVariant.shopify.sku,
+      selectedVariant.contentful.imageSet[0].data
+    )
     alert("ADDED TO CART")
     const productData = {
       title: shopifyProduct.title,
