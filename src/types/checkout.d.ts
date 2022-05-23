@@ -60,9 +60,14 @@ export interface LineItem {
   }
 }
 
+export interface tnSubItem {
+  stepNumber?: string
+  shopifyItem: LineItem
+}
+
 export interface tnItem {
   id: string
-  lineItems: LineItem
+  lineItems: tnSubItem[]
   image: IGatsbyImageData | null | undefined
   isCustom: boolean
 }
