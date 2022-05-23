@@ -234,8 +234,11 @@ const Product = ({ data: { shopifyProduct } }: any) => {
 
   const handleAddToCart = () => {
     const id = selectedVariant.storefrontId
+    const sku = selectedVariant.sku
+    const image =
+    selectedVariant.image ? selectedVariant.image.localFile.childImageSharp.gatsbyImageData: shopifyProduct.featuredImage.localFile.childImageSharp.gatsbyImageData
     const qty: number = +selectedVariantQuantity
-    addProductToCart(id, qty)
+    addProductToCart(id, qty, sku, image)
     alert("ADDED TO CART")
 
     const productData = {

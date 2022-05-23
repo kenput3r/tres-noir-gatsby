@@ -110,14 +110,9 @@ const Step5 = (props: {
   } = useContext(CustomizeContext)
 
   // const { bundledCustoms, bundledDispatch } = useContext(CustomProductsContext)
-  const {
-    addProductToCart,
-    addProductsToCart,
-    addProductCustomToCart,
-    bundledCustoms,
-    bundledDispatch,
-  } = useContext(CartContext)
-  const { isRxAble, setRxAble, rxInfo, dispatch } = useContext(RxInfoContext)
+  const { addProductCustomToCart } = useContext(CartContext)
+  const { isRxAble, setRxAble, rxInfo, rxInfoDispatch } =
+    useContext(RxInfoContext)
   const [addedToCart, setAddedToCart] = useState(false)
 
   useEffect(() => {
@@ -129,39 +124,6 @@ const Step5 = (props: {
     }
   }, [addedToCart])
 
-  const addToBundle = (newCheckout: any, key: string, customImage) => {
-    let tempItems: any[] = []
-    newCheckout.lineItems.forEach(item => {
-      if (item.customAttributes.length !== 0) {
-        let found = false
-        item.customAttributes.forEach(attr => {
-          if (attr.key === "customizationId" && attr.value === key) {
-            found = true
-          }
-          if (attr.key === "customizationStep" && found) {
-            tempItems.push({
-              stepNumber: attr.value,
-              shopifyItem: item,
-            })
-          }
-        })
-      }
-    })
-    // sort tempItems by stepNumber
-    tempItems.sort((a, b) => {
-      return a.stepNumber - b.stepNumber
-    })
-    if (tempItems.length > 0) {
-      bundledDispatch({
-        type: "ADD",
-        payload: {
-          id: key,
-          value: tempItems,
-          image: customImage,
-        },
-      })
-    }
-  }
   const handleAddToCart = async () => {
     const { step1, step2, step3, step4 } = selectedVariants
 
@@ -179,6 +141,13 @@ const Step5 = (props: {
           {
             key: "customizationStep",
             value: "1",
+          },
+          {
+            key: "Prescription",
+            value:
+              step1.product.title !== "Non-Prescription Lens"
+                ? JSON.stringify(rxInfo)
+                : "Non-Prescription",
           },
         ],
       },
@@ -241,9 +210,7 @@ const Step5 = (props: {
     }
     stepItems.unshift(frameVariant)
 
-    const result = await addProductCustomToCart(stepItems)
-    addToBundle(result, matchingKey, productImage)
-
+    addProductCustomToCart(stepItems, matchingKey, productImage)
     setAddedToCart(true)
     alert("ADDED TO CART")
   }
