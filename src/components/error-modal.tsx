@@ -57,11 +57,7 @@ const Container = styled.div`
 
 Container.displayName = "Container"
 
-interface Props {
-  callback?: () => void
-}
-
-const ErrorModal: React.FC<Props> = ({ callback }) => {
+const ErrorModal: React.FC = () => {
   const {
     errorModalIsOpen,
     closeErrorModal,
@@ -71,9 +67,6 @@ const ErrorModal: React.FC<Props> = ({ callback }) => {
   } = useContext(ErrorModalContext)
 
   const handleClose = () => {
-    if (callback) {
-      callback()
-    }
     closeErrorModal()
   }
 
