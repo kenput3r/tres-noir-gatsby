@@ -12,6 +12,8 @@ import { FaSearch, FaFacebookF, FaBars } from "react-icons/fa"
 import { useClickAway } from "react-use"
 import { TiSocialInstagram } from "react-icons/ti"
 import DesktopNavigation from "./desktopNavigation"
+import CartIcon from "./cart-icon"
+import { CartContext } from "../contexts/cart"
 
 const Component = styled.header`
   font-family: var(--sub-heading-font);
@@ -227,14 +229,7 @@ const Header = ({
               />
             </a>
 
-            <Link to="/cart">
-              <StaticImage
-                src="../images/cart.png"
-                alt="Shopping Cart"
-                placeholder="tracedSVG"
-                style={{ marginBottom: 0, maxWidth: 26 }}
-              />
-            </Link>
+            <CartIcon></CartIcon>
             <a
               href="#"
               className="hide-large"
