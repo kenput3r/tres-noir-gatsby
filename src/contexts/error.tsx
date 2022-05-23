@@ -2,7 +2,7 @@ import React, { createContext, ReactChild, useState, useMemo } from "react"
 
 interface DefaultContext {
   errorModalIsOpen: boolean
-  renderErrorModal: (error: string, callback?: any) => void
+  renderErrorModal: (error?: string, callback?: any) => void
   closeErrorModal: () => void
   onAfterOpen: (cb: any) => void
   onAfterClose: (cb: any) => void
@@ -11,7 +11,7 @@ interface DefaultContext {
 
 const defaultContext: DefaultContext = {
   errorModalIsOpen: false,
-  renderErrorModal: error => {},
+  renderErrorModal: () => {},
   closeErrorModal: () => {},
   onAfterOpen: cb => cb,
   onAfterClose: cb => cb,

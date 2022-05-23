@@ -17,12 +17,7 @@ const FakeErrorButton: React.FC = () => {
       >
         Trigger Error With Callback | Navigate To
       </button>
-      <button
-        type="button"
-        onClick={() =>
-          renderErrorModal("There's been a problem, please try again later.")
-        }
-      >
+      <button type="button" onClick={() => renderErrorModal()}>
         Trigger Error
       </button>
     </>
