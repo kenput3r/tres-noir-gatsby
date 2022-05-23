@@ -39,7 +39,7 @@ const Page = styled.div`
       button,
       .button {
         display: inline-block;
-        margin: 10px;
+        margin: 16px;
       }
     }
   }
