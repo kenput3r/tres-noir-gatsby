@@ -23,8 +23,7 @@ const Container = styled.div`
   color: #000;
   width: 750px;
   max-width: 100%;
-  padding: 3rem 2rem;
-  border-radius: 0.5rem;
+  padding: 2rem 1rem;
   position: relative;
   @media only screen and (max-width: 1024px) {
     width: 768px;
@@ -43,11 +42,17 @@ const Container = styled.div`
     align-items: center;
     h3 {
       font-size: 51px;
+      margin-top: 2rem;
       text-transform: uppercase;
     }
     .error-message {
       font-size: 26px;
       text-transform: uppercase;
+      text-align: center;
+    }
+    .btn {
+      font-size: 32px;
+      padding: 15px 30px;
     }
   }
   .error-icon {

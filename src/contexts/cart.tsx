@@ -1,4 +1,10 @@
-import React, { createContext, useState, useEffect, useMemo } from "react"
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useMemo,
+} from "react"
 import Client, { Cart } from "shopify-buy"
 import {
   Checkout,
@@ -8,6 +14,7 @@ import {
   ImageStorage,
 } from "../types/checkout"
 import { IGatsbyImageData } from "gatsby-plugin-image"
+import { ErrorModalContext } from "../contexts/error"
 
 const client = Client.buildClient({
   domain: process.env.GATSBY_STORE_MY_SHOPIFY as string,
@@ -74,6 +81,8 @@ const DefaultContext = {
 export const CartContext = createContext(DefaultContext)
 
 export const CartProvider = ({ children }) => {
+  const { renderErrorModal } = useContext(ErrorModalContext)
+
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
   const [isActive, setIsActive] = useState("shop")
   const [checkout, setCheckout] = useState<any>()
@@ -318,6 +327,7 @@ export const CartProvider = ({ children }) => {
         setCheckout(checkout)
       } catch (err: any) {
         console.error("ERROR", err.message)
+        renderErrorModal()
       }
     }
     initializeCheckout()
@@ -349,8 +359,9 @@ export const CartProvider = ({ children }) => {
         rebuildBundles(updatedCheckout)
         setCheckout(updatedCheckout)
         console.log("updated", updatedCheckout)
-      } catch (e) {
-        console.error(e)
+      } catch (err: any) {
+        console.error(err)
+        renderErrorModal()
       }
     }
 
@@ -373,8 +384,9 @@ export const CartProvider = ({ children }) => {
           )
         }
         setCheckout(updatedCheckout)
-      } catch (e) {
-        console.error(e)
+      } catch (err: any) {
+        console.error(err)
+        renderErrorModal()
       }
     }
 
@@ -392,8 +404,9 @@ export const CartProvider = ({ children }) => {
         rebuildBundles(updatedCheckout)
         setCheckout(updatedCheckout)
         console.log("updated", updatedCheckout)
-      } catch (e) {
-        console.error(e)
+      } catch (err: any) {
+        console.error(err)
+        renderErrorModal()
       }
     }
 
@@ -409,8 +422,9 @@ export const CartProvider = ({ children }) => {
         removeFromImageStorage(imageId)
         rebuildBundles(updatedCheckout)
         setCheckout(updatedCheckout)
-      } catch (e) {
-        console.error(e)
+      } catch (err: any) {
+        console.error(err)
+        renderErrorModal()
       }
     }
 
@@ -423,8 +437,9 @@ export const CartProvider = ({ children }) => {
         removeFromImageStorage(imageId)
         rebuildBundles(updatedCheckout)
         setCheckout(updatedCheckout)
-      } catch (e) {
-        console.error(e)
+      } catch (err: any) {
+        console.error(err)
+        renderErrorModal()
       }
     }
 
@@ -449,8 +464,9 @@ export const CartProvider = ({ children }) => {
         }
         rebuildBundles(updatedCheckout)
         setCheckout(updatedCheckout)
-      } catch (e) {
-        console.error(e)
+      } catch (err: any) {
+        console.error(err)
+        renderErrorModal()
       }
     }
 
@@ -471,8 +487,9 @@ export const CartProvider = ({ children }) => {
           )
         }
         setCheckout(updatedCheckout)
-      } catch (e) {
-        console.error(e)
+      } catch (err: any) {
+        console.error(err)
+        renderErrorModal()
       }
     }
 
@@ -493,8 +510,9 @@ export const CartProvider = ({ children }) => {
           )
         }
         setCheckout(updatedCheckout)
-      } catch (e) {
-        console.error(e)
+      } catch (err: any) {
+        console.error(err)
+        renderErrorModal()
       }
     }
     return {
