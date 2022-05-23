@@ -13,7 +13,6 @@ import { useClickAway } from "react-use"
 import { TiSocialInstagram } from "react-icons/ti"
 import DesktopNavigation from "./desktopNavigation"
 import CartIcon from "./cart-icon"
-import { CartContext } from "../contexts/cart"
 
 const Component = styled.header`
   font-family: var(--sub-heading-font);
