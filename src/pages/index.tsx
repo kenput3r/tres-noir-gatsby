@@ -138,7 +138,7 @@ const IndexPage = ({
       <div className="hero container no-padding">
         <div className="featured">
           <GatsbyImage
-            image={contentfulHomepage.hero2.gatsbyImageData}
+            image={contentfulHomepage.hero.gatsbyImageData}
             alt="Hero"
           />
           <div className="featured-actions">
