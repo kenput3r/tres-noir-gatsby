@@ -40,7 +40,11 @@ const Product = ({ data }: { data: ShopifyProduct }) => {
               image={
                 data.featuredImage.localFile.childImageSharp.gatsbyImageData
               }
-              alt={data.featuredImage.altText}
+              alt={
+                data.featuredImage.altText
+                  ? data.featuredImage.altText
+                  : data.title
+              }
             />
           ) : (
             <StaticImage

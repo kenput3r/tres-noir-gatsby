@@ -226,11 +226,30 @@ const ProductCustomizable = ({
   }
 
   useEffect(() => {
+    let paramSku: null | string = null
     const isBrowser = typeof window !== "undefined"
     if (isBrowser) {
       const params = new URLSearchParams(location.search)
       if (params.get("lens_type"))
         setLensType(params.get("lens_type") || "glasses")
+      if (params.get("variant")) paramSku = params.get("variant")
+    }
+
+    const sku = paramSku || selectedVariantContext
+    if (sku) {
+      const contentful = contentfulProduct.variants.find(
+        (_variant: any) => _variant.sku === sku
+      )
+      const shopify = shopifyProduct.variants.find(
+        (_variant: any) => _variant.sku === sku
+      )
+      if (contentful && shopify) {
+        const variant = contentful
+        setSelectedVariant({
+          contentful: variant,
+          shopify,
+        })
+      }
     }
   }, [])
 
@@ -254,25 +273,6 @@ const ProductCustomizable = ({
 
   // cart
   const { addProductToCart, checkout } = useContext(CartContext)
-  // initial
-  useEffect(() => {
-    const sku = selectedVariantContext
-    if (sku) {
-      const contentful = contentfulProduct.variants.find(
-        (_variant: any) => _variant.sku === sku
-      )
-      const shopify = shopifyProduct.variants.find(
-        (_variant: any) => _variant.sku === sku
-      )
-      if (contentful && shopify) {
-        const variant = contentful
-        setSelectedVariant({
-          contentful: variant,
-          shopify,
-        })
-      }
-    }
-  }, [])
 
   useEffect(() => {
     const productData = {

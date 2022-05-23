@@ -1,17 +1,7 @@
-import React, {
-  useState,
-  useContext,
-  ChangeEvent,
-  useEffect,
-  useLayoutEffect,
-  useRef,
-} from "react"
+import React, { useState, useContext, ChangeEvent, useEffect } from "react"
 import { graphql } from "gatsby"
-import { GatsbyImage, StaticImage } from "gatsby-plugin-image"
-import { CustomerContext } from "../contexts/customer"
 import { CartContext } from "../contexts/cart"
 import styled from "styled-components"
-import ProductCarousel from "../components/product-carousel"
 import Layout from "../components/layout"
 import SEO from "../components/seo"
 import { useQuantityQuery } from "../hooks/useQuantityQuery"
@@ -187,13 +177,27 @@ const Product = ({ data: { shopifyProduct } }: any) => {
   )
 
   useEffect(() => {
+    let paramSku: null | string = null
+    const isBrowser = typeof window !== "undefined"
+    if (isBrowser) {
+      const params = new URLSearchParams(location.search)
+      if (params.get("variant")) paramSku = params.get("variant")
+    }
     let firstVariant = shopifyProduct.variants[0]
-    for (let key in quantityLevels) {
-      if (quantityLevels[key] > 0) {
-        firstVariant = shopifyProduct.variants.find(
-          (_variant: any) => _variant.sku === key
-        )
-        break
+    // if variant param
+    if (paramSku) {
+      firstVariant = shopifyProduct.variants.find(
+        (_variant: any) => _variant.sku === paramSku
+      )
+    } else {
+      // first available
+      for (let key in quantityLevels) {
+        if (quantityLevels[key] > 0) {
+          firstVariant = shopifyProduct.variants.find(
+            (_variant: any) => _variant.sku === key
+          )
+          break
+        }
       }
     }
 
@@ -204,7 +208,6 @@ const Product = ({ data: { shopifyProduct } }: any) => {
     useState<string>("1")
 
   const { addProductToCart, checkout } = useContext(CartContext)
-  const { customerEmail } = useContext(CustomerContext)
 
   const handleVariant = (evt: ChangeEvent<HTMLSelectElement>) => {
     const sku = evt.target.value
@@ -235,8 +238,9 @@ const Product = ({ data: { shopifyProduct } }: any) => {
   const handleAddToCart = () => {
     const id = selectedVariant.storefrontId
     const sku = selectedVariant.sku
-    const image =
-    selectedVariant.image ? selectedVariant.image.localFile.childImageSharp.gatsbyImageData: shopifyProduct.featuredImage.localFile.childImageSharp.gatsbyImageData
+    const image = selectedVariant.image
+      ? selectedVariant.image.localFile.childImageSharp.gatsbyImageData
+      : shopifyProduct.featuredImage.localFile.childImageSharp.gatsbyImageData
     const qty: number = +selectedVariantQuantity
     addProductToCart(id, qty, sku, image)
     alert("ADDED TO CART")
