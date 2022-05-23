@@ -241,6 +241,12 @@ const Cart = () => {
     loadingOverlay.current?.classList.remove("no-events")
   }
 
+  const removeSingleProduct = async item => {
+    loadingOverlay.current?.classList.add("no-events")
+    await removeProductFromCart(item.lineItems[0].shopifyItem.id, item.id)
+    loadingOverlay.current?.classList.remove("no-events")
+  }
+
   const updateQuantity = (
     lineId: string,
     quantity: number,
@@ -261,7 +267,7 @@ const Cart = () => {
     return (Number(price) * quantity).toFixed(2)
   }
 
-  const renderStandardProduct = item => {
+  const renderStandardProduct = (item: tnItem) => {
     const line = item.lineItems[0].shopifyItem
     return (
       <li key={line.id}>
@@ -269,17 +275,24 @@ const Cart = () => {
           <a
             className="remove-item"
             href="#"
-            onClick={() => removeProductFromCart(line.id, item.id)}
+            onClick={() => removeSingleProduct(item)}
           >
             <VscClose />
           </a>
         </div>
         <div className="card">
           <div className="card-image">
-            <GatsbyImage
-              image={item.image}
-              alt={line.variant.title}
-            ></GatsbyImage>
+            {item.image ? (
+              <GatsbyImage
+                image={item.image}
+                alt={line.variant.title}
+              ></GatsbyImage>
+            ) : (
+              <StaticImage
+                src="../images/product-no-image.jpg"
+                alt="No image"
+              ></StaticImage>
+            )}
           </div>
           <div className="card-items">
             <div>
@@ -316,9 +329,9 @@ const Cart = () => {
     )
   }
 
-  const renderCustomProduct = item => {
+  const renderCustomProduct = (item: tnItem) => {
     return (
-      <li key={item.lineItems[0].id} className="customized">
+      <li key={item.id} className="customized">
         <div className="close-btn">
           <a
             className="remove-item"
@@ -330,7 +343,17 @@ const Cart = () => {
         </div>
         <div className="card">
           <div className="card-image">
-            <GatsbyImage image={item.image} alt="temp"></GatsbyImage>
+            {item.image ? (
+              <GatsbyImage
+                image={item.image}
+                alt={item.lineItems[0].shopifyItem.variant.title}
+              ></GatsbyImage>
+            ) : (
+              <StaticImage
+                src="../images/product-no-image.jpg"
+                alt="no-image"
+              ></StaticImage>
+            )}
           </div>
           <div>
             <div>
