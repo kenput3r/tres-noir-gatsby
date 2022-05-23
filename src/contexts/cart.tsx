@@ -1,6 +1,43 @@
-import React, { createContext, useState, useEffect, useMemo } from "react"
+import React, {
+  createContext,
+  useState,
+  useEffect,
+  useMemo,
+  useReducer,
+} from "react"
 import Client, { Cart } from "shopify-buy"
 import { Checkout } from "../types/checkout"
+import { IGatsbyImageData } from "gatsby-plugin-image"
+import { dispatch } from "gatsby-cli/lib/reporter/redux"
+import { parse } from "path"
+
+interface BundleCustomsItemType {
+  customizationId: string
+  lineItems: {
+    [x: string]: any
+    stepNumber: string
+    shopifyItem: Checkout
+  }
+  customImage: {
+    data: IGatsbyImageData
+    altText: string
+  }
+}
+
+interface BundleCustomsType {
+  checkoutId: string
+  items: BundleCustomsItemType[]
+}
+
+const bundleInit: BundleCustomsType = {
+  checkoutId: "",
+  items: [],
+}
+
+interface BundleLocalStorageType {
+  expiry: number
+  value: BundleCustomsType
+}
 
 const client = Client.buildClient({
   domain: process.env.GATSBY_STORE_MY_SHOPIFY as string,
@@ -42,10 +79,149 @@ const DefaultContext = {
   addProductsToCart: (
     lineItems: { variantId: string; quantity: number }[]
   ) => {},
+  addProductCustomToCart: (
+    lineItems: {
+      variantId: string
+      quantity: number
+      customAttributes: { key: string; value: string }[]
+    }[]
+  ) => {},
   removeProductFromCart: (lineItemId: string) => {},
+  removeProductsFromCart: (lineItemIds: []) => {},
   updateProductInCart: (variantId: string, quantity: number) => {},
   addDiscountCode: (code: string) => {},
   removeDiscountCode: () => {},
+  // Customized Product functions
+  bundledCustoms: bundleInit,
+  bundledDispatch: Dispatch => {},
+  addCustomsToLocalStorage: (bundle: BundleCustomsType) => {},
+  removeCustomProduct: (customizationId: string) => {},
+}
+
+const addCustomsToLocalStorage = (currentBundle: BundleCustomsType) => {
+  if (isBrowser) {
+    const now = new Date()
+    localStorage.setItem(
+      "customs",
+      JSON.stringify({
+        value: currentBundle,
+        expiry: now.getTime() + 2592000,
+      })
+    )
+  }
+}
+
+const setNewCustomLocalStorage = newCheckoutId => {
+  if (isBrowser) {
+    const now = new Date()
+    localStorage.setItem(
+      "customs",
+      JSON.stringify({
+        value: newCheckoutId,
+        expiry: now.getTime() + 2592000,
+      })
+    )
+  }
+}
+
+const customLensesReducer = (state, action) => {
+  switch (action.type) {
+    case "ADD":
+      const findId = state.items.findIndex(
+        srch => srch.customizationId === action.payload.id
+      )
+      if (findId === -1) {
+        //create new item
+        addCustomsToLocalStorage({
+          ...state,
+          items: [
+            ...state.items,
+            {
+              customizationId: action.payload.id,
+              lineItems: action.payload.value,
+              customImage: action.payload.image,
+            },
+          ],
+        })
+        return {
+          ...state,
+          items: [
+            ...state.items,
+            {
+              customizationId: action.payload.id,
+              lineItems: action.payload.value,
+              customImage: action.payload.image,
+            },
+          ],
+        }
+      } else {
+        // addCustomsToLocalStorage({
+        //   ...state,
+        //   items: [
+        //     ...state.items.slice(0, findId),
+        //     (state.items[findId] = {
+        //       customizationId: action.payload.id,
+        //       lineItems: action.payload.value,
+        //       customImage: action.payload.image,
+        //     }),
+        //     ...state.items.slice(findId),
+        //   ],
+        // })
+        // return {
+        //   ...state,
+        //   items: [
+        //     ...state.items.slice(0, findId),
+        //     (state.items[findId] = {
+        //       customizationId: action.payload.id,
+        //       lineItems: action.payload.value,
+        //       customImage: action.payload.image,
+        //     }),
+        //     ...state.items.slice(findId),
+        //   ],
+        // }
+        return state
+      }
+    case "DELETE":
+      const filteredDelete = state.items.filter(
+        item => item.customizationId !== action.payload.id
+      )
+      if (state.items.length === 1) {
+        addCustomsToLocalStorage({
+          ...state,
+          items: [],
+        })
+        return {
+          ...state,
+          items: [],
+        }
+      } else {
+        addCustomsToLocalStorage({
+          ...state,
+          items: filteredDelete,
+        })
+        return {
+          ...state,
+          items: filteredDelete,
+        }
+      }
+
+    case "SET_CHECKOUT":
+      setNewCustomLocalStorage({ ...state, checkoutId: action.payload })
+      return { ...state, checkoutId: action.payload }
+    case "UPDATE":
+      return state
+    case "DELETE_ALL":
+      return { ...state, items: [] }
+    case "RESET":
+      setNewCustomLocalStorage({
+        ...state,
+        items: [],
+        checkoutId: action.payload.id,
+      })
+      return { ...state, items: [], checkoutId: action.payload.id }
+    default:
+      return state
+  }
 }
 
 export const CartContext = createContext(DefaultContext)
@@ -54,6 +230,10 @@ export const CartProvider = ({ children }) => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
   const [isActive, setIsActive] = useState("shop")
   const [checkout, setCheckout] = useState<any>()
+  const [bundledCustoms, bundledDispatch] = useReducer(
+    customLensesReducer,
+    bundleInit
+  )
 
   /**
    * @function getCheckoutCookie - gets the current non-expired chechout cookie
@@ -83,6 +263,12 @@ export const CartProvider = ({ children }) => {
     if (isBrowser) {
       document.cookie = `shopifyCheckout=${newCheckout.id};max-age=2592000;SameSite=Strict;`
       const now = new Date()
+      bundledDispatch({
+        type: "RESET",
+        payload: {
+          id: newCheckout.id,
+        },
+      })
       localStorage.setItem(
         "checkout",
         JSON.stringify({ value: newCheckout, expiry: now.getTime() + 2592000 })
@@ -116,6 +302,8 @@ export const CartProvider = ({ children }) => {
         const now = new Date()
         if (now.getTime() > localCheckout.expiry) {
           localStorage.removeItem("checkout")
+          localStorage.removeItem("customs")
+          bundledDispatch({ type: "DELETE_ALL" })
           // eslint-disable-next-line no-return-await
           return await getNewCheckout()
         }
@@ -133,7 +321,31 @@ export const CartProvider = ({ children }) => {
           if (localCheckout) {
             localCheckout = JSON.parse(localCheckout as string) as LocalCheckout
             checkout = await validateLocalCheckout(localCheckout)
+            // initialize context
+            const customs = localStorage.getItem("customs")
+            if (customs) {
+              const parsedCustoms = JSON.parse(
+                customs
+              ) as BundleLocalStorageType
+              if (parsedCustoms.value.checkoutId === checkoutId) {
+                bundledDispatch({
+                  type: "SET_CHECKOUT",
+                  payload: checkout.id,
+                })
+                parsedCustoms.value.items.forEach(item => {
+                  bundledDispatch({
+                    type: "ADD",
+                    payload: {
+                      id: item.customizationId,
+                      value: item.lineItems,
+                      image: item.customImage,
+                    },
+                  })
+                })
+              }
+            }
           } else {
+            // local checkout doesn't exist, get checkout and create local
             checkout = await client.checkout.fetch(checkoutId)
             if (isBrowser) {
               const now = new Date()
@@ -141,7 +353,7 @@ export const CartProvider = ({ children }) => {
                 "checkout",
                 JSON.stringify({
                   value: checkout,
-                  expiry: now.getTime() + 259200,
+                  expiry: now.getTime() + 2592000,
                 })
               )
             }
@@ -184,7 +396,7 @@ export const CartProvider = ({ children }) => {
             "checkout",
             JSON.stringify({
               value: updatedCheckout,
-              expiry: now.getTime() + 259200,
+              expiry: now.getTime() + 2592000,
             })
           )
         }
@@ -208,11 +420,41 @@ export const CartProvider = ({ children }) => {
             "checkout",
             JSON.stringify({
               value: updatedCheckout,
-              expiry: now.getTime() + 259200,
+              expiry: now.getTime() + 2592000,
             })
           )
         }
         setCheckout(updatedCheckout)
+      } catch (e) {
+        console.error(e)
+      }
+    }
+
+    const addProductCustomToCart = async (
+      lineItems: {
+        variantId: string
+        quantity: number
+        customAttributes: { key: string; value: string }[]
+      }[]
+    ) => {
+      try {
+        const updatedCheckout = await client.checkout.addLineItems(
+          checkout.id,
+          lineItems
+        )
+
+        if (isBrowser) {
+          const now = new Date()
+          localStorage.setItem(
+            "checkout",
+            JSON.stringify({
+              value: updatedCheckout,
+              expiry: now.getTime() + 2592000,
+            })
+          )
+        }
+        setCheckout(updatedCheckout)
+        return updatedCheckout
       } catch (e) {
         console.error(e)
       }
@@ -230,7 +472,7 @@ export const CartProvider = ({ children }) => {
             "checkout",
             JSON.stringify({
               value: updatedCheckout,
-              expiry: now.getTime() + 259200,
+              expiry: now.getTime() + 2592000,
             })
           )
         }
@@ -238,6 +480,52 @@ export const CartProvider = ({ children }) => {
       } catch (e) {
         console.error(e)
       }
+    }
+
+    const removeProductsFromCart = async lineItemIds => {
+      try {
+        const updatedCheckout = await client.checkout.removeLineItems(
+          checkout.id,
+          lineItemIds
+        )
+        if (isBrowser) {
+          const now = new Date()
+          localStorage.setItem(
+            "checkout",
+            JSON.stringify({
+              value: updatedCheckout,
+              expiry: now.getTime() + 2592000,
+            })
+          )
+        }
+        setCheckout(updatedCheckout)
+      } catch (e) {
+        console.error(e)
+      }
+    }
+
+    const removeCustomProduct = async (customizationId: string) => {
+      let lineIds: string[] = []
+      checkout.lineItems.forEach(item => {
+        if (item.customAttributes.length !== 0) {
+          item.customAttributes.forEach(attr => {
+            if (
+              attr.key === "customizationId" &&
+              attr.value === customizationId
+            ) {
+              lineIds.push(item.id)
+            }
+          })
+        }
+      })
+      if (lineIds.length !== 0) {
+        await removeProductsFromCart(lineIds)
+        bundledDispatch({
+          type: "DELETE",
+          payload: { id: customizationId },
+        })
+      }
+      return lineIds
     }
 
     const updateProductInCart = async (id: string, quantity: number) => {
@@ -258,7 +546,7 @@ export const CartProvider = ({ children }) => {
             "checkout",
             JSON.stringify({
               value: updatedCheckout,
-              expiry: now.getTime() + 259200,
+              expiry: now.getTime() + 2592000,
             })
           )
         }
@@ -280,7 +568,7 @@ export const CartProvider = ({ children }) => {
             "checkout",
             JSON.stringify({
               value: updatedCheckout,
-              expiry: now.getTime() + 259200,
+              expiry: now.getTime() + 2592000,
             })
           )
         }
@@ -302,7 +590,7 @@ export const CartProvider = ({ children }) => {
             "checkout",
             JSON.stringify({
               value: updatedCheckout,
-              expiry: now.getTime() + 259200,
+              expiry: now.getTime() + 2592000,
             })
           )
         }
@@ -320,12 +608,26 @@ export const CartProvider = ({ children }) => {
       checkout,
       addProductToCart,
       addProductsToCart,
+      addProductCustomToCart,
       removeProductFromCart,
+      removeProductsFromCart,
       updateProductInCart,
       addDiscountCode,
       removeDiscountCode,
+      // customized products
+      bundledCustoms,
+      bundledDispatch,
+      addCustomsToLocalStorage,
+      removeCustomProduct,
     }
-  }, [isDrawerOpen, setIsDrawerOpen, isActive, setIsActive, checkout])
+  }, [
+    isDrawerOpen,
+    setIsDrawerOpen,
+    isActive,
+    setIsActive,
+    checkout,
+    bundledCustoms,
+  ])
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>
 }

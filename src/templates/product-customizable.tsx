@@ -7,12 +7,8 @@ import ProductCarousel from "../components/product-carousel"
 import Layout from "../components/layout"
 import SEO from "../components/seo"
 import { CartContext } from "../contexts/cart"
-import { CustomerContext } from "../contexts/customer"
 import { SelectedVariantContext } from "../contexts/selectedVariant"
-import {
-  addedToCartKlaviyoEvent,
-  viewedProductKlaviyoEvent,
-} from "../helpers/klaviyo"
+import { addedToCartGTMEvent, viewedProductGTMEvent } from "../helpers/gtm"
 import Product from "./product"
 
 const Page = styled.div`
@@ -192,10 +188,56 @@ const Page = styled.div`
 
 const ProductCustomizable = ({
   data: { contentfulProduct, shopifyProduct },
+  location: any,
 }: any) => {
   if (!contentfulProduct) {
     return Product({ data: { shopifyProduct } })
   }
+
+  // check if lens type is set
+  enum LensType {
+    GLASSES = "glasses",
+    SUNGLASSES = "sunglasses",
+  }
+
+  const [lensType, setLensType] = useState<string>("sunglasses")
+  const [imageSet, setImageSet] = useState<any>(
+    contentfulProduct.variants[0].imageSet
+  )
+
+  const getImageSet = (variant: any) => {
+    let defaultImageSet
+    switch (lensType) {
+      case LensType.GLASSES:
+        defaultImageSet = variant.imageSetClear
+          ? variant.imageSetClear
+          : variant.imageSet
+        break
+      case LensType.SUNGLASSES:
+        defaultImageSet = variant.imageSet
+        break
+      case null:
+        defaultImageSet = variant.imageSet
+        break
+      default:
+        variant.imageSet
+    }
+    return defaultImageSet
+  }
+
+  useEffect(() => {
+    const isBrowser = typeof window !== "undefined"
+    if (isBrowser) {
+      const params = new URLSearchParams(location.search)
+      if (params.get("lens_type"))
+        setLensType(params.get("lens_type") || "glasses")
+    }
+  }, [])
+
+  useEffect(() => {
+    const defaultImageSet = getImageSet(contentfulProduct.variants[0])
+    setImageSet(defaultImageSet)
+  }, [lensType])
 
   // return default Product Page if contentful values do not exist
   const quantityLevels = useQuantityQuery(
@@ -209,8 +251,10 @@ const ProductCustomizable = ({
     contentful: contentfulProduct?.variants && contentfulProduct.variants[0],
     shopify: shopifyProduct.variants[0],
   })
+
   // cart
   const { addProductToCart, checkout } = useContext(CartContext)
+  // initial
   useEffect(() => {
     const sku = selectedVariantContext
     if (sku) {
@@ -228,34 +272,26 @@ const ProductCustomizable = ({
         })
       }
     }
-  }, [
-    contentfulProduct?.variants,
-    selectedVariantContext,
-    shopifyProduct.variants,
-  ])
-
-  const { customerEmail } = useContext(CustomerContext)
+  }, [])
 
   useEffect(() => {
-    if (customerEmail) {
-      const productData = {
-        title: shopifyProduct.title,
-        legacyResourceId: shopifyProduct.legacyResourceId,
-        sku: selectedVariant.shopify.sku,
-        productType: shopifyProduct.productType,
-        image: selectedVariant?.shopify?.image?.originalSrc
-          ? selectedVariant.shopify.image?.originalSrc
-          : shopifyProduct.featuredImage.originalSrc,
-        url: shopifyProduct.onlineStoreUrl,
-        vendor: shopifyProduct.vendor,
-        price: selectedVariant.shopify.price,
-        compareAtPrice: selectedVariant.shopify.compareAtPrice,
-        collections: shopifyProduct.collections.map(
-          (collection: { title: string }) => collection.title
-        ),
-      }
-      viewedProductKlaviyoEvent(productData)
+    const productData = {
+      title: shopifyProduct.title,
+      legacyResourceId: shopifyProduct.legacyResourceId,
+      sku: selectedVariant.shopify.sku,
+      productType: shopifyProduct.productType,
+      image: selectedVariant?.shopify?.image?.originalSrc
+        ? selectedVariant.shopify.image?.originalSrc
+        : shopifyProduct.featuredImage.originalSrc,
+      url: shopifyProduct.onlineStoreUrl,
+      vendor: shopifyProduct.vendor,
+      price: selectedVariant.shopify.price,
+      compareAtPrice: selectedVariant.shopify.compareAtPrice,
+      collections: shopifyProduct.collections.map(
+        (collection: { title: string }) => collection.title
+      ),
     }
+    viewedProductGTMEvent(productData)
   }, [selectedVariant])
 
   const selectVariant = (e: React.MouseEvent, variant: any) => {
@@ -272,31 +308,41 @@ const ProductCustomizable = ({
     }
   }
 
+  useEffect(() => {
+    updateImageSet()
+  }, [selectedVariant])
+
   const handleAddToCart = () => {
     const id = selectedVariant.shopify.storefrontId
     addProductToCart(id, 1)
     alert("ADDED TO CART")
-    // klaviyo
-    if (customerEmail) {
-      const productData = {
-        title: shopifyProduct.title,
-        legacyResourceId: shopifyProduct.legacyResourceId,
-        sku: selectedVariant.shopify.sku,
-        productType: shopifyProduct.productType,
-        image: selectedVariant?.shopify?.image?.originalSrc
-          ? selectedVariant.shopify.image?.originalSrc
-          : shopifyProduct.featuredImage.originalSrc,
-        url: shopifyProduct.onlineStoreUrl,
-        vendor: shopifyProduct.vendor,
-        price: selectedVariant.shopify.price,
-        compareAtPrice: selectedVariant.shopify.compareAtPrice,
-        collections: shopifyProduct.collections.map(
-          (collection: { title: string }) => collection.title
-        ),
-      }
-      addedToCartKlaviyoEvent(productData, checkout)
+    const productData = {
+      title: shopifyProduct.title,
+      legacyResourceId: shopifyProduct.legacyResourceId,
+      sku: selectedVariant.shopify.sku,
+      productType: shopifyProduct.productType,
+      image: selectedVariant?.shopify?.image?.originalSrc
+        ? selectedVariant.shopify.image?.originalSrc
+        : shopifyProduct.featuredImage.originalSrc,
+      url: shopifyProduct.onlineStoreUrl,
+      vendor: shopifyProduct.vendor,
+      price: selectedVariant.shopify.price,
+      compareAtPrice: selectedVariant.shopify.compareAtPrice,
+      collections: shopifyProduct.collections.map(
+        (collection: { title: string }) => collection.title
+      ),
     }
+    addedToCartGTMEvent(productData)
   }
+
+  const updateImageSet = () => {
+    const defaultImageSet = getImageSet(selectedVariant.contentful)
+    setImageSet(defaultImageSet)
+  }
+
+  let customizeUrl = `/products/${contentfulProduct.handle}/customize?variant=${selectedVariant.shopify.sku}`
+  if (lensType !== LensType.SUNGLASSES)
+    customizeUrl = `${customizeUrl}&lens_type=${lensType}`
 
   return (
     <Layout>
@@ -314,10 +360,7 @@ const ProductCustomizable = ({
         <div className="row">
           <div className="col images">
             <ProductCarousel
-              imageSet={
-                selectedVariant?.contentful &&
-                selectedVariant.contentful.imageSet
-              }
+              imageSet={selectedVariant?.contentful && imageSet}
             />
           </div>
           <div className="col">
@@ -336,7 +379,12 @@ const ProductCustomizable = ({
             </div>
             <form className="options">
               <p className="selected-text-label">
-                Color: <span>{selectedVariant.shopify.title}</span>
+                Color:{" "}
+                <span>
+                  {lensType === LensType.GLASSES
+                    ? selectedVariant.shopify.title.replace("- Smoke Lens", "")
+                    : selectedVariant.shopify.title}
+                </span>
               </p>
               <div className="buttons">
                 {contentfulProduct &&
@@ -392,20 +440,23 @@ const ProductCustomizable = ({
                   </div>
                 ) : (
                   <div>
-                    <button
-                      type="button"
-                      onClick={handleAddToCart}
-                      className="add-to-cart"
-                    >
-                      ADD TO CART
-                    </button>
-                    <p>- OR -</p>
+                    {lensType !== LensType.GLASSES && (
+                      <>
+                        {" "}
+                        <button
+                          type="button"
+                          onClick={handleAddToCart}
+                          className="add-to-cart"
+                        >
+                          ADD TO CART
+                        </button>
+                        <p>- OR -</p>
+                      </>
+                    )}
+
                     <Link
                       className="customize-btn"
-                      to={
-                        contentfulProduct &&
-                        `/products/${contentfulProduct.handle}/customize?variant=${selectedVariant.shopify.sku}`
-                      }
+                      to={contentfulProduct && customizeUrl}
                     >
                       CUSTOMIZE
                     </Link>
@@ -445,15 +496,31 @@ export const query = graphql`
           )
           title
         }
+        imageSetClear {
+          data: gatsbyImageData(
+            layout: CONSTRAINED
+            placeholder: BLURRED
+            width: 2048
+            height: 1365
+          )
+          title
+        }
         id
       }
     }
     shopifyProduct(handle: { eq: $handle }) {
       collections {
+        handle
         title
       }
       featuredImage {
         originalSrc
+        altText
+        localFile {
+          childImageSharp {
+            gatsbyImageData
+          }
+        }
       }
       id
       handle

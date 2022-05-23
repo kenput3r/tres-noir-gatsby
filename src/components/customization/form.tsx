@@ -1,4 +1,10 @@
-import React, { useContext, useRef, ChangeEvent, useState } from "react"
+import React, {
+  useContext,
+  useRef,
+  ChangeEvent,
+  useState,
+  useEffect,
+} from "react"
 import { Link } from "gatsby"
 import { GatsbyImage } from "gatsby-plugin-image"
 import styled from "styled-components"
@@ -136,14 +142,15 @@ const Component = styled.form`
           border-bottom: 1px solid #808080;
           display: flex;
           padding: 1px;
+          align-items: center;
           label {
             color: #808080;
           }
           select {
             margin-left: 15px;
-            border: none;
             width: 100%;
-            background: none;
+            border: none;
+            color: black;
           }
         }
       }
@@ -308,6 +315,8 @@ const Form = ({
     productUrl,
     selectedVariants,
     setSelectedVariants,
+    hasSavedCustomized,
+    setHasSavedCustomized,
   } = useContext(CustomizeContext)
   const stepMap = new Map()
   stepMap.set(1, "RX TYPE")
@@ -319,11 +328,22 @@ const Form = ({
   const [isFormValid, setIsFormValid] = useState(true)
   const errorRefs = useRef({})
   const continueBtn = useRef<HTMLButtonElement>(null)
-  const handleChange = (variant: ShopifyVariant) => {
+  const handleChange = (
+    variant: ShopifyVariant,
+    isSetFromEvent: boolean = true
+  ) => {
+    console.log("setFromEvent", isSetFromEvent)
     setRxAble(variant.product?.title !== "Non-Prescription Lens")
     if (variant.product?.title === "Non-Prescription Lens") {
-      if (messageRef.current) removeChildNodes(messageRef.current)
+      if (messageRef.current) {
+        removeChildNodes(messageRef.current)
+        continueBtn.current?.classList.remove("disable")
+      }
     }
+    setHasSavedCustomized({
+      ...hasSavedCustomized,
+      [`step${currentStep}`]: isSetFromEvent,
+    })
     setSelectedVariants({
       ...selectedVariants,
       [`step${currentStep}`]: variant,
@@ -450,12 +470,20 @@ const Form = ({
       return
     }
   }
+
+  useEffect(() => {
+    // console.log("hasSaved", hasSavedCustomized[`step${currentStep}`])
+    if (hasSavedCustomized[`step${currentStep}`] === false) {
+      handleChange(shopifyCollection.products[0].variants[0], false)
+    }
+  }, [])
+
   return (
     <Component>
       <div className="step-header">
         <p>Choose your {stepMap.get(currentStep)}</p>
       </div>
-      {shopifyCollection.products.map((product: ShopifyProduct) => (
+      {shopifyCollection.products.map((product: ShopifyProduct, index) => (
         <React.Fragment key={product.id}>
           {product.variants.length === 1 ? (
             <div className="product-option">

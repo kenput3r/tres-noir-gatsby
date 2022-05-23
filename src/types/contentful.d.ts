@@ -6,6 +6,9 @@ export interface ContentfulProductVariant {
   featuredImage: {
     data: IGatsbyImageData
   }
+  featuredImageClear: {
+    data: IGatsbyImageData
+  }
   colorName: string
   colorImage: {
     data: IGatsbyImageData
@@ -18,6 +21,7 @@ export interface ContentfulProduct {
   id: string
   title: string
   fitType: string
+  frameWidth: string[]
   variants: ContentfulProductVariant[]
 }
 
@@ -25,6 +29,15 @@ export interface ContentfulCollection {
   handle: string
   name: string
   featuredImage: {
+    data: IGatsbyImageData
+    description: string
+  }
+  featuredImage2: {
+    data: IGatsbyImageData
+  }
+  featuredImageTextColor: string
+  featuredImageTextPosition: string
+  featuredImageClear: {
     data: IGatsbyImageData
   }
   products: ContentfulProduct[]

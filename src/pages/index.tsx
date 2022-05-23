@@ -5,6 +5,7 @@ import styled from "styled-components"
 import Carousel from "../components/carousel"
 import Layout from "../components/layout-index"
 import SEO from "../components/seo"
+import FreeShipping from "../components/free-shipping"
 
 const Page = styled.div`
   margin: auto;
@@ -112,15 +113,7 @@ const IndexPage = ({
   <Layout>
     <SEO title="Home" />
     <Page>
-      <div className="shipping-message container">
-        <StaticImage
-          src="../images/double-diamonds.png"
-          alt="double diamonds"
-          width={40}
-        />
-        <p className="h2">FREE SHIPPING IN USA</p>
-        <p className="h3">ALL ORDERS SHIP SAME OR NEXT BUSINESS DAY</p>
-      </div>
+      <FreeShipping />
       <div className="featured container">
         <GatsbyImage
           image={contentfulHomepage.hero.gatsbyImageData}

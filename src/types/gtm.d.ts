@@ -4,14 +4,11 @@ export interface ShopifyProductInfo {
   image: string
   legacyResourceId: string
   price: string
+  productType: string
   sku: string
   title: string
   url: string
   vendor: string
-}
-
-export interface IdentifyCustomerPayload {
-  $email: string
 }
 
 export interface ViewedProductPayload {

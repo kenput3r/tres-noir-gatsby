@@ -12,14 +12,18 @@ const DisplayFilters = styled.div`
   flex-direction: row;
   flex-wrap: wrap;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: center;
   margin-top: 20px;
+  font-family: var(--heading-font);
   button {
+    font-size: 1.25rem;
+    @media (max-width: 600px) {
+      font-size: 1.2rem;
+    }
     border: none;
     background-color: transparent;
     color: #000;
     text-transform: uppercase;
-    font-size: 1.2em;
     cursor: pointer;
     &:hover {
       color: var(--color-grey-dark);
@@ -46,6 +50,12 @@ const Triangle = styled.div`
 `
 
 const Filters = styled.div`
+  font-family: var(--heading-font);
+  font-size: 0.98rem;
+  p,
+  span {
+    font-size: 0.9rem;
+  }
   display: flex;
   flex-direction: column;
   flex-wrap: wrap;
@@ -55,6 +65,25 @@ const Filters = styled.div`
   background-color: rgb(239, 239, 239);
   padding: 25px;
   margin-bottom: 25px;
+  .frame-options {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    gap: 20px;
+    .reset {
+      margin-top: 10px;
+    }
+  }
+  .color-options {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    gap: 20px;
+  }
   a {
     text-decoration: none;
     color: var(--color-grey-dark);
@@ -66,7 +95,6 @@ const Filters = styled.div`
     cursor: pointer;
     text-transform: uppercase;
     color: var(--color-grey-dark);
-    font-size: 1.2em;
     &:hover {
       border-radius: 15px;
       color: #000;
@@ -79,7 +107,7 @@ const Filters = styled.div`
     }
     &.filter {
       padding: 8px 12px;
-      margin: 20px;
+      // margin: 20px;
       border-radius: 15px;
       color: #000;
       &[data-active="true"] {
@@ -90,17 +118,26 @@ const Filters = styled.div`
       background-color: #fff;
     }
     &.frame-filter {
-      p {
-        margin: 0.65rem 0.65rem;
+      .fit-type {
+        margin-top: 8px;
+        font-family: var(--sub-heading-font);
+        position: relative;
+        span {
+          vertical-align: middle;
+        }
+        .text {
+          font-size: 1.05rem;
+        }
       }
     }
     &.color-filter {
       line-height: 50px;
+      font-family: var(--sub-heading-font);
     }
   }
   ul {
-    border-top: 3px solid #000;
-    border-bottom: 3px solid #000;
+    /* border-top: 3px solid #000;
+    border-bottom: 3px solid #000; */
     list-style-type: none;
     display: flex;
     flex-direction: row;
@@ -110,10 +147,19 @@ const Filters = styled.div`
     margin-left: 0;
     margin-bottom: 15px;
     padding: 0 10px;
-    position: relative;
     li {
+      font-size: 1.2rem;
       margin-bottom: 0;
       padding: 10px 25px;
+      white-space: nowrap;
+      flex: 1;
+      [data-active="true"] {
+        text-decoration: underline;
+      }
+      @media (max-width: 600px) {
+        padding: 10px 5px;
+        font-size: 0.97rem;
+      }
     }
   }
 `
@@ -121,12 +167,12 @@ const Filters = styled.div`
 interface Props {
   collection: ContentfulCollection
   filters: {
-    fitType: null | string
-    colorName: null | string
+    frameWidth: string
+    colorName: string
   }
   setFilters: Dispatch<{
-    fitType: null | string
-    colorName: null | string
+    frameWidth: string
+    colorName: string
   }>
   setProducts: Dispatch<ContentfulProduct[]>
 }
@@ -134,7 +180,7 @@ interface Props {
 // eslint-disable-next-line no-unused-vars
 // eslint-disable-next-line no-shadow
 enum FilterTypes {
-  FitType = "fitType",
+  FrameWidth = "frameWidth",
   ColorName = "colorName",
 }
 
@@ -145,16 +191,16 @@ const FiltersContentful = ({
   setProducts,
 }: Props) => {
   const [showFilters, setShowFilters] = useState<boolean>(false)
-  const [panel, setPanel] = useState<string>(FilterTypes.FitType)
-  const [fitTypes, setFitTypes] = useState<string[]>([])
+  const [panel, setPanel] = useState<string>(FilterTypes.FrameWidth)
+  const [frameWidths, setFrameWidths] = useState<string[]>([])
   const [colors, setColors] = useState<string[]>([])
 
   const frameColors = useFrameColors()
 
   const generateFilters = (products: ContentfulProduct[]) => {
-    const { fitTypesList, colorsList } = getFilters(products)
+    const { frameWidthList, colorsList } = getFilters(products)
     // set values
-    setFitTypes(fitTypesList)
+    setFrameWidths(frameWidthList)
     setColors(colorsList)
   }
 
@@ -165,17 +211,18 @@ const FiltersContentful = ({
   const filter = (type: string, value: string): void => {
     let filteredProducts: ContentfulProduct[] = collection.products
     if (filters[type] === value) {
-      filters[type] = null
+      filters[type] = ""
     } else {
       filters[type] = value
     }
+
     const keys = Object.keys(filters)
     // eslint-disable-next-line no-shadow
     keys.forEach(filter => {
       if (filters[filter]) {
-        if (filter === FilterTypes.FitType) {
-          filteredProducts = filteredProducts.filter(
-            product => product.fitType === filters[filter]
+        if (filter === FilterTypes.FrameWidth) {
+          filteredProducts = filteredProducts.filter(product =>
+            product.frameWidth.includes(filters[filter])
           )
         }
         if (filter === FilterTypes.ColorName) {
@@ -198,7 +245,7 @@ const FiltersContentful = ({
   }
 
   const reset = (): void => {
-    setFilters({ fitType: null, colorName: null })
+    setFilters({ frameWidth: "", colorName: "" })
     setProducts(collection.products)
     generateFilters(collection.products)
   }
@@ -228,7 +275,11 @@ const FiltersContentful = ({
   return (
     <>
       <DisplayFilters>
-        <button type="button" onClick={handleShowFilters}>
+        <button
+          className="filter-title"
+          type="button"
+          onClick={handleShowFilters}
+        >
           Filter +
         </button>
       </DisplayFilters>
@@ -245,10 +296,10 @@ const FiltersContentful = ({
                   <button
                     className="filter-type"
                     type="button"
-                    onClick={() => handlePanel(FilterTypes.FitType)}
-                    data-active={panel === FilterTypes.FitType}
+                    onClick={() => handlePanel(FilterTypes.FrameWidth)}
+                    data-active={panel === FilterTypes.FrameWidth}
                     aria-pressed={
-                      panel === FilterTypes.FitType ? "true" : "false"
+                      panel === FilterTypes.FrameWidth ? "true" : "false"
                     }
                   >
                     FRAME WIDTH
@@ -269,34 +320,38 @@ const FiltersContentful = ({
                 </li>
               </ul>
             </div>
-            {panel === FilterTypes.FitType && (
-              <div>
-                {fitTypes.length &&
-                  fitTypes.map((fitType: string) => (
+            {panel === FilterTypes.FrameWidth && (
+              <div className="frame-options">
+                {frameWidths.length &&
+                  frameWidths.map((frameWidth: string) => (
                     <button
                       className="filter frame-filter"
-                      key={fitType}
+                      key={frameWidth}
                       type="button"
-                      data-active={filters.fitType === fitType}
-                      onClick={() => filter(FilterTypes.FitType, fitType)}
+                      data-active={filters.frameWidth === frameWidth}
+                      onClick={() => filter(FilterTypes.FrameWidth, frameWidth)}
                       aria-pressed={
-                        filters.fitType === fitType ? "true" : "false"
+                        filters.frameWidth === frameWidth ? "true" : "false"
                       }
                     >
                       <StaticImage
                         src="../images/glasses-icon.png"
-                        alt={fitType}
+                        alt={frameWidth}
                         placeholder="tracedSVG"
                         style={{ marginBottom: 0 }}
                         width={150}
                       />
-                      <p>{fitType}</p>
+                      <div className="fit-type">
+                        <span className="text">
+                          &#8866; {frameWidth} &#8867;
+                        </span>
+                      </div>
                     </button>
                   ))}
               </div>
             )}
             {panel === FilterTypes.ColorName && (
-              <div>
+              <div className="color-options">
                 {colors.length &&
                   colors.map((colorName: string) => {
                     const image = frameColors[colorName.replace("-", "_")]

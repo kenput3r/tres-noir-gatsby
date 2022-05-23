@@ -17,10 +17,10 @@ const Component = styled.div`
       cursor: pointer;
     }
   }
-  .prev {
+  .nav-prev {
     padding-right: 10px;
   }
-  .next {
+  .nav-next {
     padding-left: 10px;
   }
 `
@@ -54,15 +54,17 @@ const Carousel = ({
 }) => (
   <Component>
     <div className="navigation">
-      <a className="prev" role="button">
-        <Left />
-      </a>
+      <div className="nav-prev">
+        <a className="prev" role="button">
+          <Left />
+        </a>
+      </div>
       <StyledSwiper
         slidesPerView={1}
         spaceBetween={10}
         loop
         navigation={{ nextEl: ".next", prevEl: ".prev" }}
-        className="mySwiper"
+        className="carousel"
         breakpoints={{
           "480": {
             slidesPerView: 2,
@@ -78,6 +80,15 @@ const Carousel = ({
           },
         }}
         modules={[Navigation]}
+        // preventClicks={false}
+        preventClicksPropagation={false}
+        preventInteractionOnTransition={true}
+        touchRatio={1}
+        touchReleaseOnEdges={true}
+        touchStartForcePreventDefault={true}
+        watchSlidesProgress
+        swipeHandler=".carousel"
+        threshold={15}
       >
         {imageSet.map((image: ImageSet, i: number) => (
           <SwiperSlide key={`thumb-${i}`}>
@@ -91,9 +102,11 @@ const Carousel = ({
           </SwiperSlide>
         ))}
       </StyledSwiper>
-      <a className="next" role="button">
-        <Right />
-      </a>
+      <div className="nav-next">
+        <a className="next" role="button">
+          <Right />
+        </a>
+      </div>
     </div>
   </Component>
 )
