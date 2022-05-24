@@ -35,7 +35,7 @@ const Triangle = styled.div`
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
-  justify-content: flex-end;
+  justify-content: center;
   .triangle {
     width: 0px;
     height: 0px;
@@ -74,6 +74,7 @@ const Filters = styled.div`
     gap: 20px;
     .reset {
       margin-top: 10px;
+      background-color: transparent;
     }
   }
   .color-options {
@@ -95,11 +96,13 @@ const Filters = styled.div`
     cursor: pointer;
     text-transform: uppercase;
     color: var(--color-grey-dark);
+    background-color: transparent;
     &:hover {
       border-radius: 15px;
       color: #000;
     }
     &.filter-type {
+      background-color: transparent;
       /* font-size: 1.2em; */
       &[data-active="true"] {
         color: #000;
@@ -107,11 +110,14 @@ const Filters = styled.div`
     }
     &.filter {
       padding: 8px 12px;
-      // margin: 20px;
+      background-color: transparent;
       border-radius: 15px;
       color: #000;
       &[data-active="true"] {
         background-color: #fff;
+      }
+      img {
+        border-radius: 15px;
       }
     }
     &.filter:hover {
