@@ -81,6 +81,7 @@ const Page = styled.div`
   }
   .hero {
     display: flex;
+    justify-content: center;
     @media screen and (max-width: 767px) {
       flex-direction: column;
     }
@@ -135,7 +136,7 @@ const IndexPage = ({
     <SEO title="Home" />
     <Page>
       <FreeShipping />
-      <div className="hero container no-padding">
+      <div className="hero container">
         <div className="featured">
           <GatsbyImage
             image={contentfulHomepage.hero.gatsbyImageData}
