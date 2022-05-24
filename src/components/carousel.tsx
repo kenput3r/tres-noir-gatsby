@@ -62,7 +62,7 @@ const Carousel = ({
       <StyledSwiper
         slidesPerView={1}
         spaceBetween={10}
-        loop
+        loop={true}
         navigation={{ nextEl: ".next", prevEl: ".prev" }}
         className="carousel"
         breakpoints={{
@@ -80,7 +80,6 @@ const Carousel = ({
           },
         }}
         modules={[Navigation]}
-        // preventClicks={false}
         preventClicksPropagation={false}
         preventInteractionOnTransition={true}
         touchRatio={1}
