@@ -10,6 +10,7 @@ import { CartContext } from "../contexts/cart"
 import { SelectedVariantContext } from "../contexts/selectedVariant"
 import { addedToCartGTMEvent, viewedProductGTMEvent } from "../helpers/gtm"
 import Product from "./product"
+import { CustomizeContext } from "../contexts/customize"
 
 const Page = styled.div`
   .shipping-message {
@@ -258,6 +259,23 @@ const ProductCustomizable = ({
     setImageSet(defaultImageSet)
   }, [lensType])
 
+  const {
+    setSelectedVariantsToDefault,
+    setCurrentStep,
+    setHasSavedCustomized,
+  } = useContext(CustomizeContext)
+
+  useEffect(() => {
+    setCurrentStep(1)
+    setHasSavedCustomized({
+      step1: false,
+      step2: false,
+      step3: false,
+      step4: false,
+    })
+    setSelectedVariantsToDefault()
+  }, [])
+
   // return default Product Page if contentful values do not exist
   const quantityLevels = useQuantityQuery(
     shopifyProduct.handle,
@@ -266,6 +284,7 @@ const ProductCustomizable = ({
   const { selectedVariantContext, setSelectedVariantContext } = useContext(
     SelectedVariantContext
   )
+
   const [selectedVariant, setSelectedVariant] = useState({
     contentful: contentfulProduct?.variants && contentfulProduct.variants[0],
     shopify: shopifyProduct.variants[0],

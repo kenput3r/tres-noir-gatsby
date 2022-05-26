@@ -98,8 +98,17 @@ const Step5 = (props: {
   currentPrice: any
   variant: any
   productImage: any
+  resumedItem: any
+  completeVariant: any
 }) => {
-  const { productTitle, currentPrice, variant, productImage } = props
+  const {
+    productTitle,
+    currentPrice,
+    variant,
+    productImage,
+    resumedItem,
+    completeVariant,
+  } = props
   const {
     currentStep,
     setCurrentStep,
@@ -110,7 +119,8 @@ const Step5 = (props: {
   } = useContext(CustomizeContext)
 
   // const { bundledCustoms, bundledDispatch } = useContext(CustomProductsContext)
-  const { addProductCustomToCart } = useContext(CartContext)
+  const { addProductCustomToCart, removeCustomProductWithId } =
+    useContext(CartContext)
   const { isRxAble, setRxAble, rxInfo, rxInfoDispatch } =
     useContext(RxInfoContext)
   const [addedToCart, setAddedToCart] = useState(false)
@@ -209,8 +219,17 @@ const Step5 = (props: {
       ],
     }
     stepItems.unshift(frameVariant)
-
-    addProductCustomToCart(stepItems, matchingKey, productImage)
+    if (resumedItem) {
+      await removeCustomProductWithId(resumedItem)
+    }
+    addProductCustomToCart(
+      stepItems,
+      matchingKey,
+      productImage,
+      selectedVariants,
+      variant.sku,
+      variant.product.handle
+    )
     setAddedToCart(true)
     alert("ADDED TO CART")
   }

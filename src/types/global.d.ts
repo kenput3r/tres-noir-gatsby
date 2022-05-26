@@ -19,6 +19,7 @@ export interface ShopifyVariant {
   price: number
   product?: {
     title: string
+    handle: string
   }
   selectedOptions?: {
     name?: string
@@ -62,4 +63,40 @@ export interface SavedCustomizeContexts {
   step2: boolean
   step3: boolean
   step4: boolean
+}
+
+export interface SelectedVariantTable {
+  checkoutId: string
+  customs: {
+    [key: string]: {
+      selectedVariants: SelectedVariants
+      sku: string
+      handle: string
+    }
+  }
+}
+
+export interface SelectedVariantStorage {
+  expiry: string
+  value: SelectedVariantTable
+}
+
+export interface SelectedVariantStep {
+  image: {
+    altText: string
+    localFile: {
+      childImageSharp: {
+        gatsbyImageData: IGatsbyImageData
+      }
+    }
+  }
+  price: string
+  product: {
+    title: string
+    description: string
+  }
+  selectedOptions: any
+  sku: string
+  storefrontId: string
+  title: string
 }

@@ -13,6 +13,7 @@ import {
   ImageHashTable,
   ImageStorage,
 } from "../types/checkout"
+import { SelectedVariants, SelectedVariantStorage } from "../types/global"
 import { IGatsbyImageData } from "gatsby-plugin-image"
 import { ErrorModalContext } from "../contexts/error"
 
@@ -65,10 +66,14 @@ const DefaultContext = {
   addProductCustomToCart: (
     items: CustomLineItem[],
     key: string,
-    image: IGatsbyImageData
+    image: IGatsbyImageData,
+    resumeData: SelectedVariants,
+    sku: string,
+    handle: string
   ) => {},
   removeProductFromCart: (lineItemId: string, imageId: string) => {},
   removeProductsFromCart: (lineItemIds: [], imageId: string) => {},
+  removeCustomProductWithId: (id: string) => {},
   updateProductInCart: (
     variantId: string,
     quantity: number,
@@ -115,6 +120,10 @@ export const CartProvider = ({ children }) => {
     if (isBrowser) {
       document.cookie = `shopifyCheckout=${newCheckout.id};max-age=2592000;SameSite=Strict;`
       const now = new Date()
+      // removing local storage objects
+      localStorage.removeItem("checkout")
+      localStorage.removeItem("cart-images")
+      localStorage.removeItem("customs-resume")
       newCheckout["tnLineItems"] = []
       localStorage.setItem(
         "checkout",
@@ -127,6 +136,17 @@ export const CartProvider = ({ children }) => {
           value: {
             checkoutId: newCheckout.id,
             images: {},
+          },
+          expiry: now.getTime() + 2592000,
+        })
+      )
+      // reset custom product storage if new checkout
+      localStorage.setItem(
+        "customs-resume",
+        JSON.stringify({
+          value: {
+            checkoutId: newCheckout.id,
+            customs: {},
           },
           expiry: now.getTime() + 2592000,
         })
@@ -144,6 +164,62 @@ export const CartProvider = ({ children }) => {
     // }
   }
 
+  // adds a product from custom products local storage
+  const addCustomToLocalStorage = (
+    id: string,
+    resumeData: SelectedVariants,
+    sku: string,
+    handle: string
+  ) => {
+    if (isBrowser) {
+      const now = new Date()
+      let currentData = localStorage.getItem("customs-resume")
+      let parsedCustoms = {
+        checkoutId: checkout.id,
+        customs: {},
+      }
+      if (currentData) {
+        const localCustoms = JSON.parse(currentData) as SelectedVariantStorage
+        parsedCustoms = localCustoms.value
+      }
+      parsedCustoms.customs[id] = {
+        selectedVariants: resumeData,
+        sku: sku,
+        handle: handle,
+      }
+      localStorage.setItem(
+        "customs-resume",
+        JSON.stringify({
+          value: parsedCustoms,
+          expiry: now.getTime() + 2592000,
+        })
+      )
+    }
+  }
+
+  // removes a product from custom products local storage
+  const removeCustomFromLocalStorage = (id: string) => {
+    if (isBrowser) {
+      const now = new Date()
+      let storageCustoms = localStorage.getItem("customs-resume")
+      if (storageCustoms) {
+        const localCustoms = JSON.parse(
+          storageCustoms
+        ) as SelectedVariantStorage
+        const parsedCustoms = localCustoms.value
+        delete parsedCustoms.customs[id]
+        localStorage.setItem(
+          "customs-resume",
+          JSON.stringify({
+            value: parsedCustoms,
+            expiry: now.getTime() + 2592000,
+          })
+        )
+      }
+    }
+  }
+
+  // adds a product to image local storage
   const addToImageStorage = (
     id: string,
     image: IGatsbyImageData,
@@ -171,6 +247,7 @@ export const CartProvider = ({ children }) => {
     }
   }
 
+  // removes a product from image local storage
   const removeFromImageStorage = (id: string) => {
     if (isBrowser) {
       const now = new Date()
@@ -190,6 +267,7 @@ export const CartProvider = ({ children }) => {
     }
   }
 
+  // gets a product image from local storage
   const getImageFromLocalStorage = (id: string) => {
     if (isBrowser) {
       let cartImages = localStorage.getItem("cart-images")
@@ -201,6 +279,7 @@ export const CartProvider = ({ children }) => {
     }
   }
 
+  // rebuild tnLineItems
   const rebuildBundles = checkout => {
     let itemsToAdd: tnItem[] = []
     let itemsMap = new Map()
@@ -286,6 +365,7 @@ export const CartProvider = ({ children }) => {
         if (now.getTime() > localCheckout.expiry) {
           localStorage.removeItem("checkout")
           localStorage.removeItem("cart-images")
+          localStorage.removeItem("customs-resume")
           // eslint-disable-next-line no-return-await
           return await getNewCheckout()
         }
@@ -305,17 +385,19 @@ export const CartProvider = ({ children }) => {
             checkout = await validateLocalCheckout(localCheckout)
           } else {
             // local checkout doesn't exist, get checkout and create local
-            checkout = await client.checkout.fetch(checkoutId)
-            if (isBrowser) {
-              const now = new Date()
-              localStorage.setItem(
-                "checkout",
-                JSON.stringify({
-                  value: checkout,
-                  expiry: now.getTime() + 2592000,
-                })
-              )
-            }
+            // checkout = await client.checkout.fetch(checkoutId)
+            // if (isBrowser) {
+            //   const now = new Date()
+            //   localStorage.setItem(
+            //     "checkout",
+            //     JSON.stringify({
+            //       value: checkout,
+            //       expiry: now.getTime() + 2592000,
+            //     })
+            //   )
+            // }
+            // create new checkout
+            checkout = await getNewCheckout()
           }
           if (checkout.completedAt) {
             checkout = await getNewCheckout()
@@ -393,7 +475,10 @@ export const CartProvider = ({ children }) => {
     const addProductCustomToCart = async (
       lineItems: CustomLineItem[],
       key: string,
-      image: IGatsbyImageData
+      image: IGatsbyImageData,
+      resumeData: SelectedVariants,
+      sku: string,
+      handle: string
     ) => {
       try {
         const updatedCheckout = await client.checkout.addLineItems(
@@ -403,6 +488,8 @@ export const CartProvider = ({ children }) => {
         addToImageStorage(key, image, checkout.id)
         rebuildBundles(updatedCheckout)
         setCheckout(updatedCheckout)
+        // add necessary data to localStorage to be able to resume from cart later on
+        addCustomToLocalStorage(key, resumeData, sku, handle)
         console.log("updated", updatedCheckout)
       } catch (err: any) {
         console.error(err)
@@ -435,8 +522,23 @@ export const CartProvider = ({ children }) => {
           lineItemIds
         )
         removeFromImageStorage(imageId)
+        removeCustomFromLocalStorage(imageId)
         rebuildBundles(updatedCheckout)
         setCheckout(updatedCheckout)
+      } catch (err: any) {
+        console.error(err)
+        renderErrorModal()
+      }
+    }
+
+    // removes an item from cart given a customization id, used for editing an item in cart
+    const removeCustomProductWithId = async (id: string) => {
+      try {
+        const itemToRemove = checkout.tnLineItems.find(item => item.id === id)
+        const lineIds = itemToRemove.lineItems.map(item => {
+          return item.shopifyItem.id
+        })
+        await removeProductsFromCart(lineIds, itemToRemove.id)
       } catch (err: any) {
         console.error(err)
         renderErrorModal()
@@ -529,6 +631,7 @@ export const CartProvider = ({ children }) => {
       updateProductInCart,
       addDiscountCode,
       removeDiscountCode,
+      removeCustomProductWithId,
       // customized products
       addProductCustomToCart,
     }

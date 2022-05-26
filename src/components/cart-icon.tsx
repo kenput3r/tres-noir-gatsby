@@ -3,6 +3,7 @@ import { Link } from "gatsby"
 import { CartContext } from "../contexts/cart"
 import { StaticImage } from "gatsby-plugin-image"
 import styled from "styled-components"
+import { tnItem } from "../types/checkout"
 
 const Component = styled.div`
   .cart-icon-container {
@@ -36,7 +37,13 @@ const CartIcon = () => {
   const { checkout } = useContext(CartContext)
   if (checkout) {
     if (checkout.tnLineItems) {
-      cartCount = checkout.tnLineItems.length
+      checkout.tnLineItems.forEach((item: tnItem) => {
+        if (!item.isCustom) {
+          cartCount += item.lineItems[0].shopifyItem.quantity
+        } else {
+          cartCount += 1
+        }
+      })
     } else {
       cartCount = checkout.lineItems.length
     }
