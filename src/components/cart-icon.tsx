@@ -49,11 +49,12 @@ const CartIcon = () => {
     }
   }
   return (
-    <Component className="img-btn">
+    <Component>
       <Link to="/cart">
         <div className="cart-icon-container">
           <div className="cart-icon">
             <StaticImage
+              className="img-btn"
               src="../images/cart.png"
               alt="Shopping Cart"
               placeholder="tracedSVG"
