@@ -49,7 +49,7 @@ const CartIcon = () => {
     }
   }
   return (
-    <Component>
+    <Component className="img-btn">
       <Link to="/cart">
         <div className="cart-icon-container">
           <div className="cart-icon">

@@ -39,6 +39,15 @@ const Component = styled.div`
       font-size: 1rem;
       fill: white;
     }
+    :hover,
+    :focus {
+      background-color: #262626;
+      border-color: #262626;
+    }
+    :active {
+      background-color: #4f4f4f;
+      border-color: #4f4f4f;
+    }
   }
   input {
     width: 100%;

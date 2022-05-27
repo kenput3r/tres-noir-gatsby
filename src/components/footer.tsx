@@ -110,6 +110,15 @@ const Component = styled.footer`
     padding-left: 55px;
     padding-right: 55px;
   }
+  .foot-icon {
+    :hover,
+    .focus {
+      color: #262626;
+    }
+    :active {
+      color: #4f4f4f;
+    }
+  }
 `
 
 const Footer = () => {
@@ -130,7 +139,7 @@ const Footer = () => {
                     target="_blank"
                     rel="noreferrer"
                   >
-                    <I />
+                    <I className="foot-icon" />
                   </a>
                 </li>
                 <li>
@@ -139,7 +148,7 @@ const Footer = () => {
                     target="_blank"
                     rel="noreferrer"
                   >
-                    <F />
+                    <F className="foot-icon" />
                   </a>
                 </li>
               </ul>
