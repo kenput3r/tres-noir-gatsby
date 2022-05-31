@@ -201,19 +201,19 @@ const Header = ({
               target="_blank"
               rel="noreferrer"
             >
-              <TiSocialInstagram className="instagram" />
+              <TiSocialInstagram className="instagram text-btn" />
             </a>
             <a
               href="https://www.facebook.com/tresnoir"
               target="_blank"
               rel="noreferrer"
             >
-              <FaFacebookF />
+              <FaFacebookF className="text-btn" />
             </a>
           </div>
           <div className="search">
             <Link to="/search" state={{ prevPath: currentPath }}>
-              <FaSearch />
+              <FaSearch className="text-btn" />
             </Link>
 
             <a
@@ -221,6 +221,7 @@ const Header = ({
               className="login-text"
             >
               <StaticImage
+                className="img-btn"
                 src="../images/icon-user.png"
                 alt="User"
                 placeholder="tracedSVG"

@@ -43,14 +43,14 @@ const QuantitySelector = (props: Props) => {
     <Selector>
       <div>
         <span
-          className="quantity-down qty"
+          className="quantity-down qty text-btn"
           onClick={() => updateQuantity(lineId, quantity - 1, imageId)}
         >
           -
         </span>
         <input className="quantity" type="text" value={quantity} readOnly />
         <span
-          className="quantity-up qty"
+          className="quantity-up qty text-btn"
           onClick={() => updateQuantity(lineId, quantity + 1, imageId)}
         >
           +

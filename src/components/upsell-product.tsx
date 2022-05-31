@@ -107,6 +107,10 @@ const UpsellProduct = (props: { upsellProduct: any }) => {
     setSelectedVariant(newVariant)
   }
 
+  const sortVariants = variants => {
+    return variants.sort((a, b) => a.position - b.position)
+  }
+
   return (
     <Component>
       <div className="upsell-product" key={upsellProduct.id}>
@@ -141,7 +145,7 @@ const UpsellProduct = (props: { upsellProduct: any }) => {
                     onChange={evt => handleVariant(evt)}
                     value={selectedVariant.sku}
                   >
-                    {upsellProduct.variants.map(element => {
+                    {sortVariants(upsellProduct.variants).map(element => {
                       return (
                         <option key={element.sku} value={element.sku}>
                           {element.title}

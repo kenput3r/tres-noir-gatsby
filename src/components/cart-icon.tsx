@@ -54,6 +54,7 @@ const CartIcon = () => {
         <div className="cart-icon-container">
           <div className="cart-icon">
             <StaticImage
+              className="img-btn"
               src="../images/cart.png"
               alt="Shopping Cart"
               placeholder="tracedSVG"
