@@ -9,6 +9,16 @@ import type { Checkout } from "../types/checkout"
 // Check if window is defined (so if in the browser or in node.js).
 const isBrowser = typeof window !== "undefined"
 
+export const identifyCustomerGTMEvent = (email: string) => {
+  if (isBrowser) {
+    const payload: string = email
+    window.dataLayer.push({
+      event: "identify_customer",
+      identify_customer_payload: payload,
+    })
+  }
+}
+
 export const viewedProductGTMEvent = (productInfo: ShopifyProductInfo) => {
   if (isBrowser) {
     const payload: ViewedProductPayload = {
