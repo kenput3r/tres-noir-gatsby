@@ -27,6 +27,13 @@ const Component = styled.nav`
         }
         padding: 3px;
         text-transform: uppercase;
+        :hover,
+        :focus {
+          color: #262626;
+        }
+        .active {
+          color: #4f4f4f;
+        }
       }
     }
     :first-child {

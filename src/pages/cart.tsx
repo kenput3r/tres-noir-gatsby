@@ -318,7 +318,7 @@ const Cart = () => {
             href="#"
             onClick={() => removeSingleProduct(item)}
           >
-            <VscClose />
+            <VscClose className="text-btn" />
           </a>
         </div>
         <div className="card">

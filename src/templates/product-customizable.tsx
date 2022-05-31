@@ -11,6 +11,7 @@ import { SelectedVariantContext } from "../contexts/selectedVariant"
 import { addedToCartGTMEvent, viewedProductGTMEvent } from "../helpers/gtm"
 import Product from "./product"
 import { CustomizeContext } from "../contexts/customize"
+import FreeShipping from "../components/free-shipping"
 
 const Page = styled.div`
   .shipping-message {
@@ -372,15 +373,7 @@ const ProductCustomizable = ({
     <Layout>
       <SEO title={shopifyProduct.title} />
       <Page>
-        <div className="shipping-message">
-          <StaticImage
-            src="../images/double-diamonds.png"
-            alt="double diamonds"
-            width={40}
-          />
-          <p className="h2">FREE SHIPPING IN USA</p>
-          <p className="h3">ALL ORDERS SHIP SAME OR NEXT BUSINESS DAY</p>
-        </div>
+        <FreeShipping />
         <div className="row">
           <div className="col images">
             <ProductCarousel
@@ -470,7 +463,7 @@ const ProductCustomizable = ({
                         <button
                           type="button"
                           onClick={handleAddToCart}
-                          className="add-to-cart"
+                          className="add-to-cart btn"
                         >
                           ADD TO CART
                         </button>
@@ -479,7 +472,7 @@ const ProductCustomizable = ({
                     )}
 
                     <Link
-                      className="customize-btn"
+                      className="btn"
                       to={contentfulProduct && customizeUrl}
                     >
                       CUSTOMIZE

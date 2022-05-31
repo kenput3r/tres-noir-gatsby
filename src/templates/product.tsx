@@ -264,6 +264,10 @@ const Product = ({ data: { shopifyProduct } }: any) => {
     addedToCartGTMEvent(productData)
   }
 
+  const sortVariants = variants => {
+    return variants.sort((a, b) => a.position - b.position)
+  }
+
   return (
     <Layout>
       <SEO title={shopifyProduct.title} />
@@ -286,13 +290,15 @@ const Product = ({ data: { shopifyProduct } }: any) => {
                           id="product-variants"
                           onChange={evt => handleVariant(evt)}
                         >
-                          {shopifyProduct.variants.map(element => {
-                            return (
-                              <option key={element.sku} value={element.sku}>
-                                {element.title}
-                              </option>
-                            )
-                          })}
+                          {sortVariants(shopifyProduct.variants).map(
+                            element => {
+                              return (
+                                <option key={element.sku} value={element.sku}>
+                                  {element.title}
+                                </option>
+                              )
+                            }
+                          )}
                         </select>
                       </div>
                     </div>
@@ -402,6 +408,7 @@ export const query = graphql`
         availableForSale
         compareAtPrice
         id
+        position
         image {
           originalSrc
           altText

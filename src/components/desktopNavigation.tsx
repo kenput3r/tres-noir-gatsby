@@ -31,6 +31,24 @@ const Component = styled.nav`
   a {
     padding: 0 5px;
   }
+  a {
+    :hover,
+    :focus {
+      color: #4f4f4f;
+    }
+    :active {
+      color: #262626;
+    }
+    span {
+      :hover,
+      :focus {
+        color: #4f4f4f;
+      }
+      :active {
+        color: #262626;
+      }
+    }
+  }
   a,
   span {
     color: var(--color-grey-dark);
