@@ -356,6 +356,7 @@ const ProductCustomizable = ({
       collections: shopifyProduct.collections.map(
         (collection: { title: string }) => collection.title
       ),
+      quantity: 1,
     }
     addedToCartGTMEvent(productData)
   }

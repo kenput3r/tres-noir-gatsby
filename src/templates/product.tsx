@@ -260,6 +260,7 @@ const Product = ({ data: { shopifyProduct } }: any) => {
       collections: shopifyProduct.collections.map(
         (collection: { title: string }) => collection.title
       ),
+      quantity: qty,
     }
     addedToCartGTMEvent(productData)
   }

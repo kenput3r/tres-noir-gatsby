@@ -5,6 +5,7 @@ export interface ShopifyProductInfo {
   legacyResourceId: string
   price: string
   productType: string
+  quantity?: number
   sku: string
   title: string
   url: string

@@ -51,7 +51,7 @@ export const addedToCartGTMEvent = (productInfo: ShopifyProductInfo) => {
       AddedItemImageURL: productInfo.image,
       AddedItemURL: productInfo.url,
       AddedItemPrice: Number(productInfo.price),
-      AddedItemQuantity: 1,
+      AddedItemQuantity: Number(productInfo.quantity),
       ItemNames: [productInfo.title], // all product names
       // CheckoutURL: "http://www.example.com/path/to/checkout",
       Items: [
