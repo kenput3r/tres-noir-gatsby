@@ -137,7 +137,6 @@ export const addedCustomizedToCartGTMEvent = (
 
 export const startedCheckoutGTMEvent = (checkoutInfo: Checkout) => {
   if (isBrowser) {
-    console.log("CHECKOUT", checkoutInfo)
     const payload: StartedCheckoutPayload = {
       $event_id: new Date().getTime(),
       $value: Number(checkoutInfo.totalPrice),
