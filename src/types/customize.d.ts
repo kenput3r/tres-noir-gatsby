@@ -130,6 +130,16 @@ export interface ShopifyProductVariant {
   id: string
   legacyResourceId: string
   price: number
+  product: {
+    collections: {
+      handle: string
+      title: string
+    }[]
+    handle: string
+    onlineStoreUrl: string
+    productType: string
+    vendor: string
+  }
   sku: string
   storefrontId: string
   title: string

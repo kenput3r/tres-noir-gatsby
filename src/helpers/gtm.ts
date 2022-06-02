@@ -2,6 +2,7 @@ import type {
   AddedToCartPayload,
   ViewedProductPayload,
   ShopifyProductInfo,
+  ShopifyCustomizedProductInfo,
   StartedCheckoutPayload,
 } from "../types/gtm"
 import type { Checkout } from "../types/checkout"
@@ -28,7 +29,7 @@ export const viewedProductGTMEvent = (productInfo: ShopifyProductInfo) => {
       ImageUrl: productInfo.image,
       Name: productInfo.title,
       Price: Number(productInfo.price),
-      ProductId: productInfo.legacyResourceId,
+      ProductID: productInfo.legacyResourceId,
       SKU: productInfo.sku,
       Url: productInfo.url,
     }
@@ -50,7 +51,7 @@ export const addedToCartGTMEvent = (productInfo: ShopifyProductInfo) => {
       AddedItemImageURL: productInfo.image,
       AddedItemURL: productInfo.url,
       AddedItemPrice: Number(productInfo.price),
-      AddedItemQuantity: 1,
+      AddedItemQuantity: Number(productInfo.quantity),
       ItemNames: [productInfo.title], // all product names
       // CheckoutURL: "http://www.example.com/path/to/checkout",
       Items: [
@@ -67,6 +68,66 @@ export const addedToCartGTMEvent = (productInfo: ShopifyProductInfo) => {
         },
       ],
     }
+    window.dataLayer.push({
+      event: "add_to_cart",
+      added_to_cart_payload: payload,
+    })
+  }
+}
+
+export const addedCustomizedToCartGTMEvent = (
+  productInfo: ShopifyCustomizedProductInfo
+) => {
+  if (isBrowser) {
+    // calculate value
+    let value = Number(productInfo.main.price)
+    // get item names
+    let itemNames = [productInfo.main.title]
+    productInfo.addOns.forEach(addOn => {
+      value += Number(addOn.price)
+      itemNames.push(addOn.title)
+    })
+
+    const payload: AddedToCartPayload = {
+      $value: value, // cart value
+      AddedItemProductName: productInfo.main.title,
+      AddedItemProductID: productInfo.main.legacyResourceId,
+      AddedItemSKU: productInfo.main.sku,
+      AddedItemCategories: productInfo.main.collections,
+      AddedItemImageURL: productInfo.main.image,
+      AddedItemURL: productInfo.main.url,
+      AddedItemPrice: Number(productInfo.main.price),
+      AddedItemQuantity: 1,
+      ItemNames: itemNames, // all product names
+      Items: [],
+    }
+    // push first item
+    payload.Items.push({
+      ImageURL: productInfo.main.image,
+      ItemPrice: Number(productInfo.main.price),
+      ProductName: productInfo.main.title,
+      ProductID: productInfo.main.legacyResourceId,
+      ProductURL: productInfo.main.url,
+      Quantity: 1,
+      RowTotal: Number(productInfo.main.price),
+      SKU: productInfo.main.sku,
+    })
+
+    productInfo.addOns
+      .map(addOn => ({
+        ImageURL: addOn.image,
+        ItemPrice: Number(addOn.price),
+        ProductName: addOn.title,
+        ProductID: addOn.legacyResourceId,
+        ProductURL: addOn.url,
+        Quantity: 1,
+        RowTotal: Number(addOn.price),
+        SKU: addOn.sku,
+      }))
+      .forEach(lineItem => {
+        payload.Items.push(lineItem)
+      })
+
     window.dataLayer.push({
       event: "add_to_cart",
       added_to_cart_payload: payload,

@@ -347,12 +347,19 @@ export const query = graphql`
         availableForSale
         compareAtPrice
         id
+        legacyResourceId
         price
         sku
         storefrontId
         title
         product {
           handle
+          onlineStoreUrl
+          productType
+          collections {
+            handle
+            title
+          }
         }
       }
     }
