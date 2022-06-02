@@ -640,9 +640,7 @@ pre tt:after {
   border: none;
 }
 .button:hover,
-.button:focus,
-.btn:hover,
-.btn:focus {
+.btn:hover {
   background-color: #808080 !important;
   border-color: #808080 !important;
 }

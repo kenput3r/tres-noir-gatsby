@@ -233,7 +233,6 @@ const Step5 = (props: {
       variant.product.handle
     )
     setAddedToCart(true)
-    alert("ADDED TO CART")
 
     // GTM Event
     const productData = {
@@ -299,8 +298,6 @@ const Step5 = (props: {
       ],
     }
     addedCustomizedToCartGTMEvent(productData)
-
-    // end new
   }
 
   return (

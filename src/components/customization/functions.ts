@@ -129,26 +129,29 @@ export const changeImage = (
             })
             break
           }
-          case "Transitions Xtractive Polarized": {
+          case "XTRActive Polarized": {
+            const data = variant.contentful.customizations?.clear.data
+              ? variant.contentful.customizations?.clear.data
+              : variant.contentful.featuredImage.title
+            const title = variant.contentful.customizations?.clear.title
+              ? variant.contentful.customizations?.clear.title
+              : variant.contentful.featuredImage.title
             setCurrentImage({
-              data: variant.contentful.customizations
-                .bifocalTransitionsXtractivePolarized?.data,
-              altText:
-                variant.contentful.customizations
-                  .bifocalTransitionsXtractivePolarized?.title,
+              data: data,
+              altText: title,
             })
             break
           }
-          case "Vantage": {
-            setCurrentImage({
-              data: variant.contentful.customizations
-                .bifocalTransitionsXtractivePolarized?.data,
-              altText:
-                variant.contentful.customizations
-                  .bifocalTransitionsXtractivePolarized?.title,
-            })
-            break
-          }
+          // case "Vantage": {
+          //   setCurrentImage({
+          //     data: variant.contentful.customizations
+          //       .bifocalTransitionsXtractivePolarized?.data,
+          //     altText:
+          //       variant.contentful.customizations
+          //         .bifocalTransitionsXtractivePolarized?.title,
+          //   })
+          //   break
+          // }
           default: {
             console.log("ERROR")
           }
@@ -242,23 +245,26 @@ export const changeImage = (
             })
             break
           }
-          case "Vantage": {
+          // case "Vantage": {
+          //   setCurrentImage({
+          //     data: variant.contentful.customizations
+          //       ?.transitionsXtractivePolarized.data,
+          //     altText:
+          //       variant.contentful.customizations?.transitionsXtractivePolarized
+          //         .title,
+          //   })
+          //   break
+          // }
+          case "XTRActive Polarized": {
+            const data = variant.contentful.customizations?.clear.data
+              ? variant.contentful.customizations?.clear.data
+              : variant.contentful.featuredImage.title
+            const title = variant.contentful.customizations?.clear.title
+              ? variant.contentful.customizations?.clear.title
+              : variant.contentful.featuredImage.title
             setCurrentImage({
-              data: variant.contentful.customizations
-                ?.transitionsXtractivePolarized.data,
-              altText:
-                variant.contentful.customizations?.transitionsXtractivePolarized
-                  .title,
-            })
-            break
-          }
-          case "Transitions Xtractive Polarized": {
-            setCurrentImage({
-              data: variant.contentful.customizations
-                .transitionsXtractivePolarized?.data,
-              altText:
-                variant.contentful.customizations?.transitionsXtractivePolarized
-                  .title,
+              data: data,
+              altText: title,
             })
             break
           }
