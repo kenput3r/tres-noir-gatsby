@@ -333,7 +333,6 @@ const Form = ({
     variant: ShopifyVariant,
     isSetFromEvent: boolean = true
   ) => {
-    console.log("setFromEvent", isSetFromEvent)
     setRxAble(variant.product?.title !== "Non-Prescription Lens")
     if (variant.product?.title === "Non-Prescription Lens") {
       if (messageRef.current) {

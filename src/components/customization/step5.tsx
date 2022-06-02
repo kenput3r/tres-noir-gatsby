@@ -4,6 +4,8 @@ import { GatsbyImage, StaticImage, IGatsbyImageData } from "gatsby-plugin-image"
 import { CustomizeContext } from "../../contexts/customize"
 import { CartContext } from "../../contexts/cart"
 import { RxInfoContext } from "../../contexts/rxInfo"
+import { addedCustomizedToCartGTMEvent } from "../../helpers/gtm"
+import { ShopifyProductVariant } from "../../types/customize"
 
 const Component = styled.div`
   padding: 10px;
@@ -96,7 +98,7 @@ const Component = styled.div`
 const Step5 = (props: {
   productTitle: string
   currentPrice: any
-  variant: any
+  variant: ShopifyProductVariant
   productImage: any
   resumedItem: any
   completeVariant: any
@@ -232,6 +234,73 @@ const Step5 = (props: {
     )
     setAddedToCart(true)
     alert("ADDED TO CART")
+
+    // GTM Event
+    const productData = {
+      main: {
+        collections: variant.product.collections.map(
+          (collection: { title: string }) => collection.title
+        ),
+        compareAtPrice: "",
+        image: variant?.image?.originalSrc ? variant.image?.originalSrc : "",
+        legacyResourceId: variant.legacyResourceId,
+        price: variant.price,
+        productType: variant.product.productType,
+        sku: variant.sku,
+        title: variant.title,
+        url: variant.product.onlineStoreUrl,
+        vendor: variant.product.vendor,
+      },
+      addOns: [
+        {
+          title: step1.title,
+          legacyResourceId: step1.legacyResourceId,
+          sku: step1.sku,
+          productType: step1.product.productType,
+          image: step1?.image?.originalSrc ? step1.image?.originalSrc : "",
+          url: step1.product.onlineStoreUrl,
+          vendor: step1.product.vendor,
+          price: step1.price,
+          compareAtPrice: "",
+        },
+        {
+          title: step2.title,
+          legacyResourceId: step2.legacyResourceId,
+          sku: step2.sku,
+          productType: step2.product.productType,
+          image: step1?.image?.originalSrc ? step2.image?.originalSrc : "",
+          url: step2.product.onlineStoreUrl,
+          vendor: step2.product.vendor,
+          price: step2.price,
+          compareAtPrice: "",
+        },
+        {
+          title: step3.title,
+          legacyResourceId: step3.legacyResourceId,
+          sku: step3.sku,
+          productType: step3.product.productType,
+          image: step3?.image?.originalSrc ? step3.image?.originalSrc : "",
+          url: step3.product.onlineStoreUrl,
+          vendor: step3.product.vendor,
+          price: step3.price,
+          compareAtPrice: "",
+        },
+        {
+          title: step4.title,
+          legacyResourceId: step4.legacyResourceId,
+          sku: step4.sku,
+          productType: step4.product.productType,
+          image: step4?.image?.originalSrc ? step4.image?.originalSrc : "",
+          url: step4.product.onlineStoreUrl,
+          vendor: step4.product.vendor,
+          price: step4.price,
+          compareAtPrice: "",
+        },
+      ],
+    }
+    addedCustomizedToCartGTMEvent(productData)
+
+    // end new
   }
 
   return (
