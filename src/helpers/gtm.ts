@@ -29,7 +29,7 @@ export const viewedProductGTMEvent = (productInfo: ShopifyProductInfo) => {
       ImageUrl: productInfo.image,
       Name: productInfo.title,
       Price: Number(productInfo.price),
-      ProductId: productInfo.legacyResourceId,
+      ProductID: productInfo.legacyResourceId,
       SKU: productInfo.sku,
       Url: productInfo.url,
     }

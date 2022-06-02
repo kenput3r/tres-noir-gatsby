@@ -45,7 +45,7 @@ export interface ViewedProductPayload {
   ImageUrl: string
   Name: string
   Price: number
-  ProductId: string
+  ProductID: string
   SKU: string
   Url: string
 }
