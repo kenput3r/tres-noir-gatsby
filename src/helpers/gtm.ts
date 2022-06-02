@@ -137,6 +137,7 @@ export const addedCustomizedToCartGTMEvent = (
 
 export const startedCheckoutGTMEvent = (checkoutInfo: Checkout) => {
   if (isBrowser) {
+    console.log("CHECKOUT", checkoutInfo)
     const payload: StartedCheckoutPayload = {
       $event_id: new Date().getTime(),
       $value: Number(checkoutInfo.totalPrice),
@@ -150,7 +151,9 @@ export const startedCheckoutGTMEvent = (checkoutInfo: Checkout) => {
         ItemPrice: Number(lineItem.variant.price),
         ImageURL: lineItem.variant.image.src,
         // ProductCategories: ["Fiction", "Children"],
-        // ProductID: lineItem,
+        ProductID: lineItem.variant.id.split(
+          "gid://shopify/ProductVariant/"
+        )[1],
         ProductName: lineItem.title,
         // ProductURL: "http://www.example.com/path/to/product",
         Quantity: lineItem.quantity,
