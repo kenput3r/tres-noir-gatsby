@@ -340,7 +340,7 @@ const ProductCustomizable = ({
       selectedVariant.shopify.sku,
       selectedVariant.contentful.imageSet[0].data
     )
-    alert("ADDED TO CART")
+    // alert("ADDED TO CART")
     const productData = {
       title: shopifyProduct.title,
       legacyResourceId: shopifyProduct.legacyResourceId,

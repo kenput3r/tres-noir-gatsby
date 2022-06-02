@@ -231,7 +231,7 @@ const Step5 = (props: {
       variant.product.handle
     )
     setAddedToCart(true)
-    alert("ADDED TO CART")
+    // alert("ADDED TO CART")
   }
 
   return (

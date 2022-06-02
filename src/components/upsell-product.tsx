@@ -96,7 +96,7 @@ const UpsellProduct = (props: { upsellProduct: any }) => {
       : upsellProduct.featuredImage.localFile.childImageSharp.gatsbyImageData
 
     addProductToCart(id, 1, sku, image)
-    alert("ADDED TO CART")
+    // alert("ADDED TO CART")
   }
 
   const handleVariant = (evt: ChangeEvent<HTMLSelectElement>) => {
