@@ -99,29 +99,25 @@ export const addedCustomizedToCartGTMEvent = (
       AddedItemPrice: Number(productInfo.main.price),
       AddedItemQuantity: 1,
       ItemNames: itemNames, // all product names
-      // CheckoutURL: "http://www.example.com/path/to/checkout",
-      // Items: [
-      //   {
-      //     ImageURL: productInfo.image,
-      //     ItemPrice: Number(productInfo.price),
-      //     ProductName: productInfo.title,
-      //     // ProductCategories: item.collections,
-      //     ProductID: productInfo.legacyResourceId,
-      //     ProductURL: productInfo.url,
-      //     Quantity: 1,
-      //     RowTotal: Number(productInfo.price),
-      //     SKU: productInfo.sku,
-      //   },
-      // ],
       Items: [],
     }
+    // push first item
+    payload.Items.push({
+      ImageURL: productInfo.main.image,
+      ItemPrice: Number(productInfo.main.price),
+      ProductName: productInfo.main.title,
+      ProductID: productInfo.main.legacyResourceId,
+      ProductURL: productInfo.main.url,
+      Quantity: 1,
+      RowTotal: Number(productInfo.main.price),
+      SKU: productInfo.main.sku,
+    })
 
     productInfo.addOns
       .map(addOn => ({
         ImageURL: addOn.image,
         ItemPrice: Number(addOn.price),
         ProductName: addOn.title,
-        // ProductCategories: item.collections,
         ProductID: addOn.legacyResourceId,
         ProductURL: addOn.url,
         Quantity: 1,
