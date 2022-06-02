@@ -243,7 +243,7 @@ const Product = ({ data: { shopifyProduct } }: any) => {
       : shopifyProduct.featuredImage.localFile.childImageSharp.gatsbyImageData
     const qty: number = +selectedVariantQuantity
     addProductToCart(id, qty, sku, image)
-    alert("ADDED TO CART")
+    //alert("ADDED TO CART")
 
     const productData = {
       title: shopifyProduct.title,
