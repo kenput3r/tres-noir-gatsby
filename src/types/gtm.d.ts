@@ -87,3 +87,13 @@ export interface StartedCheckoutPayload {
     SKU: string
   }[]
 }
+
+export interface CollectionInfo {
+  handle: string
+  title: string
+}
+
+export interface ViewedCollectionPayload {
+  handle: string
+  title: string
+}

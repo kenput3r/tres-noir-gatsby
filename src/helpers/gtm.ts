@@ -4,6 +4,8 @@ import type {
   ShopifyProductInfo,
   ShopifyCustomizedProductInfo,
   StartedCheckoutPayload,
+  CollectionInfo,
+  ViewedCollectionPayload,
 } from "../types/gtm"
 import type { Checkout } from "../types/checkout"
 
@@ -13,9 +15,24 @@ const isBrowser = typeof window !== "undefined"
 export const identifyCustomerGTMEvent = (email: string) => {
   if (isBrowser) {
     const payload: string = email
+
     window.dataLayer.push({
       event: "identify_customer",
       identify_customer_payload: payload,
+    })
+  }
+}
+
+export const viewedCollectionGTMEvent = (collectionInfo: CollectionInfo) => {
+  if (isBrowser) {
+    const payload: ViewedCollectionPayload = {
+      handle: collectionInfo.handle,
+      title: collectionInfo.title,
+    }
+
+    window.dataLayer.push({
+      event: "view_collection",
+      viewed_collection_payload: payload,
     })
   }
 }
@@ -33,6 +50,7 @@ export const viewedProductGTMEvent = (productInfo: ShopifyProductInfo) => {
       SKU: productInfo.sku,
       Url: productInfo.url,
     }
+
     window.dataLayer.push({
       event: "view_item",
       viewed_product_payload: payload,
@@ -68,6 +86,7 @@ export const addedToCartGTMEvent = (productInfo: ShopifyProductInfo) => {
         },
       ],
     }
+
     window.dataLayer.push({
       event: "add_to_cart",
       added_to_cart_payload: payload,

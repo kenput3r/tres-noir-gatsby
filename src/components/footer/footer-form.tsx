@@ -1,6 +1,7 @@
 import React, { MouseEvent, useState, useRef } from "react"
 import styled from "styled-components"
 import { FaChevronRight, FaCheck, FaSpinner } from "react-icons/fa"
+import { identifyCustomerGTMEvent } from "../../helpers/gtm"
 
 const Component = styled.div`
   p {
@@ -165,6 +166,9 @@ const FooterForm = () => {
       emailMsg.current?.classList.add("green-text")
       emailMsg.current?.classList.remove("red-text")
       formRef.current?.classList.add("outline-green")
+      // identify customer
+      identifyCustomerGTMEvent(emailInput)
+
       if (emailMsg.current)
         emailMsg.current.textContent = "You are now subscribed!"
     } else {
