@@ -194,7 +194,7 @@ const IndexPage = ({
               alt="About Tres Noir 1"
             />
           </Link>
-          <Link to="/collections/all-sunglasses">
+          <Link to="/collections/new">
             <GatsbyImage
               image={contentfulHomepage.aboutTresNoir2.gatsbyImageData}
               alt="About Tres Noir 2"

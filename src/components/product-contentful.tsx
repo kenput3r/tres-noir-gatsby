@@ -47,6 +47,20 @@ const Component = styled.article`
       }
     }
   }
+  .product-container {
+    position: relative;
+    .new-styles {
+      position: absolute;
+      top: 13px;
+      left: 0;
+      font-size: 1.15rem;
+      background: #ff051d;
+      color: white;
+      padding: 0 10px;
+      border-radius: 6px;
+      font-family: var(--sub-heading-font);
+    }
+  }
 `
 
 interface Props {
@@ -92,14 +106,18 @@ const ProductContentful = ({ data, color, collectionHandle }: Props) => {
     setSelectedVariantContext(variant.sku)
   }
 
+  const hasNewStyles = data.collection.some(col => col.handle === "new")
+
   const productLink = isSunglasses
     ? `/products/${data.handle}?lens_type=sunglasses`
     : `/products/${data.handle}?lens_type=glasses`
-
   return (
     <Component>
       <Link to={productLink}>
-        <Img image={variantImage} alt={data.title} />
+        <article className="product-container">
+          <Img image={variantImage} alt={data.title} />
+          {hasNewStyles && <div className="new-styles">New!</div>}
+        </article>
       </Link>
       <h3>{data.title}</h3>
 
