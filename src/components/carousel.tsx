@@ -61,7 +61,7 @@ const Carousel = ({
           </a>
         </div>
         <StyledSwiper
-          slidesPerView={4}
+          slidesPerView="auto"
           spaceBetween={10}
           loop={true}
           navigation={{ nextEl: ".next", prevEl: ".prev" }}
