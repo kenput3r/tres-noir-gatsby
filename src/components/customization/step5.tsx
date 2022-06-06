@@ -318,7 +318,9 @@ const Step5 = (props: {
           <div className="product-description">
             <h4>
               {selectedVariants[`step${i + 1}`].product.title}{" "}
-              <span className="price">+ ${selectedVariants.step4.price}</span>
+              <span className="price">
+                + ${selectedVariants[`step${i + 1}`].price}
+              </span>
             </h4>
             <p>{selectedVariants[`step${i + 1}`].product.description}</p>
           </div>
