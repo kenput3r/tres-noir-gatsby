@@ -51,13 +51,14 @@ const Component = styled.article`
     position: relative;
     .new-styles {
       position: absolute;
-      top: 0;
+      top: 13px;
       left: 0;
-      font-size: 0.8rem;
-      background: red;
+      font-size: 1.15rem;
+      background: #ff051d;
       color: white;
-      padding: 0 5px;
+      padding: 0 10px;
       border-radius: 6px;
+      font-family: var(--sub-heading-font);
     }
   }
 `
@@ -105,7 +106,9 @@ const ProductContentful = ({ data, color, collectionHandle }: Props) => {
     setSelectedVariantContext(variant.sku)
   }
 
-  const hasNewStyles = data.collection.some(col => col.name === "New")
+  const hasNewStyles = data.collection.some(col => col.handle === "new")
+  console.log("d", data.collection)
+  console.log("hasnewstyl", hasNewStyles)
 
   const productLink = isSunglasses
     ? `/products/${data.handle}?lens_type=sunglasses`
@@ -115,7 +118,7 @@ const ProductContentful = ({ data, color, collectionHandle }: Props) => {
       <Link to={productLink}>
         <article className="product-container">
           <Img image={variantImage} alt={data.title} />
-          {data.newStyles && <div className="new-styles">New Styles</div>}
+          {hasNewStyles && <div className="new-styles">New!</div>}
         </article>
       </Link>
       <h3>{data.title}</h3>

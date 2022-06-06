@@ -22,7 +22,10 @@ export interface ContentfulProduct {
   title: string
   fitType: string
   frameWidth: string[]
-  newStyles: boolean
+  collection: {
+    name: string
+    handle: string
+  }[]
   variants: ContentfulProductVariant[]
 }
 

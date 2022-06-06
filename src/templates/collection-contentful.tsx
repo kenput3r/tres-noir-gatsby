@@ -180,9 +180,9 @@ export const query = graphql`
         handle
         id
         frameWidth
-        newStyles
         collection {
           name
+          handle
         }
         variants {
           id
