@@ -4,6 +4,7 @@ import { GatsbyImage, StaticImage } from "gatsby-plugin-image"
 import { Link } from "gatsby"
 import { CartContext } from "../contexts/cart"
 import styled from "styled-components"
+import { UpsellItem, UpsellItemVariant } from "../types/upsell"
 
 const Component = styled.article`
   flex: 1;
@@ -63,7 +64,7 @@ const Component = styled.article`
   }
 `
 
-const UpsellProduct = (props: { upsellProduct: any }) => {
+const UpsellProduct = (props: { upsellProduct: UpsellItem }) => {
   const { upsellProduct } = props
   const quantityLevels = useQuantityQuery(
     upsellProduct.handle,
@@ -75,12 +76,12 @@ const UpsellProduct = (props: { upsellProduct: any }) => {
   )
 
   useEffect(() => {
-    let firstVariant = upsellProduct.variants[0]
+    let firstVariant: UpsellItemVariant = upsellProduct.variants[0]
     for (let key in quantityLevels) {
       if (quantityLevels[key] > 0) {
         firstVariant = upsellProduct.variants.find(
           (_variant: any) => _variant.sku === key
-        )
+        ) as UpsellItemVariant
         break
       }
     }
@@ -96,14 +97,13 @@ const UpsellProduct = (props: { upsellProduct: any }) => {
       : upsellProduct.featuredImage.localFile.childImageSharp.gatsbyImageData
 
     addProductToCart(id, 1, sku, image)
-    // alert("ADDED TO CART")
   }
 
   const handleVariant = (evt: ChangeEvent<HTMLSelectElement>) => {
     const sku = evt.target.value
     const newVariant = upsellProduct.variants.find(
       (_variant: any) => _variant.sku === sku
-    )
+    ) as UpsellItemVariant
     setSelectedVariant(newVariant)
   }
 

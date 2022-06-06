@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useEffect } from "react"
 import { graphql } from "gatsby"
 import styled from "styled-components"
 import Layout from "../components/layout"
@@ -7,6 +7,7 @@ import Product from "../components/product"
 import { ShopifyCollection, ShopifyProduct } from "../types/shopify"
 import { GatsbyImage } from "gatsby-plugin-image"
 import FreeShipping from "../components/free-shipping"
+import { viewedCollectionGTMEvent } from "../helpers/gtm"
 
 const Page = styled.section`
   .grid {
@@ -83,6 +84,14 @@ const Collection = ({
     contentfulShopifyCollectionImages: collectionImages,
   } = data
   const collectionSize = collection.products.length
+
+  useEffect(() => {
+    const collectionInfo = {
+      handle: collection.handle,
+      title: collection.title,
+    }
+    viewedCollectionGTMEvent(collectionInfo)
+  }, [])
 
   return (
     <Layout>

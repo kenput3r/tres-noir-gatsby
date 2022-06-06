@@ -10,6 +10,7 @@ import Filters from "../components/filters-contentful"
 import { ContentfulCollection, ContentfulProduct } from "../types/contentful"
 import FreeShipping from "../components/free-shipping"
 import CollectionImage from "../components/collection-image"
+import { viewedCollectionGTMEvent } from "../helpers/gtm"
 
 const Page = styled.div`
   .grid {
@@ -80,6 +81,11 @@ const CollectionContentful = ({
   useEffect(() => {
     // reset selected variant context
     setSelectedVariantContext("")
+    const collectionInfo = {
+      handle: collection.handle,
+      title: collection.name,
+    }
+    viewedCollectionGTMEvent(collectionInfo)
   }, [])
 
   return (

@@ -49,11 +49,20 @@ const Component = styled.nav`
     }
   }
 `
+
+interface Item {
+  name: string
+  subListItems: {
+    name: string
+    url: string
+  }[]
+}
+
 const FooterLinks = () => {
   const { items } = useFooterNavigation()
   return (
     <Component>
-      {items.map(element => {
+      {items.map((element: Item) => {
         return (
           <ul key={element.name}>
             <span>{element.name}</span>
