@@ -1,10 +1,8 @@
-import React, { useContext } from "react"
+import React from "react"
 import styled from "styled-components"
 import { useStaticQuery, graphql, Link } from "gatsby"
-import { GatsbyImage } from "gatsby-plugin-image"
-import { CartContext } from "../contexts/cart"
-import { CustomerContext } from "../contexts/customer"
 import UpsellProduct from "./upsell-product"
+import { UpsellItems, UpsellItem } from "../types/upsell"
 
 const Component = styled.section`
   background: white;
@@ -88,18 +86,15 @@ const getUpsellItems = () => {
 }
 
 const UpsellCart = () => {
-  const { addProductToCart, checkout } = useContext(CartContext)
-  const { customerEmail } = useContext(CustomerContext)
+  const upsellItems: UpsellItems = getUpsellItems()
 
-  const upsellItems = getUpsellItems()
-  console.log("upsell items", upsellItems)
   return (
     <Component>
       <h6>Suggested Addons</h6>
       <div className="row">
         <div className="upsell-cards">
           {upsellItems &&
-            upsellItems.products.map(item => (
+            upsellItems.products.map((item: UpsellItem) => (
               <UpsellProduct
                 key={item.handle}
                 upsellProduct={item}

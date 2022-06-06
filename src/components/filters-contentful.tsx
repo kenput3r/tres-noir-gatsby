@@ -1,7 +1,7 @@
 import React, { Dispatch, useState, useEffect } from "react"
 import styled from "styled-components"
 import { StaticImage, GatsbyImage } from "gatsby-plugin-image"
-import { useSpring, useTransition, animated, config } from "react-spring"
+import { useSpring, animated, config } from "react-spring"
 import { ContentfulCollection, ContentfulProduct } from "../types/contentful"
 import { useHeight } from "../hooks/useHeight"
 import { useFrameColors } from "../hooks/useFrameColors"

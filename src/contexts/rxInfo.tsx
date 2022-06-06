@@ -4,7 +4,6 @@ import React, {
   useState,
   useMemo,
   useReducer,
-  Dispatch,
 } from "react"
 
 interface rxDetails {
