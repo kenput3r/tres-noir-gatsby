@@ -174,6 +174,10 @@ export const query = graphql`
         handle
         id
         frameWidth
+        newStyles
+        collection {
+          name
+        }
         variants {
           id
           sku

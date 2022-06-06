@@ -498,6 +498,7 @@ export const query = graphql`
       handle
       fitType
       fitDimensions
+      newStyles
       variants {
         colorName
         sku
