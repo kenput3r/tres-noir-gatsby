@@ -107,8 +107,6 @@ const ProductContentful = ({ data, color, collectionHandle }: Props) => {
   }
 
   const hasNewStyles = data.collection.some(col => col.handle === "new")
-  console.log("d", data.collection)
-  console.log("hasnewstyl", hasNewStyles)
 
   const productLink = isSunglasses
     ? `/products/${data.handle}?lens_type=sunglasses`
