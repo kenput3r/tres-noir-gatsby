@@ -89,6 +89,12 @@ const Page = styled.div`
   .about {
     background: #000;
     margin-top: -100px;
+    @media only screen and (max-width: 1024px) {
+      margin-top: -60px;
+    }
+    @media only screen and (max-width: 768px) {
+      margin-top: -70px;
+    }
     @media only screen and (max-width: 480px) {
       margin-top: -25px;
       padding-bottom: 40px;
