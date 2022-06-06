@@ -6,7 +6,7 @@ interface Props {
 }
 
 class ErrorBoundary extends React.Component<{ children: any }, Props> {
-  constructor(props) {
+  constructor(props: { children: any } | Readonly<{ children: any }>) {
     super(props)
     this.state = { error: null, errorInfo: null }
   }

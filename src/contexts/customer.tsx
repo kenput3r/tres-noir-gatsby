@@ -1,8 +1,8 @@
 import React, { createContext, ReactChild, useState, useMemo } from "react"
 import Cookies from "js-cookie"
 
-const customerAccessTokenCookie = "_tn_cat"
-const customerEmailCookie = "_tn_customer_email"
+const customerAccessTokenCookie = "__tn_cat"
+const customerEmailCookie = "__tn_ce"
 
 interface DefaultContext {
   customerAccessToken: null | string

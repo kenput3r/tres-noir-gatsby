@@ -2,7 +2,7 @@ import React, { createContext, ReactChild, useState, useMemo } from "react"
 
 const defaultContext = {
   selectedVariantContext: "",
-  setSelectedVariantContext: (variant: any) => {},
+  setSelectedVariantContext: (variant: string) => {},
 }
 
 export const SelectedVariantContext = createContext(defaultContext)
