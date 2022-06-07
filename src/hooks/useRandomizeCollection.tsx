@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from "react"
+import { useMemo } from "react"
 import { useStaticQuery, graphql } from "gatsby"
 
 export const useRandomizeCollection = currentProduct => {
@@ -20,6 +20,7 @@ export const useRandomizeCollection = currentProduct => {
             handle
             hasOnlyDefaultVariant
             hasOutOfStockVariants
+            onlineStoreUrl
             variants {
               title
               sku
@@ -29,6 +30,7 @@ export const useRandomizeCollection = currentProduct => {
               selectedOptions {
                 name
               }
+              position
             }
             tags
             storefrontId
@@ -61,7 +63,8 @@ export const useRandomizeCollection = currentProduct => {
         el.id !== currentProduct.id &&
         !el.tags.includes("upsell_item") &&
         !el.hasOutOfStockVariants &&
-        el.productType !== "Gift Card"
+        el.productType !== "Gift Card" &&
+        el.onlineStoreUrl
       )
     })
 

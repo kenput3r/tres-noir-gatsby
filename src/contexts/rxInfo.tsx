@@ -4,7 +4,6 @@ import React, {
   useState,
   useMemo,
   useReducer,
-  Dispatch,
 } from "react"
 
 interface rxDetails {
@@ -39,7 +38,7 @@ const rxInit: rxType = {
 const defaultContext = {
   isRxAble: false,
   rxInfo: rxInit,
-  dispatch: Dispatch => {},
+  rxInfoDispatch: Dispatch => {},
   setRxAble: (isRxAble: boolean) => {},
 }
 
@@ -90,14 +89,14 @@ export const RxInfoContextProvider = ({
   children: ReactChild
 }) => {
   const [isRxAble, setRxAble] = useState(false)
-  const [rxInfo, dispatch] = useReducer(reducer, rxInit)
+  const [rxInfo, rxInfoDispatch] = useReducer(reducer, rxInit)
 
   const value = useMemo(
     () => ({
       isRxAble,
       setRxAble,
       rxInfo,
-      dispatch,
+      rxInfoDispatch,
     }),
     [isRxAble, rxInfo]
   )

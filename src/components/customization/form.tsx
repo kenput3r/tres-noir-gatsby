@@ -9,6 +9,7 @@ import { Link } from "gatsby"
 import { GatsbyImage } from "gatsby-plugin-image"
 import styled from "styled-components"
 import { FaQuestionCircle } from "react-icons/fa"
+import { AiOutlineStop } from "react-icons/ai"
 
 import {
   ShopifyCollection,
@@ -302,6 +303,17 @@ const Component = styled.form`
     pointer-events: none;
     opacity: 0.3;
   }
+  .no-sign {
+    display: grid;
+    place-items: center;
+    margin-left: auto;
+    font-size: 1.45rem;
+    padding-right: 0 !important;
+  }
+  .inactive {
+    pointer-events: none;
+    opacity: 0.5;
+  }
 `
 
 const Form = ({
@@ -323,16 +335,18 @@ const Form = ({
   stepMap.set(2, "LENS TYPE")
   stepMap.set(3, "LENS MATERIAL")
   stepMap.set(4, "LENS COATING")
-  const { isRxAble, setRxAble, rxInfo, dispatch } = useContext(RxInfoContext)
+  const { isRxAble, setRxAble, rxInfo, rxInfoDispatch } =
+    useContext(RxInfoContext)
   const messageRef = useRef<any>()
   const [isFormValid, setIsFormValid] = useState(true)
   const errorRefs = useRef({})
   const continueBtn = useRef<HTMLButtonElement>(null)
+  const [filteredCollection, setFilteredCollection] = useState<string[]>([])
+
   const handleChange = (
     variant: ShopifyVariant,
     isSetFromEvent: boolean = true
   ) => {
-    console.log("setFromEvent", isSetFromEvent)
     setRxAble(variant.product?.title !== "Non-Prescription Lens")
     if (variant.product?.title === "Non-Prescription Lens") {
       if (messageRef.current) {
@@ -351,7 +365,7 @@ const Form = ({
   }
   const handleRx = (evt: ChangeEvent<HTMLSelectElement>) => {
     clearErrors(evt)
-    dispatch({ type: evt.target.id, payload: evt.target.value })
+    rxInfoDispatch({ type: evt.target.id, payload: evt.target.value })
     isNowValid()
   }
   const clearErrors = (evt: ChangeEvent<HTMLSelectElement>) => {
@@ -366,7 +380,7 @@ const Form = ({
       errorRefs.current[`select-${subId}-axis`].classList.add("disable")
       errorRefs.current[`select-${subId}-axis`].querySelector("select").value =
         ""
-      dispatch({ type: `${subId}-axis`, payload: "" })
+      rxInfoDispatch({ type: `${subId}-axis`, payload: "" })
     }
     const generalErrors: string[] = [
       "right-sph",
@@ -478,6 +492,32 @@ const Form = ({
     }
   }, [])
 
+  // useEffect with steps to filter collection
+  useEffect(() => {
+    if (currentStep === 1 || currentStep === 5) {
+      return
+    }
+    if (currentStep === 2) {
+      if (selectedVariants.step1.product.title === "Bifocal") {
+        setFilteredCollection(["Blue Light Blocking", "XTRActive Polarized"])
+      }
+    } else if (currentStep === 3) {
+      if (
+        selectedVariants.step2.product.title === "Polarized" ||
+        selectedVariants.step2.product.title === "XTRActive Polarized"
+      ) {
+        setFilteredCollection(["Hi-Index"])
+      }
+    } else if (currentStep === 4) {
+      if (
+        selectedVariants.step3.product.title === "Poly Carbonate" ||
+        selectedVariants.step3.product.title === "Hi-Index"
+      ) {
+        setFilteredCollection(["Scratch Coat", "UV Coat"])
+      }
+    }
+  }, [currentStep])
+
   return (
     <Component>
       <div className="step-header">
@@ -486,7 +526,11 @@ const Form = ({
       {shopifyCollection.products.map((product: ShopifyProduct, index) => (
         <React.Fragment key={product.id}>
           {product.variants.length === 1 ? (
-            <div className="product-option">
+            <div
+              className={`product-option ${
+                filteredCollection.includes(product.title) ? "inactive" : ""
+              }`}
+            >
               <GatsbyImage
                 image={
                   product.images[0].localFile.childImageSharp.gatsbyImageData
@@ -513,10 +557,20 @@ const Form = ({
                   selectedVariants[`step${currentStep}`].storefrontId
                 }
               />
-              <div className="checkmark" />
+              {!filteredCollection.includes(product.title) ? (
+                <div className="checkmark" />
+              ) : (
+                <div className="no-sign">
+                  <AiOutlineStop></AiOutlineStop>
+                </div>
+              )}
             </div>
           ) : (
-            <div className="product-option with-variants">
+            <div
+              className={`product-option with-variants ${
+                filteredCollection.includes(product.title) ? "inactive" : ""
+              }`}
+            >
               <GatsbyImage
                 image={
                   product.images[0].localFile.childImageSharp.gatsbyImageData
@@ -556,7 +610,13 @@ const Form = ({
                         selectedVariants[`step${currentStep}`].storefrontId
                       }
                     />
-                    <div className="checkmark" />
+                    {!filteredCollection.includes(variant.title) ? (
+                      <div className="checkmark" />
+                    ) : (
+                      <div className="no-sign">
+                        <AiOutlineStop></AiOutlineStop>
+                      </div>
+                    )}
                   </li>
                 ))}
               </ul>

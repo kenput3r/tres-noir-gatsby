@@ -1,6 +1,9 @@
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import { useStaticQuery, graphql } from "gatsby"
 import styled from "styled-components"
+import Cookies from "js-cookie"
+import ErrorModal from "./error-modal"
+import { identifyCustomerGTMEvent } from "../helpers/gtm"
 
 import Header from "./header"
 import Drawer from "./drawer"
@@ -32,6 +35,12 @@ const Layout = ({ children }: LayoutProps) => {
     }
   `)
 
+  useEffect(() => {
+    // check for __tn_ce
+    const ce = Cookies.get("__tn_ce")
+    if (ce) identifyCustomerGTMEvent(atob(ce))
+  }, [])
+
   return (
     <>
       <Header
@@ -43,6 +52,7 @@ const Layout = ({ children }: LayoutProps) => {
       <Drawer isDrawerOpen={isDrawerOpen} setIsDrawerOpen={setIsDrawerOpen} />
       <Main>{children}</Main>
       <Footer />
+      <ErrorModal />
     </>
   )
 }

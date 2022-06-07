@@ -1,21 +1,11 @@
-import React, {
-  useState,
-  useContext,
-  ChangeEvent,
-  useEffect,
-  useLayoutEffect,
-  useRef,
-} from "react"
+import React, { useState, useContext, ChangeEvent, useEffect } from "react"
 import { graphql } from "gatsby"
-import { GatsbyImage, StaticImage } from "gatsby-plugin-image"
-import { CustomerContext } from "../contexts/customer"
 import { CartContext } from "../contexts/cart"
 import styled from "styled-components"
-import ProductCarousel from "../components/product-carousel"
 import Layout from "../components/layout"
 import SEO from "../components/seo"
 import { useQuantityQuery } from "../hooks/useQuantityQuery"
-import { addedToCartGTMEvent } from "../helpers/gtm"
+import { addedToCartGTMEvent, viewedProductGTMEvent } from "../helpers/gtm"
 import YouMayAlsoLike from "../components/you-may-also-like"
 import ProductImageGrid from "../components/product-image-grid"
 
@@ -186,14 +176,49 @@ const Product = ({ data: { shopifyProduct } }: any) => {
     shopifyProduct.variants.length
   )
 
+  // fire viewed product event
   useEffect(() => {
+    const productData = {
+      title: shopifyProduct.title,
+      legacyResourceId: shopifyProduct.legacyResourceId,
+      sku: selectedVariant.sku,
+      productType: shopifyProduct.productType,
+      image: selectedVariant.image?.originalSrc
+        ? selectedVariant.image?.originalSrc
+        : shopifyProduct.featuredImage.originalSrc,
+      url: shopifyProduct.onlineStoreUrl,
+      vendor: shopifyProduct.vendor,
+      price: selectedVariant.price,
+      compareAtPrice: selectedVariant.compareAtPrice,
+      collections: shopifyProduct.collections.map(
+        (collection: { title: string }) => collection.title
+      ),
+    }
+    viewedProductGTMEvent(productData)
+  }, [selectedVariant])
+
+  useEffect(() => {
+    let paramSku: null | string = null
+    const isBrowser = typeof window !== "undefined"
+    if (isBrowser) {
+      const params = new URLSearchParams(location.search)
+      if (params.get("variant")) paramSku = params.get("variant")
+    }
     let firstVariant = shopifyProduct.variants[0]
-    for (let key in quantityLevels) {
-      if (quantityLevels[key] > 0) {
-        firstVariant = shopifyProduct.variants.find(
-          (_variant: any) => _variant.sku === key
-        )
-        break
+    // if variant param
+    if (paramSku) {
+      firstVariant = shopifyProduct.variants.find(
+        (_variant: any) => _variant.sku === paramSku
+      )
+    } else {
+      // first available
+      for (let key in quantityLevels) {
+        if (quantityLevels[key] > 0) {
+          firstVariant = shopifyProduct.variants.find(
+            (_variant: any) => _variant.sku === key
+          )
+          break
+        }
       }
     }
 
@@ -204,7 +229,6 @@ const Product = ({ data: { shopifyProduct } }: any) => {
     useState<string>("1")
 
   const { addProductToCart, checkout } = useContext(CartContext)
-  const { customerEmail } = useContext(CustomerContext)
 
   const handleVariant = (evt: ChangeEvent<HTMLSelectElement>) => {
     const sku = evt.target.value
@@ -234,9 +258,13 @@ const Product = ({ data: { shopifyProduct } }: any) => {
 
   const handleAddToCart = () => {
     const id = selectedVariant.storefrontId
+    const sku = selectedVariant.sku
+    const image = selectedVariant.image
+      ? selectedVariant.image.localFile.childImageSharp.gatsbyImageData
+      : shopifyProduct.featuredImage.localFile.childImageSharp.gatsbyImageData
     const qty: number = +selectedVariantQuantity
-    addProductToCart(id, qty)
-    alert("ADDED TO CART")
+    addProductToCart(id, qty, sku, image)
+    //alert("ADDED TO CART")
 
     const productData = {
       title: shopifyProduct.title,
@@ -253,8 +281,13 @@ const Product = ({ data: { shopifyProduct } }: any) => {
       collections: shopifyProduct.collections.map(
         (collection: { title: string }) => collection.title
       ),
+      quantity: qty,
     }
     addedToCartGTMEvent(productData)
+  }
+
+  const sortVariants = variants => {
+    return variants.sort((a, b) => a.position - b.position)
   }
 
   return (
@@ -279,13 +312,15 @@ const Product = ({ data: { shopifyProduct } }: any) => {
                           id="product-variants"
                           onChange={evt => handleVariant(evt)}
                         >
-                          {shopifyProduct.variants.map(element => {
-                            return (
-                              <option key={element.sku} value={element.sku}>
-                                {element.title}
-                              </option>
-                            )
-                          })}
+                          {sortVariants(shopifyProduct.variants).map(
+                            element => {
+                              return (
+                                <option key={element.sku} value={element.sku}>
+                                  {element.title}
+                                </option>
+                              )
+                            }
+                          )}
                         </select>
                       </div>
                     </div>
@@ -395,6 +430,7 @@ export const query = graphql`
         availableForSale
         compareAtPrice
         id
+        position
         image {
           originalSrc
           altText

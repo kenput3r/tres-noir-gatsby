@@ -4,6 +4,7 @@ import { GatsbyImage, StaticImage } from "gatsby-plugin-image"
 import { Link } from "gatsby"
 import { CartContext } from "../contexts/cart"
 import styled from "styled-components"
+import { UpsellItem, UpsellItemVariant } from "../types/upsell"
 
 const Component = styled.article`
   flex: 1;
@@ -63,7 +64,7 @@ const Component = styled.article`
   }
 `
 
-const UpsellProduct = (props: { upsellProduct: any }) => {
+const UpsellProduct = (props: { upsellProduct: UpsellItem }) => {
   const { upsellProduct } = props
   const quantityLevels = useQuantityQuery(
     upsellProduct.handle,
@@ -75,12 +76,12 @@ const UpsellProduct = (props: { upsellProduct: any }) => {
   )
 
   useEffect(() => {
-    let firstVariant = upsellProduct.variants[0]
+    let firstVariant: UpsellItemVariant = upsellProduct.variants[0]
     for (let key in quantityLevels) {
       if (quantityLevels[key] > 0) {
         firstVariant = upsellProduct.variants.find(
           (_variant: any) => _variant.sku === key
-        )
+        ) as UpsellItemVariant
         break
       }
     }
@@ -89,16 +90,25 @@ const UpsellProduct = (props: { upsellProduct: any }) => {
   }, [quantityLevels])
   const { addProductToCart } = useContext(CartContext)
   const handleAddToCart = () => {
-    addProductToCart(selectedVariant.storefrontId, 1)
-    alert("ADDED TO CART")
+    const id = selectedVariant.storefrontId
+    const sku = selectedVariant.sku
+    const image = selectedVariant.image
+      ? selectedVariant.image.localFile.childImageSharp.gatsbyImageData
+      : upsellProduct.featuredImage.localFile.childImageSharp.gatsbyImageData
+
+    addProductToCart(id, 1, sku, image)
   }
 
   const handleVariant = (evt: ChangeEvent<HTMLSelectElement>) => {
     const sku = evt.target.value
     const newVariant = upsellProduct.variants.find(
       (_variant: any) => _variant.sku === sku
-    )
+    ) as UpsellItemVariant
     setSelectedVariant(newVariant)
+  }
+
+  const sortVariants = variants => {
+    return variants.sort((a, b) => a.position - b.position)
   }
 
   return (
@@ -135,7 +145,7 @@ const UpsellProduct = (props: { upsellProduct: any }) => {
                     onChange={evt => handleVariant(evt)}
                     value={selectedVariant.sku}
                   >
-                    {upsellProduct.variants.map(element => {
+                    {sortVariants(upsellProduct.variants).map(element => {
                       return (
                         <option key={element.sku} value={element.sku}>
                           {element.title}

@@ -24,6 +24,7 @@ import {
   ShopifyProduct,
   ShopifyProductVariant,
 } from "../types/customize"
+import { ImageHashTable, ImageStorage } from "../types/checkout"
 // import Product from "../components/product"
 
 const Page = styled.div`
@@ -141,6 +142,36 @@ const Customize = ({
     )
   }, [variant, selectedVariants, currentStep])
 
+  useEffect(() => {
+    const isBrowser = typeof window !== "undefined"
+    if (!isBrowser) return
+    const urlParams = new URLSearchParams(window.location.search)
+    const customId = urlParams.get("custom_id")
+    if (customId) {
+      // using customizationId as a url param, this will grab the edited item's image and set it
+      const customImageStorage = localStorage.getItem("cart-images")
+      if (customImageStorage) {
+        const customImageLocal = JSON.parse(customImageStorage) as ImageStorage
+        const parsedCustoms = customImageLocal.value
+        const correctImage = parsedCustoms.images[customId]
+        if (correctImage) {
+          setCurrentImage({
+            data: correctImage,
+            altText: "Customized frames",
+          })
+        }
+      }
+    }
+  }, [])
+
+  const getResumedItem = () => {
+    const isBrowser = typeof window !== "undefined"
+    if (!isBrowser) return
+    const urlParams = new URLSearchParams(window.location.search)
+    const customId = urlParams.get("custom_id")
+    return customId
+  }
+
   return (
     <Layout>
       <SEO title="customize" />
@@ -168,7 +199,9 @@ const Customize = ({
                   productTitle={shopifyProduct.title}
                   variant={variant.shopify}
                   currentPrice={currentPrice}
-                  productImage={currentImage}
+                  productImage={currentImage.data}
+                  resumedItem={getResumedItem()}
+                  completeVariant={variant}
                 />
               )}
             </div>
@@ -314,10 +347,20 @@ export const query = graphql`
         availableForSale
         compareAtPrice
         id
+        legacyResourceId
         price
         sku
         storefrontId
         title
+        product {
+          handle
+          onlineStoreUrl
+          productType
+          collections {
+            handle
+            title
+          }
+        }
       }
     }
   }

@@ -23,9 +23,17 @@ const Component = styled.article`
   @media only screen and (max-width: 600px) {
     width: 100%;
   }
-  h3 {
+  h3 a {
+    color: #000;
+    text-decoration: none;
     text-align: center;
     font-weight: 400;
+    &:visited {
+      color: #000;
+    }
+    &:hover {
+      text-decoration: underline;
+    }
   }
   .options {
     button {
@@ -45,6 +53,23 @@ const Component = styled.article`
       .gatsby-image-wrapper {
         border-radius: 50%;
       }
+    }
+  }
+  .product-container {
+    position: relative;
+    &:hover {
+      opacity: 0.7;
+    }
+    .new-styles {
+      position: absolute;
+      top: 13px;
+      left: 0;
+      font-size: 1.15rem;
+      background: #ff051d;
+      color: white;
+      padding: 0 10px;
+      border-radius: 6px;
+      font-family: var(--sub-heading-font);
     }
   }
 `
@@ -92,6 +117,8 @@ const ProductContentful = ({ data, color, collectionHandle }: Props) => {
     setSelectedVariantContext(variant.sku)
   }
 
+  const hasNewStyles = data.collection.some(col => col.handle === "new")
+
   const productLink = isSunglasses
     ? `/products/${data.handle}?lens_type=sunglasses`
     : `/products/${data.handle}?lens_type=glasses`
@@ -99,9 +126,14 @@ const ProductContentful = ({ data, color, collectionHandle }: Props) => {
   return (
     <Component>
       <Link to={productLink}>
-        <Img image={variantImage} alt={data.title} />
+        <article className="product-container">
+          <Img image={variantImage} alt={data.title} />
+          {hasNewStyles && <div className="new-styles">New!</div>}
+        </article>
       </Link>
-      <h3>{data.title}</h3>
+      <h3>
+        <Link to={productLink}>{data.title}</Link>
+      </h3>
 
       <ProductOptionsCarousel
         uniqueId={`Product-${data.title

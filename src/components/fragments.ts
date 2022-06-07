@@ -5,6 +5,7 @@ export const shopifyProductsFields = graphql`
     handle
     description
     id
+    legacyResourceId
     images {
       altText
       localFile {
@@ -14,12 +15,21 @@ export const shopifyProductsFields = graphql`
         }
       }
     }
+    productType
+    onlineStoreUrl
+    vendor
+    featuredImage {
+      originalSrc
+      altText
+    }
     title
     variants {
       sku
       storefrontId
+      legacyResourceId
       title
       image {
+        originalSrc
         altText
         localFile {
           childImageSharp {
@@ -31,6 +41,13 @@ export const shopifyProductsFields = graphql`
       product {
         title
         description
+        onlineStoreUrl
+        productType
+        collections {
+          handle
+          title
+        }
+        vendor
       }
       selectedOptions {
         name

@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useEffect } from "react"
 import { graphql } from "gatsby"
 import styled from "styled-components"
 import Layout from "../components/layout"
@@ -7,6 +7,7 @@ import Product from "../components/product"
 import { ShopifyCollection, ShopifyProduct } from "../types/shopify"
 import { GatsbyImage } from "gatsby-plugin-image"
 import FreeShipping from "../components/free-shipping"
+import { viewedCollectionGTMEvent } from "../helpers/gtm"
 
 const Page = styled.section`
   .grid {
@@ -84,6 +85,14 @@ const Collection = ({
   } = data
   const collectionSize = collection.products.length
 
+  useEffect(() => {
+    const collectionInfo = {
+      handle: collection.handle,
+      title: collection.title,
+    }
+    viewedCollectionGTMEvent(collectionInfo)
+  }, [])
+
   return (
     <Layout>
       <SEO title={collection.title} />
@@ -96,7 +105,11 @@ const Collection = ({
                 <GatsbyImage
                   className="collection-image"
                   image={collectionImages.collectionImageTop?.gatsbyImageData}
-                  alt={collectionImages.collectionImageTop?.title}
+                  alt={
+                    collectionImages.collectionImageTop?.title
+                      ? collectionImages.collectionImageTop?.title
+                      : collection.title
+                  }
                 />
               </div>
               <div className="top-right">
@@ -111,19 +124,24 @@ const Collection = ({
               <Product key={product.handle} data={product} />
             ))}
           </div>
-          {collectionImages && (
-            <div className="image-container">
-              <div>
-                <GatsbyImage
-                  className="collection-image"
-                  image={
-                    collectionImages.collectionImageMiddle?.gatsbyImageData
-                  }
-                  alt={collectionImages.collectionImageMiddle?.title}
-                />
+          {collectionImages &&
+            collectionImages.collectionImageMiddle?.gatsbyImageData && (
+              <div className="image-container">
+                <div>
+                  <GatsbyImage
+                    className="collection-image"
+                    image={
+                      collectionImages.collectionImageMiddle?.gatsbyImageData
+                    }
+                    alt={
+                      collectionImages.collectionImageMiddle?.title
+                        ? collectionImages.collectionImageMiddle?.title
+                        : collection.title
+                    }
+                  />
+                </div>
               </div>
-            </div>
-          )}
+            )}
 
           <div className="grid">
             {collectionSize >= 8 &&

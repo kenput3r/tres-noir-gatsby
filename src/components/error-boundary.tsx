@@ -1,10 +1,12 @@
 import React from "react"
 
-class ErrorBoundary extends React.Component<
-  {},
-  { error: any; errorInfo: any }
-> {
-  constructor(props) {
+interface Props {
+  error: any
+  errorInfo: any
+}
+
+class ErrorBoundary extends React.Component<{ children: any }, Props> {
+  constructor(props: { children: any } | Readonly<{ children: any }>) {
     super(props)
     this.state = { error: null, errorInfo: null }
   }

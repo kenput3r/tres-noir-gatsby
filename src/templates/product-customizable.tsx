@@ -10,6 +10,8 @@ import { CartContext } from "../contexts/cart"
 import { SelectedVariantContext } from "../contexts/selectedVariant"
 import { addedToCartGTMEvent, viewedProductGTMEvent } from "../helpers/gtm"
 import Product from "./product"
+import { CustomizeContext } from "../contexts/customize"
+import FreeShipping from "../components/free-shipping"
 
 const Page = styled.div`
   .shipping-message {
@@ -226,37 +228,16 @@ const ProductCustomizable = ({
   }
 
   useEffect(() => {
+    let paramSku: null | string = null
     const isBrowser = typeof window !== "undefined"
     if (isBrowser) {
       const params = new URLSearchParams(location.search)
       if (params.get("lens_type"))
         setLensType(params.get("lens_type") || "glasses")
+      if (params.get("variant")) paramSku = params.get("variant")
     }
-  }, [])
 
-  useEffect(() => {
-    const defaultImageSet = getImageSet(contentfulProduct.variants[0])
-    setImageSet(defaultImageSet)
-  }, [lensType])
-
-  // return default Product Page if contentful values do not exist
-  const quantityLevels = useQuantityQuery(
-    shopifyProduct.handle,
-    shopifyProduct.variants.length
-  )
-  const { selectedVariantContext, setSelectedVariantContext } = useContext(
-    SelectedVariantContext
-  )
-  const [selectedVariant, setSelectedVariant] = useState({
-    contentful: contentfulProduct?.variants && contentfulProduct.variants[0],
-    shopify: shopifyProduct.variants[0],
-  })
-
-  // cart
-  const { addProductToCart, checkout } = useContext(CartContext)
-  // initial
-  useEffect(() => {
-    const sku = selectedVariantContext
+    const sku = paramSku || selectedVariantContext
     if (sku) {
       const contentful = contentfulProduct.variants.find(
         (_variant: any) => _variant.sku === sku
@@ -275,6 +256,50 @@ const ProductCustomizable = ({
   }, [])
 
   useEffect(() => {
+    const defaultImageSet = getImageSet(contentfulProduct.variants[0])
+    setImageSet(defaultImageSet)
+  }, [lensType])
+
+  const {
+    setSelectedVariantsToDefault,
+    setCurrentStep,
+    setHasSavedCustomized,
+    setProductUrl,
+  } = useContext(CustomizeContext)
+
+  useEffect(() => {
+    setProductUrl(`/products/${contentfulProduct.handle}`)
+    setCurrentStep(1)
+    setHasSavedCustomized({
+      step1: false,
+      step2: false,
+      step3: false,
+      step4: false,
+    })
+    setSelectedVariantsToDefault()
+  }, [])
+
+  // return default Product Page if contentful values do not exist
+  const quantityLevels = useQuantityQuery(
+    shopifyProduct.handle,
+    shopifyProduct.variants.length
+  )
+  const { selectedVariantContext, setSelectedVariantContext } = useContext(
+    SelectedVariantContext
+  )
+
+  const [selectedVariant, setSelectedVariant] = useState({
+    contentful: contentfulProduct?.variants && contentfulProduct.variants[0],
+    shopify: shopifyProduct.variants.find(
+      (variant: any) => variant.sku === contentfulProduct.variants[0].sku
+    ),
+  })
+
+  // cart
+  const { addProductToCart, checkout } = useContext(CartContext)
+
+  useEffect(() => {
+    console.log("SELECTED VARIANT CHANGED", selectedVariant)
     const productData = {
       title: shopifyProduct.title,
       legacyResourceId: shopifyProduct.legacyResourceId,
@@ -295,6 +320,7 @@ const ProductCustomizable = ({
   }, [selectedVariant])
 
   const selectVariant = (e: React.MouseEvent, variant: any) => {
+    console.log("RUNNING SELECT VARIANT", variant)
     // e.currentTarget && (e.currentTarget as HTMLElement).blur()
     const shopify = shopifyProduct.variants.find(
       (_variant: any) => _variant.sku === variant.sku
@@ -314,8 +340,13 @@ const ProductCustomizable = ({
 
   const handleAddToCart = () => {
     const id = selectedVariant.shopify.storefrontId
-    addProductToCart(id, 1)
-    alert("ADDED TO CART")
+    addProductToCart(
+      id,
+      1,
+      selectedVariant.shopify.sku,
+      selectedVariant.contentful.imageSet[0].data
+    )
+    // alert("ADDED TO CART")
     const productData = {
       title: shopifyProduct.title,
       legacyResourceId: shopifyProduct.legacyResourceId,
@@ -331,6 +362,7 @@ const ProductCustomizable = ({
       collections: shopifyProduct.collections.map(
         (collection: { title: string }) => collection.title
       ),
+      quantity: 1,
     }
     addedToCartGTMEvent(productData)
   }
@@ -344,19 +376,13 @@ const ProductCustomizable = ({
   if (lensType !== LensType.SUNGLASSES)
     customizeUrl = `${customizeUrl}&lens_type=${lensType}`
 
+  console.log("CUSTOMIZE URL", customizeUrl)
+
   return (
     <Layout>
       <SEO title={shopifyProduct.title} />
       <Page>
-        <div className="shipping-message">
-          <StaticImage
-            src="../images/double-diamonds.png"
-            alt="double diamonds"
-            width={40}
-          />
-          <p className="h2">FREE SHIPPING IN USA</p>
-          <p className="h3">ALL ORDERS SHIP SAME OR NEXT BUSINESS DAY</p>
-        </div>
+        <FreeShipping />
         <div className="row">
           <div className="col images">
             <ProductCarousel
@@ -446,7 +472,7 @@ const ProductCustomizable = ({
                         <button
                           type="button"
                           onClick={handleAddToCart}
-                          className="add-to-cart"
+                          className="add-to-cart btn"
                         >
                           ADD TO CART
                         </button>
@@ -455,7 +481,7 @@ const ProductCustomizable = ({
                     )}
 
                     <Link
-                      className="customize-btn"
+                      className="btn"
                       to={contentfulProduct && customizeUrl}
                     >
                       CUSTOMIZE

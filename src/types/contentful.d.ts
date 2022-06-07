@@ -13,7 +13,7 @@ export interface ContentfulProductVariant {
   colorImage: {
     data: IGatsbyImageData
   }
-  frameColor: string
+  frameColor: string[]
 }
 
 export interface ContentfulProduct {
@@ -22,6 +22,10 @@ export interface ContentfulProduct {
   title: string
   fitType: string
   frameWidth: string[]
+  collection: {
+    name: string
+    handle: string
+  }[]
   variants: ContentfulProductVariant[]
 }
 

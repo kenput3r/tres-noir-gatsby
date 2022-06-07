@@ -9,6 +9,10 @@ import FreeShipping from "../components/free-shipping"
 
 const Page = styled.div`
   margin: auto;
+  .h2,
+  .h3 {
+    font-weight: normal;
+  }
   .shipping-message {
     text-align: center;
     .h2 {
@@ -35,7 +39,7 @@ const Page = styled.div`
       button,
       .button {
         display: inline-block;
-        margin: 10px;
+        margin: 16px;
       }
     }
   }
@@ -47,12 +51,12 @@ const Page = styled.div`
   }
   button,
   .button {
-    background-color: #fff;
+    font-family: var(--heading-font);
+    background-color: #000;
     border-radius: 0;
-    border: 1px solid #fff;
-    color: #000;
+    border: 1px solid #000;
+    color: #fff;
     display: block;
-    font-family: var(--sub-heading-font);
     padding: 10px 20px;
     text-decoration: none;
     :hover {
@@ -63,27 +67,44 @@ const Page = styled.div`
     text-align: center;
   }
   .sub-title {
-    max-width: 60%;
+    max-width: 700px;
     text-align: center;
     display: block;
     margin: 1.45rem auto;
     padding: 10px 20px;
+    font-size: 1.35rem;
   }
-  h2 {
+  .featured-products {
     text-align: center;
     margin: 1.45rem auto;
+    font-size: 1.65rem;
+  }
+  .hero {
+    display: flex;
+    justify-content: center;
+    @media screen and (max-width: 767px) {
+      flex-direction: column;
+    }
   }
   .about {
     background: #000;
     margin-top: -100px;
+    @media only screen and (max-width: 1024px) {
+      margin-top: -60px;
+    }
+    @media only screen and (max-width: 768px) {
+      margin-top: -70px;
+    }
     @media only screen and (max-width: 480px) {
       margin-top: -25px;
+      padding-bottom: 40px;
     }
     .about-content {
       display: flex;
       flex-direction: row;
       align-items: center;
       justify-content: space-between;
+      max-width: 925px;
       @media only screen and (max-width: 480px) {
         display: block;
       }
@@ -103,6 +124,13 @@ const Page = styled.div`
       }
     }
   }
+  .home-text {
+    font-weight: normal;
+  }
+  .no-padding {
+    margin-left: -15px;
+    margin-right: -15px;
+  }
 `
 
 const IndexPage = ({
@@ -114,21 +142,34 @@ const IndexPage = ({
     <SEO title="Home" />
     <Page>
       <FreeShipping />
-      <div className="featured container">
-        <GatsbyImage
-          image={contentfulHomepage.hero.gatsbyImageData}
-          alt="Hero"
-        />
-        <div className="featured-actions">
-          <Link className="button" to="/collections/glasses-for-men">
-            SHOP MEN'S
-          </Link>
-          <Link className="button" to="/collections/glasses-for-women">
-            SHOP WOMEN'S
-          </Link>
+      <div className="hero container">
+        <div className="featured">
+          <GatsbyImage
+            image={contentfulHomepage.hero.gatsbyImageData}
+            alt="Hero"
+          />
+          <div className="featured-actions">
+            <Link className="button" to="/collections/sunglasses-for-men">
+              SHOP MEN'S
+            </Link>
+          </div>
+        </div>
+        <div className="featured">
+          <GatsbyImage
+            image={contentfulHomepage.hero2.gatsbyImageData}
+            alt="Hero"
+          />
+          <div className="featured-actions">
+            <Link className="button" to="/collections/sunglasses-for-women">
+              SHOP WOMEN'S
+            </Link>
+          </div>
         </div>
       </div>
-      <h3 className="sub-title">{contentfulHomepage.tagline.tagline}</h3>
+
+      <h2 className="sub-title home-text">
+        {contentfulHomepage.tagline.tagline}
+      </h2>
       <div className="diamond-divider">
         <StaticImage
           src="../images/double-diamonds.png"
@@ -137,7 +178,7 @@ const IndexPage = ({
         />
       </div>
       <div className="featured-styles container">
-        <h2>FEATURED STYLES</h2>
+        <h3 className="home-text featured-products">FEATURED PRODUCTS</h3>
         <Carousel
           imageSet={contentfulHomepage && contentfulHomepage.featuredStyles}
           imageLinks={
@@ -145,16 +186,20 @@ const IndexPage = ({
           }
         />
       </div>
-      <div className="about">
+      <div className="about no-padding">
         <div className="about-content container">
-          <GatsbyImage
-            image={contentfulHomepage.aboutTresNoir1.gatsbyImageData}
-            alt="About Tres Noir 1"
-          />
-          <GatsbyImage
-            image={contentfulHomepage.aboutTresNoir2.gatsbyImageData}
-            alt="About Tres Noir 2"
-          />
+          <Link to="/pages/rx-faq">
+            <GatsbyImage
+              image={contentfulHomepage.aboutTresNoir1.gatsbyImageData}
+              alt="About Tres Noir 1"
+            />
+          </Link>
+          <Link to="/collections/new">
+            <GatsbyImage
+              image={contentfulHomepage.aboutTresNoir2.gatsbyImageData}
+              alt="About Tres Noir 2"
+            />
+          </Link>
         </div>
       </div>
     </Page>
@@ -166,6 +211,9 @@ export default IndexPage
 interface HomePageQuery {
   contentfulHomepage: {
     hero: {
+      gatsbyImageData: IGatsbyImageData
+    }
+    hero2: {
       gatsbyImageData: IGatsbyImageData
     }
     tagline: {
@@ -191,6 +239,9 @@ export const query = graphql`
   query HomepageQuery {
     contentfulHomepage {
       hero {
+        gatsbyImageData
+      }
+      hero2 {
         gatsbyImageData
       }
       tagline {

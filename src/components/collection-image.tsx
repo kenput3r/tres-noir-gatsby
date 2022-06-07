@@ -44,20 +44,21 @@ const Component = styled.section`
   }
 `
 
-const CollectionImage = (props: {
+interface Props {
   collectionImage: IGatsbyImageData
   collectionName: string
-  collectionDescription: string
-  textColor: string
-  position: string
+  collectionDescription?: string
+  textColor?: string
+  position?: string
+}
+
+const CollectionImage: React.FC<Props> = ({
+  collectionImage,
+  collectionName,
+  collectionDescription,
+  textColor = "white",
+  position = "right",
 }) => {
-  const {
-    collectionImage,
-    collectionName,
-    collectionDescription,
-    textColor,
-    position,
-  } = props
   const inlineStyleText = {
     color: textColor,
     right: position === "right" ? "0" : "unset",
@@ -74,13 +75,14 @@ const CollectionImage = (props: {
           image={collectionImage}
           alt={collectionName}
           style={inlineStyleImage}
-        ></GatsbyImage>
+        />
         <div className="inner-text" style={inlineStyleText}>
-          <h1>{collectionName}</h1>
-          <p>{collectionDescription}</p>
+          {collectionName && collectionDescription && <h1>{collectionName}</h1>}
+          {collectionDescription && <p>{collectionDescription}</p>}
         </div>
       </div>
     </Component>
   )
 }
+
 export default CollectionImage

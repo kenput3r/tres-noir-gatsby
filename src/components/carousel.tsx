@@ -30,14 +30,6 @@ const StyledSwiper = styled(Swiper)`
   .swiper-slide {
     max-width: 100%;
   }
-  /* .swiper-slide {
-    line-height: 0;
-    margin-left: 5px;
-    max-width: calc(33.333% - 15px);
-    &:hover {
-      cursor: pointer;
-    }
-  } */
 `
 
 interface ImageSet {
@@ -51,64 +43,69 @@ const Carousel = ({
 }: {
   imageSet: [ImageSet]
   imageLinks: string[]
-}) => (
-  <Component>
-    <div className="navigation">
-      <div className="nav-prev">
-        <a className="prev" role="button">
-          <Left />
-        </a>
+}) => {
+  return (
+    <Component>
+      <div className="navigation">
+        <div className="nav-prev">
+          <a className="prev" role="button">
+            <Left />
+          </a>
+        </div>
+        <StyledSwiper
+          slidesPerView="auto"
+          spaceBetween={10}
+          loop={true}
+          navigation={{ nextEl: ".next", prevEl: ".prev" }}
+          className="carousel"
+          breakpoints={{
+            "480": {
+              slidesPerView: 2,
+              slidesPerGroup: 1,
+              spaceBetween: 10,
+            },
+            "768": {
+              slidesPerView: 3,
+              slidesPerGroup: 1,
+              spaceBetween: 20,
+            },
+            "1024": {
+              slidesPerView: 4,
+              slidesPerGroup: 1,
+              spaceBetween: 30,
+            },
+          }}
+          modules={[Navigation]}
+          preventClicksPropagation={false}
+          preventInteractionOnTransition={true}
+          touchRatio={1}
+          touchReleaseOnEdges={true}
+          touchStartForcePreventDefault={true}
+          watchSlidesProgress
+          swipeHandler=".carousel"
+          threshold={15}
+          observer={true}
+        >
+          {imageSet.map((image: ImageSet, i: number) => (
+            <SwiperSlide key={`thumb-${i}`}>
+              <Link to={imageLinks[i]}>
+                <GatsbyImage
+                  image={image.data}
+                  alt={image.title}
+                  loading="eager"
+                />
+              </Link>
+            </SwiperSlide>
+          ))}
+        </StyledSwiper>
+        <div className="nav-next">
+          <a className="next" role="button">
+            <Right />
+          </a>
+        </div>
       </div>
-      <StyledSwiper
-        slidesPerView={1}
-        spaceBetween={10}
-        loop
-        navigation={{ nextEl: ".next", prevEl: ".prev" }}
-        className="carousel"
-        breakpoints={{
-          "480": {
-            slidesPerView: 2,
-            spaceBetween: 10,
-          },
-          "768": {
-            slidesPerView: 3,
-            spaceBetween: 20,
-          },
-          "1024": {
-            slidesPerView: 4,
-            spaceBetween: 30,
-          },
-        }}
-        modules={[Navigation]}
-        // preventClicks={false}
-        preventClicksPropagation={false}
-        preventInteractionOnTransition={true}
-        touchRatio={1}
-        touchReleaseOnEdges={true}
-        touchStartForcePreventDefault={true}
-        watchSlidesProgress
-        swipeHandler=".carousel"
-        threshold={15}
-      >
-        {imageSet.map((image: ImageSet, i: number) => (
-          <SwiperSlide key={`thumb-${i}`}>
-            <Link to={imageLinks[i]}>
-              <GatsbyImage
-                image={image.data}
-                alt={image.title}
-                loading="eager"
-              />
-            </Link>
-          </SwiperSlide>
-        ))}
-      </StyledSwiper>
-      <div className="nav-next">
-        <a className="next" role="button">
-          <Right />
-        </a>
-      </div>
-    </div>
-  </Component>
-)
+    </Component>
+  )
+}
 
 export default Carousel

@@ -33,24 +33,25 @@ const Selector = styled.div`
 interface Props {
   lineId: string
   quantity: number
-  updateQuantity: (lineId: string, quantity: number) => void
+  imageId: string
+  updateQuantity: (lineId: string, quantity: number, imageId: string) => void
 }
 
 const QuantitySelector = (props: Props) => {
-  const { lineId, quantity, updateQuantity } = props
+  const { lineId, quantity, imageId, updateQuantity } = props
   return (
     <Selector>
       <div>
         <span
-          className="quantity-down qty"
-          onClick={() => updateQuantity(lineId, quantity - 1)}
+          className="quantity-down qty text-btn"
+          onClick={() => updateQuantity(lineId, quantity - 1, imageId)}
         >
           -
         </span>
         <input className="quantity" type="text" value={quantity} readOnly />
         <span
-          className="quantity-up qty"
-          onClick={() => updateQuantity(lineId, quantity + 1)}
+          className="quantity-up qty text-btn"
+          onClick={() => updateQuantity(lineId, quantity + 1, imageId)}
         >
           +
         </span>

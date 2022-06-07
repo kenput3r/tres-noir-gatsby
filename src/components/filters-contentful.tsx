@@ -1,7 +1,7 @@
 import React, { Dispatch, useState, useEffect } from "react"
 import styled from "styled-components"
 import { StaticImage, GatsbyImage } from "gatsby-plugin-image"
-import { useSpring, useTransition, animated, config } from "react-spring"
+import { useSpring, animated, config } from "react-spring"
 import { ContentfulCollection, ContentfulProduct } from "../types/contentful"
 import { useHeight } from "../hooks/useHeight"
 import { useFrameColors } from "../hooks/useFrameColors"
@@ -15,7 +15,7 @@ const DisplayFilters = styled.div`
   justify-content: center;
   margin-top: 20px;
   font-family: var(--heading-font);
-  button {
+  button.filter {
     font-size: 1.25rem;
     @media (max-width: 600px) {
       font-size: 1.2rem;
@@ -35,7 +35,7 @@ const Triangle = styled.div`
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
-  justify-content: flex-end;
+  justify-content: center;
   .triangle {
     width: 0px;
     height: 0px;
@@ -74,6 +74,7 @@ const Filters = styled.div`
     gap: 20px;
     .reset {
       margin-top: 10px;
+      background-color: transparent;
     }
   }
   .color-options {
@@ -95,11 +96,13 @@ const Filters = styled.div`
     cursor: pointer;
     text-transform: uppercase;
     color: var(--color-grey-dark);
+    background-color: transparent;
     &:hover {
       border-radius: 15px;
       color: #000;
     }
     &.filter-type {
+      background-color: transparent;
       /* font-size: 1.2em; */
       &[data-active="true"] {
         color: #000;
@@ -107,11 +110,14 @@ const Filters = styled.div`
     }
     &.filter {
       padding: 8px 12px;
-      // margin: 20px;
+      background-color: transparent;
       border-radius: 15px;
       color: #000;
       &[data-active="true"] {
         background-color: #fff;
+      }
+      img {
+        border-radius: 15px;
       }
     }
     &.filter:hover {
@@ -228,8 +234,8 @@ const FiltersContentful = ({
         if (filter === FilterTypes.ColorName) {
           filteredProducts = filteredProducts.filter(product => {
             let found = false
-            product.variants.forEach(p => {
-              if (p.frameColor === filters[filter]) {
+            product.variants.forEach(variant => {
+              if (variant.frameColor.includes(filters[filter])) {
                 found = true
               }
             })
@@ -275,11 +281,7 @@ const FiltersContentful = ({
   return (
     <>
       <DisplayFilters>
-        <button
-          className="filter-title"
-          type="button"
-          onClick={handleShowFilters}
-        >
+        <button className="filter" type="button" onClick={handleShowFilters}>
           Filter +
         </button>
       </DisplayFilters>
@@ -366,11 +368,14 @@ const FiltersContentful = ({
                           filters.colorName === colorName ? "true" : "false"
                         }
                       >
-                        <GatsbyImage
-                          image={image.childImageSharp.gatsbyImageData}
-                          alt={colorName}
-                          style={{ marginBottom: 0, marginRight: 10 }}
-                        />
+                        {image && (
+                          <GatsbyImage
+                            image={image.childImageSharp.gatsbyImageData}
+                            alt={colorName}
+                            style={{ marginBottom: 0, marginRight: 10 }}
+                          />
+                        )}
+
                         <span>{colorName}</span>
                       </button>
                     )

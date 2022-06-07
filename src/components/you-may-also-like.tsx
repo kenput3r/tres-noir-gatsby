@@ -1,9 +1,8 @@
-import React, { useContext, useState } from "react"
+import React from "react"
 import styled from "styled-components"
-import { CartContext } from "../contexts/cart"
-import { useQuantityQuery } from "../hooks/useQuantityQuery"
 import UpsellProduct from "./upsell-product"
 import { useRandomizeCollection } from "../hooks/useRandomizeCollection"
+import { ShopifyProduct } from "../types/shopify"
 
 const Component = styled.section`
   margin-bottom: 40px;
@@ -41,7 +40,7 @@ const Component = styled.section`
   }
 `
 
-const YouMayAlsoLike = (props: { shopifyProduct: any }) => {
+const YouMayAlsoLike = (props: { shopifyProduct: ShopifyProduct }) => {
   const { shopifyProduct } = props
 
   const collectionItems = useRandomizeCollection(shopifyProduct)

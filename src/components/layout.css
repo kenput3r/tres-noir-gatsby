@@ -639,6 +639,25 @@ pre tt:after {
   -webkit-appearance: button-bevel;
   border: none;
 }
+.button:hover,
+.btn:hover {
+  background-color: #808080 !important;
+  border-color: #808080 !important;
+}
+.button:active,
+.btn:active {
+  background-color: #4f4f4f !important;
+  border-color: #4f4f4f !important;
+}
+.text-btn:hover {
+  color: #808080 !important;
+}
+.text-btn:active {
+  color: #4f4f4f !important;
+}
+.img-btn:hover {
+  opacity: 0.6;
+}
 
 main {
   max-width: 1440px;

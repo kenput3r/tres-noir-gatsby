@@ -27,6 +27,13 @@ const Component = styled.nav`
         }
         padding: 3px;
         text-transform: uppercase;
+        :hover,
+        :focus {
+          color: #262626;
+        }
+        .active {
+          color: #4f4f4f;
+        }
       }
     }
     :first-child {
@@ -42,11 +49,20 @@ const Component = styled.nav`
     }
   }
 `
+
+interface Item {
+  name: string
+  subListItems: {
+    name: string
+    url: string
+  }[]
+}
+
 const FooterLinks = () => {
   const { items } = useFooterNavigation()
   return (
     <Component>
-      {items.map(element => {
+      {items.map((element: Item) => {
         return (
           <ul key={element.name}>
             <span>{element.name}</span>

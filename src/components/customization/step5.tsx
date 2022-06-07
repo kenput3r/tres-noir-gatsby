@@ -4,6 +4,8 @@ import { GatsbyImage, StaticImage, IGatsbyImageData } from "gatsby-plugin-image"
 import { CustomizeContext } from "../../contexts/customize"
 import { CartContext } from "../../contexts/cart"
 import { RxInfoContext } from "../../contexts/rxInfo"
+import { addedCustomizedToCartGTMEvent } from "../../helpers/gtm"
+import { ShopifyProductVariant } from "../../types/customize"
 
 const Component = styled.div`
   padding: 10px;
@@ -96,10 +98,19 @@ const Component = styled.div`
 const Step5 = (props: {
   productTitle: string
   currentPrice: any
-  variant: any
+  variant: ShopifyProductVariant
   productImage: any
+  resumedItem: any
+  completeVariant: any
 }) => {
-  const { productTitle, currentPrice, variant, productImage } = props
+  const {
+    productTitle,
+    currentPrice,
+    variant,
+    productImage,
+    resumedItem,
+    completeVariant,
+  } = props
   const {
     currentStep,
     setCurrentStep,
@@ -110,14 +121,10 @@ const Step5 = (props: {
   } = useContext(CustomizeContext)
 
   // const { bundledCustoms, bundledDispatch } = useContext(CustomProductsContext)
-  const {
-    addProductToCart,
-    addProductsToCart,
-    addProductCustomToCart,
-    bundledCustoms,
-    bundledDispatch,
-  } = useContext(CartContext)
-  const { isRxAble, setRxAble, rxInfo, dispatch } = useContext(RxInfoContext)
+  const { addProductCustomToCart, removeCustomProductWithId } =
+    useContext(CartContext)
+  const { isRxAble, setRxAble, rxInfo, rxInfoDispatch } =
+    useContext(RxInfoContext)
   const [addedToCart, setAddedToCart] = useState(false)
 
   useEffect(() => {
@@ -129,39 +136,6 @@ const Step5 = (props: {
     }
   }, [addedToCart])
 
-  const addToBundle = (newCheckout: any, key: string, customImage) => {
-    let tempItems: any[] = []
-    newCheckout.lineItems.forEach(item => {
-      if (item.customAttributes.length !== 0) {
-        let found = false
-        item.customAttributes.forEach(attr => {
-          if (attr.key === "customizationId" && attr.value === key) {
-            found = true
-          }
-          if (attr.key === "customizationStep" && found) {
-            tempItems.push({
-              stepNumber: attr.value,
-              shopifyItem: item,
-            })
-          }
-        })
-      }
-    })
-    // sort tempItems by stepNumber
-    tempItems.sort((a, b) => {
-      return a.stepNumber - b.stepNumber
-    })
-    if (tempItems.length > 0) {
-      bundledDispatch({
-        type: "ADD",
-        payload: {
-          id: key,
-          value: tempItems,
-          image: customImage,
-        },
-      })
-    }
-  }
   const handleAddToCart = async () => {
     const { step1, step2, step3, step4 } = selectedVariants
 
@@ -179,6 +153,13 @@ const Step5 = (props: {
           {
             key: "customizationStep",
             value: "1",
+          },
+          {
+            key: "Prescription",
+            value:
+              step1.product.title !== "Non-Prescription Lens"
+                ? JSON.stringify(rxInfo)
+                : "Non-Prescription",
           },
         ],
       },
@@ -240,12 +221,83 @@ const Step5 = (props: {
       ],
     }
     stepItems.unshift(frameVariant)
-
-    const result = await addProductCustomToCart(stepItems)
-    addToBundle(result, matchingKey, productImage)
-
+    if (resumedItem) {
+      await removeCustomProductWithId(resumedItem)
+    }
+    addProductCustomToCart(
+      stepItems,
+      matchingKey,
+      productImage,
+      selectedVariants,
+      variant.sku,
+      variant.product.handle
+    )
     setAddedToCart(true)
-    alert("ADDED TO CART")
+
+    // GTM Event
+    const productData = {
+      main: {
+        collections: variant.product.collections.map(
+          (collection: { title: string }) => collection.title
+        ),
+        compareAtPrice: "",
+        image: variant?.image?.originalSrc ? variant.image?.originalSrc : "",
+        legacyResourceId: variant.legacyResourceId,
+        price: variant.price,
+        productType: variant.product.productType,
+        sku: variant.sku,
+        title: variant.title,
+        url: variant.product.onlineStoreUrl,
+        vendor: variant.product.vendor,
+      },
+      addOns: [
+        {
+          title: step1.title,
+          legacyResourceId: step1.legacyResourceId,
+          sku: step1.sku,
+          productType: step1.product.productType,
+          image: step1?.image?.originalSrc ? step1.image?.originalSrc : "",
+          url: step1.product.onlineStoreUrl,
+          vendor: step1.product.vendor,
+          price: step1.price,
+          compareAtPrice: "",
+        },
+        {
+          title: step2.title,
+          legacyResourceId: step2.legacyResourceId,
+          sku: step2.sku,
+          productType: step2.product.productType,
+          image: step1?.image?.originalSrc ? step2.image?.originalSrc : "",
+          url: step2.product.onlineStoreUrl,
+          vendor: step2.product.vendor,
+          price: step2.price,
+          compareAtPrice: "",
+        },
+        {
+          title: step3.title,
+          legacyResourceId: step3.legacyResourceId,
+          sku: step3.sku,
+          productType: step3.product.productType,
+          image: step3?.image?.originalSrc ? step3.image?.originalSrc : "",
+          url: step3.product.onlineStoreUrl,
+          vendor: step3.product.vendor,
+          price: step3.price,
+          compareAtPrice: "",
+        },
+        {
+          title: step4.title,
+          legacyResourceId: step4.legacyResourceId,
+          sku: step4.sku,
+          productType: step4.product.productType,
+          image: step4?.image?.originalSrc ? step4.image?.originalSrc : "",
+          url: step4.product.onlineStoreUrl,
+          vendor: step4.product.vendor,
+          price: step4.price,
+          compareAtPrice: "",
+        },
+      ],
+    }
+    addedCustomizedToCartGTMEvent(productData)
   }
 
   return (
@@ -266,7 +318,9 @@ const Step5 = (props: {
           <div className="product-description">
             <h4>
               {selectedVariants[`step${i + 1}`].product.title}{" "}
-              <span className="price">+ ${selectedVariants.step4.price}</span>
+              <span className="price">
+                + ${selectedVariants[`step${i + 1}`].price}
+              </span>
             </h4>
             <p>{selectedVariants[`step${i + 1}`].product.description}</p>
           </div>

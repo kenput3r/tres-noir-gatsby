@@ -1,9 +1,8 @@
-import React, { useContext } from "react"
+import React from "react"
 import styled from "styled-components"
 import { useStaticQuery, graphql, Link } from "gatsby"
-import { GatsbyImage } from "gatsby-plugin-image"
-import { CartContext } from "../contexts/cart"
-import { CustomerContext } from "../contexts/customer"
+import UpsellProduct from "./upsell-product"
+import { UpsellItems, UpsellItem } from "../types/upsell"
 
 const Component = styled.section`
   background: white;
@@ -72,9 +71,11 @@ const getUpsellItems = () => {
           }
           title
           handle
+          hasOnlyDefaultVariant
           variants {
             storefrontId
             price
+            sku
           }
           storefrontId
         }
@@ -84,56 +85,25 @@ const getUpsellItems = () => {
   return shopifyCollection
 }
 
-const Upsell = () => {
-  const { addProductToCart, checkout } = useContext(CartContext)
-  const { customerEmail } = useContext(CustomerContext)
+const UpsellCart = () => {
+  const upsellItems: UpsellItems = getUpsellItems()
 
-  const handleAddToCart = product => {
-    addProductToCart(product.variants[0].storefrontId, 1)
-  }
-
-  const upsellItems = getUpsellItems()
   return (
     <Component>
       <h6>Suggested Addons</h6>
       <div className="row">
         <div className="upsell-cards">
-          {upsellItems.products.map(product => {
-            return (
-              <div className="upsell-product" key={product.id}>
-                <Link to={`/products/${product.handle}`}>
-                  <div className="upsell-image">
-                    <GatsbyImage
-                      image={
-                        product.featuredImage.localFile.childImageSharp
-                          .gatsbyImageData
-                      }
-                      alt={product.title}
-                    ></GatsbyImage>
-                  </div>
-                  <div>
-                    <p>{product.title}</p>
-                  </div>
-                </Link>
-                <div>
-                  <p>${product.variants[0].price}</p>
-                </div>
-                <div>
-                  <button
-                    className="btn"
-                    type="button"
-                    onClick={evt => handleAddToCart(product)}
-                  >
-                    ADD TO CART
-                  </button>
-                </div>
-              </div>
-            )
-          })}
+          {upsellItems &&
+            upsellItems.products.map((item: UpsellItem) => (
+              <UpsellProduct
+                key={item.handle}
+                upsellProduct={item}
+              ></UpsellProduct>
+            ))}
         </div>
       </div>
     </Component>
   )
 }
 
-export default Upsell
+export default UpsellCart

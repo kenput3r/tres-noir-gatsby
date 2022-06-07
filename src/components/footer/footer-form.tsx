@@ -1,6 +1,7 @@
-import React, { MouseEvent, useState, useRef } from "react"
+import React, { useState, useRef } from "react"
 import styled from "styled-components"
 import { FaChevronRight, FaCheck, FaSpinner } from "react-icons/fa"
+import { identifyCustomerGTMEvent } from "../../helpers/gtm"
 
 const Component = styled.div`
   p {
@@ -38,6 +39,15 @@ const Component = styled.div`
     svg {
       font-size: 1rem;
       fill: white;
+    }
+    :hover,
+    :focus {
+      background-color: #262626;
+      border-color: #262626;
+    }
+    :active {
+      background-color: #4f4f4f;
+      border-color: #4f4f4f;
     }
   }
   input {
@@ -115,7 +125,7 @@ const FooterForm = () => {
   }
 
   const validEmail = (email: string) => {
-    var regex = new RegExp(
+    const regex = new RegExp(
       /^(("[\w-\s]+")|([\w-]+(?:\.[\w-]+)*)|("[\w-\s]+")([\w-]+(?:\.[\w-]+)*))(@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$)|(@\[?((25[0-5]\.|2[0-4][0-9]\.|1[0-9]{2}\.|[0-9]{1,2}\.))((25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\.){2}(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\]?$)/i
     )
     if (!regex.test(email)) {
@@ -156,6 +166,9 @@ const FooterForm = () => {
       emailMsg.current?.classList.add("green-text")
       emailMsg.current?.classList.remove("red-text")
       formRef.current?.classList.add("outline-green")
+      // identify customer
+      identifyCustomerGTMEvent(emailInput)
+
       if (emailMsg.current)
         emailMsg.current.textContent = "You are now subscribed!"
     } else {

@@ -13,6 +13,7 @@ const defaultContext = {
   selectedVariants: {
     step1: {
       image: {
+        originalSrc: "",
         altText: "",
         localFile: {
           childImageSharp: {
@@ -20,10 +21,18 @@ const defaultContext = {
           },
         },
       },
+      legacyResourceId: "",
       price: 0,
       product: {
         title: "",
         description: "",
+        onlineStoreUrl: "",
+        productType: "",
+        collections: {
+          handle: "",
+          title: "",
+        },
+        vendor: "",
       },
       selectedOptions: [
         {
@@ -37,6 +46,7 @@ const defaultContext = {
     },
     step2: {
       image: {
+        originalSrc: "",
         altText: "",
         localFile: {
           childImageSharp: {
@@ -44,10 +54,18 @@ const defaultContext = {
           },
         },
       },
+      legacyResourceId: "",
       price: 0,
       product: {
         title: "",
         description: "",
+        onlineStoreUrl: "",
+        productType: "",
+        collections: {
+          handle: "",
+          title: "",
+        },
+        vendor: "",
       },
       selectedOptions: [
         {
@@ -61,6 +79,7 @@ const defaultContext = {
     },
     step3: {
       image: {
+        originalSrc: "",
         altText: "",
         localFile: {
           childImageSharp: {
@@ -68,10 +87,18 @@ const defaultContext = {
           },
         },
       },
+      legacyResourceId: "",
       price: 0,
       product: {
         title: "",
         description: "",
+        onlineStoreUrl: "",
+        productType: "",
+        collections: {
+          handle: "",
+          title: "",
+        },
+        vendor: "",
       },
       selectedOptions: [
         {
@@ -85,6 +112,7 @@ const defaultContext = {
     },
     step4: {
       image: {
+        originalSrc: "",
         altText: "",
         localFile: {
           childImageSharp: {
@@ -92,10 +120,18 @@ const defaultContext = {
           },
         },
       },
+      legacyResourceId: "",
       price: 0,
       product: {
         title: "",
         description: "",
+        onlineStoreUrl: "",
+        productType: "",
+        collections: {
+          handle: "",
+          title: "",
+        },
+        vendor: "",
       },
       selectedOptions: [
         {
@@ -133,6 +169,7 @@ export const CustomizeProvider = ({ children }: { children: ReactChild }) => {
   const [selectedVariants, setSelectedVariants] = useState<SelectedVariants>({
     step1: {
       image: {
+        originalSrc: "",
         altText: "",
         localFile: {
           childImageSharp: {
@@ -140,10 +177,18 @@ export const CustomizeProvider = ({ children }: { children: ReactChild }) => {
           },
         },
       },
+      legacyResourceId: "",
       price: 0,
       product: {
         title: "",
         description: "",
+        onlineStoreUrl: "",
+        productType: "",
+        collections: {
+          handle: "",
+          title: "",
+        },
+        vendor: "",
       },
       selectedOptions: [
         {
@@ -157,6 +202,7 @@ export const CustomizeProvider = ({ children }: { children: ReactChild }) => {
     },
     step2: {
       image: {
+        originalSrc: "",
         altText: "",
         localFile: {
           childImageSharp: {
@@ -164,10 +210,18 @@ export const CustomizeProvider = ({ children }: { children: ReactChild }) => {
           },
         },
       },
+      legacyResourceId: "",
       price: 0,
       product: {
         title: "",
         description: "",
+        onlineStoreUrl: "",
+        productType: "",
+        collections: {
+          handle: "",
+          title: "",
+        },
+        vendor: "",
       },
       selectedOptions: [
         {
@@ -181,6 +235,7 @@ export const CustomizeProvider = ({ children }: { children: ReactChild }) => {
     },
     step3: {
       image: {
+        originalSrc: "",
         altText: "",
         localFile: {
           childImageSharp: {
@@ -188,10 +243,18 @@ export const CustomizeProvider = ({ children }: { children: ReactChild }) => {
           },
         },
       },
+      legacyResourceId: "",
       price: 0,
       product: {
         title: "",
         description: "",
+        onlineStoreUrl: "",
+        productType: "",
+        collections: {
+          handle: "",
+          title: "",
+        },
+        vendor: "",
       },
       selectedOptions: [
         {
@@ -205,6 +268,7 @@ export const CustomizeProvider = ({ children }: { children: ReactChild }) => {
     },
     step4: {
       image: {
+        originalSrc: "",
         altText: "",
         localFile: {
           childImageSharp: {
@@ -212,10 +276,18 @@ export const CustomizeProvider = ({ children }: { children: ReactChild }) => {
           },
         },
       },
+      legacyResourceId: "",
       price: 0,
       product: {
         title: "",
         description: "",
+        onlineStoreUrl: "",
+        productType: "",
+        collections: {
+          handle: "",
+          title: "",
+        },
+        vendor: "",
       },
       selectedOptions: [
         {

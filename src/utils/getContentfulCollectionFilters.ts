@@ -20,7 +20,11 @@ export const getFilters = (products: ContentfulProduct[]) => {
   // get colors
   let colorsList: string[] = []
   products.forEach(product =>
-    product.variants.forEach(variant => colorsList.push(variant.frameColor))
+    product.variants.forEach(variant => {
+      variant.frameColor.forEach(color => {
+        if (!colorsList.includes(color)) colorsList.push(color)
+      })
+    })
   )
   colorsList = colorsList.filter((v, i) => colorsList.indexOf(v) === i)
   // return values

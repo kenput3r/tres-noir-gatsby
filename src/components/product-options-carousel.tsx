@@ -4,10 +4,7 @@ import { Navigation } from "swiper"
 import { GatsbyImage } from "gatsby-plugin-image"
 import { BsChevronLeft as Left, BsChevronRight as Right } from "react-icons/bs"
 import styled from "styled-components"
-import {
-  ContentfulProduct,
-  ContentfulProductVariant,
-} from "../types/contentful"
+import { ContentfulProductVariant } from "../types/contentful"
 
 import "swiper/css"
 
@@ -91,7 +88,6 @@ const ProductOptionsCarousel = ({
   }, [color])
 
   const selectColors = (color: string): void => {
-    // console.log(`${uniqueId} SWIPER ===>`, swiperRef.current)
     if (!sliderRef.current) return
 
     const options: HTMLElement[] = Array.from(
@@ -102,9 +98,7 @@ const ProductOptionsCarousel = ({
         const index = Number(option.getAttribute("data-index"))
         clickHandler(variants[index])
         if (swiperRef.current) {
-          // console.log(`${uniqueId} SET SLIDE TO`, index)
           swiperRef.current.slideTo(index, 200, false)
-          // option.click()
           setActiveIndex(index)
         }
       }
@@ -170,7 +164,7 @@ const ProductOptionsCarousel = ({
         >
           {variants.map((variant: ContentfulProductVariant, i: number) => (
             <SwiperSlide
-              key={i}
+              key={`${uniqueId}-${i}`}
               onClick={e => {
                 clickHandler(variant)
                 setActiveIndex(i)

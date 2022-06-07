@@ -5,10 +5,37 @@ export interface ShopifyProductInfo {
   legacyResourceId: string
   price: string
   productType: string
+  quantity?: number
   sku: string
   title: string
   url: string
   vendor: string
+}
+
+export interface ShopifyCustomizedProductInfo {
+  main: {
+    collections: string[]
+    compareAtPrice: string | number
+    image: string
+    legacyResourceId: string
+    price: string | number
+    productType: string
+    sku: string
+    title: string
+    url: string
+    vendor: string
+  }
+  addOns: {
+    title: string
+    legacyResourceId: string
+    sku: string
+    productType: string
+    image: string
+    url: string
+    vendor: string
+    price: string | number
+    compareAtPrice: string | number
+  }[]
 }
 
 export interface ViewedProductPayload {
@@ -18,7 +45,7 @@ export interface ViewedProductPayload {
   ImageUrl: string
   Name: string
   Price: number
-  ProductId: string
+  ProductID: string
   SKU: string
   Url: string
 }
@@ -59,4 +86,14 @@ export interface StartedCheckoutPayload {
     RowTotal: number
     SKU: string
   }[]
+}
+
+export interface CollectionInfo {
+  handle: string
+  title: string
+}
+
+export interface ViewedCollectionPayload {
+  handle: string
+  title: string
 }

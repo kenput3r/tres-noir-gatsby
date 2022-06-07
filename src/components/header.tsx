@@ -12,6 +12,7 @@ import { FaSearch, FaFacebookF, FaBars } from "react-icons/fa"
 import { useClickAway } from "react-use"
 import { TiSocialInstagram } from "react-icons/ti"
 import DesktopNavigation from "./desktopNavigation"
+import CartIcon from "./cart-icon"
 
 const Component = styled.header`
   font-family: var(--sub-heading-font);
@@ -200,19 +201,19 @@ const Header = ({
               target="_blank"
               rel="noreferrer"
             >
-              <TiSocialInstagram className="instagram" />
+              <TiSocialInstagram className="instagram text-btn" />
             </a>
             <a
               href="https://www.facebook.com/tresnoir"
               target="_blank"
               rel="noreferrer"
             >
-              <FaFacebookF />
+              <FaFacebookF className="text-btn" />
             </a>
           </div>
           <div className="search">
             <Link to="/search" state={{ prevPath: currentPath }}>
-              <FaSearch />
+              <FaSearch className="text-btn" />
             </Link>
 
             <a
@@ -220,6 +221,7 @@ const Header = ({
               className="login-text"
             >
               <StaticImage
+                className="img-btn"
                 src="../images/icon-user.png"
                 alt="User"
                 placeholder="tracedSVG"
@@ -227,14 +229,7 @@ const Header = ({
               />
             </a>
 
-            <Link to="/cart">
-              <StaticImage
-                src="../images/cart.png"
-                alt="Shopping Cart"
-                placeholder="tracedSVG"
-                style={{ marginBottom: 0, maxWidth: 26 }}
-              />
-            </Link>
+            <CartIcon></CartIcon>
             <a
               href="#"
               className="hide-large"
