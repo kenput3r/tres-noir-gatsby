@@ -5,6 +5,7 @@ import styled from "styled-components"
 import { ShopifyProduct } from "../types/shopify"
 
 const Component = styled.article`
+  h3,
   p {
     font-family: var(--heading-font);
     text-transform: uppercase;
@@ -13,6 +14,19 @@ const Component = styled.article`
       font-size: 0.98rem;
     }
     margin-bottom: 0;
+  }
+  h3 {
+    font-weight: normal;
+    a {
+      color: #000;
+      text-decoration: none;
+      &:visited {
+        color: #000;
+      }
+      &:hover {
+        text-decoration: underline;
+      }
+    }
   }
   .product-price {
     color: var(--color-grey-dark);
@@ -24,6 +38,9 @@ const Component = styled.article`
   }
   .product-image {
     margin-bottom: 15px;
+    &:hover {
+      opacity: 0.7;
+    }
   }
 `
 
@@ -48,13 +65,19 @@ const Product = ({ data }: { data: ShopifyProduct }) => {
             />
           ) : (
             <StaticImage
-              src="../images/edit.png"
+              src="../images/no-image-placeholder.jpg"
               alt="Empty product image"
               className="product-image"
+              layout="constrained"
+              width={275}
+              height={183}
             />
           )}
         </Link>
-        <p className="product-title">{data.title}</p>
+        <h3 className="product-title">
+          {" "}
+          <Link to={`/products/${data.handle}`}>{data.title}</Link>
+        </h3>
         <p className="product-price">${price} USD</p>
       </div>
     </Component>
