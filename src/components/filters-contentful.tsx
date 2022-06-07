@@ -234,8 +234,8 @@ const FiltersContentful = ({
         if (filter === FilterTypes.ColorName) {
           filteredProducts = filteredProducts.filter(product => {
             let found = false
-            product.variants.forEach(p => {
-              if (p.frameColor === filters[filter]) {
+            product.variants.forEach(variant => {
+              if (variant.frameColor.includes(filters[filter])) {
                 found = true
               }
             })
@@ -368,11 +368,14 @@ const FiltersContentful = ({
                           filters.colorName === colorName ? "true" : "false"
                         }
                       >
-                        <GatsbyImage
-                          image={image.childImageSharp.gatsbyImageData}
-                          alt={colorName}
-                          style={{ marginBottom: 0, marginRight: 10 }}
-                        />
+                        {image && (
+                          <GatsbyImage
+                            image={image.childImageSharp.gatsbyImageData}
+                            alt={colorName}
+                            style={{ marginBottom: 0, marginRight: 10 }}
+                          />
+                        )}
+
                         <span>{colorName}</span>
                       </button>
                     )

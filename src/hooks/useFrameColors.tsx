@@ -49,6 +49,11 @@ export const useFrameColors = () => {
             gatsbyImageData(width: 50)
           }
         }
+        yellow: file(relativePath: { eq: "yellow.png" }) {
+          childImageSharp {
+            gatsbyImageData(width: 50)
+          }
+        }
       }
     `
   )
