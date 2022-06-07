@@ -11,15 +11,13 @@ import FreeShipping from "../components/free-shipping"
 import CollectionImage from "../components/collection-image"
 import { viewedCollectionGTMEvent } from "../helpers/gtm"
 
-const Page = styled.div`
-  .grid {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    justify-content: center;
-    margin-top: 15px;
-    margin-bottom: 55px;
-  }
+const Grid = styled.div`
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 15px;
+  margin-bottom: 55px;
 `
 
 const CollectionContentful = ({
@@ -52,7 +50,7 @@ const CollectionContentful = ({
   return (
     <Layout>
       <SEO title={collection.name} />
-      <Page>
+      <div className="page">
         <FreeShipping />
         {collection.featuredImage && (
           <CollectionImage
@@ -63,14 +61,17 @@ const CollectionContentful = ({
             position={collection.featuredImageTextPosition}
           />
         )}
-        <Filters
-          collection={collection}
-          filters={filters}
-          setFilters={setFilters}
-          setProducts={setProducts}
-        />
 
-        <div className="grid">
+        <div className="filters-container">
+          <Filters
+            collection={collection}
+            filters={filters}
+            setFilters={setFilters}
+            setProducts={setProducts}
+          />
+        </div>
+
+        <Grid>
           {products.length ? (
             Array.from(products.slice(0, 6)).map(
               (product: ContentfulProduct) => {
@@ -87,7 +88,7 @@ const CollectionContentful = ({
           ) : (
             <p>No Products found please remove filters and try again.</p>
           )}
-        </div>
+        </Grid>
 
         {collection.featuredImage2 && (
           <CollectionImage
@@ -96,7 +97,7 @@ const CollectionContentful = ({
           />
         )}
 
-        <div className="grid">
+        <Grid>
           {products.length > 6 &&
             Array.from(products.slice(6)).map((product: ContentfulProduct) => (
               <Product
@@ -106,8 +107,8 @@ const CollectionContentful = ({
                 collectionHandle={collection.handle}
               />
             ))}
-        </div>
-      </Page>
+        </Grid>
+      </div>
     </Layout>
   )
 }

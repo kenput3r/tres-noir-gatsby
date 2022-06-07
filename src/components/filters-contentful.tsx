@@ -15,7 +15,7 @@ const DisplayFilters = styled.div`
   justify-content: center;
   margin-top: 20px;
   font-family: var(--heading-font);
-  button {
+  button.filter {
     font-size: 1.25rem;
     @media (max-width: 600px) {
       font-size: 1.2rem;
@@ -281,11 +281,7 @@ const FiltersContentful = ({
   return (
     <>
       <DisplayFilters>
-        <button
-          className="filter-title"
-          type="button"
-          onClick={handleShowFilters}
-        >
+        <button className="filter" type="button" onClick={handleShowFilters}>
           Filter +
         </button>
       </DisplayFilters>
