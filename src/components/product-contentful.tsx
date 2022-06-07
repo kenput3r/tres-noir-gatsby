@@ -23,9 +23,17 @@ const Component = styled.article`
   @media only screen and (max-width: 600px) {
     width: 100%;
   }
-  h3 {
+  h3 a {
+    color: #000;
+    text-decoration: none;
     text-align: center;
     font-weight: 400;
+    &:visited {
+      color: #000;
+    }
+    &:hover {
+      text-decoration: underline;
+    }
   }
   .options {
     button {
@@ -49,6 +57,9 @@ const Component = styled.article`
   }
   .product-container {
     position: relative;
+    &:hover {
+      opacity: 0.7;
+    }
     .new-styles {
       position: absolute;
       top: 13px;
@@ -120,7 +131,9 @@ const ProductContentful = ({ data, color, collectionHandle }: Props) => {
           {hasNewStyles && <div className="new-styles">New!</div>}
         </article>
       </Link>
-      <h3>{data.title}</h3>
+      <h3>
+        <Link to={productLink}>{data.title}</Link>
+      </h3>
 
       <ProductOptionsCarousel
         uniqueId={`Product-${data.title
