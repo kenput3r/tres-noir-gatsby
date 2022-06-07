@@ -99,6 +99,12 @@ const ProductContentful = ({ data, color, collectionHandle }: Props) => {
     contentful: data.variants[0],
   })
 
+  const [productLink, setProductLink] = useState(
+    isSunglasses
+      ? `/products/${data.handle}?lens_type=sunglasses`
+      : `/products/${data.handle}?lens_type=glasses`
+  )
+
   const selectVariant = (
     // e: React.MouseEvent,
     variant: ContentfulProductVariant
@@ -115,13 +121,10 @@ const ProductContentful = ({ data, color, collectionHandle }: Props) => {
       contentful: variant,
     })
     setSelectedVariantContext(variant.sku)
+    setProductLink(productLink => `${productLink}&variant=${variant.sku}`)
   }
 
   const hasNewStyles = data.collection.some(col => col.handle === "new")
-
-  const productLink = isSunglasses
-    ? `/products/${data.handle}?lens_type=sunglasses`
-    : `/products/${data.handle}?lens_type=glasses`
 
   return (
     <Component>
