@@ -54,6 +54,9 @@ const Component = styled.div`
           top: 1rem;
           right: 1.5rem;
         }
+        :hover {
+          opacity: 0.65;
+        }
       }
     }
   }
