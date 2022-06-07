@@ -30,14 +30,6 @@ const StyledSwiper = styled(Swiper)`
   .swiper-slide {
     max-width: 100%;
   }
-  /* .swiper-slide {
-    line-height: 0;
-    margin-left: 5px;
-    max-width: calc(33.333% - 15px);
-    &:hover {
-      cursor: pointer;
-    }
-  } */
 `
 
 interface ImageSet {

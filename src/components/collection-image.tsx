@@ -75,7 +75,7 @@ const CollectionImage: React.FC<Props> = ({
           image={collectionImage}
           alt={collectionName}
           style={inlineStyleImage}
-        ></GatsbyImage>
+        />
         <div className="inner-text" style={inlineStyleText}>
           {collectionName && collectionDescription && <h1>{collectionName}</h1>}
           {collectionDescription && <p>{collectionDescription}</p>}
