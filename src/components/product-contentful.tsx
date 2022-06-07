@@ -111,6 +111,7 @@ const ProductContentful = ({ data, color, collectionHandle }: Props) => {
   const productLink = isSunglasses
     ? `/products/${data.handle}?lens_type=sunglasses`
     : `/products/${data.handle}?lens_type=glasses`
+
   return (
     <Component>
       <Link to={productLink}>

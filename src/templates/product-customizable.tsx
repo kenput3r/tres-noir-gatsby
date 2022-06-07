@@ -264,9 +264,11 @@ const ProductCustomizable = ({
     setSelectedVariantsToDefault,
     setCurrentStep,
     setHasSavedCustomized,
+    setProductUrl,
   } = useContext(CustomizeContext)
 
   useEffect(() => {
+    setProductUrl(`/products/${contentfulProduct.handle}`)
     setCurrentStep(1)
     setHasSavedCustomized({
       step1: false,
@@ -288,13 +290,16 @@ const ProductCustomizable = ({
 
   const [selectedVariant, setSelectedVariant] = useState({
     contentful: contentfulProduct?.variants && contentfulProduct.variants[0],
-    shopify: shopifyProduct.variants[0],
+    shopify: shopifyProduct.variants.find(
+      (variant: any) => variant.sku === contentfulProduct.variants[0].sku
+    ),
   })
 
   // cart
   const { addProductToCart, checkout } = useContext(CartContext)
 
   useEffect(() => {
+    console.log("SELECTED VARIANT CHANGED", selectedVariant)
     const productData = {
       title: shopifyProduct.title,
       legacyResourceId: shopifyProduct.legacyResourceId,
@@ -315,6 +320,7 @@ const ProductCustomizable = ({
   }, [selectedVariant])
 
   const selectVariant = (e: React.MouseEvent, variant: any) => {
+    console.log("RUNNING SELECT VARIANT", variant)
     // e.currentTarget && (e.currentTarget as HTMLElement).blur()
     const shopify = shopifyProduct.variants.find(
       (_variant: any) => _variant.sku === variant.sku
@@ -369,6 +375,8 @@ const ProductCustomizable = ({
   let customizeUrl = `/products/${contentfulProduct.handle}/customize?variant=${selectedVariant.shopify.sku}`
   if (lensType !== LensType.SUNGLASSES)
     customizeUrl = `${customizeUrl}&lens_type=${lensType}`
+
+  console.log("CUSTOMIZE URL", customizeUrl)
 
   return (
     <Layout>
