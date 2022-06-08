@@ -7,8 +7,8 @@ import {
   ContentfulProductVariant,
 } from "../types/contentful"
 import { SelectedVariantContext } from "../contexts/selectedVariant"
-
 import ProductOptionsCarousel from "../components/product-options-carousel"
+import ProductAction from "./collection-product-action"
 
 const Component = styled.article`
   margin-bottom: 1.45rem;
@@ -57,8 +57,13 @@ const Component = styled.article`
   }
   .product-container {
     position: relative;
-    &:hover {
+    &:hover > a > .gatsby-image-wrapper {
       opacity: 0.7;
+    }
+    @media (hover: hover) {
+      &:hover > .collection-product-action {
+        max-height: 50px;
+      }
     }
     .new-styles {
       position: absolute;
@@ -128,12 +133,15 @@ const ProductContentful = ({ data, color, collectionHandle }: Props) => {
 
   return (
     <Component>
-      <Link to={productLink}>
-        <article className="product-container">
+      <article className="product-container">
+        <Link to={productLink}>
           <Img image={variantImage} alt={data.title} />
           {hasNewStyles && <div className="new-styles">New!</div>}
-        </article>
-      </Link>
+        </Link>
+        <ProductAction>
+          <Link to={productLink}>View Product</Link>
+        </ProductAction>
+      </article>
       <h3>
         <Link to={productLink}>{data.title}</Link>
       </h3>

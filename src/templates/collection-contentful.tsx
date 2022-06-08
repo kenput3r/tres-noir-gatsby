@@ -150,14 +150,14 @@ export const query = graphql`
           id
           sku
           featuredImage {
-            data: gatsbyImageData(width: 600)
+            data: gatsbyImageData(width: 600, placeholder: BLURRED)
           }
           featuredImageClear {
-            data: gatsbyImageData(width: 600)
+            data: gatsbyImageData(width: 600, placeholder: BLURRED)
           }
           colorName
           colorImage {
-            data: gatsbyImageData(width: 40)
+            data: gatsbyImageData(width: 40, placeholder: BLURRED)
           }
           frameColor
         }

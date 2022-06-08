@@ -21,6 +21,7 @@ export interface ShopifyProduct {
   productType: string
   storefrontId: string
   title: string
+  variants: { title: string; sku: string; storefrontId: string }[]
 }
 
 export interface ShopifyCollection {
