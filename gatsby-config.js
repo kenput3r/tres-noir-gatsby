@@ -99,7 +99,8 @@ module.exports = {
       options: {
         defaults: {
           formats: [`webp`, `auto`],
-          quality: 80,
+          quality: 40,
+          placeholder: `dominantColor`,
         },
       },
     },

@@ -1,8 +1,10 @@
-import React from "react"
+import React, { useContext } from "react"
 import { Link } from "gatsby"
 import { GatsbyImage, StaticImage } from "gatsby-plugin-image"
 import styled from "styled-components"
+import { CartContext } from "../contexts/cart"
 import { ShopifyProduct } from "../types/shopify"
+import ProductAction from "./collection-product-action"
 
 const Component = styled.article`
   h3,
@@ -38,42 +40,77 @@ const Component = styled.article`
   }
   .product-image {
     margin-bottom: 15px;
-    &:hover {
+    text-align: center;
+  }
+  .product-container {
+    position: relative;
+    text-align: center;
+    &:hover > a > .gatsby-image-wrapper {
       opacity: 0.7;
+    }
+    @media (hover: hover) {
+      &:hover > .collection-product-action {
+        max-height: 50px;
+      }
     }
   }
 `
 
 const Product = ({ data }: { data: ShopifyProduct }) => {
+  const { addProductToCart } = useContext(CartContext)
+
   let price: any = data.priceRangeV2.minVariantPrice.amount
   price = parseFloat(price).toFixed(2)
+
+  const handleAddToCart = () => {
+    const id = data.variants[0].storefrontId
+    const sku = data.variants[0].sku
+    const image = data.featuredImage.localFile.childImageSharp.gatsbyImageData
+    const qty = 1
+    console.log("ADDING TO CART", { id, qty, sku, image })
+    addProductToCart(id, qty, sku, image)
+  }
+
   return (
     <Component>
       <div className="product-card">
-        <Link to={`/products/${data.handle}`}>
-          {data.featuredImage ? (
-            <GatsbyImage
-              className="product-image"
-              image={
-                data.featuredImage.localFile.childImageSharp.gatsbyImageData
-              }
-              alt={
-                data.featuredImage.altText
-                  ? data.featuredImage.altText
-                  : data.title
-              }
-            />
+        <div className="product-container">
+          <Link to={`/products/${data.handle}`}>
+            {data.featuredImage ? (
+              <GatsbyImage
+                className="product-image"
+                image={
+                  data.featuredImage.localFile.childImageSharp.gatsbyImageData
+                }
+                alt={
+                  data.featuredImage.altText
+                    ? data.featuredImage.altText
+                    : data.title
+                }
+              />
+            ) : (
+              <StaticImage
+                src="../images/no-image-placeholder.jpg"
+                alt="Empty product image"
+                className="product-image"
+                layout="constrained"
+                width={275}
+                height={183}
+              />
+            )}
+          </Link>
+          {data.variants.length > 1 ? (
+            <ProductAction>
+              <Link to={`/products/${data.handle}`}>View Product</Link>
+            </ProductAction>
           ) : (
-            <StaticImage
-              src="../images/no-image-placeholder.jpg"
-              alt="Empty product image"
-              className="product-image"
-              layout="constrained"
-              width={275}
-              height={183}
-            />
+            <ProductAction>
+              <button type="button" onClick={handleAddToCart}>
+                Add to Cart
+              </button>
+            </ProductAction>
           )}
-        </Link>
+        </div>
         <h3 className="product-title">
           {" "}
           <Link to={`/products/${data.handle}`}>{data.title}</Link>
