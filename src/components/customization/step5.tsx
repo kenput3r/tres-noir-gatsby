@@ -6,6 +6,7 @@ import { CartContext } from "../../contexts/cart"
 import { RxInfoContext } from "../../contexts/rxInfo"
 import { addedCustomizedToCartGTMEvent } from "../../helpers/gtm"
 import { ShopifyProductVariant } from "../../types/customize"
+import CaseGrid from "../case-grid"
 
 const Component = styled.div`
   padding: 10px;
@@ -205,6 +206,20 @@ const Step5 = (props: {
           },
         ],
       },
+      {
+        variantId: selectedVariants.case.storefrontId,
+        quantity: 1,
+        customAttributes: [
+          {
+            key: "customizationId",
+            value: matchingKey,
+          },
+          {
+            key: "customizationStep",
+            value: "5",
+          },
+        ],
+      },
     ]
     const frameVariant = {
       variantId: variant.storefrontId,
@@ -359,6 +374,7 @@ const Step5 = (props: {
           ADD TO CART
         </button>
       </div>
+      <CaseGrid />
     </Component>
   )
 }
