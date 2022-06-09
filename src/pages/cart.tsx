@@ -12,6 +12,7 @@ import { tnItem } from "../types/checkout"
 import { startedCheckoutGTMEvent } from "../helpers/gtm"
 import { VscClose } from "react-icons/vsc"
 import UpsellCart from "../components/upsell-cart"
+import Spinner from "../components/spinner"
 import { SelectedVariants, SelectedVariantStorage } from "../types/global"
 import { CustomizeContext } from "../contexts/customize"
 
@@ -206,7 +207,20 @@ const Page = styled.div`
     pointer-events: none;
     opacity: 0.5;
   }
-  .btn {
+  .checkout-loading {
+    min-height: 42px;
+    min-width: 165px;
+    position: relative;
+    @media only screen and (max-width: 468px) {
+      min-height: 39px;
+      min-width: 152px;
+    }
+    div {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
   }
 `
 
@@ -222,6 +236,12 @@ const Cart = () => {
 
   const { setSelectedVariants, setCurrentStep, setHasSavedCustomized } =
     useContext(CustomizeContext)
+
+  const [clickedCheckout, setClickedCheckout] = useState<boolean>(false)
+
+  const handleCheckingOut = () => {
+    setClickedCheckout(true)
+  }
 
   const stepMap = new Map()
   stepMap.set(1, "RX TYPE")
@@ -496,9 +516,19 @@ const Cart = () => {
                   <p>Delivery & Taxes are calculated at checkout.</p>
                 </div>
                 <div className="btn-container">
-                  <a href={checkout.webUrl} className="btn checkout">
-                    Check Out
-                  </a>
+                  {!clickedCheckout ? (
+                    <a
+                      href={checkout.webUrl}
+                      className="btn checkout"
+                      onClick={handleCheckingOut}
+                    >
+                      Check Out
+                    </a>
+                  ) : (
+                    <div className="btn checkout-loading">
+                      <Spinner />
+                    </div>
+                  )}
                 </div>
               </section>
             </div>
