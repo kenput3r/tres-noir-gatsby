@@ -124,8 +124,11 @@ const Component = styled.form`
     font-family: var(--sub-heading-font);
     padding: 10px 20px;
     text-decoration: none;
-    :hover {
+    &:hover {
       cursor: pointer;
+      background-color: #808080;
+      // box-shadow: none;
+      border-color: #808080;
     }
     @media only screen and (max-width: 480px) {
       display: inline-block;

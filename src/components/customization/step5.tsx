@@ -6,6 +6,7 @@ import { CartContext } from "../../contexts/cart"
 import { RxInfoContext } from "../../contexts/rxInfo"
 import { addedCustomizedToCartGTMEvent } from "../../helpers/gtm"
 import { ShopifyProductVariant } from "../../types/customize"
+import Spinner from "../spinner"
 
 const Component = styled.div`
   padding: 10px;
@@ -121,7 +122,7 @@ const Step5 = (props: {
   } = useContext(CustomizeContext)
 
   // const { bundledCustoms, bundledDispatch } = useContext(CustomProductsContext)
-  const { addProductCustomToCart, removeCustomProductWithId } =
+  const { addProductCustomToCart, removeCustomProductWithId, isAddingToCart } =
     useContext(CartContext)
   const { isRxAble, setRxAble, rxInfo, rxInfoDispatch } =
     useContext(RxInfoContext)
@@ -352,11 +353,21 @@ const Step5 = (props: {
         </p>
       </div>
       <div className="row">
-        <button type="button" onClick={() => setCurrentStep(currentStep - 1)}>
+        <button
+          className="btn"
+          type="button"
+          onClick={() => setCurrentStep(currentStep - 1)}
+        >
           GO BACK
         </button>
-        <button type="button" onClick={handleAddToCart} className="add-to-cart">
-          ADD TO CART
+        <button
+          type="button"
+          onClick={handleAddToCart}
+          className="add-to-cart btn"
+          disabled={isAddingToCart}
+        >
+          {isAddingToCart ? <Spinner /> : `ADD TO CART`}
+          {/* ADD TO CART */}
         </button>
       </div>
     </Component>

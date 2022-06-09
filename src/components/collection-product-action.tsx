@@ -42,6 +42,7 @@ const Component = styled.div`
     text-transform: uppercase;
     width: 100%;
     padding: 0.5rem;
+    height: 100%;
     &:hover {
       background-color: grey;
     }

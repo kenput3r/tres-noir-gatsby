@@ -5,6 +5,7 @@ import styled from "styled-components"
 import { CartContext } from "../contexts/cart"
 import { ShopifyProduct } from "../types/shopify"
 import ProductAction from "./collection-product-action"
+import Spinner from "../components/spinner"
 
 const Component = styled.article`
   h3,
@@ -51,13 +52,14 @@ const Component = styled.article`
     @media (hover: hover) {
       &:hover > .collection-product-action {
         max-height: 50px;
+        height: 44px;
       }
     }
   }
 `
 
 const Product = ({ data }: { data: ShopifyProduct }) => {
-  const { addProductToCart } = useContext(CartContext)
+  const { addProductToCart, isAddingToCart } = useContext(CartContext)
 
   let price: any = data.priceRangeV2.minVariantPrice.amount
   price = parseFloat(price).toFixed(2)
@@ -106,7 +108,7 @@ const Product = ({ data }: { data: ShopifyProduct }) => {
           ) : (
             <ProductAction>
               <button type="button" onClick={handleAddToCart}>
-                Add to Cart
+                {isAddingToCart ? <Spinner /> : `Add To Cart`}
               </button>
             </ProductAction>
           )}

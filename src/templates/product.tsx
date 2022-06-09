@@ -8,6 +8,7 @@ import { useQuantityQuery } from "../hooks/useQuantityQuery"
 import { addedToCartGTMEvent, viewedProductGTMEvent } from "../helpers/gtm"
 import YouMayAlsoLike from "../components/you-may-also-like"
 import ProductImageGrid from "../components/product-image-grid"
+import AddToCartButton from "../components/add-to-cart-button"
 
 const Page = styled.div`
   .shipping-message {
@@ -228,7 +229,7 @@ const Product = ({ data: { shopifyProduct } }: any) => {
   const [selectedVariantQuantity, setSelectedVariantQuantity] =
     useState<string>("1")
 
-  const { addProductToCart, checkout } = useContext(CartContext)
+  const { addProductToCart, isAddingToCart } = useContext(CartContext)
 
   const handleVariant = (evt: ChangeEvent<HTMLSelectElement>) => {
     const sku = evt.target.value
@@ -289,6 +290,10 @@ const Product = ({ data: { shopifyProduct } }: any) => {
   const sortVariants = variants => {
     return variants.sort((a, b) => a.position - b.position)
   }
+
+  useEffect(() => {
+    console.log("IS ADDING TO CART", isAddingToCart)
+  }, [isAddingToCart])
 
   return (
     <Layout>
@@ -355,17 +360,13 @@ const Product = ({ data: { shopifyProduct } }: any) => {
                 <div>
                   {quantityLevels &&
                   quantityLevels[selectedVariant.sku] !== 0 ? (
-                    <button
-                      type="button"
-                      className="btn"
-                      onClick={handleAddToCart}
-                    >
-                      ADD TO CART
-                    </button>
+                    <AddToCartButton
+                      handler={handleAddToCart}
+                      loading={isAddingToCart}
+                      soldOut={false}
+                    />
                   ) : (
-                    <button type="button" className="sold-out btn">
-                      SOLD OUT
-                    </button>
+                    <AddToCartButton soldOut={true} />
                   )}
                 </div>
               </div>
