@@ -12,6 +12,7 @@ import { addedToCartGTMEvent, viewedProductGTMEvent } from "../helpers/gtm"
 import Product from "./product"
 import { CustomizeContext } from "../contexts/customize"
 import FreeShipping from "../components/free-shipping"
+import Spinner from "../components/spinner"
 
 const Page = styled.div`
   .shipping-message {
@@ -296,7 +297,7 @@ const ProductCustomizable = ({
   })
 
   // cart
-  const { addProductToCart, checkout } = useContext(CartContext)
+  const { addProductToCart, isAddingToCart } = useContext(CartContext)
 
   useEffect(() => {
     console.log("SELECTED VARIANT CHANGED", selectedVariant)
@@ -473,8 +474,9 @@ const ProductCustomizable = ({
                           type="button"
                           onClick={handleAddToCart}
                           className="add-to-cart btn"
+                          disabled={isAddingToCart}
                         >
-                          ADD TO CART
+                          {isAddingToCart ? <Spinner /> : `ADD TO CART`}
                         </button>
                         <p>- OR -</p>
                       </>

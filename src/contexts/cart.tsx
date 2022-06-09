@@ -54,6 +54,7 @@ const DefaultContext = {
     tnLineItems: [],
     webUrl: "",
   },
+  isAddingToCart: false,
   addProductToCart: (
     variantId: string,
     quantity: number,
@@ -91,6 +92,7 @@ export const CartProvider = ({ children }) => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
   const [isActive, setIsActive] = useState("shop")
   const [checkout, setCheckout] = useState<any>()
+  const [isAddingToCart, setIsAddingToCart] = useState<boolean>(false)
 
   /**
    * @function getCheckoutCookie - gets the current non-expired chechout cookie
@@ -427,6 +429,7 @@ export const CartProvider = ({ children }) => {
       image: IGatsbyImageData
     ) => {
       try {
+        setIsAddingToCart(true)
         const lineItems = [
           {
             variantId,
@@ -440,9 +443,11 @@ export const CartProvider = ({ children }) => {
         addToImageStorage(sku, image, checkout.id)
         rebuildBundles(updatedCheckout)
         setCheckout(updatedCheckout)
+        setIsAddingToCart(false)
         console.log("updated", updatedCheckout)
       } catch (err: any) {
         console.error(err)
+        setIsAddingToCart(false)
         renderErrorModal()
       }
     }
@@ -451,6 +456,7 @@ export const CartProvider = ({ children }) => {
       lineItems: { variantId: string; quantity: number }[]
     ) => {
       try {
+        setIsAddingToCart(true)
         const updatedCheckout = await client.checkout.addLineItems(
           checkout.id,
           lineItems
@@ -466,8 +472,10 @@ export const CartProvider = ({ children }) => {
           )
         }
         setCheckout(updatedCheckout)
+        setIsAddingToCart(false)
       } catch (err: any) {
         console.error(err)
+        setIsAddingToCart(false)
         renderErrorModal()
       }
     }
@@ -481,6 +489,7 @@ export const CartProvider = ({ children }) => {
       handle: string
     ) => {
       try {
+        setIsAddingToCart(true)
         const updatedCheckout = await client.checkout.addLineItems(
           checkout.id,
           lineItems
@@ -490,9 +499,11 @@ export const CartProvider = ({ children }) => {
         setCheckout(updatedCheckout)
         // add necessary data to localStorage to be able to resume from cart later on
         addCustomToLocalStorage(key, resumeData, sku, handle)
+        setIsAddingToCart(false)
         console.log("updated", updatedCheckout)
       } catch (err: any) {
         console.error(err)
+        setIsAddingToCart(false)
         renderErrorModal()
       }
     }
@@ -624,6 +635,7 @@ export const CartProvider = ({ children }) => {
       setIsActive,
       closeDrawer,
       checkout,
+      isAddingToCart,
       addProductToCart,
       addProductsToCart,
       removeProductFromCart,
@@ -635,7 +647,14 @@ export const CartProvider = ({ children }) => {
       // customized products
       addProductCustomToCart,
     }
-  }, [isDrawerOpen, setIsDrawerOpen, isActive, setIsActive, checkout])
+  }, [
+    isDrawerOpen,
+    setIsDrawerOpen,
+    isActive,
+    setIsActive,
+    checkout,
+    isAddingToCart,
+  ])
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>
 }

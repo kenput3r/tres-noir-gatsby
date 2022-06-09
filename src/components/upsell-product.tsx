@@ -5,6 +5,7 @@ import { Link } from "gatsby"
 import { CartContext } from "../contexts/cart"
 import styled from "styled-components"
 import { UpsellItem, UpsellItemVariant } from "../types/upsell"
+import AddToCartButton from "./add-to-cart-button"
 
 const Component = styled.article`
   flex: 1;
@@ -88,7 +89,7 @@ const UpsellProduct = (props: { upsellProduct: UpsellItem }) => {
 
     setSelectedVariant(firstVariant)
   }, [quantityLevels])
-  const { addProductToCart } = useContext(CartContext)
+  const { addProductToCart, isAddingToCart } = useContext(CartContext)
   const handleAddToCart = () => {
     const id = selectedVariant.storefrontId
     const sku = selectedVariant.sku
@@ -161,13 +162,13 @@ const UpsellProduct = (props: { upsellProduct: UpsellItem }) => {
         </div>
         <div>
           {quantityLevels && quantityLevels[selectedVariant.sku] !== 0 ? (
-            <button type="button" className="btn" onClick={handleAddToCart}>
-              ADD TO CART
-            </button>
+            <AddToCartButton
+              handler={handleAddToCart}
+              loading={isAddingToCart}
+              soldOut={false}
+            />
           ) : (
-            <button type="button" className="sold-out btn">
-              SOLD OUT
-            </button>
+            <AddToCartButton soldOut={true} />
           )}
         </div>
       </div>
