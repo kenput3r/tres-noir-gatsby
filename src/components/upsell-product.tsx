@@ -46,21 +46,24 @@ const Component = styled.article`
       flex-direction: column;
     }
     select {
-      border: 1px solid #e1e3e4;
-      color: #8a8f93;
       margin-right: 18px;
-      -webkit-appearance: none;
-      -moz-appearance: none;
-      appearance: none;
-      background: url("data:image/svg+xml;utf8,<svg viewBox='0 0 140 140' width='9' height='9' xmlns='http://www.w3.org/2000/svg'><g><path d='m121.3,34.6c-1.6-1.6-4.2-1.6-5.8,0l-51,51.1-51.1-51.1c-1.6-1.6-4.2-1.6-5.8,0-1.6,1.6-1.6,4.2 0,5.8l53.9,53.9c0.8,0.8 1.8,1.2 2.9,1.2 1,0 2.1-0.4 2.9-1.2l53.9-53.9c1.7-1.6 1.7-4.2 0.1-5.8z' fill='black'/></g></svg>")
-        no-repeat;
-      background-position: right 5px center;
       @media screen and (max-width: 600px) {
         font-size: 0.95rem;
         margin: 0 0 8px 0;
       }
     }
     margin-bottom: 8px;
+  }
+  .upsell-image {
+    max-width: 280px;
+    :hover {
+      opacity: 0.7;
+    }
+  }
+  .product-title {
+    :hover {
+      text-decoration: underline;
+    }
   }
 `
 
@@ -114,8 +117,8 @@ const UpsellProduct = (props: { upsellProduct: UpsellItem }) => {
   return (
     <Component>
       <div className="upsell-product" key={upsellProduct.id}>
-        <Link to={`/products/${upsellProduct.handle}`}>
-          <div className="upsell-image">
+        <div className="upsell-image">
+          <Link to={`/products/${upsellProduct.handle}`}>
             {upsellProduct.featuredImage?.localFile ? (
               <GatsbyImage
                 image={
@@ -130,11 +133,13 @@ const UpsellProduct = (props: { upsellProduct: UpsellItem }) => {
                 alt={upsellProduct.title}
               ></StaticImage>
             )}
-          </div>
-          <div>
+          </Link>
+        </div>
+        <div className="product-title">
+          <Link to={`/products/${upsellProduct.handle}`}>
             <p>{upsellProduct.title}</p>
-          </div>
-        </Link>
+          </Link>
+        </div>
         <div className="select-price">
           <div>
             {!upsellProduct.hasOnlyDefaultVariant && (
