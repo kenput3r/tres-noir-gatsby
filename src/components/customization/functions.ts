@@ -130,16 +130,23 @@ export const changeImage = (
             break
           }
           case "XTRActive Polarized": {
-            const data = variant.contentful.customizations?.clear.data
-              ? variant.contentful.customizations?.clear.data
-              : variant.contentful.featuredImage.title
-            const title = variant.contentful.customizations?.clear.title
-              ? variant.contentful.customizations?.clear.title
-              : variant.contentful.featuredImage.title
-            setCurrentImage({
-              data: data,
-              altText: title,
-            })
+            // const data = variant.contentful.customizations?.clear.data
+            //   ? variant.contentful.customizations?.clear.data
+            //   : variant.contentful.featuredImage.title
+            // const title = variant.contentful.customizations?.clear.title
+            //   ? variant.contentful.customizations?.clear.title
+            //   : variant.contentful.featuredImage.title
+            if (step1.product.title === "Bifocal") {
+              setCurrentImage({
+                data: variant.contentful.customizations?.bifocal.data,
+                altText: variant.contentful.customizations?.bifocal.title,
+              })
+            } else {
+              setCurrentImage({
+                data: variant.contentful.customizations?.clear.data,
+                altText: variant.contentful.customizations?.clear.title,
+              })
+            }
             break
           }
           // case "Vantage": {
@@ -256,15 +263,16 @@ export const changeImage = (
           //   break
           // }
           case "XTRActive Polarized": {
-            const data = variant.contentful.customizations?.clear.data
-              ? variant.contentful.customizations?.clear.data
-              : variant.contentful.featuredImage.title
-            const title = variant.contentful.customizations?.clear.title
-              ? variant.contentful.customizations?.clear.title
-              : variant.contentful.featuredImage.title
+            // const data = variant.contentful.customizations?.clear.data
+            //   ? variant.contentful.customizations?.clear.data
+            //   : variant.contentful.featuredImage.title
+            // const title = variant.contentful.customizations?.clear.title
+            //   ? variant.contentful.customizations?.clear.title
+            //   : variant.contentful.featuredImage.title
+            const property: string = `sunGlassesSmokeLenses`
             setCurrentImage({
-              data: data,
-              altText: title,
+              data: variant.contentful.customizations[property].data,
+              altText: variant.contentful.customizations[property].title,
             })
             break
           }
