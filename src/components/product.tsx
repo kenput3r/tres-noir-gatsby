@@ -6,6 +6,7 @@ import { CartContext } from "../contexts/cart"
 import { ShopifyProduct } from "../types/shopify"
 import ProductAction from "./collection-product-action"
 import Spinner from "../components/spinner"
+import { useQuantityQuery } from "../hooks/useQuantityQuery"
 
 const Component = styled.article`
   h3,
@@ -59,6 +60,8 @@ const Component = styled.article`
 `
 
 const Product = ({ data }: { data: ShopifyProduct }) => {
+  const quantityLevels = useQuantityQuery(data.handle, data.variants.length)
+
   const { addProductToCart, isAddingToCart } = useContext(CartContext)
 
   let price: any = data.priceRangeV2.minVariantPrice.amount
@@ -107,9 +110,13 @@ const Product = ({ data }: { data: ShopifyProduct }) => {
             </ProductAction>
           ) : (
             <ProductAction>
-              <button type="button" onClick={handleAddToCart}>
-                {isAddingToCart ? <Spinner /> : `Add To Cart`}
-              </button>
+              {quantityLevels && quantityLevels[data.variants[0].sku] !== 0 ? (
+                <button type="button" onClick={handleAddToCart}>
+                  {isAddingToCart ? <Spinner /> : `Add To Cart`}
+                </button>
+              ) : (
+                <Link to={`/products/${data.handle}`}>View Product</Link>
+              )}
             </ProductAction>
           )}
         </div>
