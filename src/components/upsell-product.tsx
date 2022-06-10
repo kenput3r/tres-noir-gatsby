@@ -114,9 +114,10 @@ const UpsellProduct = (props: { upsellProduct: UpsellItem }) => {
     ) as UpsellItemVariant
 
     if (
+      newVariant &&
       newVariant.image &&
       newVariant.image.localFile &&
-      selectedVariant.selectedOptions.some(e => e.name !== "Size")
+      newVariant.selectedOptions.some(e => e.name !== "Size")
     ) {
       setFeaturedImage(
         newVariant.image.localFile.childImageSharp.gatsbyImageData
