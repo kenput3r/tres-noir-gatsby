@@ -39,6 +39,16 @@ export const useFrameColors = () => {
             gatsbyImageData(width: 50)
           }
         }
+        pink: file(relativePath: { eq: "pink.png" }) {
+          childImageSharp {
+            gatsbyImageData(width: 50)
+          }
+        }
+        purple: file(relativePath: { eq: "purple.png" }) {
+          childImageSharp {
+            gatsbyImageData(width: 50)
+          }
+        }
         tortoise: file(relativePath: { eq: "tortoise.png" }) {
           childImageSharp {
             gatsbyImageData(width: 50)
