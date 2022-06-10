@@ -74,6 +74,7 @@ const ProductCarousel = ({ imageSet }: { imageSet: ImageSet[] }) => {
           slidesPerView={3}
           onSwiper={swiper => setThumbsSwiper(swiper)}
           watchSlidesProgress
+          threshold={15}
         >
           {imageSet.map((image: ImageSet, i: number) => (
             <SwiperSlide key={`thumb-${i}`}>
