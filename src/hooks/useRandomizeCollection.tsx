@@ -30,6 +30,13 @@ export const useRandomizeCollection = currentProduct => {
               selectedOptions {
                 name
               }
+              image {
+                localFile {
+                  childImageSharp {
+                    gatsbyImageData(quality: 40, width: 400)
+                  }
+                }
+              }
               position
             }
             tags

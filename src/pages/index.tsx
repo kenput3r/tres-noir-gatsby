@@ -131,6 +131,11 @@ const Page = styled.div`
     margin-left: -15px;
     margin-right: -15px;
   }
+  /* .about-image {
+    :hover {
+      opacity: 0.65;
+    }
+  } */
 `
 
 const IndexPage = ({
@@ -188,13 +193,13 @@ const IndexPage = ({
       </div>
       <div className="about no-padding">
         <div className="about-content container">
-          <Link to="/pages/rx-faq">
+          <Link to="/pages/rx-faq" className="about-image">
             <GatsbyImage
               image={contentfulHomepage.aboutTresNoir1.gatsbyImageData}
               alt="About Tres Noir 1"
             />
           </Link>
-          <Link to="/collections/new">
+          <Link to="/collections/new" className="about-image">
             <GatsbyImage
               image={contentfulHomepage.aboutTresNoir2.gatsbyImageData}
               alt="About Tres Noir 2"

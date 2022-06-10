@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import styled from "styled-components"
 import { GatsbyImage, StaticImage } from "gatsby-plugin-image"
 
@@ -14,12 +14,13 @@ const Component = styled.section`
   }
 `
 
-const ProductImageGrid = (props: { product: any }) => {
-  const { product } = props
+const ProductImageGrid = (props: { product: any; selectedVariant: any }) => {
+  const { product, selectedVariant } = props
 
   interface ImageSet {
     data: any
     title: string
+    id: string
   }
 
   const createImageSet = () => {
@@ -30,6 +31,7 @@ const ProductImageGrid = (props: { product: any }) => {
         data: product.featuredImage?.localFile?.childImageSharp
           ?.gatsbyImageData,
         title: product.featuredImage.altText,
+        id: product.featuredImage.localFile.id,
       })
     }
     if (product.images) {
@@ -38,9 +40,11 @@ const ProductImageGrid = (props: { product: any }) => {
           imageSet.push({
             data: element.localFile.childImageSharp.gatsbyImageData,
             title: element.altText,
+            id: element.localFile.id,
           })
       })
     }
+
     // variant with images
     // else {
     //   product.variants.forEach(element => {
@@ -70,7 +74,23 @@ const ProductImageGrid = (props: { product: any }) => {
     return imageSet
   }
   const imageSetArr = createImageSet()
-  const [featuredImage, setFeaturedImage] = useState<ImageSet>(imageSetArr[0])
+  const [featuredImage, setFeaturedImage] = useState<ImageSet | undefined>(
+    imageSetArr[0]
+  )
+
+  useEffect(() => {
+    if (
+      selectedVariant &&
+      selectedVariant.selectedOptions.some(e => e.name !== "Size")
+    ) {
+      if (selectedVariant.image) {
+        const toSwap = imageSetArr.find(
+          el => el.id === selectedVariant.image.localFile.id
+        )
+        setFeaturedImage(toSwap)
+      }
+    }
+  }, [selectedVariant])
 
   return (
     <Component>

@@ -297,7 +297,10 @@ const Product = ({ data: { shopifyProduct } }: any) => {
       <Page>
         <div className="row">
           <div className="col images">
-            <ProductImageGrid product={shopifyProduct}></ProductImageGrid>
+            <ProductImageGrid
+              product={shopifyProduct}
+              selectedVariant={selectedVariant}
+            ></ProductImageGrid>
           </div>
           <div className="col">
             <div className="heading">

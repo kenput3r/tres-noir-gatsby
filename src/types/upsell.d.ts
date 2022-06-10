@@ -24,6 +24,9 @@ export interface UpsellItemVariant {
   price: string
   sku: string
   storefrontId: string
+  selectedOptions: {
+    name
+  }[]
   image?: {
     localFile: {
       childImageSharp: {
