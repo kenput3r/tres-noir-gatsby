@@ -55,6 +55,7 @@ const DefaultContext = {
     webUrl: "",
   },
   isAddingToCart: false,
+  setIsAddingToCart: (value: boolean) => {},
   addProductToCart: (
     variantId: string,
     quantity: number,
@@ -683,6 +684,7 @@ export const CartProvider = ({ children }) => {
       closeDrawer,
       checkout,
       isAddingToCart,
+      setIsAddingToCart,
       addProductToCart,
       addProductsToCart,
       removeProductFromCart,
@@ -703,6 +705,7 @@ export const CartProvider = ({ children }) => {
     setIsActive,
     checkout,
     isAddingToCart,
+    setIsAddingToCart,
   ])
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>

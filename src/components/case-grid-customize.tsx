@@ -46,6 +46,55 @@ const Component = styled.div`
       color: var(--color-grey-dark);
     }
   }
+  /* new */
+  .radio-container {
+    display: block;
+    position: relative;
+    cursor: pointer;
+    height: 25px;
+    width: 25px;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    :hover input ~ .checkmark {
+      background-color: grey;
+    }
+    input {
+      position: absolute;
+      opacity: 0;
+      cursor: pointer;
+      height: 100%;
+      width: 100%;
+      &:checked ~ .checkmark {
+        background-color: #fff;
+      }
+      &:checked ~ .checkmark:after {
+        display: block;
+      }
+    }
+    .checkmark {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 25px;
+      width: 25px;
+      background-color: #fff;
+      border: 1px solid #000;
+      border-radius: 50%;
+      &:after {
+        content: "";
+        position: absolute;
+        display: none;
+        top: 3px;
+        left: 3px;
+        width: 17px;
+        height: 17px;
+        border-radius: 50%;
+        background: #000;
+      }
+    }
+  }
 `
 
 const CaseGridCustomize = () => {
@@ -120,17 +169,20 @@ const CaseGridCustomize = () => {
                   </p>
                 </div>
                 <div>
-                  <input
-                    type="radio"
-                    name="case-select"
-                    id={`case-${product.title}`}
-                    aria-label={product.title}
-                    onChange={() => handleChange(product.variants[0], true)}
-                    checked={
-                      product.variants[0].storefrontId ===
-                      selectedVariants["case"].storefrontId
-                    }
-                  />
+                  <label className="radio-container">
+                    <input
+                      type="radio"
+                      name="case-select"
+                      id={`case-${product.title}`}
+                      aria-label={product.title}
+                      onChange={() => handleChange(product.variants[0], true)}
+                      checked={
+                        product.variants[0].storefrontId ===
+                        selectedVariants["case"].storefrontId
+                      }
+                    />
+                    <span className="checkmark"></span>
+                  </label>
                 </div>
               </div>
             )

@@ -50,7 +50,7 @@ const Page = styled.div`
         .card {
           display: flex;
           justify-content: space-between;
-          padding: 10px;
+          padding: 0 10px 20px 10px;
           > div {
             flex: 1;
             padding: 0 10px;
