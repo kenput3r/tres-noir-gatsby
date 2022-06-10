@@ -56,6 +56,7 @@ export interface SelectedVariants {
   step2: any
   step3: any
   step4: any
+  case: any
 }
 
 export interface SavedCustomizeContexts {
@@ -63,6 +64,7 @@ export interface SavedCustomizeContexts {
   step2: boolean
   step3: boolean
   step4: boolean
+  case: boolean
 }
 
 export interface SelectedVariantTable {

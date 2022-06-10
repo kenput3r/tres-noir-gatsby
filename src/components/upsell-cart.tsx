@@ -90,7 +90,7 @@ const UpsellCart = () => {
 
   return (
     <Component>
-      <h6>Suggested Addons</h6>
+      <h6>Suggested Add-ons</h6>
       <div className="row">
         <div className="upsell-cards">
           {upsellItems &&

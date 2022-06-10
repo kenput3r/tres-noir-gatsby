@@ -6,6 +6,7 @@ import { CartContext } from "../../contexts/cart"
 import { RxInfoContext } from "../../contexts/rxInfo"
 import { addedCustomizedToCartGTMEvent } from "../../helpers/gtm"
 import { ShopifyProductVariant } from "../../types/customize"
+import CaseGridCustomize from "../case-grid-customize"
 import Spinner from "../spinner"
 
 const Component = styled.div`
@@ -212,6 +213,20 @@ const Step5 = (props: {
           },
         ],
       },
+      {
+        variantId: selectedVariants.case.storefrontId,
+        quantity: 1,
+        customAttributes: [
+          {
+            key: "customizationId",
+            value: matchingKey,
+          },
+          {
+            key: "customizationStep",
+            value: "5",
+          },
+        ],
+      },
     ]
     const frameVariant = {
       variantId: variant.storefrontId,
@@ -375,6 +390,7 @@ const Step5 = (props: {
           {isAddingToCart ? <Spinner /> : `ADD TO CART`}
         </button>
       </div>
+      <CaseGridCustomize />
     </Component>
   )
 }
