@@ -300,7 +300,6 @@ const ProductCustomizable = ({
   const { addProductToCart, isAddingToCart } = useContext(CartContext)
 
   useEffect(() => {
-    console.log("SELECTED VARIANT CHANGED", selectedVariant)
     const productData = {
       title: shopifyProduct.title,
       legacyResourceId: shopifyProduct.legacyResourceId,
@@ -321,7 +320,6 @@ const ProductCustomizable = ({
   }, [selectedVariant])
 
   const selectVariant = (e: React.MouseEvent, variant: any) => {
-    console.log("RUNNING SELECT VARIANT", variant)
     // e.currentTarget && (e.currentTarget as HTMLElement).blur()
     const shopify = shopifyProduct.variants.find(
       (_variant: any) => _variant.sku === variant.sku
@@ -376,8 +374,6 @@ const ProductCustomizable = ({
   let customizeUrl = `/products/${contentfulProduct.handle}/customize?variant=${selectedVariant.shopify.sku}`
   if (lensType !== LensType.SUNGLASSES)
     customizeUrl = `${customizeUrl}&lens_type=${lensType}`
-
-  console.log("CUSTOMIZE URL", customizeUrl)
 
   return (
     <Layout>

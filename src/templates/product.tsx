@@ -291,10 +291,6 @@ const Product = ({ data: { shopifyProduct } }: any) => {
     return variants.sort((a, b) => a.position - b.position)
   }
 
-  useEffect(() => {
-    console.log("IS ADDING TO CART", isAddingToCart)
-  }, [isAddingToCart])
-
   return (
     <Layout>
       <SEO title={shopifyProduct.title} />

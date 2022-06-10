@@ -160,7 +160,16 @@ export const changeImage = (
           //   break
           // }
           default: {
-            console.log("ERROR")
+            const data = variant.contentful.customizations?.bifocal.data
+              ? variant.contentful.customizations?.bifocal.data
+              : variant.contentful.featuredImage.data
+            const title = variant.contentful.customizations?.bifocal.title
+              ? variant.contentful.customizations?.bifocal.title
+              : variant.contentful.featuredImage.title
+            setCurrentImage({
+              data: data,
+              altText: title,
+            })
           }
         }
         // Not Bifocal
@@ -277,18 +286,27 @@ export const changeImage = (
             break
           }
           default: {
-            console.log("ERROR")
+            const data = variant.contentful.customizations?.clear.data
+              ? variant.contentful.customizations?.clear.data
+              : variant.contentful.featuredImage.data
+            const title = variant.contentful.customizations?.clear.data
+              ? variant.contentful.customizations?.clear.title
+              : variant.contentful.featuredImage.title
+            setCurrentImage({
+              data: data,
+              altText: title,
+            })
           }
         }
       }
       break
     case 3:
-      console.log("step is 3")
+      // console.log("step is 3")
       break
     case 4:
-      console.log("step is 4")
+      // console.log("step is 4")
       break
     default:
-      console.log("ERROR")
+    // console.log("ERROR")
   }
 }

@@ -444,7 +444,6 @@ export const CartProvider = ({ children }) => {
         rebuildBundles(updatedCheckout)
         setCheckout(updatedCheckout)
         setIsAddingToCart(false)
-        console.log("updated", updatedCheckout)
       } catch (err: any) {
         console.error(err)
         setIsAddingToCart(false)
@@ -500,7 +499,6 @@ export const CartProvider = ({ children }) => {
         // add necessary data to localStorage to be able to resume from cart later on
         addCustomToLocalStorage(key, resumeData, sku, handle)
         setIsAddingToCart(false)
-        console.log("updated", updatedCheckout)
       } catch (err: any) {
         console.error(err)
         setIsAddingToCart(false)
