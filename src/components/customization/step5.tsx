@@ -89,6 +89,12 @@ const Component = styled.div`
       }
     }
   }
+  .add-to-cart {
+    min-width: 141px;
+    @media only screen and (max-width: 468px) {
+      min-width: 130px;
+    }
+  }
   .edit-btn {
     background-color: transparent;
     color: #000;
@@ -367,7 +373,6 @@ const Step5 = (props: {
           disabled={isAddingToCart}
         >
           {isAddingToCart ? <Spinner /> : `ADD TO CART`}
-          {/* ADD TO CART */}
         </button>
       </div>
     </Component>

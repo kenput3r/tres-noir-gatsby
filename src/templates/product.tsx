@@ -393,7 +393,7 @@ export const query = graphql`
         localFile {
           id
           childImageSharp {
-            gatsbyImageData
+            gatsbyImageData(quality: 50)
           }
         }
       }

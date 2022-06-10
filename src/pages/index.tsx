@@ -248,7 +248,7 @@ export const query = graphql`
         tagline
       }
       featuredStyles {
-        data: gatsbyImageData(layout: CONSTRAINED, placeholder: BLURRED)
+        data: gatsbyImageData(layout: CONSTRAINED, quality: 40, width: 600)
         title
       }
       featuredStylesLinks

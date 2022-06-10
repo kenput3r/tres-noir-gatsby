@@ -121,19 +121,11 @@ export const query = graphql`
       handle
       name
       featuredImage {
-        data: gatsbyImageData(
-          width: 2048
-          placeholder: BLURRED
-          formats: [AUTO, WEBP]
-        )
+        data: gatsbyImageData(width: 2048, formats: [AUTO, WEBP], quality: 50)
         description
       }
       featuredImage2 {
-        data: gatsbyImageData(
-          width: 2048
-          placeholder: BLURRED
-          formats: [AUTO, WEBP]
-        )
+        data: gatsbyImageData(width: 2048, formats: [AUTO, WEBP], quality: 50)
       }
       featuredImageTextColor
       featuredImageTextPosition
@@ -150,14 +142,14 @@ export const query = graphql`
           id
           sku
           featuredImage {
-            data: gatsbyImageData(width: 600, placeholder: BLURRED)
+            data: gatsbyImageData(width: 600, quality: 40)
           }
           featuredImageClear {
-            data: gatsbyImageData(width: 600, placeholder: BLURRED)
+            data: gatsbyImageData(width: 600, quality: 40)
           }
           colorName
           colorImage {
-            data: gatsbyImageData(width: 40, placeholder: BLURRED)
+            data: gatsbyImageData(width: 40)
           }
           frameColor
         }
