@@ -341,6 +341,15 @@ const Cart = () => {
     }
   }
 
+  // clean this up after demo
+  const orderTnLineItems = (lineItems: any) => {
+    const order = ["0", "1", "2", "3", "4", "5"]
+    lineItems.sort((a, b) => {
+      return order.indexOf(a.stepNumber) - order.indexOf(b.stepNumber)
+    })
+    return lineItems
+  }
+
   const renderStandardProduct = (item: tnItem) => {
     const line = item.lineItems[0].shopifyItem
     return (
@@ -406,6 +415,8 @@ const Cart = () => {
   const renderSunglasses = (item: tnItem) => {
     const sunglassesStepMap = new Map()
     sunglassesStepMap.set(1, "CASE")
+    // fix this
+    item.lineItems = orderTnLineItems(item.lineItems)
     return (
       <li key={item.id} className="customized">
         <div className="close-btn">
