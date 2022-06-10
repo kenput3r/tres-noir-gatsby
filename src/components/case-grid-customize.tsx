@@ -116,7 +116,7 @@ const CaseGridCustomize = () => {
     if (price === "0.00") {
       return "FREE"
     }
-    return `$${price} USD`
+    return `+ $${price} USD`
   }
 
   const handleChange = (variant: ShopifyVariant, isSetFromEvent: boolean) => {
