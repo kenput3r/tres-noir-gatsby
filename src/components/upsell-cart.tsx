@@ -65,7 +65,7 @@ const getUpsellItems = () => {
           featuredImage {
             localFile {
               childImageSharp {
-                gatsbyImageData
+                gatsbyImageData(quality: 40)
               }
             }
           }

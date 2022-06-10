@@ -1,5 +1,4 @@
 import React from "react"
-import { navigate } from "gatsby"
 import styled from "styled-components"
 import Layout from "../components/layout"
 import SEO from "../components/seo"
@@ -10,7 +9,6 @@ import {
   Configure,
   InstantSearch,
   RefinementList,
-  Pagination,
   connectStateResults,
 } from "react-instantsearch-dom"
 import SearchBox from "../components/search/search-box"
@@ -65,7 +63,6 @@ const Search = ({ location: { state } }: Location) => {
           <Hits />
           {searchResults.nbHits > hitsPerPage && (
             <PaginationContainer>
-              {/* <Pagination /> */}
               <CustomPagination />
             </PaginationContainer>
           )}

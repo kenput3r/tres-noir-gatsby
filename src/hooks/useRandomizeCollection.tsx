@@ -11,7 +11,7 @@ export const useRandomizeCollection = currentProduct => {
             featuredImage {
               localFile {
                 childImageSharp {
-                  gatsbyImageData
+                  gatsbyImageData(quality: 40, width: 400)
                 }
               }
             }

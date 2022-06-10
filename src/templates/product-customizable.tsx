@@ -512,21 +512,11 @@ export const query = graphql`
           title
         }
         imageSet {
-          data: gatsbyImageData(
-            layout: CONSTRAINED
-            placeholder: BLURRED
-            width: 2048
-            height: 1365
-          )
+          data: gatsbyImageData(layout: CONSTRAINED, width: 2048, height: 1365)
           title
         }
         imageSetClear {
-          data: gatsbyImageData(
-            layout: CONSTRAINED
-            placeholder: BLURRED
-            width: 2048
-            height: 1365
-          )
+          data: gatsbyImageData(layout: CONSTRAINED, width: 2048, height: 1365)
           title
         }
         id
