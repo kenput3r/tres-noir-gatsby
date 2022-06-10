@@ -125,6 +125,7 @@ const Collection = ({
             ))}
           </div>
           {collectionImages &&
+            collectionSize >= 8 &&
             collectionImages.collectionImageMiddle?.gatsbyImageData && (
               <div className="image-container">
                 <div>

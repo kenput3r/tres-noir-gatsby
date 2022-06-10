@@ -50,7 +50,7 @@ const Page = styled.div`
         .card {
           display: flex;
           justify-content: space-between;
-          padding: 10px;
+          padding: 0 10px 20px 10px;
           > div {
             flex: 1;
             padding: 0 10px;
@@ -248,6 +248,7 @@ const Cart = () => {
   stepMap.set(2, "LENS TYPE")
   stepMap.set(3, "LENS MATERIAL")
   stepMap.set(4, "LENS COATING")
+  stepMap.set(5, "CASE")
   const loadingOverlay = useRef<HTMLDivElement>(null)
   useEffect(() => {
     if (checkout) {
@@ -279,6 +280,7 @@ const Cart = () => {
           step2: true,
           step3: true,
           step4: true,
+          case: true,
         })
         setCurrentStep(5)
         // navigate to step 5 of customize page
@@ -325,6 +327,27 @@ const Cart = () => {
 
   const priceTimesQuantity = (price: string, quantity: number) => {
     return (Number(price) * quantity).toFixed(2)
+  }
+
+  const formatItemTitle = (subItem, stepName: string) => {
+    if (stepName === "CASE") {
+      let spl = subItem.shopifyItem.title.split("AO")[0]
+      return spl.slice(0, -2)
+    }
+    if (subItem.shopifyItem.variant.title === "Default Title") {
+      return subItem.shopifyItem.title
+    } else {
+      return `${subItem.shopifyItem.title} - ${subItem.shopifyItem.variant.title}`
+    }
+  }
+
+  // clean this up after demo
+  const orderTnLineItems = (lineItems: any) => {
+    const order = ["0", "1", "2", "3", "4", "5"]
+    lineItems.sort((a, b) => {
+      return order.indexOf(a.stepNumber) - order.indexOf(b.stepNumber)
+    })
+    return lineItems
   }
 
   const renderStandardProduct = (item: tnItem) => {
@@ -389,6 +412,80 @@ const Cart = () => {
     )
   }
 
+  const renderSunglasses = (item: tnItem) => {
+    const sunglassesStepMap = new Map()
+    sunglassesStepMap.set(1, "CASE")
+    // fix this
+    item.lineItems = orderTnLineItems(item.lineItems)
+    return (
+      <li key={item.id} className="customized">
+        <div className="close-btn">
+          <a
+            className="remove-item"
+            href="#"
+            onClick={() => removeMultipleProducts(item)}
+          >
+            <VscClose />
+          </a>
+        </div>
+        <div className="card">
+          <div className="card-image">
+            {item.image ? (
+              <GatsbyImage
+                image={item.image}
+                alt={item.lineItems[0].shopifyItem.variant.title}
+              ></GatsbyImage>
+            ) : (
+              <StaticImage
+                src="../images/product-no-image.jpg"
+                alt="no-image"
+              ></StaticImage>
+            )}
+          </div>
+          <div>
+            <div>
+              <p className="title">
+                <Link
+                  to={`/products/${item.lineItems[0].shopifyItem.variant.product.handle}`}
+                >
+                  {item.lineItems[0].shopifyItem.title}
+                </Link>
+              </p>
+              <div className="sub-title-customize">
+                {item.lineItems.map((subItem, subIndex) => {
+                  return (
+                    <div className="sub-item" key={subItem.shopifyItem.id}>
+                      <div className="step-name">
+                        <p>{sunglassesStepMap.get(subIndex)}</p>
+                      </div>
+                      <div className="sub-title" key={subItem.shopifyItem.id}>
+                        <span key={subItem.shopifyItem.id}>
+                          {formatItemTitle(
+                            subItem,
+                            sunglassesStepMap.get(subIndex)
+                          )}
+                        </span>
+                        <span className="price">
+                          {subItem.shopifyItem.variant.price === "0.00"
+                            ? "Free"
+                            : `$${subItem.shopifyItem.variant.price}`}
+                        </span>
+                      </div>
+                    </div>
+                  )
+                })}
+                <hr />
+                <span className="price total-price">
+                  ${totalSum(item.lineItems)}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </li>
+    )
+  }
+
   const renderCustomProduct = (item: tnItem) => {
     return (
       <li key={item.id} className="customized">
@@ -433,12 +530,12 @@ const Cart = () => {
                       </div>
                       <div className="sub-title" key={subItem.shopifyItem.id}>
                         <span key={subItem.shopifyItem.id}>
-                          {subItem.shopifyItem.variant.title === "Default Title"
-                            ? subItem.shopifyItem.title
-                            : subItem.shopifyItem.variant.title}
+                          {formatItemTitle(subItem, stepMap.get(subIndex))}
                         </span>
                         <span className="price">
-                          ${subItem.shopifyItem.variant.price}
+                          {subItem.shopifyItem.variant.price === "0.00"
+                            ? "Free"
+                            : `$${subItem.shopifyItem.variant.price}`}
                         </span>
                       </div>
                     </div>
@@ -502,6 +599,8 @@ const Cart = () => {
                       if (item) {
                         if (item.isCustom) {
                           return renderCustomProduct(item)
+                        } else if (item.lineItems.length === 2) {
+                          return renderSunglasses(item)
                         }
                         return renderStandardProduct(item)
                       }

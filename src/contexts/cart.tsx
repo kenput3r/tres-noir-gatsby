@@ -55,6 +55,7 @@ const DefaultContext = {
     webUrl: "",
   },
   isAddingToCart: false,
+  setIsAddingToCart: (value: boolean) => {},
   addProductToCart: (
     variantId: string,
     quantity: number,
@@ -63,6 +64,11 @@ const DefaultContext = {
   ) => {},
   addProductsToCart: (
     lineItems: { variantId: string; quantity: number }[]
+  ) => {},
+  addSunglassesToCart: (
+    lineItems: CustomLineItem[],
+    image: IGatsbyImageData,
+    key: string
   ) => {},
   addProductCustomToCart: (
     items: CustomLineItem[],
@@ -318,6 +324,7 @@ export const CartProvider = ({ children }) => {
       }
     })
     itemsMap.forEach((value, key) => {
+      // normal item
       if (value.length === 1) {
         itemsToAdd.push({
           id: key,
@@ -325,7 +332,18 @@ export const CartProvider = ({ children }) => {
           image: getImageFromLocalStorage(key),
           isCustom: false,
         })
-      } else {
+      }
+      // sunglasses + case
+      else if (value.length === 2) {
+        itemsToAdd.push({
+          id: key,
+          lineItems: value,
+          image: getImageFromLocalStorage(key),
+          isCustom: false,
+        })
+      }
+      // customized lenses
+      else {
         itemsToAdd.push({
           id: key,
           lineItems: value.sort((a, b) => {
@@ -470,6 +488,38 @@ export const CartProvider = ({ children }) => {
             })
           )
         }
+        setCheckout(updatedCheckout)
+        setIsAddingToCart(false)
+      } catch (err: any) {
+        console.error(err)
+        setIsAddingToCart(false)
+        renderErrorModal()
+      }
+    }
+
+    const addSunglassesToCart = async (
+      lineItems: CustomLineItem[],
+      image: IGatsbyImageData,
+      key: string
+    ) => {
+      try {
+        setIsAddingToCart(true)
+        const updatedCheckout = await client.checkout.addLineItems(
+          checkout.id,
+          lineItems
+        )
+        if (isBrowser) {
+          const now = new Date()
+          localStorage.setItem(
+            "checkout",
+            JSON.stringify({
+              value: updatedCheckout,
+              expiry: now.getTime() + 2592000,
+            })
+          )
+        }
+        addToImageStorage(key, image, checkout.id)
+        rebuildBundles(updatedCheckout)
         setCheckout(updatedCheckout)
         setIsAddingToCart(false)
       } catch (err: any) {
@@ -634,6 +684,7 @@ export const CartProvider = ({ children }) => {
       closeDrawer,
       checkout,
       isAddingToCart,
+      setIsAddingToCart,
       addProductToCart,
       addProductsToCart,
       removeProductFromCart,
@@ -644,6 +695,8 @@ export const CartProvider = ({ children }) => {
       removeCustomProductWithId,
       // customized products
       addProductCustomToCart,
+      // for sunglasses
+      addSunglassesToCart,
     }
   }, [
     isDrawerOpen,
@@ -652,6 +705,7 @@ export const CartProvider = ({ children }) => {
     setIsActive,
     checkout,
     isAddingToCart,
+    setIsAddingToCart,
   ])
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>

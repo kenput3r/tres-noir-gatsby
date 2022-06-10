@@ -90,7 +90,7 @@ const CollectionContentful = ({
           )}
         </Grid>
 
-        {collection.featuredImage2 && (
+        {collection.featuredImage2 && products.length > 6 && (
           <CollectionImage
             collectionImage={collection.featuredImage2.data}
             collectionName={collection.name}
