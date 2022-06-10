@@ -1,13 +1,11 @@
-import React, { useContext, useEffect } from "react"
+import React, { useContext, useEffect, useState } from "react"
 import { GatsbyImage, StaticImage } from "gatsby-plugin-image"
 import styled from "styled-components"
 import { useStaticQuery, Link, graphql } from "gatsby"
 import { ShopifyVariant } from "../types/global"
-import { CustomizeContext } from "../contexts/customize"
 
 const Component = styled.div`
   margin-top: 35px;
-  width: 75%;
   margin-bottom: 35px;
   p {
     margin: 0;
@@ -34,79 +32,22 @@ const Component = styled.div`
       text-transform: uppercase;
       font-weight: normal;
       text-align: center;
+      margin: 0;
     }
     .price {
       font-family: var(--sub-heading-font);
       color: var(--color-grey-dark);
+      margin: 0;
     }
   }
 `
 
-const CaseGrid = () => {
-  const {
-    currentStep,
-    setCurrentStep,
-    productUrl,
-    selectedVariants,
-    setSelectedVariants,
-    hasSavedCustomized,
-    setHasSavedCustomized,
-  } = useContext(CustomizeContext)
-
-  const getCaseCollection = () => {
-    const { shopifyCollection } = useStaticQuery(graphql`
-      query GetAOCaseCollection {
-        shopifyCollection(handle: { eq: "case-add-ons" }) {
-          products {
-            id
-            title
-            productType
-            handle
-            storefrontId
-            featuredImage {
-              localFile {
-                childImageSharp {
-                  gatsbyImageData
-                }
-              }
-            }
-            variants {
-              sku
-              storefrontId
-              title
-              image {
-                originalSrc
-                altText
-                localFile {
-                  childImageSharp {
-                    gatsbyImageData
-                  }
-                }
-              }
-              price
-              product {
-                title
-                description
-                onlineStoreUrl
-                productType
-                collections {
-                  handle
-                  title
-                }
-                vendor
-              }
-              selectedOptions {
-                name
-                value
-              }
-            }
-          }
-        }
-      }
-    `)
-    return shopifyCollection
-  }
-  const caseCollection = getCaseCollection().products
+const CaseGridSunglasses = (props: {
+  selectedCase: any
+  setSelectedCase: any
+  caseCollection: any
+}) => {
+  const { selectedCase, setSelectedCase, caseCollection } = props
 
   const formatTitle = (str: string) => {
     let spl = str.split("AO")[0]
@@ -120,22 +61,9 @@ const CaseGrid = () => {
     return `$${price} USD`
   }
 
-  const handleChange = (variant: ShopifyVariant, isSetFromEvent: boolean) => {
-    setSelectedVariants({
-      ...selectedVariants,
-      ["case"]: variant,
-    })
-    setHasSavedCustomized({
-      ...hasSavedCustomized,
-      ["case"]: isSetFromEvent,
-    })
+  const handleChange = (variant: ShopifyVariant) => {
+    setSelectedCase(variant)
   }
-
-  useEffect(() => {
-    if (hasSavedCustomized["case"] === false) {
-      handleChange(caseCollection[0].variants[0], false)
-    }
-  }, [])
 
   return (
     <Component>
@@ -175,10 +103,10 @@ const CaseGrid = () => {
                     name="case-select"
                     id={`case-${product.title}`}
                     aria-label={product.title}
-                    onChange={() => handleChange(product.variants[0], true)}
+                    onChange={() => handleChange(product.variants[0])}
                     checked={
                       product.variants[0].storefrontId ===
-                      selectedVariants["case"].storefrontId
+                      selectedCase.storefrontId
                     }
                   />
                 </div>
@@ -190,4 +118,4 @@ const CaseGrid = () => {
   )
 }
 
-export default CaseGrid
+export default CaseGridSunglasses

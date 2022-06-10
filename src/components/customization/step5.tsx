@@ -6,11 +6,8 @@ import { CartContext } from "../../contexts/cart"
 import { RxInfoContext } from "../../contexts/rxInfo"
 import { addedCustomizedToCartGTMEvent } from "../../helpers/gtm"
 import { ShopifyProductVariant } from "../../types/customize"
-<<<<<<< HEAD
-import CaseGrid from "../case-grid"
-=======
+import CaseGridCustomize from "../case-grid-customize"
 import Spinner from "../spinner"
->>>>>>> 23b01773d85cc29c4366f827dee93077e35bce44
 
 const Component = styled.div`
   padding: 10px;
@@ -388,7 +385,7 @@ const Step5 = (props: {
           {/* ADD TO CART */}
         </button>
       </div>
-      <CaseGrid />
+      <CaseGridCustomize />
     </Component>
   )
 }

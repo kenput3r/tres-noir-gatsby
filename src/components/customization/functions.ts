@@ -160,7 +160,8 @@ export const changeImage = (
           //   break
           // }
           default: {
-            console.log("ERROR")
+            // console.log("ERROR")
+            break
           }
         }
         // Not Bifocal
@@ -277,18 +278,20 @@ export const changeImage = (
             break
           }
           default: {
-            console.log("ERROR")
+            break
+            // console.log("ERROR")
           }
         }
       }
       break
     case 3:
-      console.log("step is 3")
+      // console.log("step is 3")
       break
     case 4:
-      console.log("step is 4")
+      // console.log("step is 4")
       break
     default:
-      console.log("ERROR")
+      break
+    // console.log("ERROR")
   }
 }

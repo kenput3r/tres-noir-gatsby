@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react"
+import React, { useState, useEffect, useContext, useRef } from "react"
 import { Link, graphql } from "gatsby"
 import { StaticImage, GatsbyImage as Img } from "gatsby-plugin-image"
 import styled from "styled-components"
@@ -13,6 +13,8 @@ import Product from "./product"
 import { CustomizeContext } from "../contexts/customize"
 import FreeShipping from "../components/free-shipping"
 import Spinner from "../components/spinner"
+import CaseGridSunglasses from "../components/case-grid-sunglasses"
+import { useCaseCollection } from "../hooks/useCaseCollection"
 
 const Page = styled.div`
   .shipping-message {
@@ -208,6 +210,12 @@ const ProductCustomizable = ({
     contentfulProduct.variants[0].imageSet
   )
 
+  const caseCollection = useCaseCollection()
+
+  const [selectedCase, setSelectedCase] = useState<any>(
+    caseCollection[0].variants[0]
+  )
+
   const getImageSet = (variant: any) => {
     let defaultImageSet
     switch (lensType) {
@@ -276,6 +284,7 @@ const ProductCustomizable = ({
       step2: false,
       step3: false,
       step4: false,
+      case: false,
     })
     setSelectedVariantsToDefault()
   }, [])
@@ -297,7 +306,8 @@ const ProductCustomizable = ({
   })
 
   // cart
-  const { addProductToCart, isAddingToCart } = useContext(CartContext)
+  const { addProductToCart, isAddingToCart, addSunglassesToCart } =
+    useContext(CartContext)
 
   useEffect(() => {
     console.log("SELECTED VARIANT CHANGED", selectedVariant)
@@ -341,6 +351,33 @@ const ProductCustomizable = ({
 
   const handleAddToCart = () => {
     const id = selectedVariant.shopify.storefrontId
+    if (lensType !== LensType.GLASSES) {
+      const today = new Date()
+      const matchingKey: string = today.valueOf().toString()
+      addSunglassesToCart(
+        [
+          {
+            variantId: selectedVariant.shopify.storefrontId,
+            quantity: 1,
+            customAttributes: [
+              { key: "customizationId", value: matchingKey },
+              { key: "customizationStep", value: "1" },
+            ],
+          },
+          {
+            variantId: selectedCase.storefrontId,
+            quantity: 1,
+            customAttributes: [
+              { key: "customizationId", value: matchingKey },
+              { key: "customizationStep", value: "2" },
+            ],
+          },
+        ],
+        selectedVariant.contentful.imageSet[0].data,
+        matchingKey
+      )
+      return
+    }
     addProductToCart(
       id,
       1,
@@ -493,6 +530,13 @@ const ProductCustomizable = ({
                 )}
               </div>
             </form>
+            {lensType !== LensType.GLASSES && (
+              <CaseGridSunglasses
+                caseCollection={caseCollection}
+                selectedCase={selectedCase}
+                setSelectedCase={setSelectedCase}
+              />
+            )}
           </div>
         </div>
       </Page>
