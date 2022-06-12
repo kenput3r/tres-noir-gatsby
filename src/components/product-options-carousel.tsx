@@ -7,6 +7,7 @@ import styled from "styled-components"
 import { ContentfulProductVariant } from "../types/contentful"
 
 import "swiper/css"
+import NotFoundPage from "../pages/404"
 
 const Component = styled.div`
   .navigation {
@@ -93,16 +94,36 @@ const ProductOptionsCarousel = ({
     const options: HTMLElement[] = Array.from(
       (sliderRef.current as HTMLDivElement).querySelectorAll(".option")
     )
+    let found: { index: number; dominantColor: string; frameColors: any }[] = []
     options.forEach(option => {
-      if (option.getAttribute("data-option")?.includes(color)) {
+      let targetIndex: number
+      if (option.getAttribute("data-frame-colors")?.includes(color)) {
         const index = Number(option.getAttribute("data-index"))
-        clickHandler(variants[index])
-        if (swiperRef.current) {
-          swiperRef.current.slideTo(index, 200, false)
-          setActiveIndex(index)
-        }
+        const dominantColor = option.getAttribute("data-dominant-color") || ""
+        found.push({
+          index,
+          dominantColor,
+          frameColors: option.getAttribute("data-frame-colors"),
+        })
       }
     })
+    // if multiple options have color use dominant color for match
+    if (found.length > 0) {
+      let matchedIndex: number = -1
+      if (found.length > 1) {
+        const dominantMatch = found.find(el => el.dominantColor === color)
+        if (dominantMatch) matchedIndex = dominantMatch?.index
+      } else {
+        matchedIndex = found[0].index
+      }
+      // if color !== dominant color match to first found
+      if (matchedIndex === -1) matchedIndex = found[0].index
+      clickHandler(variants[matchedIndex])
+      if (swiperRef.current) {
+        swiperRef.current.slideTo(matchedIndex, 200, false)
+        setActiveIndex(matchedIndex)
+      }
+    }
   }
 
   return (
@@ -170,7 +191,8 @@ const ProductOptionsCarousel = ({
                 setActiveIndex(i)
               }}
               className={`option ${i === activeIndex ? "active-option" : ""}`}
-              data-option={variant.frameColor}
+              data-frame-colors={variant.frameColor}
+              data-dominant-color={variant.dominantFrameColor}
               data-index={i}
             >
               <OptionImage className="option-image">
