@@ -14,6 +14,7 @@ export interface ContentfulProductVariant {
     data: IGatsbyImageData
   }
   frameColor: string[]
+  dominantFrameColor: string
 }
 
 export interface ContentfulProduct {

@@ -225,12 +225,14 @@ const FiltersContentful = ({
     const keys = Object.keys(filters)
     // eslint-disable-next-line no-shadow
     keys.forEach(filter => {
+      // frame width
       if (filters[filter]) {
         if (filter === FilterTypes.FrameWidth) {
           filteredProducts = filteredProducts.filter(product =>
             product.frameWidth.includes(filters[filter])
           )
         }
+        // frame color
         if (filter === FilterTypes.ColorName) {
           filteredProducts = filteredProducts.filter(product => {
             let found = false

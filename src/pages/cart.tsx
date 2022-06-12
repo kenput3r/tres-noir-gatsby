@@ -239,6 +239,10 @@ const Cart = () => {
 
   const [clickedCheckout, setClickedCheckout] = useState<boolean>(false)
 
+  useEffect(() => {
+    setClickedCheckout(false)
+  }, [])
+
   const handleCheckingOut = () => {
     setClickedCheckout(true)
   }
@@ -614,7 +618,11 @@ const Cart = () => {
                   <p>Delivery & Taxes are calculated at checkout.</p>
                 </div>
                 <div className="btn-container">
-                  {!clickedCheckout ? (
+                  {clickedCheckout ? (
+                    <div className="btn checkout-loading">
+                      <Spinner />
+                    </div>
+                  ) : (
                     <a
                       href={checkout.webUrl}
                       className="btn checkout"
@@ -622,10 +630,6 @@ const Cart = () => {
                     >
                       Check Out
                     </a>
-                  ) : (
-                    <div className="btn checkout-loading">
-                      <Spinner />
-                    </div>
                   )}
                 </div>
               </section>
