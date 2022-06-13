@@ -79,7 +79,7 @@ const DefaultContext = {
     handle: string
   ) => {},
   removeProductFromCart: (lineItemId: string, imageId: string) => {},
-  removeProductsFromCart: (lineItemIds: [], imageId: string) => {},
+  removeProductsFromCart: (lineItemIds: string[], imageId: string) => {},
   removeCustomProductWithId: (id: string) => {},
   updateProductInCart: (
     variantId: string,
@@ -574,7 +574,10 @@ export const CartProvider = ({ children }) => {
       }
     }
 
-    const removeProductsFromCart = async (lineItemIds, imageId: string) => {
+    const removeProductsFromCart = async (
+      lineItemIds: string[],
+      imageId: string
+    ) => {
       try {
         const updatedCheckout = await client.checkout.removeLineItems(
           checkout.id,

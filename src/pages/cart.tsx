@@ -1,4 +1,4 @@
-import React, { useEffect, useContext, useRef, useState } from "react"
+import React, { useEffect, useContext, useRef } from "react"
 import { Link, navigate } from "gatsby"
 import { GatsbyImage, StaticImage } from "gatsby-plugin-image"
 import styled from "styled-components"
@@ -8,11 +8,10 @@ import Loader from "../components/loader"
 import QuantitySelector from "../components/quantity-selector"
 import { CartContext } from "../contexts/cart"
 import { CustomerContext } from "../contexts/customer"
-import { tnItem } from "../types/checkout"
+import { tnItem, tnSubItem } from "../types/checkout"
 import { startedCheckoutGTMEvent } from "../helpers/gtm"
 import { VscClose } from "react-icons/vsc"
 import UpsellCart from "../components/upsell-cart"
-import Spinner from "../components/spinner"
 import { SelectedVariants, SelectedVariantStorage } from "../types/global"
 import { CustomizeContext } from "../contexts/customize"
 
@@ -237,16 +236,6 @@ const Cart = () => {
   const { setSelectedVariants, setCurrentStep, setHasSavedCustomized } =
     useContext(CustomizeContext)
 
-  const [clickedCheckout, setClickedCheckout] = useState<boolean>(false)
-
-  useEffect(() => {
-    setClickedCheckout(false)
-  }, [])
-
-  const handleCheckingOut = () => {
-    setClickedCheckout(true)
-  }
-
   const stepMap = new Map()
   stepMap.set(1, "RX TYPE")
   stepMap.set(2, "LENS TYPE")
@@ -295,7 +284,7 @@ const Cart = () => {
     }
   }
 
-  const removeMultipleProducts = async item => {
+  const removeMultipleProducts = async (item: tnItem) => {
     const lineIds = item.lineItems.map(item => {
       return item.shopifyItem.id
     })
@@ -333,7 +322,7 @@ const Cart = () => {
     return (Number(price) * quantity).toFixed(2)
   }
 
-  const formatItemTitle = (subItem, stepName: string) => {
+  const formatItemTitle = (subItem: tnSubItem, stepName: string) => {
     if (stepName === "CASE") {
       let spl = subItem.shopifyItem.title.split("AO")[0]
       return spl.slice(0, -2)
@@ -346,7 +335,7 @@ const Cart = () => {
   }
 
   // clean this up after demo
-  const orderTnLineItems = (lineItems: any) => {
+  const orderTnLineItems = lineItems => {
     const order = ["0", "1", "2", "3", "4", "5"]
     lineItems.sort((a, b) => {
       return order.indexOf(a.stepNumber) - order.indexOf(b.stepNumber)
@@ -618,19 +607,9 @@ const Cart = () => {
                   <p>Delivery & Taxes are calculated at checkout.</p>
                 </div>
                 <div className="btn-container">
-                  {clickedCheckout ? (
-                    <div className="btn checkout-loading">
-                      <Spinner />
-                    </div>
-                  ) : (
-                    <a
-                      href={checkout.webUrl}
-                      className="btn checkout"
-                      onClick={handleCheckingOut}
-                    >
-                      Check Out
-                    </a>
-                  )}
+                  <a href={checkout.webUrl} className="btn checkout">
+                    Check Out
+                  </a>
                 </div>
               </section>
             </div>
