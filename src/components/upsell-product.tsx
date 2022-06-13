@@ -95,7 +95,7 @@ const UpsellProduct = (props: { upsellProduct: UpsellItem }) => {
       }
     }
 
-    setSelectedVariant(firstVariant)
+    if (firstVariant) setSelectedVariant(firstVariant)
   }, [quantityLevels])
   const { addProductToCart, isAddingToCart } = useContext(CartContext)
   const handleAddToCart = () => {
@@ -124,7 +124,7 @@ const UpsellProduct = (props: { upsellProduct: UpsellItem }) => {
         newVariant.image.localFile.childImageSharp.gatsbyImageData
       )
     }
-    setSelectedVariant(newVariant)
+    if (newVariant) setSelectedVariant(newVariant)
   }
 
   const sortVariants = (variants: UpsellItemVariant[]) => {
