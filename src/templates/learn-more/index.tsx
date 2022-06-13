@@ -382,7 +382,10 @@ const LearnMore = ({ data: { contentfulProduct } }: any) => {
         <section className="fit-info">
           <div className="wrapper">
             <p className="h2">
-              {contentfulProduct.title} frames are a {contentfulProduct.fitType}{" "}
+              {contentfulProduct.title} frames are a{" "}
+              {contentfulProduct.frameWidth.length > 1
+                ? `${contentfulProduct.frameWidth[0]} to ${contentfulProduct.frameWidth[1]}`
+                : contentfulProduct.frameWidth[0]}{" "}
               fit.
             </p>
             <p className="h3">{contentfulProduct.fitDimensions}</p>
@@ -505,7 +508,7 @@ export const query = graphql`
         data: gatsbyImageData
       }
       fitDimensions
-      fitType
+      frameWidth
       handle
       lensesInfoImage {
         data: gatsbyImageData

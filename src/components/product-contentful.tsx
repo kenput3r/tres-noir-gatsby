@@ -129,7 +129,9 @@ const ProductContentful = ({ data, color, collectionHandle }: Props) => {
     setProductLink(productLink => `${productLink}&variant=${variant.sku}`)
   }
 
-  const hasNewStyles = data.collection.some(col => col.handle === "new")
+  let hasNewStyles: boolean = false
+  if (data.collection.length > 0)
+    hasNewStyles = data.collection.some(col => col.handle === "new")
 
   return (
     <Component>
