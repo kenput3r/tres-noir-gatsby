@@ -124,7 +124,7 @@ const UpsellProduct = (props: { upsellProduct: UpsellItem }) => {
         newVariant.image.localFile.childImageSharp.gatsbyImageData
       )
     }
-    if (newVariant) setSelectedVariant(newVariant)
+    setSelectedVariant(newVariant)
   }
 
   const sortVariants = (variants: UpsellItemVariant[]) => {
