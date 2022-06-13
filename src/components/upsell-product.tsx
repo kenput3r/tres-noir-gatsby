@@ -79,6 +79,10 @@ const UpsellProduct = (props: { upsellProduct: UpsellItem }) => {
     upsellProduct.variants[0]
   )
 
+  const [featuredImage, setFeaturedImage] = useState(
+    upsellProduct.featuredImage.localFile.childImageSharp.gatsbyImageData
+  )
+
   useEffect(() => {
     let firstVariant: UpsellItemVariant = upsellProduct.variants[0]
     for (let key in quantityLevels) {
@@ -108,6 +112,17 @@ const UpsellProduct = (props: { upsellProduct: UpsellItem }) => {
     const newVariant = upsellProduct.variants.find(
       (_variant: any) => _variant.sku === sku
     ) as UpsellItemVariant
+
+    if (
+      newVariant &&
+      newVariant.image &&
+      newVariant.image.localFile &&
+      newVariant.selectedOptions.some(e => e.name !== "Size")
+    ) {
+      setFeaturedImage(
+        newVariant.image.localFile.childImageSharp.gatsbyImageData
+      )
+    }
     setSelectedVariant(newVariant)
   }
 
@@ -122,10 +137,7 @@ const UpsellProduct = (props: { upsellProduct: UpsellItem }) => {
           <Link to={`/products/${upsellProduct.handle}`}>
             {upsellProduct.featuredImage?.localFile ? (
               <GatsbyImage
-                image={
-                  upsellProduct.featuredImage.localFile.childImageSharp
-                    .gatsbyImageData
-                }
+                image={featuredImage}
                 alt={upsellProduct.title}
               ></GatsbyImage>
             ) : (
