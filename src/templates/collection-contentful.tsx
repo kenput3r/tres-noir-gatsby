@@ -152,6 +152,7 @@ export const query = graphql`
             data: gatsbyImageData(width: 40)
           }
           frameColor
+          dominantFrameColor
         }
       }
     }
