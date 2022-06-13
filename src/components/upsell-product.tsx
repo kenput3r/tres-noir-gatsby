@@ -70,6 +70,7 @@ const Component = styled.article`
 
 const UpsellProduct = (props: { upsellProduct: UpsellItem }) => {
   const { upsellProduct } = props
+
   const quantityLevels = useQuantityQuery(
     upsellProduct.handle,
     upsellProduct.variants.length
@@ -88,7 +89,7 @@ const UpsellProduct = (props: { upsellProduct: UpsellItem }) => {
     for (let key in quantityLevels) {
       if (quantityLevels[key] > 0) {
         firstVariant = upsellProduct.variants.find(
-          (_variant: any) => _variant.sku === key
+          (_variant: UpsellItemVariant) => _variant.sku === key
         ) as UpsellItemVariant
         break
       }
@@ -110,7 +111,7 @@ const UpsellProduct = (props: { upsellProduct: UpsellItem }) => {
   const handleVariant = (evt: ChangeEvent<HTMLSelectElement>) => {
     const sku = evt.target.value
     const newVariant = upsellProduct.variants.find(
-      (_variant: any) => _variant.sku === sku
+      (_variant: UpsellItemVariant) => _variant.sku === sku
     ) as UpsellItemVariant
 
     if (
@@ -126,7 +127,7 @@ const UpsellProduct = (props: { upsellProduct: UpsellItem }) => {
     setSelectedVariant(newVariant)
   }
 
-  const sortVariants = variants => {
+  const sortVariants = (variants: UpsellItemVariant[]) => {
     return variants.sort((a, b) => a.position - b.position)
   }
 

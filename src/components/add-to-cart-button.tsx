@@ -23,11 +23,11 @@ const AddToCartButton: React.FC<Props> = ({
   soldOut,
   loading = false,
 }) => {
-  const [isThis, setIsThis] = useState<boolean>(false)
+  const [self, setSelf] = useState<boolean>(false)
   const [addingToCart, setAddingToCart] = useState<boolean>(loading)
 
   const handleAddToCart = () => {
-    setIsThis(true)
+    setSelf(true)
     if (handler) {
       handler()
       setAddingToCart(loading)
@@ -35,9 +35,9 @@ const AddToCartButton: React.FC<Props> = ({
   }
 
   useEffect(() => {
-    if (isThis) {
+    if (self) {
       setAddingToCart(loading)
-      if (!loading) setIsThis(false)
+      if (!loading) setSelf(false)
     }
   }, [loading])
 

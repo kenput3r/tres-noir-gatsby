@@ -1,7 +1,7 @@
-import React, { useContext, useEffect, useState } from "react"
+import React from "react"
 import { GatsbyImage, StaticImage } from "gatsby-plugin-image"
 import styled from "styled-components"
-import { useStaticQuery, Link, graphql } from "gatsby"
+import { IGatsbyImageData } from "gatsby-plugin-image"
 import { ShopifyVariant } from "../types/global"
 
 const Component = styled.div`
@@ -91,10 +91,27 @@ const Component = styled.div`
   }
 `
 
+interface Product {
+  featuredImage: {
+    altText: string
+    localFile: {
+      childImageSharp: {
+        gatsbyImageData: IGatsbyImageData
+      }
+    }
+  }
+  handle: string
+  id: string
+  productType: string
+  storeFrontId: string
+  title: string
+  variants: ShopifyVariant[]
+}
+
 const CaseGridSunglasses = (props: {
-  selectedCase: any
-  setSelectedCase: any
-  caseCollection: any
+  selectedCase: ShopifyVariant
+  setSelectedCase: (variant: ShopifyVariant) => void
+  caseCollection: Product[]
 }) => {
   const { selectedCase, setSelectedCase, caseCollection } = props
 
@@ -119,7 +136,7 @@ const CaseGridSunglasses = (props: {
       <p className="heading">Choose your case:</p>
       <div className="container">
         {caseCollection &&
-          caseCollection.map(product => {
+          caseCollection.map((product: Product) => {
             return (
               <div key={product.id} className="product-flex">
                 <div className="case-image">

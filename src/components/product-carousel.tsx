@@ -1,7 +1,7 @@
 import React, { useState } from "react"
 import { Swiper, SwiperSlide } from "swiper/react"
 import { Thumbs, Navigation } from "swiper"
-import { GatsbyImage } from "gatsby-plugin-image"
+import { GatsbyImage, IGatsbyImageData } from "gatsby-plugin-image"
 import { BsChevronLeft as Left, BsChevronRight as Right } from "react-icons/bs"
 import styled from "styled-components"
 
@@ -42,12 +42,13 @@ const StyledThumbs = styled(Swiper)`
 `
 
 interface ImageSet {
-  data: any
+  data: IGatsbyImageData
   title: string
 }
 
 const ProductCarousel = ({ imageSet }: { imageSet: ImageSet[] }) => {
   const [thumbsSwiper, setThumbsSwiper] = useState<any>(null)
+
   return (
     <Component>
       <StyledSwiper

@@ -64,15 +64,15 @@ const Product = ({ data }: { data: ShopifyProduct }) => {
 
   const { addProductToCart, isAddingToCart } = useContext(CartContext)
 
-  let price: any = data.priceRangeV2.minVariantPrice.amount
-  price = parseFloat(price).toFixed(2)
+  const price: string = parseFloat(
+    data.priceRangeV2.minVariantPrice.amount.toString()
+  ).toFixed(2)
 
   const handleAddToCart = () => {
     const id = data.variants[0].storefrontId
     const sku = data.variants[0].sku
     const image = data.featuredImage.localFile.childImageSharp.gatsbyImageData
     const qty = 1
-    console.log("ADDING TO CART", { id, qty, sku, image })
     addProductToCart(id, qty, sku, image)
   }
 

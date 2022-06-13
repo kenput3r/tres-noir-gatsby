@@ -5,20 +5,13 @@ const Selector = styled.div`
   div {
     display: inline-block;
     line-height: 1.5em;
-    /* border: 1px solid var(--color-grey-dark); */
     padding: 3px 7px;
     font-family: var(--sub-heading-font);
-    /* @media only screen and (max-width: 480px) {
-      padding: 1px 4px;
-    } */
     input {
       border: none;
       text-align: center;
       width: 2em;
       vertical-align: top;
-      /* @media only screen and (max-width: 480px) {
-        width: 1em;
-      } */
     }
     .qty {
       cursor: pointer;
