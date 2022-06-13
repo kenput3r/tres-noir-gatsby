@@ -21,7 +21,6 @@ export interface ContentfulProduct {
   handle: string
   id: string
   title: string
-  fitType: string
   frameWidth: string[]
   collection: {
     name: string

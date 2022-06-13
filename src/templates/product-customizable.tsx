@@ -51,6 +51,7 @@ const Page = styled.div`
   }
   .heading {
     align-self: flex-start;
+    width: 100%;
   }
   h1 {
     font-weight: normal;
@@ -62,6 +63,7 @@ const Page = styled.div`
     color: var(--color-grey-dark);
     font-size: 1.5rem;
     text-transform: capitalize;
+    width: 100%;
     span {
       float: right;
     }
@@ -429,10 +431,11 @@ const ProductCustomizable = ({
               <p className="fit">
                 Size: {contentfulProduct && contentfulProduct.fitDimensions}{" "}
                 <span>
-                  {contentfulProduct &&
-                  contentfulProduct.fitType === "medium (average)"
-                    ? "medium"
-                    : contentfulProduct && contentfulProduct.fitType}{" "}
+                  {contentfulProduct && contentfulProduct.frameWidth.length > 1
+                    ? `${contentfulProduct.frameWidth[0]} to ${
+                        contentfulProduct.frameWidth[1]
+                      }${" "}`
+                    : `${contentfulProduct.frameWidth[0]}${" "}`}
                   fit
                 </span>
               </p>
@@ -442,7 +445,7 @@ const ProductCustomizable = ({
                 Color:{" "}
                 <span>
                   {lensType === LensType.GLASSES
-                    ? selectedVariant.shopify.title.replace("- Smoke Lens", "")
+                    ? selectedVariant.shopify.title.split(" - ")[0]
                     : selectedVariant.shopify.title}
                 </span>
               </p>
@@ -546,7 +549,7 @@ export const query = graphql`
   query ProductQuery($handle: String) {
     contentfulProduct(handle: { eq: $handle }) {
       handle
-      fitType
+      frameWidth
       fitDimensions
       variants {
         colorName

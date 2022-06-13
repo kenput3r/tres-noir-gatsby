@@ -212,7 +212,6 @@ export const query = graphql`
   query CustomizeQuery($handle: String) {
     contentfulProduct(handle: { eq: $handle }) {
       handle
-      fitType
       fitDimensions
       variants {
         colorName
