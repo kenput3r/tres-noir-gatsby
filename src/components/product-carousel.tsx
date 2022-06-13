@@ -66,31 +66,33 @@ const ProductCarousel = ({ imageSet }: { imageSet: ImageSet[] }) => {
           </SwiperSlide>
         ))}
       </StyledSwiper>
-      <div className="navigation">
-        <a className="prev" role="button">
-          <Left />
-        </a>
-        <StyledThumbs
-          spaceBetween={10}
-          slidesPerView={3}
-          onSwiper={swiper => setThumbsSwiper(swiper)}
-          watchSlidesProgress
-          threshold={15}
-        >
-          {imageSet.map((image: ImageSet, i: number) => (
-            <SwiperSlide key={`thumb-${i}`}>
-              <GatsbyImage
-                image={image.data}
-                alt={image.title}
-                loading="eager"
-              />
-            </SwiperSlide>
-          ))}
-        </StyledThumbs>
-        <a className="next" role="button">
-          <Right />
-        </a>
-      </div>
+      {imageSet.length > 1 && (
+        <div className="navigation">
+          <a className="prev" role="button">
+            <Left />
+          </a>
+          <StyledThumbs
+            spaceBetween={10}
+            slidesPerView={3}
+            onSwiper={swiper => setThumbsSwiper(swiper)}
+            watchSlidesProgress
+            threshold={15}
+          >
+            {imageSet.map((image: ImageSet, i: number) => (
+              <SwiperSlide key={`thumb-${i}`}>
+                <GatsbyImage
+                  image={image.data}
+                  alt={image.title}
+                  loading="eager"
+                />
+              </SwiperSlide>
+            ))}
+          </StyledThumbs>
+          <a className="next" role="button">
+            <Right />
+          </a>
+        </div>
+      )}
     </Component>
   )
 }
