@@ -1,7 +1,7 @@
 import React, { useContext, useEffect } from "react"
 import { GatsbyImage, StaticImage } from "gatsby-plugin-image"
 import styled from "styled-components"
-import { useStaticQuery, Link, graphql } from "gatsby"
+import { IGatsbyImageData } from "gatsby-plugin-image"
 import { ShopifyVariant } from "../types/global"
 import { CustomizeContext } from "../contexts/customize"
 
@@ -97,6 +97,23 @@ const Component = styled.div`
   }
 `
 
+interface Product {
+  featuredImage: {
+    altText: string
+    localFile: {
+      childImageSharp: {
+        gatsbyImageData: IGatsbyImageData
+      }
+    }
+  }
+  handle: string
+  id: string
+  productType: string
+  storeFrontId: string
+  title: string
+  variants: ShopifyVariant[]
+}
+
 const CaseGridCustomize = () => {
   const {
     selectedVariants,
@@ -105,7 +122,7 @@ const CaseGridCustomize = () => {
     setHasSavedCustomized,
   } = useContext(CustomizeContext)
 
-  const caseCollection = useCaseCollection()
+  const caseCollection: Product[] = useCaseCollection()
 
   const formatTitle = (str: string) => {
     let spl = str.split("AO")[0]
@@ -141,7 +158,7 @@ const CaseGridCustomize = () => {
       <p className="heading">Choose your case:</p>
       <div className="container">
         {caseCollection &&
-          caseCollection.map(product => {
+          caseCollection.map((product: Product) => {
             return (
               <div key={product.id} className="product-flex">
                 <div className="case-image">

@@ -239,12 +239,6 @@ const Product = ({ data: { shopifyProduct } }: any) => {
     setSelectedVariant(newVariant)
   }
 
-  // const randomCollection = useMemo(
-  //   () => useRandomizeCollection(shopifyProduct),
-  //   []
-  // )
-  // const randomCollection = useRandomizeCollection(shopifyProduct)
-
   const quantityRange = () => {
     let minRange = 0
     if (quantityLevels) {

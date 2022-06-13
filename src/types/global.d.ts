@@ -16,7 +16,7 @@ export interface ShopifyVariant {
       }
     }
   }
-  price: number
+  price: string
   product?: {
     title: string
     handle: string

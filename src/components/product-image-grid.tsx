@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react"
 import styled from "styled-components"
-import { GatsbyImage, StaticImage } from "gatsby-plugin-image"
+import { GatsbyImage, IGatsbyImageData, StaticImage } from "gatsby-plugin-image"
 
 const Component = styled.section`
   .image-grid {
@@ -18,7 +18,7 @@ const ProductImageGrid = (props: { product: any; selectedVariant: any }) => {
   const { product, selectedVariant } = props
 
   interface ImageSet {
-    data: any
+    data: IGatsbyImageData
     title: string
     id: string
   }
@@ -45,32 +45,6 @@ const ProductImageGrid = (props: { product: any; selectedVariant: any }) => {
       })
     }
 
-    // variant with images
-    // else {
-    //   product.variants.forEach(element => {
-    //     if (element.image) {
-    //       const img = {
-    //         data: element.image.localFile.childImageSharp.gatsbyImageData,
-    //         title: element.image.altText,
-    //       }
-    //       imageSet.push(img)
-    //     }
-    //   })
-    //   // variant with product images, not attached to variant
-    //   if (product.images && imageSet.length === 0) {
-    //     product.images.forEach(element => {
-    //       const img = {
-    //         data: element.localFile.childImageSharp.gatsbyImageData,
-    //         title: element.altText,
-    //       }
-    //       imageSet.push(img)
-    //     })
-    //   }
-    // }
-    // imageSet.unshift({
-    //   data: product.featuredImage.localFile.childImageSharp.gatsbyImageData,
-    //   title: product.featuredImage.altText,
-    // })
     return imageSet
   }
   const imageSetArr = createImageSet()

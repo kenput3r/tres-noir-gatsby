@@ -96,7 +96,6 @@ const ProductContentful = ({ data, color, collectionHandle }: Props) => {
     ? data.variants[0].featuredImageClear.data
     : data.variants[0].featuredImage.data
 
-  // const defaultImage = data.variants[0].featuredImage.data
   const [variantImage, setVariantImage] =
     useState<IGatsbyImageData>(defaultImage)
 
@@ -110,18 +109,13 @@ const ProductContentful = ({ data, color, collectionHandle }: Props) => {
       : `/products/${data.handle}?lens_type=glasses`
   )
 
-  const selectVariant = (
-    // e: React.MouseEvent,
-    variant: ContentfulProductVariant
-  ) => {
-    // e.currentTarget && (e.currentTarget as HTMLElement).blur()
+  const selectVariant = (variant: ContentfulProductVariant) => {
     const defaultImage = isSunglasses
       ? variant.featuredImage.data
       : variant.featuredImageClear?.data
       ? variant.featuredImageClear.data
       : variant.featuredImage.data
     setVariantImage(defaultImage)
-    // setVariantImage(variant.featuredImage.data)
     setSelectedVariant({
       contentful: variant,
     })

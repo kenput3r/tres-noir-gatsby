@@ -1,6 +1,10 @@
-import React, { useState, useEffect, useContext, useRef } from "react"
+import React, { useState, useEffect, useContext } from "react"
 import { Link, graphql } from "gatsby"
-import { StaticImage, GatsbyImage as Img } from "gatsby-plugin-image"
+import {
+  StaticImage,
+  GatsbyImage as Img,
+  IGatsbyImageData,
+} from "gatsby-plugin-image"
 import styled from "styled-components"
 import { useQuantityQuery } from "../hooks/useQuantityQuery"
 import ProductCarousel from "../components/product-carousel"
@@ -212,14 +216,35 @@ const ProductCustomizable = ({
     contentfulProduct.variants[0].imageSet
   )
 
+  const [selectedVariant, setSelectedVariant] = useState({
+    contentful: contentfulProduct?.variants && contentfulProduct.variants[0],
+    shopify: shopifyProduct.variants.find(
+      (variant: any) => variant.sku === contentfulProduct.variants[0].sku
+    ),
+  })
+
+  const [customizeUrl, setCustomizeUrl] = useState<string>(
+    `/products/${contentfulProduct.handle}/customize?variant=${contentfulProduct.variants[0].sku}`
+  )
+
   const caseCollection = useCaseCollection()
 
   const [selectedCase, setSelectedCase] = useState<any>(
     caseCollection[0].variants[0]
   )
 
+  // return default Product Page if contentful values do not exist
+  const quantityLevels = useQuantityQuery(
+    shopifyProduct.handle,
+    shopifyProduct.variants.length
+  )
+
+  const { selectedVariantContext, setSelectedVariantContext } = useContext(
+    SelectedVariantContext
+  )
+
   const getImageSet = (variant: any) => {
-    let defaultImageSet
+    let defaultImageSet: IGatsbyImageData[]
     switch (lensType) {
       case LensType.GLASSES:
         defaultImageSet = variant.imageSetClear
@@ -233,7 +258,7 @@ const ProductCustomizable = ({
         defaultImageSet = variant.imageSet
         break
       default:
-        variant.imageSet
+        defaultImageSet = variant.imageSet
     }
     return defaultImageSet
   }
@@ -269,6 +294,7 @@ const ProductCustomizable = ({
   useEffect(() => {
     const defaultImageSet = getImageSet(contentfulProduct.variants[0])
     setImageSet(defaultImageSet)
+    updateCustomizeUrl()
   }, [lensType])
 
   const {
@@ -290,22 +316,6 @@ const ProductCustomizable = ({
     })
     setSelectedVariantsToDefault()
   }, [])
-
-  // return default Product Page if contentful values do not exist
-  const quantityLevels = useQuantityQuery(
-    shopifyProduct.handle,
-    shopifyProduct.variants.length
-  )
-  const { selectedVariantContext, setSelectedVariantContext } = useContext(
-    SelectedVariantContext
-  )
-
-  const [selectedVariant, setSelectedVariant] = useState({
-    contentful: contentfulProduct?.variants && contentfulProduct.variants[0],
-    shopify: shopifyProduct.variants.find(
-      (variant: any) => variant.sku === contentfulProduct.variants[0].sku
-    ),
-  })
 
   // cart
   const { addProductToCart, isAddingToCart, addSunglassesToCart } =
@@ -332,7 +342,6 @@ const ProductCustomizable = ({
   }, [selectedVariant])
 
   const selectVariant = (e: React.MouseEvent, variant: any) => {
-    // e.currentTarget && (e.currentTarget as HTMLElement).blur()
     const shopify = shopifyProduct.variants.find(
       (_variant: any) => _variant.sku === variant.sku
     )
@@ -347,6 +356,7 @@ const ProductCustomizable = ({
 
   useEffect(() => {
     updateImageSet()
+    updateCustomizeUrl()
   }, [selectedVariant])
 
   const handleAddToCart = () => {
@@ -384,7 +394,6 @@ const ProductCustomizable = ({
       selectedVariant.shopify.sku,
       selectedVariant.contentful.imageSet[0].data
     )
-    // alert("ADDED TO CART")
     const productData = {
       title: shopifyProduct.title,
       legacyResourceId: shopifyProduct.legacyResourceId,
@@ -410,9 +419,11 @@ const ProductCustomizable = ({
     setImageSet(defaultImageSet)
   }
 
-  let customizeUrl = `/products/${contentfulProduct.handle}/customize?variant=${selectedVariant.shopify.sku}`
-  if (lensType !== LensType.SUNGLASSES)
-    customizeUrl = `${customizeUrl}&lens_type=${lensType}`
+  const updateCustomizeUrl = () => {
+    let url = `/products/${contentfulProduct.handle}/customize?variant=${selectedVariant.shopify.sku}`
+    if (lensType !== LensType.SUNGLASSES) url = `${url}&lens_type=${lensType}`
+    setCustomizeUrl(url)
+  }
 
   return (
     <Layout>

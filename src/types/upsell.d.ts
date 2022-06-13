@@ -14,19 +14,17 @@ export interface UpsellItem {
   }
   handle: string
   hasOnlyDefaultVariant: boolean
+  hasOutofStockVariants: boolean
   id: string
+  onlineStoreUrl: string
+  productType: string
   storefrontId: string
+  tags: string[]
   title: string
   variants: UpsellItemVariant[]
 }
 
 export interface UpsellItemVariant {
-  price: string
-  sku: string
-  storefrontId: string
-  selectedOptions: {
-    name
-  }[]
   image?: {
     localFile: {
       childImageSharp: {
@@ -34,4 +32,13 @@ export interface UpsellItemVariant {
       }
     }
   }
+  inventoryQuantity: number
+  position: number
+  price: string
+  selectedOptions: {
+    name: string
+  }[]
+  sku: string
+  storefrontId: string
+  title: string
 }
