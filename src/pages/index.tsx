@@ -108,6 +108,9 @@ const Page = styled.div`
       @media only screen and (max-width: 480px) {
         display: block;
       }
+      .about-image {
+        flex: 1;
+      }
       .gatsby-image-wrapper {
         margin: 200px 20px 100px 20px;
         padding: 20px;
