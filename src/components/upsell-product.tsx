@@ -133,7 +133,7 @@ const UpsellProduct = (props: { upsellProduct: UpsellItem }) => {
 
   return (
     <Component>
-      <div className="upsell-product" key={upsellProduct.id}>
+      <div className="upsell-product">
         <div className="upsell-image">
           <Link to={`/products/${upsellProduct.handle}`}>
             {upsellProduct.featuredImage?.localFile ? (
