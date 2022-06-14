@@ -43,7 +43,7 @@ const Page = styled.div`
     width: 1280px;
     max-width: 100%;
     margin: 0 auto;
-    @media only screen and (max-width: 468px) {
+    @media only screen and (max-width: 768px) {
       &.mobile-reverse {
         flex-direction: column-reverse;
       }
