@@ -5,8 +5,8 @@ import { IGatsbyImageData } from "gatsby-plugin-image"
 import { ShopifyVariant } from "../types/global"
 
 const Component = styled.div`
-  margin-top: 35px;
-  margin-bottom: 35px;
+  // margin-top: 35px;
+  // margin-bottom: 35px;
   p {
     margin: 0;
   }
