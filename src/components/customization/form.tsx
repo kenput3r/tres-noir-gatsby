@@ -359,6 +359,13 @@ const Form = ({
         removeChildNodes(messageRef.current)
         continueBtn.current?.classList.remove("disable")
       }
+    } else if (variant.product?.title === "Single Vision") {
+      rxInfoDispatch({ type: `right-add`, payload: "" })
+      rxInfoDispatch({ type: `left-add`, payload: "" })
+      errorRefs.current[`select-right-add`].classList.add("disable")
+      errorRefs.current[`select-right-add`].querySelector("select").value = ""
+      errorRefs.current[`select-left-add`].classList.add("disable")
+      errorRefs.current[`select-left-add`].querySelector("select").value = ""
     }
     setHasSavedCustomized({
       ...hasSavedCustomized,
@@ -379,6 +386,7 @@ const Form = ({
     // disable axis whether a cyl value is present or not
     if (id.includes("cyl")) {
       let subId = id.split("-")[0]
+      console.log(subId)
       if (evt.target.value !== "0.00") {
         errorRefs.current[`select-${subId}-axis`].classList.remove("disable")
         return
@@ -394,6 +402,7 @@ const Form = ({
       "left-sph",
       "left-cyl",
     ]
+
     if (id.includes("axis")) {
       evt.target.closest(".rx-select")?.classList.remove("select-error")
     }
@@ -654,8 +663,9 @@ const Form = ({
           )}
         </React.Fragment>
       ))}
-      {currentStep === 1 &&
-      selectedVariants.step1.product.title !== "Non-Prescription Lens" ? (
+      {(currentStep === 1 &&
+        selectedVariants.step1.product.title !== "Non-Prescription Lens") ||
+      selectedVariants.step1.product.title === "" ? (
         <div className="rx-info">
           <div className="rx-box">
             <div className="rx-col">
@@ -728,7 +738,16 @@ const Form = ({
                   })}
                 </select>
               </div>
-              <div className="rx-select">
+              <div
+                className={
+                  selectedVariants.step1.product.title === "Single Vision"
+                    ? "rx-select disable"
+                    : "rx-select"
+                }
+                ref={el => {
+                  errorRefs.current["select-right-add"] = el
+                }}
+              >
                 <label htmlFor="right-add">Add</label>
                 <select
                   id="right-add"
@@ -812,7 +831,16 @@ const Form = ({
                   ))}
                 </select>
               </div>
-              <div className="rx-select">
+              <div
+                className={
+                  selectedVariants.step1.product.title === "Single Vision"
+                    ? "rx-select disable"
+                    : "rx-select"
+                }
+                ref={el => {
+                  errorRefs.current["select-left-add"] = el
+                }}
+              >
                 <label htmlFor="left-add">Add</label>
                 <select
                   id="left-add"
