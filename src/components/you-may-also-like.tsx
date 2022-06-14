@@ -43,7 +43,7 @@ const Component = styled.section`
 const YouMayAlsoLike = (props: { shopifyProduct: ShopifyProduct }) => {
   const { shopifyProduct } = props
 
-  const collectionItems = useRandomizeCollection(shopifyProduct)
+  const collectionItems = useRandomizeCollection(shopifyProduct.storefrontId)
 
   return (
     <Component>
