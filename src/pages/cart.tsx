@@ -322,7 +322,15 @@ const Cart = () => {
     return (Number(price) * quantity).toFixed(2)
   }
 
-  const formatItemTitle = (subItem: tnSubItem, stepName: string) => {
+  const formatItemTitle = (
+    subItem: tnSubItem,
+    stepName: string,
+    isCustom: boolean
+  ) => {
+    if (subItem.stepNumber === "0" && isCustom) {
+      console.log(subItem.shopifyItem.variant.title)
+      return subItem.shopifyItem.variant.title.split("-")[0]
+    }
     if (stepName === "CASE") {
       let spl = subItem.shopifyItem.title.split("AO")[0]
       return spl.slice(0, -2)
@@ -455,7 +463,8 @@ const Cart = () => {
                         <span key={subItem.shopifyItem.id}>
                           {formatItemTitle(
                             subItem,
-                            sunglassesStepMap.get(subIndex)
+                            sunglassesStepMap.get(subIndex),
+                            item.isCustom
                           )}
                         </span>
                         <span className="price">
@@ -523,7 +532,11 @@ const Cart = () => {
                       </div>
                       <div className="sub-title" key={subItem.shopifyItem.id}>
                         <span key={subItem.shopifyItem.id}>
-                          {formatItemTitle(subItem, stepMap.get(subIndex))}
+                          {formatItemTitle(
+                            subItem,
+                            stepMap.get(subIndex),
+                            item.isCustom
+                          )}
                         </span>
                         <span className="price">
                           {subItem.shopifyItem.variant.price === "0.00"
