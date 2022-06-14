@@ -18,6 +18,7 @@ import { CustomizeContext } from "../contexts/customize"
 import FreeShipping from "../components/free-shipping"
 import Spinner from "../components/spinner"
 import CaseGridSunglasses from "../components/case-grid-sunglasses"
+import ProductDetails from "../components/product-contentful-details"
 import { useCaseCollection } from "../hooks/useCaseCollection"
 
 const Page = styled.div`
@@ -42,6 +43,11 @@ const Page = styled.div`
     width: 1280px;
     max-width: 100%;
     margin: 0 auto;
+    @media only screen and (max-width: 468px) {
+      &.mobile-reverse {
+        flex-direction: column-reverse;
+      }
+    }
   }
   .col {
     display: flex;
@@ -51,6 +57,12 @@ const Page = styled.div`
     &.images {
       flex: 1.5;
       max-width: 65%;
+      @media only screen and (max-width: 1024px) {
+        max-width: 50%;
+      }
+      @media only screen and (max-width: 768px) {
+        max-width: 100%;
+      }
     }
   }
   .heading {
@@ -110,9 +122,18 @@ const Page = styled.div`
   }
   p.value {
     font-size: 2rem;
+    display: flex;
+    flex-direction: row;
     span {
-      float: right;
       font-weight: normal;
+      flex: 1;
+      &.left {
+        align-self: start;
+      }
+      &.right {
+        align-self: end;
+        text-align: right;
+      }
       a {
         color: var(--color-grey-dark);
         text-decoration: none;
@@ -156,7 +177,7 @@ const Page = styled.div`
   .align-start {
     align-self: start;
   }
-  @media (max-width: 500px) {
+  @media only screen and (max-width: 500px) {
     .shipping-message {
       .h3 {
         font-size: 1rem;
@@ -177,12 +198,12 @@ const Page = styled.div`
       }
     }
   }
-  @media (max-width: 375px) {
+  @media only screen and (max-width: 375px) {
     p.value {
       font-size: 1.75rem;
     }
   }
-  @media (max-width: 320px) {
+  @media only screen and (max-width: 320px) {
     h1 {
       font-size: 2.25rem;
     }
@@ -494,8 +515,10 @@ const ProductCustomizable = ({
               <div className="price">
                 <p className="label">STARTING AT</p>
                 <p className="value">
-                  ${selectedVariant.shopify.price} USD
-                  <span>
+                  <span className="left">
+                    ${selectedVariant.shopify.price} USD
+                  </span>
+                  <span className="right">
                     <Link
                       to={contentfulProduct && `/${contentfulProduct.handle}`}
                     >
@@ -540,14 +563,27 @@ const ProductCustomizable = ({
                 )}
               </div>
             </form>
-            {lensType !== LensType.GLASSES && (
+          </div>
+        </div>
+        <div className="row mobile-reverse">
+          <div
+            className={`col ${lensType !== LensType.GLASSES ? "images" : ""}`}
+          >
+            <ProductDetails
+              fitDimensions={contentfulProduct.fitDimensions}
+              lensColor={selectedVariant.contentful.lensColor}
+              lensType={lensType}
+            />
+          </div>
+          {lensType !== LensType.GLASSES && (
+            <div className="col">
               <CaseGridSunglasses
                 caseCollection={caseCollection}
                 selectedCase={selectedCase}
                 setSelectedCase={setSelectedCase}
               />
-            )}
-          </div>
+            </div>
+          )}
         </div>
       </Page>
     </Layout>
@@ -578,6 +614,7 @@ export const query = graphql`
           title
         }
         id
+        lensColor
       }
     }
     shopifyProduct(handle: { eq: $handle }) {
