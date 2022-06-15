@@ -130,16 +130,23 @@ export const changeImage = (
             break
           }
           case "XTRActive Polarized": {
-            const data = variant.contentful.customizations?.clear.data
-              ? variant.contentful.customizations?.clear.data
-              : variant.contentful.featuredImage.title
-            const title = variant.contentful.customizations?.clear.title
-              ? variant.contentful.customizations?.clear.title
-              : variant.contentful.featuredImage.title
-            setCurrentImage({
-              data: data,
-              altText: title,
-            })
+            // const data = variant.contentful.customizations?.clear.data
+            //   ? variant.contentful.customizations?.clear.data
+            //   : variant.contentful.featuredImage.title
+            // const title = variant.contentful.customizations?.clear.title
+            //   ? variant.contentful.customizations?.clear.title
+            //   : variant.contentful.featuredImage.title
+            if (step1.product.title === "Bifocal") {
+              setCurrentImage({
+                data: variant.contentful.customizations?.bifocal.data,
+                altText: variant.contentful.customizations?.bifocal.title,
+              })
+            } else {
+              setCurrentImage({
+                data: variant.contentful.customizations?.clear.data,
+                altText: variant.contentful.customizations?.clear.title,
+              })
+            }
             break
           }
           // case "Vantage": {
@@ -153,7 +160,16 @@ export const changeImage = (
           //   break
           // }
           default: {
-            console.log("ERROR")
+            const data = variant.contentful.customizations?.bifocal.data
+              ? variant.contentful.customizations?.bifocal.data
+              : variant.contentful.featuredImage.data
+            const title = variant.contentful.customizations?.bifocal.title
+              ? variant.contentful.customizations?.bifocal.title
+              : variant.contentful.featuredImage.title
+            setCurrentImage({
+              data: data,
+              altText: title,
+            })
           }
         }
         // Not Bifocal
@@ -256,31 +272,41 @@ export const changeImage = (
           //   break
           // }
           case "XTRActive Polarized": {
+            // const data = variant.contentful.customizations?.clear.data
+            //   ? variant.contentful.customizations?.clear.data
+            //   : variant.contentful.featuredImage.title
+            // const title = variant.contentful.customizations?.clear.title
+            //   ? variant.contentful.customizations?.clear.title
+            //   : variant.contentful.featuredImage.title
+            const property: string = `sunGlassesSmokeLenses`
+            setCurrentImage({
+              data: variant.contentful.customizations[property].data,
+              altText: variant.contentful.customizations[property].title,
+            })
+            break
+          }
+          default: {
             const data = variant.contentful.customizations?.clear.data
               ? variant.contentful.customizations?.clear.data
-              : variant.contentful.featuredImage.title
-            const title = variant.contentful.customizations?.clear.title
+              : variant.contentful.featuredImage.data
+            const title = variant.contentful.customizations?.clear.data
               ? variant.contentful.customizations?.clear.title
               : variant.contentful.featuredImage.title
             setCurrentImage({
               data: data,
               altText: title,
             })
-            break
-          }
-          default: {
-            console.log("ERROR")
           }
         }
       }
       break
     case 3:
-      console.log("step is 3")
+      // console.log("step is 3")
       break
     case 4:
-      console.log("step is 4")
+      // console.log("step is 4")
       break
     default:
-      console.log("ERROR")
+    // console.log("ERROR")
   }
 }

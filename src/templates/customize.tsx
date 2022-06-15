@@ -1,10 +1,4 @@
-import React, {
-  useContext,
-  useEffect,
-  useState,
-  useRef,
-  useCallback,
-} from "react"
+import React, { useContext, useEffect, useState, useRef } from "react"
 import { graphql } from "gatsby"
 import { GatsbyImage } from "gatsby-plugin-image"
 import styled from "styled-components"
@@ -31,7 +25,7 @@ const Page = styled.div`
   .row {
     display: flex;
     flex-direction: row;
-    @media only screen and (max-width: 750px) {
+    @media only screen and (max-width: 760px) {
       &.product-customize {
         display: block;
       }
@@ -218,7 +212,6 @@ export const query = graphql`
   query CustomizeQuery($handle: String) {
     contentfulProduct(handle: { eq: $handle }) {
       handle
-      fitType
       fitDimensions
       variants {
         colorName
@@ -229,91 +222,179 @@ export const query = graphql`
         }
         customizations {
           bifocal {
-            data: gatsbyImageData(placeholder: TRACED_SVG)
+            data: gatsbyImageData(
+              placeholder: TRACED_SVG
+              quality: 60
+              width: 800
+            )
             title
           }
           bifocalGradientTintSmokeLenses {
-            data: gatsbyImageData(placeholder: TRACED_SVG)
+            data: gatsbyImageData(
+              placeholder: TRACED_SVG
+              quality: 60
+              width: 800
+            )
             title
           }
           bifocalGradientTintBrownLenses {
-            data: gatsbyImageData(placeholder: TRACED_SVG)
+            data: gatsbyImageData(
+              placeholder: TRACED_SVG
+              quality: 60
+              width: 800
+            )
             title
           }
           bifocalGradientTintG15Lenses {
-            data: gatsbyImageData(placeholder: TRACED_SVG)
+            data: gatsbyImageData(
+              placeholder: TRACED_SVG
+              quality: 60
+              width: 800
+            )
             title
           }
           clear {
-            data: gatsbyImageData(placeholder: TRACED_SVG)
+            data: gatsbyImageData(
+              placeholder: TRACED_SVG
+              quality: 60
+              width: 800
+            )
             title
           }
           gradientTintSmokeLenses {
-            data: gatsbyImageData(placeholder: TRACED_SVG)
+            data: gatsbyImageData(
+              placeholder: TRACED_SVG
+              quality: 60
+              width: 800
+            )
             title
           }
           gradientTintBrownLenses {
-            data: gatsbyImageData(placeholder: TRACED_SVG)
+            data: gatsbyImageData(
+              placeholder: TRACED_SVG
+              quality: 60
+              width: 800
+            )
             title
           }
           gradientTintG15Lenses {
-            data: gatsbyImageData(placeholder: TRACED_SVG)
+            data: gatsbyImageData(
+              placeholder: TRACED_SVG
+              quality: 60
+              width: 800
+            )
             title
           }
           sunGlassesSmokeLenses {
-            data: gatsbyImageData(placeholder: TRACED_SVG)
+            data: gatsbyImageData(
+              placeholder: TRACED_SVG
+              quality: 60
+              width: 800
+            )
             title
           }
           sunGlassesBrownLenses {
-            data: gatsbyImageData(placeholder: TRACED_SVG)
+            data: gatsbyImageData(
+              placeholder: TRACED_SVG
+              quality: 60
+              width: 800
+            )
             title
           }
           sunGlassesGreenLenses {
-            data: gatsbyImageData(placeholder: TRACED_SVG)
+            data: gatsbyImageData(
+              placeholder: TRACED_SVG
+              quality: 60
+              width: 800
+            )
             title
           }
           sunGlassesOrangeLenses {
-            data: gatsbyImageData(placeholder: TRACED_SVG)
+            data: gatsbyImageData(
+              placeholder: TRACED_SVG
+              quality: 60
+              width: 800
+            )
             title
           }
           sunGlassesYellowLenses {
-            data: gatsbyImageData(placeholder: TRACED_SVG)
+            data: gatsbyImageData(
+              placeholder: TRACED_SVG
+              quality: 60
+              width: 800
+            )
             title
           }
           sunGlassesBlueLenses {
-            data: gatsbyImageData(placeholder: TRACED_SVG)
+            data: gatsbyImageData(
+              placeholder: TRACED_SVG
+              quality: 60
+              width: 800
+            )
             title
           }
           sunGlassesG15Lenses {
-            data: gatsbyImageData(placeholder: TRACED_SVG)
+            data: gatsbyImageData(
+              placeholder: TRACED_SVG
+              quality: 60
+              width: 800
+            )
             title
           }
           sunGlassesSmokeLensesBifocal {
-            data: gatsbyImageData(placeholder: TRACED_SVG)
+            data: gatsbyImageData(
+              placeholder: TRACED_SVG
+              quality: 60
+              width: 800
+            )
             title
           }
           sunGlassesBrownLensesBifocal {
-            data: gatsbyImageData(placeholder: TRACED_SVG)
+            data: gatsbyImageData(
+              placeholder: TRACED_SVG
+              quality: 60
+              width: 800
+            )
             title
           }
           sunGlassesGreenLensesBifocal {
-            data: gatsbyImageData(placeholder: TRACED_SVG)
+            data: gatsbyImageData(
+              placeholder: TRACED_SVG
+              quality: 60
+              width: 800
+            )
             title
           }
           sunGlassesOrangeLensesBifocal {
-            data: gatsbyImageData(placeholder: TRACED_SVG)
+            data: gatsbyImageData(
+              placeholder: TRACED_SVG
+              quality: 60
+              width: 800
+            )
             title
           }
           sunGlassesYellowLensesBifocal {
-            data: gatsbyImageData(placeholder: TRACED_SVG)
+            data: gatsbyImageData(
+              placeholder: TRACED_SVG
+              quality: 60
+              width: 800
+            )
             title
           }
           sunGlassesBlueLensesBifocal {
-            data: gatsbyImageData(placeholder: TRACED_SVG)
+            data: gatsbyImageData(
+              placeholder: TRACED_SVG
+              quality: 60
+              width: 800
+            )
             title
           }
           sunGlassesG15LensesBifocal {
-            data: gatsbyImageData(placeholder: TRACED_SVG)
+            data: gatsbyImageData(
+              placeholder: TRACED_SVG
+              quality: 60
+              width: 800
+            )
             title
           }
         }

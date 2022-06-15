@@ -143,6 +143,39 @@ const defaultContext = {
       sku: "",
       title: "",
     },
+    case: {
+      image: {
+        originalSrc: "",
+        altText: "",
+        localFile: {
+          childImageSharp: {
+            gatsbyImageData: {},
+          },
+        },
+      },
+      legacyResourceId: "",
+      price: 0,
+      product: {
+        title: "",
+        description: "",
+        onlineStoreUrl: "",
+        productType: "",
+        collections: {
+          handle: "",
+          title: "",
+        },
+        vendor: "",
+      },
+      selectedOptions: [
+        {
+          name: "",
+          value: "",
+        },
+      ],
+      storefrontId: "",
+      sku: "",
+      title: "",
+    },
   },
   setSelectedVariants: (selectedVariants: SelectedVariants) => {},
   setSelectedVariantsToDefault: () => {},
@@ -151,6 +184,7 @@ const defaultContext = {
     step2: false,
     step3: false,
     step4: false,
+    case: false,
   },
   setHasSavedCustomized: (hasSavedCustomized: SavedCustomizeContexts) => {},
 }
@@ -165,6 +199,7 @@ export const CustomizeProvider = ({ children }: { children: ReactChild }) => {
     step2: false,
     step3: false,
     step4: false,
+    case: false,
   })
   const [selectedVariants, setSelectedVariants] = useState<SelectedVariants>({
     step1: {
@@ -299,6 +334,39 @@ export const CustomizeProvider = ({ children }: { children: ReactChild }) => {
       sku: "",
       title: "",
     },
+    case: {
+      image: {
+        originalSrc: "",
+        altText: "",
+        localFile: {
+          childImageSharp: {
+            gatsbyImageData: {},
+          },
+        },
+      },
+      legacyResourceId: "",
+      price: 0,
+      product: {
+        title: "",
+        description: "",
+        onlineStoreUrl: "",
+        productType: "",
+        collections: {
+          handle: "",
+          title: "",
+        },
+        vendor: "",
+      },
+      selectedOptions: [
+        {
+          name: "",
+          value: "",
+        },
+      ],
+      storefrontId: "",
+      sku: "",
+      title: "",
+    },
   })
 
   const setSelectedVariantsToDefault = () => {
@@ -376,6 +444,30 @@ export const CustomizeProvider = ({ children }: { children: ReactChild }) => {
         title: "",
       },
       step4: {
+        image: {
+          altText: "",
+          localFile: {
+            childImageSharp: {
+              gatsbyImageData: {},
+            },
+          },
+        },
+        price: 0,
+        product: {
+          title: "",
+          description: "",
+        },
+        selectedOptions: [
+          {
+            name: "",
+            value: "",
+          },
+        ],
+        storefrontId: "",
+        sku: "",
+        title: "",
+      },
+      case: {
         image: {
           altText: "",
           localFile: {

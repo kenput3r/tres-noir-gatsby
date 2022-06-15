@@ -7,8 +7,8 @@ import {
   ContentfulProductVariant,
 } from "../types/contentful"
 import { SelectedVariantContext } from "../contexts/selectedVariant"
-
 import ProductOptionsCarousel from "../components/product-options-carousel"
+import ProductAction from "./collection-product-action"
 
 const Component = styled.article`
   margin-bottom: 1.45rem;
@@ -57,8 +57,13 @@ const Component = styled.article`
   }
   .product-container {
     position: relative;
-    &:hover {
+    &:hover > a > .gatsby-image-wrapper {
       opacity: 0.7;
+    }
+    @media (hover: hover) {
+      &:hover > .collection-product-action {
+        max-height: 50px;
+      }
     }
     .new-styles {
       position: absolute;
@@ -91,7 +96,6 @@ const ProductContentful = ({ data, color, collectionHandle }: Props) => {
     ? data.variants[0].featuredImageClear.data
     : data.variants[0].featuredImage.data
 
-  // const defaultImage = data.variants[0].featuredImage.data
   const [variantImage, setVariantImage] =
     useState<IGatsbyImageData>(defaultImage)
 
@@ -99,38 +103,41 @@ const ProductContentful = ({ data, color, collectionHandle }: Props) => {
     contentful: data.variants[0],
   })
 
-  const selectVariant = (
-    // e: React.MouseEvent,
-    variant: ContentfulProductVariant
-  ) => {
-    // e.currentTarget && (e.currentTarget as HTMLElement).blur()
+  const [productLink, setProductLink] = useState(
+    isSunglasses
+      ? `/products/${data.handle}?lens_type=sunglasses`
+      : `/products/${data.handle}?lens_type=glasses`
+  )
+
+  const selectVariant = (variant: ContentfulProductVariant) => {
     const defaultImage = isSunglasses
       ? variant.featuredImage.data
       : variant.featuredImageClear?.data
       ? variant.featuredImageClear.data
       : variant.featuredImage.data
     setVariantImage(defaultImage)
-    // setVariantImage(variant.featuredImage.data)
     setSelectedVariant({
       contentful: variant,
     })
     setSelectedVariantContext(variant.sku)
+    setProductLink(productLink => `${productLink}&variant=${variant.sku}`)
   }
 
-  const hasNewStyles = data.collection.some(col => col.handle === "new")
-
-  const productLink = isSunglasses
-    ? `/products/${data.handle}?lens_type=sunglasses`
-    : `/products/${data.handle}?lens_type=glasses`
+  let hasNewStyles: boolean = false
+  if (data.collection && data.collection.length > 0)
+    hasNewStyles = data.collection.some(col => col.handle === "new")
 
   return (
     <Component>
-      <Link to={productLink}>
-        <article className="product-container">
+      <article className="product-container">
+        <Link to={productLink}>
           <Img image={variantImage} alt={data.title} />
           {hasNewStyles && <div className="new-styles">New!</div>}
-        </article>
-      </Link>
+        </Link>
+        <ProductAction>
+          <Link to={productLink}>View Product</Link>
+        </ProductAction>
+      </article>
       <h3>
         <Link to={productLink}>{data.title}</Link>
       </h3>

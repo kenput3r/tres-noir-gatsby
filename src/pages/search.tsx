@@ -1,6 +1,6 @@
-import React from "react"
-import { navigate } from "gatsby"
+import React, { useContext, useEffect } from "react"
 import styled from "styled-components"
+import { SelectedVariantContext } from "../contexts/selectedVariant"
 import Layout from "../components/layout"
 import SEO from "../components/seo"
 // search
@@ -10,7 +10,6 @@ import {
   Configure,
   InstantSearch,
   RefinementList,
-  Pagination,
   connectStateResults,
 } from "react-instantsearch-dom"
 import SearchBox from "../components/search/search-box"
@@ -57,6 +56,14 @@ const PaginationContainer = styled.div`
 `
 
 const Search = ({ location: { state } }: Location) => {
+  const { setSelectedVariantContext } = useContext(SelectedVariantContext)
+
+  useEffect(() => {
+    // reset selected variant
+    // search will show default variant, this will set default variant
+    setSelectedVariantContext("")
+  }, [])
+
   const Results = connectStateResults(({ searchState, searchResults }) => {
     return searchState && searchState.query ? (
       searchResults && searchResults.nbHits !== 0 ? (
@@ -65,7 +72,6 @@ const Search = ({ location: { state } }: Location) => {
           <Hits />
           {searchResults.nbHits > hitsPerPage && (
             <PaginationContainer>
-              {/* <Pagination /> */}
               <CustomPagination />
             </PaginationContainer>
           )}

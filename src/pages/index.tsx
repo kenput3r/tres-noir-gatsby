@@ -108,6 +108,9 @@ const Page = styled.div`
       @media only screen and (max-width: 480px) {
         display: block;
       }
+      .about-image {
+        flex: 1;
+      }
       .gatsby-image-wrapper {
         margin: 200px 20px 100px 20px;
         padding: 20px;
@@ -131,6 +134,11 @@ const Page = styled.div`
     margin-left: -15px;
     margin-right: -15px;
   }
+  /* .about-image {
+    :hover {
+      opacity: 0.65;
+    }
+  } */
 `
 
 const IndexPage = ({
@@ -188,13 +196,13 @@ const IndexPage = ({
       </div>
       <div className="about no-padding">
         <div className="about-content container">
-          <Link to="/pages/rx-faq">
+          <Link to="/pages/rx-faq" className="about-image">
             <GatsbyImage
               image={contentfulHomepage.aboutTresNoir1.gatsbyImageData}
               alt="About Tres Noir 1"
             />
           </Link>
-          <Link to="/collections/new">
+          <Link to="/collections/new" className="about-image">
             <GatsbyImage
               image={contentfulHomepage.aboutTresNoir2.gatsbyImageData}
               alt="About Tres Noir 2"
@@ -248,7 +256,7 @@ export const query = graphql`
         tagline
       }
       featuredStyles {
-        data: gatsbyImageData(layout: CONSTRAINED, placeholder: BLURRED)
+        data: gatsbyImageData(layout: CONSTRAINED, quality: 40, width: 600)
         title
       }
       featuredStylesLinks

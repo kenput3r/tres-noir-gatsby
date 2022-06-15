@@ -9,7 +9,6 @@ import { Link } from "gatsby"
 import { GatsbyImage } from "gatsby-plugin-image"
 import styled from "styled-components"
 import { FaQuestionCircle } from "react-icons/fa"
-import { AiOutlineStop } from "react-icons/ai"
 
 import {
   ShopifyCollection,
@@ -97,6 +96,17 @@ const Component = styled.form`
         transform: rotate(45deg);
       }
     }
+    .disabled {
+      :after {
+        display: block;
+        left: 11px;
+        top: 0px;
+        border-width: 0 1px 0 0;
+        width: 0px;
+        height: 24px;
+        transform: rotate(135deg);
+      }
+    }
   }
   .row {
     display: flex;
@@ -114,8 +124,11 @@ const Component = styled.form`
     font-family: var(--sub-heading-font);
     padding: 10px 20px;
     text-decoration: none;
-    :hover {
+    &:hover {
       cursor: pointer;
+      background-color: #808080;
+      // box-shadow: none;
+      border-color: #808080;
     }
     @media only screen and (max-width: 480px) {
       display: inline-block;
@@ -303,13 +316,6 @@ const Component = styled.form`
     pointer-events: none;
     opacity: 0.3;
   }
-  .no-sign {
-    display: grid;
-    place-items: center;
-    margin-left: auto;
-    font-size: 1.45rem;
-    padding-right: 0 !important;
-  }
   .inactive {
     pointer-events: none;
     opacity: 0.5;
@@ -353,6 +359,13 @@ const Form = ({
         removeChildNodes(messageRef.current)
         continueBtn.current?.classList.remove("disable")
       }
+    } else if (variant.product?.title === "Single Vision") {
+      rxInfoDispatch({ type: `right-add`, payload: "" })
+      rxInfoDispatch({ type: `left-add`, payload: "" })
+      errorRefs.current[`select-right-add`].classList.add("disable")
+      errorRefs.current[`select-right-add`].querySelector("select").value = ""
+      errorRefs.current[`select-left-add`].classList.add("disable")
+      errorRefs.current[`select-left-add`].querySelector("select").value = ""
     }
     setHasSavedCustomized({
       ...hasSavedCustomized,
@@ -373,6 +386,7 @@ const Form = ({
     // disable axis whether a cyl value is present or not
     if (id.includes("cyl")) {
       let subId = id.split("-")[0]
+      console.log(subId)
       if (evt.target.value !== "0.00") {
         errorRefs.current[`select-${subId}-axis`].classList.remove("disable")
         return
@@ -388,6 +402,7 @@ const Form = ({
       "left-sph",
       "left-cyl",
     ]
+
     if (id.includes("axis")) {
       evt.target.closest(".rx-select")?.classList.remove("select-error")
     }
@@ -494,28 +509,49 @@ const Form = ({
 
   // useEffect with steps to filter collection
   useEffect(() => {
-    if (currentStep === 1 || currentStep === 5) {
-      return
+    // temp array to store blocked selections
+    let blockedSelections: any[] = []
+    switch (currentStep) {
+      case 2:
+        if (selectedVariants.step1.product.title === "Bifocal") {
+          blockedSelections.push(
+            "Blue Light Blocking",
+            "Polarized-G15",
+            "XTRActive Polarized"
+          )
+        }
+        break
+      case 3:
+        // if Bifocal and Polarized or Gradient Tint, disable Hi-Index
+        if (
+          selectedVariants.step1.product.title === "Bifocal" &&
+          (selectedVariants.step2.product.title === "Polarized" ||
+            selectedVariants.step2.product.title === "Gradient Tint")
+        ) {
+          blockedSelections.push("Hi-Index")
+        }
+        // if Polarized G15 option, disabled Hi-Index
+        else if (
+          selectedVariants.step2.product.title === "Polarized" &&
+          selectedVariants.step2.title === "G15"
+        ) {
+          blockedSelections.push("Hi-Index")
+        }
+        break
+      case 4:
+        // if poly carbonate or hi index, disable scratch coat and uv coat
+        if (
+          selectedVariants.step3.product.title === "Poly Carbonate" ||
+          selectedVariants.step3.product.title === "Hi-Index"
+        ) {
+          blockedSelections.push("Scratch Coat", "UV Coat")
+        }
+        break
+      // if currentStep is 1 or 5, do nothing
+      default:
+        break
     }
-    if (currentStep === 2) {
-      if (selectedVariants.step1.product.title === "Bifocal") {
-        setFilteredCollection(["Blue Light Blocking", "XTRActive Polarized"])
-      }
-    } else if (currentStep === 3) {
-      if (
-        selectedVariants.step2.product.title === "Polarized" ||
-        selectedVariants.step2.product.title === "XTRActive Polarized"
-      ) {
-        setFilteredCollection(["Hi-Index"])
-      }
-    } else if (currentStep === 4) {
-      if (
-        selectedVariants.step3.product.title === "Poly Carbonate" ||
-        selectedVariants.step3.product.title === "Hi-Index"
-      ) {
-        setFilteredCollection(["Scratch Coat", "UV Coat"])
-      }
-    }
+    setFilteredCollection([...new Set(blockedSelections)])
   }, [currentStep])
 
   return (
@@ -560,17 +596,11 @@ const Form = ({
               {!filteredCollection.includes(product.title) ? (
                 <div className="checkmark" />
               ) : (
-                <div className="no-sign">
-                  <AiOutlineStop></AiOutlineStop>
-                </div>
+                <div className="checkmark disabled" />
               )}
             </div>
           ) : (
-            <div
-              className={`product-option with-variants ${
-                filteredCollection.includes(product.title) ? "inactive" : ""
-              }`}
-            >
+            <div className={`product-option with-variants`}>
               <GatsbyImage
                 image={
                   product.images[0].localFile.childImageSharp.gatsbyImageData
@@ -583,7 +613,16 @@ const Form = ({
               </div>
               <ul className="variants">
                 {product.variants.map((variant: ShopifyVariant) => (
-                  <li key={variant.storefrontId}>
+                  <li
+                    key={variant.storefrontId}
+                    className={`${
+                      filteredCollection.includes(
+                        `${product.title}-${variant.title}`
+                      )
+                        ? "inactive"
+                        : ""
+                    }`}
+                  >
                     <GatsbyImage
                       image={
                         variant.image.localFile.childImageSharp.gatsbyImageData
@@ -610,12 +649,12 @@ const Form = ({
                         selectedVariants[`step${currentStep}`].storefrontId
                       }
                     />
-                    {!filteredCollection.includes(variant.title) ? (
+                    {!filteredCollection.includes(
+                      `${product.title}-${variant.title}`
+                    ) ? (
                       <div className="checkmark" />
                     ) : (
-                      <div className="no-sign">
-                        <AiOutlineStop></AiOutlineStop>
-                      </div>
+                      <div className="checkmark disabled" />
                     )}
                   </li>
                 ))}
@@ -624,7 +663,9 @@ const Form = ({
           )}
         </React.Fragment>
       ))}
-      {currentStep === 1 && isRxAble ? (
+      {(currentStep === 1 &&
+        selectedVariants.step1.product.title !== "Non-Prescription Lens") ||
+      selectedVariants.step1.product.title === "" ? (
         <div className="rx-info">
           <div className="rx-box">
             <div className="rx-col">
@@ -697,7 +738,16 @@ const Form = ({
                   })}
                 </select>
               </div>
-              <div className="rx-select">
+              <div
+                className={
+                  selectedVariants.step1.product.title === "Single Vision"
+                    ? "rx-select disable"
+                    : "rx-select"
+                }
+                ref={el => {
+                  errorRefs.current["select-right-add"] = el
+                }}
+              >
                 <label htmlFor="right-add">Add</label>
                 <select
                   id="right-add"
@@ -781,7 +831,16 @@ const Form = ({
                   ))}
                 </select>
               </div>
-              <div className="rx-select">
+              <div
+                className={
+                  selectedVariants.step1.product.title === "Single Vision"
+                    ? "rx-select disable"
+                    : "rx-select"
+                }
+                ref={el => {
+                  errorRefs.current["select-left-add"] = el
+                }}
+              >
                 <label htmlFor="left-add">Add</label>
                 <select
                   id="left-add"

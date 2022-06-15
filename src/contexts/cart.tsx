@@ -54,6 +54,8 @@ const DefaultContext = {
     tnLineItems: [],
     webUrl: "",
   },
+  isAddingToCart: false,
+  setIsAddingToCart: (value: boolean) => {},
   addProductToCart: (
     variantId: string,
     quantity: number,
@@ -62,6 +64,11 @@ const DefaultContext = {
   ) => {},
   addProductsToCart: (
     lineItems: { variantId: string; quantity: number }[]
+  ) => {},
+  addSunglassesToCart: (
+    lineItems: CustomLineItem[],
+    image: IGatsbyImageData,
+    key: string
   ) => {},
   addProductCustomToCart: (
     items: CustomLineItem[],
@@ -72,7 +79,7 @@ const DefaultContext = {
     handle: string
   ) => {},
   removeProductFromCart: (lineItemId: string, imageId: string) => {},
-  removeProductsFromCart: (lineItemIds: [], imageId: string) => {},
+  removeProductsFromCart: (lineItemIds: string[], imageId: string) => {},
   removeCustomProductWithId: (id: string) => {},
   updateProductInCart: (
     variantId: string,
@@ -91,6 +98,7 @@ export const CartProvider = ({ children }) => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
   const [isActive, setIsActive] = useState("shop")
   const [checkout, setCheckout] = useState<any>()
+  const [isAddingToCart, setIsAddingToCart] = useState<boolean>(false)
 
   /**
    * @function getCheckoutCookie - gets the current non-expired chechout cookie
@@ -316,6 +324,7 @@ export const CartProvider = ({ children }) => {
       }
     })
     itemsMap.forEach((value, key) => {
+      // normal item
       if (value.length === 1) {
         itemsToAdd.push({
           id: key,
@@ -323,7 +332,18 @@ export const CartProvider = ({ children }) => {
           image: getImageFromLocalStorage(key),
           isCustom: false,
         })
-      } else {
+      }
+      // sunglasses + case
+      else if (value.length === 2) {
+        itemsToAdd.push({
+          id: key,
+          lineItems: value,
+          image: getImageFromLocalStorage(key),
+          isCustom: false,
+        })
+      }
+      // customized lenses
+      else {
         itemsToAdd.push({
           id: key,
           lineItems: value.sort((a, b) => {
@@ -427,6 +447,7 @@ export const CartProvider = ({ children }) => {
       image: IGatsbyImageData
     ) => {
       try {
+        setIsAddingToCart(true)
         const lineItems = [
           {
             variantId,
@@ -440,9 +461,10 @@ export const CartProvider = ({ children }) => {
         addToImageStorage(sku, image, checkout.id)
         rebuildBundles(updatedCheckout)
         setCheckout(updatedCheckout)
-        console.log("updated", updatedCheckout)
+        setIsAddingToCart(false)
       } catch (err: any) {
         console.error(err)
+        setIsAddingToCart(false)
         renderErrorModal()
       }
     }
@@ -451,6 +473,7 @@ export const CartProvider = ({ children }) => {
       lineItems: { variantId: string; quantity: number }[]
     ) => {
       try {
+        setIsAddingToCart(true)
         const updatedCheckout = await client.checkout.addLineItems(
           checkout.id,
           lineItems
@@ -466,8 +489,42 @@ export const CartProvider = ({ children }) => {
           )
         }
         setCheckout(updatedCheckout)
+        setIsAddingToCart(false)
       } catch (err: any) {
         console.error(err)
+        setIsAddingToCart(false)
+        renderErrorModal()
+      }
+    }
+
+    const addSunglassesToCart = async (
+      lineItems: CustomLineItem[],
+      image: IGatsbyImageData,
+      key: string
+    ) => {
+      try {
+        setIsAddingToCart(true)
+        const updatedCheckout = await client.checkout.addLineItems(
+          checkout.id,
+          lineItems
+        )
+        if (isBrowser) {
+          const now = new Date()
+          localStorage.setItem(
+            "checkout",
+            JSON.stringify({
+              value: updatedCheckout,
+              expiry: now.getTime() + 2592000,
+            })
+          )
+        }
+        addToImageStorage(key, image, checkout.id)
+        rebuildBundles(updatedCheckout)
+        setCheckout(updatedCheckout)
+        setIsAddingToCart(false)
+      } catch (err: any) {
+        console.error(err)
+        setIsAddingToCart(false)
         renderErrorModal()
       }
     }
@@ -481,6 +538,7 @@ export const CartProvider = ({ children }) => {
       handle: string
     ) => {
       try {
+        setIsAddingToCart(true)
         const updatedCheckout = await client.checkout.addLineItems(
           checkout.id,
           lineItems
@@ -490,9 +548,10 @@ export const CartProvider = ({ children }) => {
         setCheckout(updatedCheckout)
         // add necessary data to localStorage to be able to resume from cart later on
         addCustomToLocalStorage(key, resumeData, sku, handle)
-        console.log("updated", updatedCheckout)
+        setIsAddingToCart(false)
       } catch (err: any) {
         console.error(err)
+        setIsAddingToCart(false)
         renderErrorModal()
       }
     }
@@ -515,7 +574,10 @@ export const CartProvider = ({ children }) => {
       }
     }
 
-    const removeProductsFromCart = async (lineItemIds, imageId: string) => {
+    const removeProductsFromCart = async (
+      lineItemIds: string[],
+      imageId: string
+    ) => {
       try {
         const updatedCheckout = await client.checkout.removeLineItems(
           checkout.id,
@@ -624,6 +686,8 @@ export const CartProvider = ({ children }) => {
       setIsActive,
       closeDrawer,
       checkout,
+      isAddingToCart,
+      setIsAddingToCart,
       addProductToCart,
       addProductsToCart,
       removeProductFromCart,
@@ -634,8 +698,18 @@ export const CartProvider = ({ children }) => {
       removeCustomProductWithId,
       // customized products
       addProductCustomToCart,
+      // for sunglasses
+      addSunglassesToCart,
     }
-  }, [isDrawerOpen, setIsDrawerOpen, isActive, setIsActive, checkout])
+  }, [
+    isDrawerOpen,
+    setIsDrawerOpen,
+    isActive,
+    setIsActive,
+    checkout,
+    isAddingToCart,
+    setIsAddingToCart,
+  ])
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>
 }

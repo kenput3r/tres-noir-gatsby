@@ -1,6 +1,10 @@
 import React, { useState, useEffect, useContext } from "react"
 import { Link, graphql } from "gatsby"
-import { StaticImage, GatsbyImage as Img } from "gatsby-plugin-image"
+import {
+  StaticImage,
+  GatsbyImage as Img,
+  IGatsbyImageData,
+} from "gatsby-plugin-image"
 import styled from "styled-components"
 import { useQuantityQuery } from "../hooks/useQuantityQuery"
 import ProductCarousel from "../components/product-carousel"
@@ -12,6 +16,10 @@ import { addedToCartGTMEvent, viewedProductGTMEvent } from "../helpers/gtm"
 import Product from "./product"
 import { CustomizeContext } from "../contexts/customize"
 import FreeShipping from "../components/free-shipping"
+import Spinner from "../components/spinner"
+import CaseGridSunglasses from "../components/case-grid-sunglasses"
+import ProductDetails from "../components/product-contentful-details"
+import { useCaseCollection } from "../hooks/useCaseCollection"
 
 const Page = styled.div`
   .shipping-message {
@@ -35,6 +43,11 @@ const Page = styled.div`
     width: 1280px;
     max-width: 100%;
     margin: 0 auto;
+    @media only screen and (max-width: 768px) {
+      &.mobile-reverse {
+        flex-direction: column-reverse;
+      }
+    }
   }
   .col {
     display: flex;
@@ -44,10 +57,17 @@ const Page = styled.div`
     &.images {
       flex: 1.5;
       max-width: 65%;
+      @media only screen and (max-width: 1024px) {
+        max-width: 50%;
+      }
+      @media only screen and (max-width: 768px) {
+        max-width: 100%;
+      }
     }
   }
   .heading {
     align-self: flex-start;
+    width: 100%;
   }
   h1 {
     font-weight: normal;
@@ -59,6 +79,7 @@ const Page = styled.div`
     color: var(--color-grey-dark);
     font-size: 1.5rem;
     text-transform: capitalize;
+    width: 100%;
     span {
       float: right;
     }
@@ -101,9 +122,18 @@ const Page = styled.div`
   }
   p.value {
     font-size: 2rem;
+    display: flex;
+    flex-direction: row;
     span {
-      float: right;
       font-weight: normal;
+      flex: 1;
+      &.left {
+        align-self: start;
+      }
+      &.right {
+        align-self: end;
+        text-align: right;
+      }
       a {
         color: var(--color-grey-dark);
         text-decoration: none;
@@ -147,7 +177,7 @@ const Page = styled.div`
   .align-start {
     align-self: start;
   }
-  @media (max-width: 500px) {
+  @media only screen and (max-width: 500px) {
     .shipping-message {
       .h3 {
         font-size: 1rem;
@@ -168,12 +198,12 @@ const Page = styled.div`
       }
     }
   }
-  @media (max-width: 375px) {
+  @media only screen and (max-width: 375px) {
     p.value {
       font-size: 1.75rem;
     }
   }
-  @media (max-width: 320px) {
+  @media only screen and (max-width: 320px) {
     h1 {
       font-size: 2.25rem;
     }
@@ -207,8 +237,35 @@ const ProductCustomizable = ({
     contentfulProduct.variants[0].imageSet
   )
 
+  const [selectedVariant, setSelectedVariant] = useState({
+    contentful: contentfulProduct?.variants && contentfulProduct.variants[0],
+    shopify: shopifyProduct.variants.find(
+      (variant: any) => variant.sku === contentfulProduct.variants[0].sku
+    ),
+  })
+
+  const [customizeUrl, setCustomizeUrl] = useState<string>(
+    `/products/${contentfulProduct.handle}/customize?variant=${contentfulProduct.variants[0].sku}`
+  )
+
+  const caseCollection = useCaseCollection()
+
+  const [selectedCase, setSelectedCase] = useState<any>(
+    caseCollection[0].variants[0]
+  )
+
+  // return default Product Page if contentful values do not exist
+  const quantityLevels = useQuantityQuery(
+    shopifyProduct.handle,
+    shopifyProduct.variants.length
+  )
+
+  const { selectedVariantContext, setSelectedVariantContext } = useContext(
+    SelectedVariantContext
+  )
+
   const getImageSet = (variant: any) => {
-    let defaultImageSet
+    let defaultImageSet: IGatsbyImageData[]
     switch (lensType) {
       case LensType.GLASSES:
         defaultImageSet = variant.imageSetClear
@@ -222,7 +279,7 @@ const ProductCustomizable = ({
         defaultImageSet = variant.imageSet
         break
       default:
-        variant.imageSet
+        defaultImageSet = variant.imageSet
     }
     return defaultImageSet
   }
@@ -258,6 +315,7 @@ const ProductCustomizable = ({
   useEffect(() => {
     const defaultImageSet = getImageSet(contentfulProduct.variants[0])
     setImageSet(defaultImageSet)
+    updateCustomizeUrl()
   }, [lensType])
 
   const {
@@ -275,31 +333,16 @@ const ProductCustomizable = ({
       step2: false,
       step3: false,
       step4: false,
+      case: false,
     })
     setSelectedVariantsToDefault()
   }, [])
 
-  // return default Product Page if contentful values do not exist
-  const quantityLevels = useQuantityQuery(
-    shopifyProduct.handle,
-    shopifyProduct.variants.length
-  )
-  const { selectedVariantContext, setSelectedVariantContext } = useContext(
-    SelectedVariantContext
-  )
-
-  const [selectedVariant, setSelectedVariant] = useState({
-    contentful: contentfulProduct?.variants && contentfulProduct.variants[0],
-    shopify: shopifyProduct.variants.find(
-      (variant: any) => variant.sku === contentfulProduct.variants[0].sku
-    ),
-  })
-
   // cart
-  const { addProductToCart, checkout } = useContext(CartContext)
+  const { addProductToCart, isAddingToCart, addSunglassesToCart } =
+    useContext(CartContext)
 
   useEffect(() => {
-    console.log("SELECTED VARIANT CHANGED", selectedVariant)
     const productData = {
       title: shopifyProduct.title,
       legacyResourceId: shopifyProduct.legacyResourceId,
@@ -320,8 +363,6 @@ const ProductCustomizable = ({
   }, [selectedVariant])
 
   const selectVariant = (e: React.MouseEvent, variant: any) => {
-    console.log("RUNNING SELECT VARIANT", variant)
-    // e.currentTarget && (e.currentTarget as HTMLElement).blur()
     const shopify = shopifyProduct.variants.find(
       (_variant: any) => _variant.sku === variant.sku
     )
@@ -336,17 +377,44 @@ const ProductCustomizable = ({
 
   useEffect(() => {
     updateImageSet()
+    updateCustomizeUrl()
   }, [selectedVariant])
 
   const handleAddToCart = () => {
     const id = selectedVariant.shopify.storefrontId
+    if (lensType !== LensType.GLASSES) {
+      const today = new Date()
+      const matchingKey: string = today.valueOf().toString()
+      addSunglassesToCart(
+        [
+          {
+            variantId: selectedVariant.shopify.storefrontId,
+            quantity: 1,
+            customAttributes: [
+              { key: "customizationId", value: matchingKey },
+              { key: "customizationStep", value: "1" },
+            ],
+          },
+          {
+            variantId: selectedCase.storefrontId,
+            quantity: 1,
+            customAttributes: [
+              { key: "customizationId", value: matchingKey },
+              { key: "customizationStep", value: "2" },
+            ],
+          },
+        ],
+        selectedVariant.contentful.imageSet[0].data,
+        matchingKey
+      )
+      return
+    }
     addProductToCart(
       id,
       1,
       selectedVariant.shopify.sku,
       selectedVariant.contentful.imageSet[0].data
     )
-    // alert("ADDED TO CART")
     const productData = {
       title: shopifyProduct.title,
       legacyResourceId: shopifyProduct.legacyResourceId,
@@ -372,11 +440,11 @@ const ProductCustomizable = ({
     setImageSet(defaultImageSet)
   }
 
-  let customizeUrl = `/products/${contentfulProduct.handle}/customize?variant=${selectedVariant.shopify.sku}`
-  if (lensType !== LensType.SUNGLASSES)
-    customizeUrl = `${customizeUrl}&lens_type=${lensType}`
-
-  console.log("CUSTOMIZE URL", customizeUrl)
+  const updateCustomizeUrl = () => {
+    let url = `/products/${contentfulProduct.handle}/customize?variant=${selectedVariant.shopify.sku}`
+    if (lensType !== LensType.SUNGLASSES) url = `${url}&lens_type=${lensType}`
+    setCustomizeUrl(url)
+  }
 
   return (
     <Layout>
@@ -395,10 +463,11 @@ const ProductCustomizable = ({
               <p className="fit">
                 Size: {contentfulProduct && contentfulProduct.fitDimensions}{" "}
                 <span>
-                  {contentfulProduct &&
-                  contentfulProduct.fitType === "medium (average)"
-                    ? "medium"
-                    : contentfulProduct && contentfulProduct.fitType}{" "}
+                  {contentfulProduct && contentfulProduct.frameWidth.length > 1
+                    ? `${contentfulProduct.frameWidth[0]} to ${
+                        contentfulProduct.frameWidth[1]
+                      }${" "}`
+                    : `${contentfulProduct.frameWidth[0]}${" "}`}
                   fit
                 </span>
               </p>
@@ -408,7 +477,7 @@ const ProductCustomizable = ({
                 Color:{" "}
                 <span>
                   {lensType === LensType.GLASSES
-                    ? selectedVariant.shopify.title.replace("- Smoke Lens", "")
+                    ? selectedVariant.shopify.title.split(" - ")[0]
                     : selectedVariant.shopify.title}
                 </span>
               </p>
@@ -446,8 +515,10 @@ const ProductCustomizable = ({
               <div className="price">
                 <p className="label">STARTING AT</p>
                 <p className="value">
-                  ${selectedVariant.shopify.price} USD
-                  <span>
+                  <span className="left">
+                    ${selectedVariant.shopify.price} USD
+                  </span>
+                  <span className="right">
                     <Link
                       to={contentfulProduct && `/${contentfulProduct.handle}`}
                     >
@@ -473,8 +544,9 @@ const ProductCustomizable = ({
                           type="button"
                           onClick={handleAddToCart}
                           className="add-to-cart btn"
+                          disabled={isAddingToCart}
                         >
-                          ADD TO CART
+                          {isAddingToCart ? <Spinner /> : `ADD TO CART`}
                         </button>
                         <p>- OR -</p>
                       </>
@@ -493,6 +565,26 @@ const ProductCustomizable = ({
             </form>
           </div>
         </div>
+        <div className="row mobile-reverse">
+          <div
+            className={`col ${lensType !== LensType.GLASSES ? "images" : ""}`}
+          >
+            <ProductDetails
+              fitDimensions={contentfulProduct.fitDimensions}
+              lensColor={selectedVariant.contentful.lensColor}
+              lensType={lensType}
+            />
+          </div>
+          {lensType !== LensType.GLASSES && (
+            <div className="col">
+              <CaseGridSunglasses
+                caseCollection={caseCollection}
+                selectedCase={selectedCase}
+                setSelectedCase={setSelectedCase}
+              />
+            </div>
+          )}
+        </div>
       </Page>
     </Layout>
   )
@@ -504,7 +596,7 @@ export const query = graphql`
   query ProductQuery($handle: String) {
     contentfulProduct(handle: { eq: $handle }) {
       handle
-      fitType
+      frameWidth
       fitDimensions
       variants {
         colorName
@@ -514,24 +606,15 @@ export const query = graphql`
           title
         }
         imageSet {
-          data: gatsbyImageData(
-            layout: CONSTRAINED
-            placeholder: BLURRED
-            width: 2048
-            height: 1365
-          )
+          data: gatsbyImageData(layout: CONSTRAINED, width: 2048, height: 1365)
           title
         }
         imageSetClear {
-          data: gatsbyImageData(
-            layout: CONSTRAINED
-            placeholder: BLURRED
-            width: 2048
-            height: 1365
-          )
+          data: gatsbyImageData(layout: CONSTRAINED, width: 2048, height: 1365)
           title
         }
         id
+        lensColor
       }
     }
     shopifyProduct(handle: { eq: $handle }) {

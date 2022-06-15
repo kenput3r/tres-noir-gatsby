@@ -125,6 +125,7 @@ const Collection = ({
             ))}
           </div>
           {collectionImages &&
+            collectionSize >= 8 &&
             collectionImages.collectionImageMiddle?.gatsbyImageData && (
               <div className="image-container">
                 <div>
@@ -171,11 +172,7 @@ export const query = graphql`
           altText
           localFile {
             childImageSharp {
-              gatsbyImageData(
-                width: 275
-                placeholder: BLURRED
-                formats: [AUTO, WEBP, AVIF]
-              )
+              gatsbyImageData(width: 275, formats: [AUTO, WEBP], quality: 50)
             }
           }
         }
@@ -192,6 +189,8 @@ export const query = graphql`
         title
         variants {
           title
+          sku
+          storefrontId
         }
       }
     }

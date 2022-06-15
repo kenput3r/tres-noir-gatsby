@@ -1,7 +1,7 @@
-import { useMemo } from "react"
+import { useEffect, useState } from "react"
 import { useStaticQuery, graphql } from "gatsby"
 
-export const useRandomizeCollection = currentProduct => {
+export const useRandomizeCollection = (currentProductId: string) => {
   const getCollectionItems = () => {
     const { shopifyCollection } = useStaticQuery(graphql`
       query GetYouMayAlsoLikeProducts {
@@ -11,7 +11,7 @@ export const useRandomizeCollection = currentProduct => {
             featuredImage {
               localFile {
                 childImageSharp {
-                  gatsbyImageData
+                  gatsbyImageData(quality: 40, width: 400)
                 }
               }
             }
@@ -30,6 +30,13 @@ export const useRandomizeCollection = currentProduct => {
               selectedOptions {
                 name
               }
+              image {
+                localFile {
+                  childImageSharp {
+                    gatsbyImageData(quality: 40, width: 400)
+                  }
+                }
+              }
               position
             }
             tags
@@ -43,33 +50,41 @@ export const useRandomizeCollection = currentProduct => {
 
   const queriedCollection = getCollectionItems()
 
-  const getRandom = (arr: any[], n: number) => {
-    var result = new Array(n),
-      len = arr.length,
-      taken = new Array(len)
-    if (n > len)
-      throw new RangeError("getRandom: more elements taken than available")
-    while (n--) {
-      var x = Math.floor(Math.random() * len)
-      result[n] = arr[x in taken ? taken[x] : x]
-      taken[x] = --len in taken ? taken[len] : len
+  const [items, setItems] = useState<any[]>([])
+
+  useEffect(() => {
+    const getRandom = (arr: any[], n: number) => {
+      var result = new Array(n),
+        len = arr.length,
+        taken = new Array(len)
+      if (n > len)
+        throw new RangeError("getRandom: more elements taken than available")
+      while (n--) {
+        var x = Math.floor(Math.random() * len)
+        result[n] = arr[x in taken ? taken[x] : x]
+        taken[x] = --len in taken ? taken[len] : len
+      }
+      return result
     }
-    return result
-  }
+    const filteredCollection = queriedCollection.products.filter(
+      (el: {
+        id: string
+        tags: string | string[]
+        hasOutOfStockVariants: boolean
+        productType: string
+        onlineStoreUrl: string | null
+      }) => {
+        return (
+          el.id !== currentProductId &&
+          !el.tags.includes("upsell_item") &&
+          !el.hasOutOfStockVariants &&
+          el.productType !== "Gift Card" &&
+          el.onlineStoreUrl
+        )
+      }
+    )
+    setItems(getRandom(filteredCollection, 4))
+  }, [])
 
-  const data = useMemo(() => {
-    const filteredCollection = queriedCollection.products.filter(el => {
-      return (
-        el.id !== currentProduct.id &&
-        !el.tags.includes("upsell_item") &&
-        !el.hasOutOfStockVariants &&
-        el.productType !== "Gift Card" &&
-        el.onlineStoreUrl
-      )
-    })
-
-    return getRandom(filteredCollection, 4)
-  }, [currentProduct, queriedCollection])
-
-  return data
+  return items
 }

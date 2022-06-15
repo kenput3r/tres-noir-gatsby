@@ -1,4 +1,4 @@
-import React, { useEffect, useContext, useRef, useState } from "react"
+import React, { useEffect, useContext, useRef } from "react"
 import { Link, navigate } from "gatsby"
 import { GatsbyImage, StaticImage } from "gatsby-plugin-image"
 import styled from "styled-components"
@@ -8,7 +8,7 @@ import Loader from "../components/loader"
 import QuantitySelector from "../components/quantity-selector"
 import { CartContext } from "../contexts/cart"
 import { CustomerContext } from "../contexts/customer"
-import { tnItem } from "../types/checkout"
+import { tnItem, tnSubItem } from "../types/checkout"
 import { startedCheckoutGTMEvent } from "../helpers/gtm"
 import { VscClose } from "react-icons/vsc"
 import UpsellCart from "../components/upsell-cart"
@@ -49,7 +49,7 @@ const Page = styled.div`
         .card {
           display: flex;
           justify-content: space-between;
-          padding: 10px;
+          padding: 0 10px 20px 10px;
           > div {
             flex: 1;
             padding: 0 10px;
@@ -206,7 +206,20 @@ const Page = styled.div`
     pointer-events: none;
     opacity: 0.5;
   }
-  .btn {
+  .checkout-loading {
+    min-height: 42px;
+    min-width: 165px;
+    position: relative;
+    @media only screen and (max-width: 468px) {
+      min-height: 39px;
+      min-width: 152px;
+    }
+    div {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
   }
 `
 
@@ -228,6 +241,7 @@ const Cart = () => {
   stepMap.set(2, "LENS TYPE")
   stepMap.set(3, "LENS MATERIAL")
   stepMap.set(4, "LENS COATING")
+  stepMap.set(5, "CASE")
   const loadingOverlay = useRef<HTMLDivElement>(null)
   useEffect(() => {
     if (checkout) {
@@ -235,7 +249,6 @@ const Cart = () => {
         startedCheckoutGTMEvent(checkout)
       }
       associateCheckout(checkout.id)
-      console.log("checkout is currently", checkout)
     }
   }, [checkout])
 
@@ -260,6 +273,7 @@ const Cart = () => {
           step2: true,
           step3: true,
           step4: true,
+          case: true,
         })
         setCurrentStep(5)
         // navigate to step 5 of customize page
@@ -270,7 +284,7 @@ const Cart = () => {
     }
   }
 
-  const removeMultipleProducts = async item => {
+  const removeMultipleProducts = async (item: tnItem) => {
     const lineIds = item.lineItems.map(item => {
       return item.shopifyItem.id
     })
@@ -306,6 +320,35 @@ const Cart = () => {
 
   const priceTimesQuantity = (price: string, quantity: number) => {
     return (Number(price) * quantity).toFixed(2)
+  }
+
+  const formatItemTitle = (
+    subItem: tnSubItem,
+    stepName: string,
+    isCustom: boolean
+  ) => {
+    if (subItem.stepNumber === "0" && isCustom) {
+      console.log(subItem.shopifyItem.variant.title)
+      return subItem.shopifyItem.variant.title.split("-")[0]
+    }
+    if (stepName === "CASE") {
+      let spl = subItem.shopifyItem.title.split("AO")[0]
+      return spl.slice(0, -2)
+    }
+    if (subItem.shopifyItem.variant.title === "Default Title") {
+      return subItem.shopifyItem.title
+    } else {
+      return `${subItem.shopifyItem.title} - ${subItem.shopifyItem.variant.title}`
+    }
+  }
+
+  // clean this up after demo
+  const orderTnLineItems = lineItems => {
+    const order = ["0", "1", "2", "3", "4", "5"]
+    lineItems.sort((a, b) => {
+      return order.indexOf(a.stepNumber) - order.indexOf(b.stepNumber)
+    })
+    return lineItems
   }
 
   const renderStandardProduct = (item: tnItem) => {
@@ -370,6 +413,81 @@ const Cart = () => {
     )
   }
 
+  const renderSunglasses = (item: tnItem) => {
+    const sunglassesStepMap = new Map()
+    sunglassesStepMap.set(1, "CASE")
+    // fix this
+    item.lineItems = orderTnLineItems(item.lineItems)
+    return (
+      <li key={item.id} className="customized">
+        <div className="close-btn">
+          <a
+            className="remove-item"
+            href="#"
+            onClick={() => removeMultipleProducts(item)}
+          >
+            <VscClose />
+          </a>
+        </div>
+        <div className="card">
+          <div className="card-image">
+            {item.image ? (
+              <GatsbyImage
+                image={item.image}
+                alt={item.lineItems[0].shopifyItem.variant.title}
+              ></GatsbyImage>
+            ) : (
+              <StaticImage
+                src="../images/product-no-image.jpg"
+                alt="no-image"
+              ></StaticImage>
+            )}
+          </div>
+          <div>
+            <div>
+              <p className="title">
+                <Link
+                  to={`/products/${item.lineItems[0].shopifyItem.variant.product.handle}`}
+                >
+                  {item.lineItems[0].shopifyItem.title}
+                </Link>
+              </p>
+              <div className="sub-title-customize">
+                {item.lineItems.map((subItem, subIndex) => {
+                  return (
+                    <div className="sub-item" key={subItem.shopifyItem.id}>
+                      <div className="step-name">
+                        <p>{sunglassesStepMap.get(subIndex)}</p>
+                      </div>
+                      <div className="sub-title" key={subItem.shopifyItem.id}>
+                        <span key={subItem.shopifyItem.id}>
+                          {formatItemTitle(
+                            subItem,
+                            sunglassesStepMap.get(subIndex),
+                            item.isCustom
+                          )}
+                        </span>
+                        <span className="price">
+                          {subItem.shopifyItem.variant.price === "0.00"
+                            ? "Free"
+                            : `$${subItem.shopifyItem.variant.price}`}
+                        </span>
+                      </div>
+                    </div>
+                  )
+                })}
+                <hr />
+                <span className="price total-price">
+                  ${totalSum(item.lineItems)}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </li>
+    )
+  }
+
   const renderCustomProduct = (item: tnItem) => {
     return (
       <li key={item.id} className="customized">
@@ -414,12 +532,16 @@ const Cart = () => {
                       </div>
                       <div className="sub-title" key={subItem.shopifyItem.id}>
                         <span key={subItem.shopifyItem.id}>
-                          {subItem.shopifyItem.variant.title === "Default Title"
-                            ? subItem.shopifyItem.title
-                            : subItem.shopifyItem.variant.title}
+                          {formatItemTitle(
+                            subItem,
+                            stepMap.get(subIndex),
+                            item.isCustom
+                          )}
                         </span>
                         <span className="price">
-                          ${subItem.shopifyItem.variant.price}
+                          {subItem.shopifyItem.variant.price === "0.00"
+                            ? "Free"
+                            : `$${subItem.shopifyItem.variant.price}`}
                         </span>
                       </div>
                     </div>
@@ -483,6 +605,8 @@ const Cart = () => {
                       if (item) {
                         if (item.isCustom) {
                           return renderCustomProduct(item)
+                        } else if (item.lineItems.length === 2) {
+                          return renderSunglasses(item)
                         }
                         return renderStandardProduct(item)
                       }

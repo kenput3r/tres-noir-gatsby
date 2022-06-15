@@ -8,6 +8,7 @@ import { useQuantityQuery } from "../hooks/useQuantityQuery"
 import { addedToCartGTMEvent, viewedProductGTMEvent } from "../helpers/gtm"
 import YouMayAlsoLike from "../components/you-may-also-like"
 import ProductImageGrid from "../components/product-image-grid"
+import AddToCartButton from "../components/add-to-cart-button"
 
 const Page = styled.div`
   .shipping-message {
@@ -228,7 +229,7 @@ const Product = ({ data: { shopifyProduct } }: any) => {
   const [selectedVariantQuantity, setSelectedVariantQuantity] =
     useState<string>("1")
 
-  const { addProductToCart, checkout } = useContext(CartContext)
+  const { addProductToCart, isAddingToCart } = useContext(CartContext)
 
   const handleVariant = (evt: ChangeEvent<HTMLSelectElement>) => {
     const sku = evt.target.value
@@ -237,12 +238,6 @@ const Product = ({ data: { shopifyProduct } }: any) => {
     )
     setSelectedVariant(newVariant)
   }
-
-  // const randomCollection = useMemo(
-  //   () => useRandomizeCollection(shopifyProduct),
-  //   []
-  // )
-  // const randomCollection = useRandomizeCollection(shopifyProduct)
 
   const quantityRange = () => {
     let minRange = 0
@@ -296,7 +291,10 @@ const Product = ({ data: { shopifyProduct } }: any) => {
       <Page>
         <div className="row">
           <div className="col images">
-            <ProductImageGrid product={shopifyProduct}></ProductImageGrid>
+            <ProductImageGrid
+              product={shopifyProduct}
+              selectedVariant={selectedVariant}
+            ></ProductImageGrid>
           </div>
           <div className="col">
             <div className="heading">
@@ -355,17 +353,13 @@ const Product = ({ data: { shopifyProduct } }: any) => {
                 <div>
                   {quantityLevels &&
                   quantityLevels[selectedVariant.sku] !== 0 ? (
-                    <button
-                      type="button"
-                      className="btn"
-                      onClick={handleAddToCart}
-                    >
-                      ADD TO CART
-                    </button>
+                    <AddToCartButton
+                      handler={handleAddToCart}
+                      loading={isAddingToCart}
+                      soldOut={false}
+                    />
                   ) : (
-                    <button type="button" className="sold-out btn">
-                      SOLD OUT
-                    </button>
+                    <AddToCartButton soldOut={true} />
                   )}
                 </div>
               </div>
@@ -396,7 +390,7 @@ export const query = graphql`
         localFile {
           id
           childImageSharp {
-            gatsbyImageData
+            gatsbyImageData(quality: 50)
           }
         }
       }

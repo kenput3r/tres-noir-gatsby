@@ -6,6 +6,9 @@ import { CartContext } from "../../contexts/cart"
 import { RxInfoContext } from "../../contexts/rxInfo"
 import { addedCustomizedToCartGTMEvent } from "../../helpers/gtm"
 import { ShopifyProductVariant } from "../../types/customize"
+import CaseGridCustomize from "../case-grid-customize"
+import Spinner from "../spinner"
+import { navigate } from "gatsby"
 
 const Component = styled.div`
   padding: 10px;
@@ -88,6 +91,12 @@ const Component = styled.div`
       }
     }
   }
+  .add-to-cart {
+    min-width: 141px;
+    @media only screen and (max-width: 468px) {
+      min-width: 130px;
+    }
+  }
   .edit-btn {
     background-color: transparent;
     color: #000;
@@ -121,8 +130,12 @@ const Step5 = (props: {
   } = useContext(CustomizeContext)
 
   // const { bundledCustoms, bundledDispatch } = useContext(CustomProductsContext)
-  const { addProductCustomToCart, removeCustomProductWithId } =
-    useContext(CartContext)
+  const {
+    addProductCustomToCart,
+    removeCustomProductWithId,
+    isAddingToCart,
+    setIsAddingToCart,
+  } = useContext(CartContext)
   const { isRxAble, setRxAble, rxInfo, rxInfoDispatch } =
     useContext(RxInfoContext)
   const [addedToCart, setAddedToCart] = useState(false)
@@ -135,6 +148,13 @@ const Step5 = (props: {
       }
     }
   }, [addedToCart])
+
+  const buttonLabel = () => {
+    if (resumedItem) {
+      return "SAVE CHANGES"
+    }
+    return "ADD TO CART"
+  }
 
   const handleAddToCart = async () => {
     const { step1, step2, step3, step4 } = selectedVariants
@@ -205,6 +225,20 @@ const Step5 = (props: {
           },
         ],
       },
+      {
+        variantId: selectedVariants.case.storefrontId,
+        quantity: 1,
+        customAttributes: [
+          {
+            key: "customizationId",
+            value: matchingKey,
+          },
+          {
+            key: "customizationStep",
+            value: "5",
+          },
+        ],
+      },
     ]
     const frameVariant = {
       variantId: variant.storefrontId,
@@ -224,7 +258,7 @@ const Step5 = (props: {
     if (resumedItem) {
       await removeCustomProductWithId(resumedItem)
     }
-    addProductCustomToCart(
+    await addProductCustomToCart(
       stepItems,
       matchingKey,
       productImage,
@@ -232,7 +266,14 @@ const Step5 = (props: {
       variant.sku,
       variant.product.handle
     )
+    // boolean to determine whether a frame has been added to cart
+    // if true, then the selectedVariant context will reset and currentStep will be 1
     setAddedToCart(true)
+
+    if (resumedItem) {
+      setIsAddingToCart(false)
+      navigate("/cart")
+    }
 
     // GTM Event
     const productData = {
@@ -352,13 +393,23 @@ const Step5 = (props: {
         </p>
       </div>
       <div className="row">
-        <button type="button" onClick={() => setCurrentStep(currentStep - 1)}>
+        <button
+          className="btn"
+          type="button"
+          onClick={() => setCurrentStep(currentStep - 1)}
+        >
           GO BACK
         </button>
-        <button type="button" onClick={handleAddToCart} className="add-to-cart">
-          ADD TO CART
+        <button
+          type="button"
+          onClick={handleAddToCart}
+          className="add-to-cart btn"
+          disabled={isAddingToCart}
+        >
+          {isAddingToCart ? <Spinner /> : buttonLabel()}
         </button>
       </div>
+      <CaseGridCustomize />
     </Component>
   )
 }

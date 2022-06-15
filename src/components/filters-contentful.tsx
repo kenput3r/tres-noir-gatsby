@@ -225,12 +225,14 @@ const FiltersContentful = ({
     const keys = Object.keys(filters)
     // eslint-disable-next-line no-shadow
     keys.forEach(filter => {
+      // frame width
       if (filters[filter]) {
         if (filter === FilterTypes.FrameWidth) {
           filteredProducts = filteredProducts.filter(product =>
             product.frameWidth.includes(filters[filter])
           )
         }
+        // frame color
         if (filter === FilterTypes.ColorName) {
           filteredProducts = filteredProducts.filter(product => {
             let found = false
@@ -269,8 +271,8 @@ const FiltersContentful = ({
   if (!isBrowser) return null
   const [heightRef, height] = useHeight()
   const slideInStyles = useSpring({
-    config: { ...config.stiff },
-    from: { opacity: 0, height: 0 },
+    config: { ...config.default },
+    from: { opacity: 0, height: 0, margin: 0 },
     to: {
       opacity: showFilters ? 1 : 0,
       height: showFilters ? height : 0,
@@ -286,8 +288,11 @@ const FiltersContentful = ({
         </button>
       </DisplayFilters>
 
-      <animated.div style={{ ...slideInStyles, overflow: "hidden" }}>
-        <div ref={heightRef}>
+      <animated.div
+        style={{ ...slideInStyles, overflow: "hidden" }}
+        className="animated"
+      >
+        <div className="filters-ref" ref={heightRef}>
           <Triangle>
             <div className="triangle" />
           </Triangle>
