@@ -124,7 +124,7 @@ const ProductContentful = ({ data, color, collectionHandle }: Props) => {
   }
 
   let hasNewStyles: boolean = false
-  if (data.collection.length > 0)
+  if (data.collection && data.collection.length > 0)
     hasNewStyles = data.collection.some(col => col.handle === "new")
 
   return (
