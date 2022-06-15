@@ -29,6 +29,11 @@ export const useFrameColors = () => {
             gatsbyImageData(quality: 40, width: 50)
           }
         }
+        cream: file(relativePath: { eq: "cream.png" }) {
+          childImageSharp {
+            gatsbyImageData(quality: 40, width: 50)
+          }
+        }
         green: file(relativePath: { eq: "green.png" }) {
           childImageSharp {
             gatsbyImageData(quality: 40, width: 50)
@@ -45,6 +50,11 @@ export const useFrameColors = () => {
           }
         }
         purple: file(relativePath: { eq: "purple.png" }) {
+          childImageSharp {
+            gatsbyImageData(quality: 40, width: 50)
+          }
+        }
+        red: file(relativePath: { eq: "red.png" }) {
           childImageSharp {
             gatsbyImageData(quality: 40, width: 50)
           }
