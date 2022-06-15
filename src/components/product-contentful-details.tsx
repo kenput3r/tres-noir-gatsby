@@ -58,6 +58,16 @@ interface Props {
   lensType: string
 }
 
+enum LENSE_COLORS {
+  SMOKE = "smoke",
+  SMOKE_GRADIENT = "smoke gradient",
+  BROWN = "brown",
+  BROWN_GRADIENT = "brown gradient",
+  GREEN = "green",
+  GREEN_GRADIENT = "green gradient",
+  CLEAR = "clear",
+}
+
 const ProductDetails: React.FC<Props> = ({
   fitDimensions,
   lensColor,
@@ -74,16 +84,16 @@ const ProductDetails: React.FC<Props> = ({
   const getLensData = () => {
     if (lensType !== "glasses") {
       switch (lensColor) {
-        case "smoke":
-        case "smoke-gradient":
+        case LENSE_COLORS.SMOKE:
+        case LENSE_COLORS.SMOKE_GRADIENT:
           imageData = lensColors.smoke
           break
-        case "brown":
-        case "brown-gradient":
+        case LENSE_COLORS.BROWN:
+        case LENSE_COLORS.BROWN_GRADIENT:
           imageData = lensColors.brown
           break
-        case "green":
-        case "green-gradient":
+        case LENSE_COLORS.GREEN:
+        case LENSE_COLORS.GREEN_GRADIENT:
           imageData = lensColors.green
           break
         default:
