@@ -201,13 +201,10 @@ const CartDrawer = () => {
     setIsCartDrawerOpen(false)
   })
 
-  const { width } = useWindowSize()
-
-  console.log("w", width)
-
   // React Spring
   const isBrowser = typeof window !== "undefined"
   if (!isBrowser) return null
+  const { width } = useWindowSize()
   const [heightRef, height] = useHeight()
   const slideInStyles = useSpring({
     config: { ...config.default },
@@ -218,6 +215,7 @@ const CartDrawer = () => {
       top: 0,
       right: 0,
       transform: "translateX(0)",
+      zIndex: 100000,
     },
     to: {
       position: "fixed",
@@ -226,6 +224,7 @@ const CartDrawer = () => {
       opacity: isCartDrawerOpen ? 1 : 0,
       height: isCartDrawerOpen ? height : 0,
       transform: isCartDrawerOpen ? "translateX(0px)" : "translateX(1000px)",
+      zIndex: 100000,
     },
   })
 
