@@ -12,7 +12,7 @@ import { FaSearch, FaFacebookF, FaBars } from "react-icons/fa"
 import { useClickAway } from "react-use"
 import { TiSocialInstagram } from "react-icons/ti"
 import DesktopNavigation from "./desktopNavigation"
-import CartIcon from "./cart-icon"
+import CartIcon from "./cart-drawer/cart-icon"
 
 const Component = styled.header`
   font-family: var(--sub-heading-font);
