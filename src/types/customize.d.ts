@@ -4,6 +4,7 @@ export interface ContentfulProduct {
   handle: string
   fitDimensions: string
   variants: ContentfulProductVariant[]
+  casesAvailable: string[]
 }
 
 export interface ContentfulProductVariant {

@@ -581,6 +581,7 @@ const ProductCustomizable = ({
                 caseCollection={caseCollection}
                 selectedCase={selectedCase}
                 setSelectedCase={setSelectedCase}
+                casesAvailable={contentfulProduct.casesAvailable}
               />
             </div>
           )}
@@ -598,6 +599,7 @@ export const query = graphql`
       handle
       frameWidth
       fitDimensions
+      casesAvailable
       variants {
         colorName
         sku

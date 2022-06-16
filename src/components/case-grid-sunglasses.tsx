@@ -112,12 +112,13 @@ const CaseGridSunglasses = (props: {
   selectedCase: ShopifyVariant
   setSelectedCase: (variant: ShopifyVariant) => void
   caseCollection: Product[]
+  casesAvailable: string[]
 }) => {
-  const { selectedCase, setSelectedCase, caseCollection } = props
+  const { selectedCase, setSelectedCase, caseCollection, casesAvailable } =
+    props
 
   const formatTitle = (str: string) => {
-    let spl = str.split("AO")[0]
-    return spl.slice(0, -2)
+    return str.split(" - AO")[0]
   }
 
   const formatMoney = (price: string) => {
@@ -137,50 +138,54 @@ const CaseGridSunglasses = (props: {
       <div className="container">
         {caseCollection &&
           caseCollection.map((product: Product) => {
-            return (
-              <div key={product.id} className="product-flex">
-                <div className="case-image">
-                  {product.featuredImage?.localFile ? (
-                    <GatsbyImage
-                      image={
-                        product.featuredImage.localFile.childImageSharp
-                          .gatsbyImageData
-                      }
-                      alt={product.title}
-                    ></GatsbyImage>
-                  ) : (
-                    <StaticImage
-                      src="../images/product-no-image.jpg"
-                      alt={product.title}
-                    ></StaticImage>
-                  )}
+            if (casesAvailable.includes(formatTitle(product.title))) {
+              return (
+                <div key={product.id} className="product-flex">
+                  <div className="case-image">
+                    {product.featuredImage?.localFile ? (
+                      <GatsbyImage
+                        image={
+                          product.featuredImage.localFile.childImageSharp
+                            .gatsbyImageData
+                        }
+                        alt={product.title}
+                      ></GatsbyImage>
+                    ) : (
+                      <StaticImage
+                        src="../images/product-no-image.jpg"
+                        alt={product.title}
+                      ></StaticImage>
+                    )}
+                  </div>
+                  <div>
+                    <p className="title">{formatTitle(product.title)}</p>
+                  </div>
+                  <div>
+                    <p className="price">
+                      {formatMoney(product.variants[0].price)}
+                    </p>
+                  </div>
+                  <div>
+                    <label className="radio-container">
+                      <input
+                        type="radio"
+                        name="case-select"
+                        id={`case-${product.title}`}
+                        aria-label={product.title}
+                        onChange={() => handleChange(product.variants[0])}
+                        checked={
+                          product.variants[0].storefrontId ===
+                          selectedCase.storefrontId
+                        }
+                      />
+                      <span className="checkmark"></span>
+                    </label>
+                  </div>
                 </div>
-                <div>
-                  <p className="title">{formatTitle(product.title)}</p>
-                </div>
-                <div>
-                  <p className="price">
-                    {formatMoney(product.variants[0].price)}
-                  </p>
-                </div>
-                <div>
-                  <label className="radio-container">
-                    <input
-                      type="radio"
-                      name="case-select"
-                      id={`case-${product.title}`}
-                      aria-label={product.title}
-                      onChange={() => handleChange(product.variants[0])}
-                      checked={
-                        product.variants[0].storefrontId ===
-                        selectedCase.storefrontId
-                      }
-                    />
-                    <span className="checkmark"></span>
-                  </label>
-                </div>
-              </div>
-            )
+              )
+            } else {
+              return null
+            }
           })}
       </div>
     </Component>

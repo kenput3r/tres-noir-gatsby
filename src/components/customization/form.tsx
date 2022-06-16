@@ -229,11 +229,12 @@ const Form = ({
         }
         break
       case 3:
-        // if Bifocal and Polarized or Gradient Tint, disable Hi-Index
+        // if Bifocal and Polarized or Gradient Tint or Transitions, disable Hi-Index
         if (
-          selectedVariants.step1.product.title === "Bifocal" &&
-          (selectedVariants.step2.product.title === "Polarized" ||
-            selectedVariants.step2.product.title === "Gradient Tint")
+          (selectedVariants.step1.product.title === "Bifocal" &&
+            (selectedVariants.step2.product.title === "Polarized" ||
+              selectedVariants.step2.product.title === "Gradient Tint")) ||
+          selectedVariants.step2.product.title === "Transitions"
         ) {
           blockedSelections.push("Hi-Index")
         }
