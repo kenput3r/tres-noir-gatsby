@@ -45,6 +45,7 @@ const Form = ({
   const [filteredCollection, setFilteredCollection] = useState<string[]>([])
 
   const handleChange = (
+    evt: React.ChangeEvent<HTMLInputElement> | null,
     variant: ShopifyVariant,
     isSetFromEvent: boolean = true
   ) => {
@@ -70,11 +71,94 @@ const Form = ({
       ...hasSavedCustomized,
       [`step${currentStep}`]: isSetFromEvent,
     })
-    setSelectedVariants({
-      ...selectedVariants,
-      [`step${currentStep}`]: variant,
-    })
+    if (currentStep === 4) {
+      const checked =
+        isSetFromEvent === false
+          ? true
+          : evt !== null
+          ? evt.target.checked
+          : false
+      const name = evt?.target.getAttribute("name") as string
+      if (checked) {
+        toggleAntiReflective(name, checked)
+
+        // no coating
+        if (name === "No Coating") {
+          setSelectedVariants({
+            ...selectedVariants,
+            [`step${currentStep}`]: [variant],
+          })
+        } else {
+          const found = selectedVariants.step4.find(
+            el => variant.sku === el.sku
+          )
+          if (!found) {
+            if (
+              selectedVariants.step4.length === 1 &&
+              selectedVariants.step4[0].price === "0.00"
+            ) {
+              setSelectedVariants({
+                ...selectedVariants,
+                [`step${currentStep}`]: [variant],
+              })
+            } else {
+              // remove no coating
+              setSelectedVariants({
+                ...selectedVariants,
+                [`step${currentStep}`]: [...selectedVariants.step4, variant],
+              })
+            }
+          }
+        }
+      } else {
+        // remove
+        toggleAntiReflective(name, checked)
+        // do not let removal of one
+        if (selectedVariants.step4.length === 1) {
+          setSelectedVariants({
+            ...selectedVariants,
+            [`step${currentStep}`]: [shopifyCollection.products[0].variants[0]],
+          })
+        } else {
+          const arr = selectedVariants.step4
+          const index = arr.findIndex(el => variant.sku === el.sku)
+          if (index !== -1) arr.splice(index, 1)
+          setSelectedVariants({
+            ...selectedVariants,
+            [`step${currentStep}`]: arr,
+          })
+        }
+      }
+    } else {
+      setSelectedVariants({
+        ...selectedVariants,
+        [`step${currentStep}`]: variant,
+      })
+    }
   }
+
+  const toggleAntiReflective = (name: string | null, checked: boolean) => {
+    let blockedSelections: string[] = []
+    if (checked) {
+      if (name && name.includes("Anti-Reflective")) {
+        if (name === "Anti-Reflective - Standard") {
+          blockedSelections.push("Anti-Reflective Coat - Premium")
+        } else {
+          blockedSelections.push("Anti-Reflective - Standard")
+        }
+      } else if (
+        name &&
+        !name.includes("Anti-Reflective") &&
+        name !== "No Coating"
+      ) {
+        blockedSelections = [...filteredCollection]
+      } else if (name && name === "No Coating") {
+        blockedSelections = []
+      }
+    }
+    setFilteredCollection([...new Set(blockedSelections)])
+  }
+
   const handleRx = (evt: ChangeEvent<HTMLSelectElement>) => {
     clearErrors(evt)
     rxInfoDispatch({ type: evt.target.id, payload: evt.target.value })
@@ -85,7 +169,6 @@ const Form = ({
     // disable axis whether a cyl value is present or not
     if (id.includes("cyl")) {
       let subId = id.split("-")[0]
-      console.log(subId)
       if (evt.target.value !== "0.00") {
         errorRefs.current[`select-${subId}-axis`].classList.remove("disable")
         return
@@ -200,9 +283,8 @@ const Form = ({
   }
 
   useEffect(() => {
-    // console.log("hasSaved", hasSavedCustomized[`step${currentStep}`])
     if (hasSavedCustomized[`step${currentStep}`] === false) {
-      handleChange(shopifyCollection.products[0].variants[0], false)
+      handleChange(null, shopifyCollection.products[0].variants[0], false)
     }
   }, [])
 
@@ -262,115 +344,140 @@ const Form = ({
     setFilteredCollection([...new Set(blockedSelections)])
   }, [currentStep])
 
+  const findStep4 = (id: string) => {
+    const find = selectedVariants.step4.find(el => el.storefrontId === id)
+    let found: boolean = false
+    if (find) found = true
+    return found
+  }
+
   return (
     <Component>
       <div className="step-header">
         <p>Choose your {stepMap.get(currentStep)}</p>
       </div>
-      {shopifyCollection.products.map((product: ShopifyProduct, index) => (
-        <React.Fragment key={product.id}>
-          {product.variants.length === 1 ? (
-            <div
-              className={`product-option ${
-                filteredCollection.includes(product.title) ? "inactive" : ""
-              }`}
-            >
-              <GatsbyImage
-                image={
-                  product.images[0].localFile.childImageSharp.gatsbyImageData
-                }
-                alt={product.images[0].altText || product.title}
-              />
-              <div className="product-description">
-                <h4>
-                  {product.title}{" "}
-                  <span className="price">
-                    {` + $${product.variants[0].price}`}
-                  </span>
-                </h4>
-                <p>{product.description}</p>
+      {shopifyCollection.products.map((product: ShopifyProduct, index) => {
+        // fix variant.image is null
+        if (product.variants[0].image === null) {
+          product.variants[0].image = product.images[0]
+        }
+        return (
+          <React.Fragment key={product.id}>
+            {product.variants.length === 1 ? (
+              <div
+                className={`product-option ${
+                  filteredCollection.includes(product.title) ? "inactive" : ""
+                }`}
+              >
+                <GatsbyImage
+                  image={
+                    product.images[0].localFile.childImageSharp.gatsbyImageData
+                  }
+                  alt={product.images[0].altText || product.title}
+                />
+                <div className="product-description">
+                  <h4>
+                    {product.title}{" "}
+                    <span className="price">
+                      {` + $${product.variants[0].price}`}
+                    </span>
+                  </h4>
+                  <p>{product.description}</p>
+                </div>
+                {currentStep === 4 ? (
+                  <input
+                    type="checkbox"
+                    name={product.title}
+                    id={product.id}
+                    aria-label={product.title}
+                    onChange={evt => handleChange(evt, product.variants[0])}
+                    checked={findStep4(product.variants[0].storefrontId)}
+                  />
+                ) : (
+                  <input
+                    type="radio"
+                    name={`step${currentStep}`}
+                    id={product.id}
+                    aria-label={product.title}
+                    onChange={evt => handleChange(evt, product.variants[0])}
+                    checked={
+                      product.variants[0].storefrontId ===
+                      selectedVariants[`step${currentStep}`].storefrontId
+                    }
+                  />
+                )}
+                {!filteredCollection.includes(product.title) ? (
+                  <div className="checkmark" />
+                ) : (
+                  <div className="checkmark disabled" />
+                )}
               </div>
-              <input
-                type="radio"
-                name={`step${currentStep}`}
-                id={product.id}
-                aria-label={product.title}
-                onChange={() => handleChange(product.variants[0])}
-                checked={
-                  product.variants[0].storefrontId ===
-                  selectedVariants[`step${currentStep}`].storefrontId
-                }
-              />
-              {!filteredCollection.includes(product.title) ? (
-                <div className="checkmark" />
-              ) : (
-                <div className="checkmark disabled" />
-              )}
-            </div>
-          ) : (
-            <div className={`product-option with-variants`}>
-              <GatsbyImage
-                image={
-                  product.images[0].localFile.childImageSharp.gatsbyImageData
-                }
-                alt={product.images[0].altText || product.title}
-              />
-              <div className="product-description">
-                <h4>{product.title}</h4>
-                <p>{product.description}</p>
-              </div>
-              <ul className="variants">
-                {product.variants.map((variant: ShopifyVariant) => (
-                  <li
-                    key={variant.storefrontId}
-                    className={`${
-                      filteredCollection.includes(
+            ) : (
+              <div className={`product-option with-variants`}>
+                <GatsbyImage
+                  image={
+                    product.images[0].localFile.childImageSharp.gatsbyImageData
+                  }
+                  alt={product.images[0].altText || product.title}
+                />
+                <div className="product-description">
+                  <h4>{product.title}</h4>
+                  <p>{product.description}</p>
+                </div>
+                <ul className="variants">
+                  {product.variants.map((variant: ShopifyVariant) => (
+                    <li
+                      key={variant.storefrontId}
+                      className={`${
+                        filteredCollection.includes(
+                          `${product.title}-${variant.title}`
+                        )
+                          ? "inactive"
+                          : ""
+                      }`}
+                    >
+                      <GatsbyImage
+                        image={
+                          variant.image.localFile.childImageSharp
+                            .gatsbyImageData
+                        }
+                        alt={variant.title}
+                        className="variant-image"
+                      />
+                      <div className="variant-description">
+                        <h6>
+                          {variant.title}
+                          <span className="price">
+                            {` + $${product.variants[0].price}`}
+                          </span>
+                        </h6>
+                      </div>
+                      <input
+                        type="radio"
+                        name={`step${currentStep}`}
+                        id={product.id}
+                        aria-label={product.title}
+                        onChange={evt => handleChange(evt, variant)}
+                        checked={
+                          variant.storefrontId ===
+                          selectedVariants[`step${currentStep}`].storefrontId
+                        }
+                      />
+                      {!filteredCollection.includes(
                         `${product.title}-${variant.title}`
-                      )
-                        ? "inactive"
-                        : ""
-                    }`}
-                  >
-                    <GatsbyImage
-                      image={
-                        variant.image.localFile.childImageSharp.gatsbyImageData
-                      }
-                      alt={variant.title}
-                      className="variant-image"
-                    />
-                    <div className="variant-description">
-                      <h6>
-                        {variant.title}
-                        <span className="price">
-                          {` + $${product.variants[0].price}`}
-                        </span>
-                      </h6>
-                    </div>
-                    <input
-                      type="radio"
-                      name={`step${currentStep}`}
-                      id={product.id}
-                      aria-label={product.title}
-                      onChange={() => handleChange(variant)}
-                      checked={
-                        variant.storefrontId ===
-                        selectedVariants[`step${currentStep}`].storefrontId
-                      }
-                    />
-                    {!filteredCollection.includes(
-                      `${product.title}-${variant.title}`
-                    ) ? (
-                      <div className="checkmark" />
-                    ) : (
-                      <div className="checkmark disabled" />
-                    )}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-        </React.Fragment>
-      ))}
+                      ) ? (
+                        <div className="checkmark" />
+                      ) : (
+                        <div className="checkmark disabled" />
+                      )}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </React.Fragment>
+        )
+      })}
       {(currentStep === 1 &&
         selectedVariants.step1.product.title !== "Non-Prescription Lens") ||
       selectedVariants.step1.product.title === "" ? (

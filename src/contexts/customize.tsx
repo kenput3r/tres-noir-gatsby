@@ -22,7 +22,7 @@ const defaultContext = {
         },
       },
       legacyResourceId: "",
-      price: 0,
+      price: "0.00",
       product: {
         title: "",
         description: "",
@@ -55,7 +55,7 @@ const defaultContext = {
         },
       },
       legacyResourceId: "",
-      price: 0,
+      price: "0.00",
       product: {
         title: "",
         description: "",
@@ -88,7 +88,7 @@ const defaultContext = {
         },
       },
       legacyResourceId: "",
-      price: 0,
+      price: "0.00",
       product: {
         title: "",
         description: "",
@@ -110,39 +110,41 @@ const defaultContext = {
       sku: "",
       title: "",
     },
-    step4: {
-      image: {
-        originalSrc: "",
-        altText: "",
-        localFile: {
-          childImageSharp: {
-            gatsbyImageData: {},
+    step4: [
+      {
+        image: {
+          originalSrc: "",
+          altText: "",
+          localFile: {
+            childImageSharp: {
+              gatsbyImageData: {},
+            },
           },
         },
-      },
-      legacyResourceId: "",
-      price: 0,
-      product: {
-        title: "",
-        description: "",
-        onlineStoreUrl: "",
-        productType: "",
-        collections: {
-          handle: "",
+        legacyResourceId: "",
+        price: "0.00",
+        product: {
           title: "",
+          description: "",
+          onlineStoreUrl: "",
+          productType: "",
+          collections: {
+            handle: "",
+            title: "",
+          },
+          vendor: "",
         },
-        vendor: "",
+        selectedOptions: [
+          {
+            name: "",
+            value: "",
+          },
+        ],
+        storefrontId: "",
+        sku: "",
+        title: "",
       },
-      selectedOptions: [
-        {
-          name: "",
-          value: "",
-        },
-      ],
-      storefrontId: "",
-      sku: "",
-      title: "",
-    },
+    ],
     case: {
       image: {
         originalSrc: "",
@@ -154,7 +156,7 @@ const defaultContext = {
         },
       },
       legacyResourceId: "",
-      price: 0,
+      price: "0.00",
       product: {
         title: "",
         description: "",
@@ -213,7 +215,7 @@ export const CustomizeProvider = ({ children }: { children: ReactChild }) => {
         },
       },
       legacyResourceId: "",
-      price: 0,
+      price: "0.00",
       product: {
         title: "",
         description: "",
@@ -246,7 +248,7 @@ export const CustomizeProvider = ({ children }: { children: ReactChild }) => {
         },
       },
       legacyResourceId: "",
-      price: 0,
+      price: "0.00",
       product: {
         title: "",
         description: "",
@@ -279,7 +281,7 @@ export const CustomizeProvider = ({ children }: { children: ReactChild }) => {
         },
       },
       legacyResourceId: "",
-      price: 0,
+      price: "0.00",
       product: {
         title: "",
         description: "",
@@ -301,39 +303,41 @@ export const CustomizeProvider = ({ children }: { children: ReactChild }) => {
       sku: "",
       title: "",
     },
-    step4: {
-      image: {
-        originalSrc: "",
-        altText: "",
-        localFile: {
-          childImageSharp: {
-            gatsbyImageData: {},
+    step4: [
+      {
+        image: {
+          originalSrc: "",
+          altText: "",
+          localFile: {
+            childImageSharp: {
+              gatsbyImageData: {},
+            },
           },
         },
-      },
-      legacyResourceId: "",
-      price: 0,
-      product: {
-        title: "",
-        description: "",
-        onlineStoreUrl: "",
-        productType: "",
-        collections: {
-          handle: "",
+        legacyResourceId: "",
+        price: "0.00",
+        product: {
           title: "",
+          description: "",
+          onlineStoreUrl: "",
+          productType: "",
+          collections: {
+            handle: "",
+            title: "",
+          },
+          vendor: "",
         },
-        vendor: "",
+        selectedOptions: [
+          {
+            name: "",
+            value: "",
+          },
+        ],
+        storefrontId: "",
+        sku: "",
+        title: "",
       },
-      selectedOptions: [
-        {
-          name: "",
-          value: "",
-        },
-      ],
-      storefrontId: "",
-      sku: "",
-      title: "",
-    },
+    ],
     case: {
       image: {
         originalSrc: "",
@@ -345,7 +349,7 @@ export const CustomizeProvider = ({ children }: { children: ReactChild }) => {
         },
       },
       legacyResourceId: "",
-      price: 0,
+      price: "0.00",
       product: {
         title: "",
         description: "",
@@ -380,7 +384,7 @@ export const CustomizeProvider = ({ children }: { children: ReactChild }) => {
             },
           },
         },
-        price: 0,
+        price: "0.00",
         product: {
           title: "",
           description: "",
@@ -404,7 +408,7 @@ export const CustomizeProvider = ({ children }: { children: ReactChild }) => {
             },
           },
         },
-        price: 0,
+        price: "0.00",
         product: {
           title: "",
           description: "",
@@ -428,7 +432,7 @@ export const CustomizeProvider = ({ children }: { children: ReactChild }) => {
             },
           },
         },
-        price: 0,
+        price: "0.00",
         product: {
           title: "",
           description: "",
@@ -443,30 +447,41 @@ export const CustomizeProvider = ({ children }: { children: ReactChild }) => {
         sku: "",
         title: "",
       },
-      step4: {
-        image: {
-          altText: "",
-          localFile: {
-            childImageSharp: {
-              gatsbyImageData: {},
+      step4: [
+        {
+          image: {
+            originalSrc: "",
+            altText: "",
+            localFile: {
+              childImageSharp: {
+                gatsbyImageData: {},
+              },
             },
           },
-        },
-        price: 0,
-        product: {
-          title: "",
-          description: "",
-        },
-        selectedOptions: [
-          {
-            name: "",
-            value: "",
+          legacyResourceId: "",
+          price: "0.00",
+          product: {
+            title: "",
+            description: "",
+            onlineStoreUrl: "",
+            productType: "",
+            collections: {
+              handle: "",
+              title: "",
+            },
+            vendor: "",
           },
-        ],
-        storefrontId: "",
-        sku: "",
-        title: "",
-      },
+          selectedOptions: [
+            {
+              name: "",
+              value: "",
+            },
+          ],
+          storefrontId: "",
+          sku: "",
+          title: "",
+        },
+      ],
       case: {
         image: {
           altText: "",
@@ -476,7 +491,7 @@ export const CustomizeProvider = ({ children }: { children: ReactChild }) => {
             },
           },
         },
-        price: 0,
+        price: "0.00",
         product: {
           title: "",
           description: "",

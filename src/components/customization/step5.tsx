@@ -213,20 +213,20 @@ const Step5 = (props: {
           },
         ],
       },
-      {
-        variantId: step4.storefrontId,
-        quantity: 1,
-        customAttributes: [
-          {
-            key: "customizationId",
-            value: matchingKey,
-          },
-          {
-            key: "customizationStep",
-            value: "4",
-          },
-        ],
-      },
+      // {
+      //   variantId: step4.storefrontId,
+      //   quantity: 1,
+      //   customAttributes: [
+      //     {
+      //       key: "customizationId",
+      //       value: matchingKey,
+      //     },
+      //     {
+      //       key: "customizationStep",
+      //       value: "4",
+      //     },
+      //   ],
+      // },
       {
         variantId: selectedVariants.case.storefrontId,
         quantity: 1,
@@ -242,6 +242,23 @@ const Step5 = (props: {
         ],
       },
     ]
+    // updated step 4
+    step4.forEach(el => {
+      stepItems.push({
+        variantId: el.storefrontId,
+        quantity: 1,
+        customAttributes: [
+          {
+            key: "customizationId",
+            value: matchingKey,
+          },
+          {
+            key: "customizationStep",
+            value: "4",
+          },
+        ],
+      })
+    })
     const frameVariant = {
       variantId: variant.storefrontId,
       quantity: 1,
@@ -327,19 +344,33 @@ const Step5 = (props: {
           price: step3.price,
           compareAtPrice: "",
         },
-        {
-          title: step4.title,
-          legacyResourceId: step4.legacyResourceId,
-          sku: step4.sku,
-          productType: step4.product.productType,
-          image: step4?.image?.originalSrc ? step4.image?.originalSrc : "",
-          url: step4.product.onlineStoreUrl,
-          vendor: step4.product.vendor,
-          price: step4.price,
-          compareAtPrice: "",
-        },
+        // {
+        //   title: step4.title,
+        //   legacyResourceId: step4.legacyResourceId,
+        //   sku: step4.sku,
+        //   productType: step4.product.productType,
+        //   image: step4?.image?.originalSrc ? step4.image?.originalSrc : "",
+        //   url: step4.product.onlineStoreUrl,
+        //   vendor: step4.product.vendor,
+        //   price: step4.price,
+        //   compareAtPrice: "",
+        // },
       ],
     }
+    step4.forEach(el => {
+      productData.addOns.push({
+        title: el.title,
+        legacyResourceId: el.legacyResourceId,
+        sku: el.sku,
+        productType: el.product.productType,
+        image: el?.image?.originalSrc ? el.image?.originalSrc : "",
+        url: el.product.onlineStoreUrl,
+        vendor: el.product.vendor,
+        price: el.price,
+        compareAtPrice: "",
+      })
+    })
+    // add cases
     addedCustomizedToCartGTMEvent(productData)
   }
 
@@ -347,7 +378,7 @@ const Step5 = (props: {
     <Component>
       <p>REVIEW YOUR CUSTOM GLASSES</p>
 
-      {Array.from({ length: 4 }, (_, i) => (
+      {Array.from({ length: 3 }, (_, i) => (
         <div key={i} className="product-option">
           <GatsbyImage
             image={
@@ -372,6 +403,37 @@ const Step5 = (props: {
             className="edit-btn"
             type="button"
             onClick={() => setCurrentStep(i + 1)}
+          >
+            <StaticImage
+              src="../../images/edit.png"
+              alt="Edit Line Item"
+              placeholder="tracedSVG"
+              style={{ marginBottom: 0, maxWidth: 26 }}
+            />
+          </button>
+        </div>
+      ))}
+
+      {selectedVariants.step4.map((el, i) => (
+        <div key={i} className="product-option">
+          <GatsbyImage
+            image={
+              el.image.localFile.childImageSharp
+                .gatsbyImageData as IGatsbyImageData
+            }
+            alt={el.image.altText || "Placeholder"}
+          />
+          <div className="product-description">
+            <h4>
+              {el.product.title} <span className="price">+ ${el.price}</span>
+            </h4>
+            <p>{el.product.description}</p>
+          </div>
+
+          <button
+            className="edit-btn"
+            type="button"
+            onClick={() => setCurrentStep(4)}
           >
             <StaticImage
               src="../../images/edit.png"
