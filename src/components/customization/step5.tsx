@@ -111,6 +111,7 @@ const Step5 = (props: {
   productImage: any
   resumedItem: any
   completeVariant: any
+  casesAvailable: string[]
 }) => {
   const {
     productTitle,
@@ -119,6 +120,7 @@ const Step5 = (props: {
     productImage,
     resumedItem,
     completeVariant,
+    casesAvailable,
   } = props
   const {
     currentStep,
@@ -409,7 +411,7 @@ const Step5 = (props: {
           {isAddingToCart ? <Spinner /> : buttonLabel()}
         </button>
       </div>
-      <CaseGridCustomize />
+      <CaseGridCustomize casesAvailable={casesAvailable} />
     </Component>
   )
 }

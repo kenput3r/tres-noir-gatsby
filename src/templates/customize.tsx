@@ -196,6 +196,7 @@ const Customize = ({
                   productImage={currentImage.data}
                   resumedItem={getResumedItem()}
                   completeVariant={variant}
+                  casesAvailable={contentfulProduct.casesAvailable}
                 />
               )}
             </div>
@@ -213,6 +214,7 @@ export const query = graphql`
     contentfulProduct(handle: { eq: $handle }) {
       handle
       fitDimensions
+      casesAvailable
       variants {
         colorName
         sku
