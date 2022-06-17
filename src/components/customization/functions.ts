@@ -1,5 +1,5 @@
 import { Dispatch, SetStateAction } from "react"
-import { SelectedVariants, ShopifyVariant } from "../../types/global"
+import { SelectedVariants } from "../../types/global"
 
 export const changeImage = (
   currentStep: number,

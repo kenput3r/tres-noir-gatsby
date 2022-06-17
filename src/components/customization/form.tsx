@@ -7,6 +7,7 @@ import React, {
 } from "react"
 import { Link } from "gatsby"
 import { GatsbyImage } from "gatsby-plugin-image"
+import { FaQuestionCircle } from "react-icons/fa"
 import { Component } from "./styles"
 import {
   ShopifyCollection,
@@ -15,7 +16,6 @@ import {
 } from "../../types/global"
 import { CustomizeContext } from "../../contexts/customize"
 import { RxInfoContext } from "../../contexts/rxInfo"
-import PrescriptionForm from "./prescription-form"
 
 const Form = ({
   shopifyCollection,
@@ -45,7 +45,6 @@ const Form = ({
   const [filteredCollection, setFilteredCollection] = useState<string[]>([])
 
   const handleChange = (
-    evt: React.ChangeEvent<HTMLInputElement> | null,
     variant: ShopifyVariant,
     isSetFromEvent: boolean = true
   ) => {
@@ -71,102 +70,11 @@ const Form = ({
       ...hasSavedCustomized,
       [`step${currentStep}`]: isSetFromEvent,
     })
-    if (currentStep === 4) {
-      const blockedSelections: string[] = []
-      if (
-        selectedVariants.step3.product.title === "Poly Carbonate" ||
-        selectedVariants.step3.product.title === "Hi-Index"
-      ) {
-        blockedSelections.push("Scratch Coat", "UV Coat")
-      }
-      const checked =
-        isSetFromEvent === false
-          ? true
-          : evt !== null
-          ? evt.target.checked
-          : false
-      const name = evt?.target.getAttribute("name") as string
-      if (checked) {
-        toggleAntiReflective(blockedSelections, name, checked)
-
-        // no coating
-        if (name === "No Coating") {
-          setSelectedVariants({
-            ...selectedVariants,
-            [`step${currentStep}`]: [variant],
-          })
-        } else {
-          const found = selectedVariants.step4.find(
-            el => variant.sku === el.sku
-          )
-          if (!found) {
-            if (
-              selectedVariants.step4.length === 1 &&
-              selectedVariants.step4[0].price === "0.00"
-            ) {
-              setSelectedVariants({
-                ...selectedVariants,
-                [`step${currentStep}`]: [variant],
-              })
-            } else {
-              // remove no coating
-              setSelectedVariants({
-                ...selectedVariants,
-                [`step${currentStep}`]: [...selectedVariants.step4, variant],
-              })
-            }
-          }
-        }
-      } else {
-        // remove
-        toggleAntiReflective(blockedSelections, name, checked)
-        // do not let removal of one
-        if (selectedVariants.step4.length === 1) {
-          setSelectedVariants({
-            ...selectedVariants,
-            [`step${currentStep}`]: [shopifyCollection.products[0].variants[0]],
-          })
-        } else {
-          const arr = selectedVariants.step4
-          const index = arr.findIndex(el => variant.sku === el.sku)
-          if (index !== -1) arr.splice(index, 1)
-          setSelectedVariants({
-            ...selectedVariants,
-            [`step${currentStep}`]: arr,
-          })
-        }
-      }
-    } else {
-      setSelectedVariants({
-        ...selectedVariants,
-        [`step${currentStep}`]: variant,
-      })
-    }
+    setSelectedVariants({
+      ...selectedVariants,
+      [`step${currentStep}`]: variant,
+    })
   }
-
-  const toggleAntiReflective = (
-    blockedSelections: string[],
-    name: string | null,
-    checked: boolean
-  ) => {
-    if (checked) {
-      if (name && name.includes("Anti-Reflective")) {
-        if (name === "Anti-Reflective - Standard") {
-          blockedSelections.push("Anti-Reflective Coat - Premium")
-        } else {
-          blockedSelections.push("Anti-Reflective - Standard")
-        }
-      } else if (
-        name &&
-        !name.includes("Anti-Reflective") &&
-        name !== "No Coating"
-      ) {
-        blockedSelections = [...filteredCollection]
-      }
-    }
-    setFilteredCollection([...new Set(blockedSelections)])
-  }
-
   const handleRx = (evt: ChangeEvent<HTMLSelectElement>) => {
     clearErrors(evt)
     rxInfoDispatch({ type: evt.target.id, payload: evt.target.value })
@@ -177,6 +85,7 @@ const Form = ({
     // disable axis whether a cyl value is present or not
     if (id.includes("cyl")) {
       let subId = id.split("-")[0]
+      console.log(subId)
       if (evt.target.value !== "0.00") {
         errorRefs.current[`select-${subId}-axis`].classList.remove("disable")
         return
@@ -209,7 +118,6 @@ const Form = ({
     let msg = messageRef.current.querySelector(`#error-${id}`)
     if (msg) msg.remove()
   }
-
   const range = (
     start: number,
     end: number,
@@ -224,13 +132,11 @@ const Form = ({
     }
     return arr
   }
-
   const removeChildNodes = (parent: HTMLElement) => {
     while (parent.firstChild) {
       parent.removeChild(parent.firstChild)
     }
   }
-
   const verifyForm = () => {
     let isValid = true
     let messages: HTMLElement[] = []
@@ -275,7 +181,6 @@ const Form = ({
     setIsFormValid(isValid)
     return isValid
   }
-
   const isNowValid = () => {
     // will re enable the button once all form errors are cleared
     if (isFormValid) return
@@ -283,7 +188,6 @@ const Form = ({
       continueBtn.current?.classList.remove("disable")
     }
   }
-
   const handleSteps = (num: number) => {
     if (currentStep !== 1 || !isRxAble) {
       setCurrentStep(currentStep + num)
@@ -296,27 +200,9 @@ const Form = ({
   }
 
   useEffect(() => {
-    // remove lens coatings that are no longer eligible if step3 changes
-    if (
-      (currentStep === 4 &&
-        selectedVariants.step3.product.title === "Poly Carbonate") ||
-      selectedVariants.step3.product.title === "Hi-Index"
-    ) {
-      const coatings: string[] = ["Scratch Coat", "UV Coat"]
-      setSelectedVariants({
-        ...selectedVariants,
-        ["step4"]: [
-          ...selectedVariants.step4.filter(
-            el => !coatings.includes(el.product.title)
-          ),
-        ],
-      })
-    }
-  }, [])
-
-  useEffect(() => {
+    // console.log("hasSaved", hasSavedCustomized[`step${currentStep}`])
     if (hasSavedCustomized[`step${currentStep}`] === false) {
-      handleChange(null, shopifyCollection.products[0].variants[0], false)
+      handleChange(shopifyCollection.products[0].variants[0], false)
     }
   }, [])
 
@@ -368,19 +254,6 @@ const Form = ({
         ) {
           blockedSelections.push("Scratch Coat", "UV Coat")
         }
-        const selectedCoatings = selectedVariants.step4.map(
-          el => el.product.title
-        )
-        if (
-          selectedCoatings.includes("Anti-Reflective - Standard") ||
-          selectedCoatings.includes("Anti-Reflective Coat - Premium")
-        ) {
-          if (selectedCoatings.includes("Anti-Reflective - Standard")) {
-            blockedSelections.push("Anti-Reflective Coat - Premium")
-          } else {
-            blockedSelections.push("Anti-Reflective - Standard")
-          }
-        }
         break
       // if currentStep is 1 or 5, do nothing
       default:
@@ -389,154 +262,374 @@ const Form = ({
     setFilteredCollection([...new Set(blockedSelections)])
   }, [currentStep])
 
-  const findStep4Selections = (id: string) => {
-    const find = selectedVariants.step4.find(el => {
-      return el.storefrontId === id
-    })
-    let found: boolean = false
-    if (find) found = true
-    return found
-  }
-
   return (
     <Component>
       <div className="step-header">
         <p>Choose your {stepMap.get(currentStep)}</p>
       </div>
-      {shopifyCollection.products.map((product: ShopifyProduct, index) => {
-        // fix variant.image is null
-        if (product.variants[0].image === null) {
-          product.variants[0].image = product.images[0]
-        }
-        return (
-          <React.Fragment key={product.id}>
-            {product.variants.length === 1 ? (
-              <div
-                className={`product-option ${
-                  filteredCollection.includes(product.title) ? "inactive" : ""
-                }`}
-              >
-                <GatsbyImage
-                  image={
-                    product.images[0].localFile.childImageSharp.gatsbyImageData
-                  }
-                  alt={product.images[0].altText || product.title}
-                />
-                <div className="product-description">
-                  <h4>
-                    {product.title}{" "}
-                    <span className="price">
-                      {` + $${product.variants[0].price}`}
-                    </span>
-                  </h4>
-                  <p>{product.description}</p>
-                </div>
-                {currentStep === 4 ? (
-                  <input
-                    type="checkbox"
-                    name={product.title}
-                    id={product.id}
-                    aria-label={product.title}
-                    onChange={evt => handleChange(evt, product.variants[0])}
-                    checked={findStep4Selections(
-                      product.variants[0].storefrontId
-                    )}
-                  />
-                ) : (
-                  <input
-                    type="radio"
-                    name={`step${currentStep}`}
-                    id={product.id}
-                    aria-label={product.title}
-                    onChange={evt => handleChange(evt, product.variants[0])}
-                    checked={
-                      product.variants[0].storefrontId ===
-                      selectedVariants[`step${currentStep}`].storefrontId
-                    }
-                  />
-                )}
-                {!filteredCollection.includes(product.title) ? (
-                  <div className="checkmark" />
-                ) : (
-                  <div className="checkmark disabled" />
-                )}
+      {shopifyCollection.products.map((product: ShopifyProduct, index) => (
+        <React.Fragment key={product.id}>
+          {product.variants.length === 1 ? (
+            <div
+              className={`product-option ${
+                filteredCollection.includes(product.title) ? "inactive" : ""
+              }`}
+            >
+              <GatsbyImage
+                image={
+                  product.images[0].localFile.childImageSharp.gatsbyImageData
+                }
+                alt={product.images[0].altText || product.title}
+              />
+              <div className="product-description">
+                <h4>
+                  {product.title}{" "}
+                  <span className="price">
+                    {` + $${product.variants[0].price}`}
+                  </span>
+                </h4>
+                <p>{product.description}</p>
               </div>
-            ) : (
-              <div className={`product-option with-variants`}>
-                <GatsbyImage
-                  image={
-                    product.images[0].localFile.childImageSharp.gatsbyImageData
-                  }
-                  alt={product.images[0].altText || product.title}
-                />
-                <div className="product-description">
-                  <h4>{product.title}</h4>
-                  <p>{product.description}</p>
-                </div>
-                <ul className="variants">
-                  {product.variants.map((variant: ShopifyVariant) => (
-                    <li
-                      key={variant.storefrontId}
-                      className={`${
-                        filteredCollection.includes(
-                          `${product.title}-${variant.title}`
-                        )
-                          ? "inactive"
-                          : ""
-                      }`}
-                    >
-                      <GatsbyImage
-                        image={
-                          variant.image.localFile.childImageSharp
-                            .gatsbyImageData
-                        }
-                        alt={variant.title}
-                        className="variant-image"
-                      />
-                      <div className="variant-description">
-                        <h6>
-                          {variant.title}
-                          <span className="price">
-                            {` + $${product.variants[0].price}`}
-                          </span>
-                        </h6>
-                      </div>
-                      <input
-                        type="radio"
-                        name={`step${currentStep}`}
-                        id={product.id}
-                        aria-label={product.title}
-                        onChange={evt => handleChange(evt, variant)}
-                        checked={
-                          variant.storefrontId ===
-                          selectedVariants[`step${currentStep}`].storefrontId
-                        }
-                      />
-                      {!filteredCollection.includes(
+              <input
+                type="radio"
+                name={`step${currentStep}`}
+                id={product.id}
+                aria-label={product.title}
+                onChange={() => handleChange(product.variants[0])}
+                checked={
+                  product.variants[0].storefrontId ===
+                  selectedVariants[`step${currentStep}`].storefrontId
+                }
+              />
+              {!filteredCollection.includes(product.title) ? (
+                <div className="checkmark" />
+              ) : (
+                <div className="checkmark disabled" />
+              )}
+            </div>
+          ) : (
+            <div className={`product-option with-variants`}>
+              <GatsbyImage
+                image={
+                  product.images[0].localFile.childImageSharp.gatsbyImageData
+                }
+                alt={product.images[0].altText || product.title}
+              />
+              <div className="product-description">
+                <h4>{product.title}</h4>
+                <p>{product.description}</p>
+              </div>
+              <ul className="variants">
+                {product.variants.map((variant: ShopifyVariant) => (
+                  <li
+                    key={variant.storefrontId}
+                    className={`${
+                      filteredCollection.includes(
                         `${product.title}-${variant.title}`
-                      ) ? (
-                        <div className="checkmark" />
-                      ) : (
-                        <div className="checkmark disabled" />
-                      )}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-          </React.Fragment>
-        )
-      })}
+                      )
+                        ? "inactive"
+                        : ""
+                    }`}
+                  >
+                    <GatsbyImage
+                      image={
+                        variant.image.localFile.childImageSharp.gatsbyImageData
+                      }
+                      alt={variant.title}
+                      className="variant-image"
+                    />
+                    <div className="variant-description">
+                      <h6>
+                        {variant.title}
+                        <span className="price">
+                          {` + $${product.variants[0].price}`}
+                        </span>
+                      </h6>
+                    </div>
+                    <input
+                      type="radio"
+                      name={`step${currentStep}`}
+                      id={product.id}
+                      aria-label={product.title}
+                      onChange={() => handleChange(variant)}
+                      checked={
+                        variant.storefrontId ===
+                        selectedVariants[`step${currentStep}`].storefrontId
+                      }
+                    />
+                    {!filteredCollection.includes(
+                      `${product.title}-${variant.title}`
+                    ) ? (
+                      <div className="checkmark" />
+                    ) : (
+                      <div className="checkmark disabled" />
+                    )}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </React.Fragment>
+      ))}
       {(currentStep === 1 &&
         selectedVariants.step1.product.title !== "Non-Prescription Lens") ||
       selectedVariants.step1.product.title === "" ? (
-        <PrescriptionForm
-          errorRefs={errorRefs}
-          rxInfo={rxInfo}
-          handleRx={handleRx}
-          range={range}
-          selectedVariants={selectedVariants}
-        />
+        <div className="rx-info">
+          <div className="rx-box">
+            <div className="rx-col">
+              <p>Right Eye (OD)</p>
+              <div
+                className="rx-select"
+                ref={el => {
+                  errorRefs.current["select-right-sph"] = el
+                }}
+              >
+                <label htmlFor="right-sph">SPH</label>
+                <select
+                  id="right-sph"
+                  defaultValue={rxInfo.right.sph}
+                  onChange={evt => handleRx(evt)}
+                >
+                  {range(-20, 20, 0.25, "right-sph").map(el => {
+                    return (
+                      <React.Fragment key={`right-sph-${el}`}>
+                        <option value={el}>{el}</option>
+                      </React.Fragment>
+                    )
+                  })}
+                </select>
+              </div>
+              <div
+                className="rx-select"
+                ref={el => {
+                  errorRefs.current["select-right-cyl"] = el
+                }}
+              >
+                <label htmlFor="right-cyl">CYL</label>
+                <select
+                  id="right-cyl"
+                  defaultValue={rxInfo.right.cyl}
+                  onChange={evt => handleRx(evt)}
+                >
+                  {range(-20, 20, 0.25, "right-cyl").map(el => {
+                    return (
+                      <React.Fragment key={`right-cyl-${el}`}>
+                        <option value={el}>{el}</option>
+                      </React.Fragment>
+                    )
+                  })}
+                </select>
+              </div>
+              <div
+                className={
+                  rxInfo.right.cyl === "0.00"
+                    ? "rx-select disable"
+                    : "rx-select"
+                }
+                ref={el => {
+                  errorRefs.current["select-right-axis"] = el
+                }}
+              >
+                <label htmlFor="right-axis">Axis</label>
+                <select
+                  id="right-axis"
+                  defaultValue={rxInfo.right.axis}
+                  onChange={evt => handleRx(evt)}
+                >
+                  <option>{""}</option>
+                  {range(1, 180, 1, "right-axis").map(el => {
+                    return (
+                      <React.Fragment key={`right-axis-${el}`}>
+                        <option value={el}>{el}</option>
+                      </React.Fragment>
+                    )
+                  })}
+                </select>
+              </div>
+              <div
+                className={
+                  selectedVariants.step1.product.title === "Single Vision"
+                    ? "rx-select disable"
+                    : "rx-select"
+                }
+                ref={el => {
+                  errorRefs.current["select-right-add"] = el
+                }}
+              >
+                <label htmlFor="right-add">Add</label>
+                <select
+                  id="right-add"
+                  defaultValue={rxInfo.right.add}
+                  onChange={evt => handleRx(evt)}
+                >
+                  <option>{""}</option>
+                  {range(0, 3.5, 0.25, "right-add").map(el => {
+                    return (
+                      <React.Fragment key={`right-add-${el}`}>
+                        <option value={el}>{el}</option>
+                      </React.Fragment>
+                    )
+                  })}
+                </select>
+              </div>
+            </div>
+            <div className="rx-col">
+              <p>Left Eye (OS)</p>
+              <div
+                className="rx-select"
+                ref={el => {
+                  errorRefs.current["select-left-sph"] = el
+                }}
+              >
+                <label htmlFor="left-sph">SPH</label>
+                <select
+                  id="left-sph"
+                  defaultValue={rxInfo.left.sph}
+                  onChange={evt => handleRx(evt)}
+                >
+                  {range(-20, 20, 0.25, "left-sph").map(el => {
+                    return (
+                      <React.Fragment key={`left-sph-${el}`}>
+                        <option value={el}>{el}</option>
+                      </React.Fragment>
+                    )
+                  })}
+                </select>
+              </div>
+              <div
+                className="rx-select"
+                ref={el => {
+                  errorRefs.current["select-left-cyl"] = el
+                }}
+              >
+                <label htmlFor="left-cyl">CYL</label>
+                <select
+                  id="left-cyl"
+                  defaultValue={rxInfo.left.cyl}
+                  onChange={evt => handleRx(evt)}
+                >
+                  {range(-20, 20, 0.25, "left-cyl").map(el => {
+                    return (
+                      <React.Fragment key={`left-cyl-${el}`}>
+                        <option value={el}>{el}</option>
+                      </React.Fragment>
+                    )
+                  })}
+                </select>
+              </div>
+              <div
+                className={
+                  rxInfo.left.cyl === "0.00" ? "rx-select disable" : "rx-select"
+                }
+                ref={el => {
+                  errorRefs.current["select-left-axis"] = el
+                }}
+              >
+                <label htmlFor="left-axis">Axis</label>
+                <select
+                  id="left-axis"
+                  defaultValue={rxInfo.left.axis}
+                  onChange={evt => handleRx(evt)}
+                >
+                  <option>{""}</option>
+                  {range(1, 180, 1, "left-axis").map(el => (
+                    <React.Fragment key={`left-axis-${el}`}>
+                      <option value={el}>{el}</option>
+                    </React.Fragment>
+                  ))}
+                </select>
+              </div>
+              <div
+                className={
+                  selectedVariants.step1.product.title === "Single Vision"
+                    ? "rx-select disable"
+                    : "rx-select"
+                }
+                ref={el => {
+                  errorRefs.current["select-left-add"] = el
+                }}
+              >
+                <label htmlFor="left-add">Add</label>
+                <select
+                  id="left-add"
+                  defaultValue={rxInfo.left.add}
+                  onChange={evt => handleRx(evt)}
+                >
+                  <option>{""}</option>
+                  {range(0, 3.5, 0.25, "left-add").map(el => (
+                    <React.Fragment key={`left-add-${el}`}>
+                      <option value={el}>{el}</option>
+                    </React.Fragment>
+                  ))}
+                </select>
+              </div>
+            </div>
+          </div>
+          <div className="rx-box">
+            <div className="rx-col">
+              <div className="rx-select">
+                <div className="pd-box">
+                  <label htmlFor="right-pd">Pupillary Distance Right</label>
+                  <div>
+                    <FaQuestionCircle />
+                    <span className="tooltip-text">
+                      <a href="https://www.youtube.com/watch?v=OBuX8QEabZc">
+                        Need help measuring your pd? Click here!
+                      </a>
+                    </span>
+                  </div>
+                </div>
+                <select
+                  id="right-pd"
+                  defaultValue={rxInfo.right.pd}
+                  onChange={evt => handleRx(evt)}
+                >
+                  {range(46, 80, 1, "right-pd").map(el => {
+                    return (
+                      <React.Fragment key={`right-pd-${el}`}>
+                        <option value={el}>{el}</option>
+                      </React.Fragment>
+                    )
+                  })}
+                </select>
+              </div>
+            </div>
+            <div className="rx-col">
+              <div className="rx-select">
+                <div className="pd-box">
+                  <label htmlFor="left-pd">Pupillary Distance Left</label>
+                  <div>
+                    <FaQuestionCircle />
+                    <span className="tooltip-text">
+                      <a href="https://www.youtube.com/watch?v=OBuX8QEabZc">
+                        Need help measuring your pd? Click here!
+                      </a>
+                    </span>
+                  </div>
+                </div>
+                <select
+                  id="left-pd"
+                  defaultValue={rxInfo.left.pd}
+                  onChange={evt => handleRx(evt)}
+                >
+                  {range(46, 80, 1, "left-pd").map(el => {
+                    return (
+                      <React.Fragment key={`left-pd-${el}`}>
+                        <option value={el}>{el}</option>
+                      </React.Fragment>
+                    )
+                  })}
+                </select>
+              </div>
+            </div>
+          </div>
+          <div className="rx-prism">
+            <p>
+              Need prism corection? Email <span>info@tresnoir.com</span> or call{" "}
+              <span>714-656-4796</span>
+            </p>
+          </div>
+        </div>
       ) : null}
       <div className="row">
         {currentStep === 1 ? (
