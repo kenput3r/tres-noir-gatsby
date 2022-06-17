@@ -4,30 +4,22 @@ import styled from "styled-components"
 import { CartContext } from "../../contexts/cart"
 import { tnItem } from "../../types/checkout"
 import CartIcon from "./cart-icon"
-import { GatsbyImage } from "gatsby-plugin-image"
 import { FaChevronRight } from "react-icons/fa"
-import QuantitySelector from "../quantity-selector"
 import { useClickAway } from "react-use"
 import { useSpring, animated, config } from "react-spring"
-import { useHeight } from "../../hooks/useHeight"
 import ShopifyItem from "./products/shopify-item"
 import SunglassesItem from "./products/sunglasses-item"
 import CustomItem from "./products/custom-item"
-import { useWindowSize } from "react-use"
 
 const Component = styled.div`
-  position: fixed;
-  top: 0;
-  right: 0;
+  display: flex;
+  flex-direction: column;
   background-color: white;
   z-index: 100000;
   max-height: 100vh;
   height: 100vh;
-  /* max-width: 100%; */
   width: 400px;
-  /* @media screen and (max-width: 400px) {
-    width: 100%;
-  } */
+  max-width: 100vw;
   overflow-y: auto;
   border: 0.5px solid #c5c5c5;
   border-top: none;
@@ -69,8 +61,7 @@ const Component = styled.div`
   }
   .cart-products {
     overflow-y: auto;
-    z-index: 100001;
-    //height: 100vh;
+    flex: 1 0 auto;
   }
   .item-card {
     border: 0.5px solid #c5c5c5;
@@ -146,6 +137,7 @@ const Component = styled.div`
     }
   }
   .sticky-bottom {
+    flex-shrink: 0;
     position: sticky;
     bottom: 0;
     background: white;
@@ -206,14 +198,11 @@ const CartDrawer = () => {
   // React Spring
   const isBrowser = typeof window !== "undefined"
   if (!isBrowser) return null
-  const { width } = useWindowSize()
-  const [heightRef, height] = useHeight()
   const slideInStyles = useSpring({
     config: { ...config.default },
     from: {
       opacity: 0,
-      height: 0,
-      position: "fixed",
+      position: "fixed" as any,
       top: 0,
       right: 0,
       transform: "translateX(0)",
@@ -224,7 +213,6 @@ const CartDrawer = () => {
       top: 0,
       right: 0,
       opacity: isCartDrawerOpen ? 1 : 0,
-      height: isCartDrawerOpen ? height : 0,
       transform: isCartDrawerOpen ? "translateX(0px)" : "translateX(1000px)",
       zIndex: 100000,
     },
@@ -233,10 +221,7 @@ const CartDrawer = () => {
   return (
     <animated.div style={{ ...slideInStyles }} className="animated">
       {checkout && checkout.tnLineItems.length !== 0 && (
-        <Component
-          style={width < 400 ? { width: `${width}px` } : {}}
-          ref={clickRef}
-        >
+        <Component ref={clickRef}>
           <div className="header">
             <button onClick={evt => setIsCartDrawerOpen(false)}>
               <FaChevronRight />
