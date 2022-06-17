@@ -45,6 +45,11 @@ const SunglassesItem = (props: { item: tnItem }) => {
     return sum.toFixed(2)
   }
 
+  const formatCaseName = (caseName: string) => {
+    let spl = caseName.split("AO")[0]
+    return spl.slice(0, -2)
+  }
+
   return (
     <Component className="item-card" ref={loadingOverlay}>
       <div className="close-btn">
@@ -78,7 +83,7 @@ const SunglassesItem = (props: { item: tnItem }) => {
                 ? ""
                 : item.lineItems[0].shopifyItem.variant.title}
             </p>
-            <p className="subtitle">+ {item.lineItems[1].shopifyItem.title}</p>
+            <p className="subtitle">+ {formatCaseName(item.lineItems[1].shopifyItem.title)}</p>
           </div>
           <div className="price-quantity">
             <p>${totalSum(item.lineItems)} USD</p>
