@@ -328,7 +328,6 @@ const Cart = () => {
     isCustom: boolean
   ) => {
     if (subItem.stepNumber === "0" && isCustom) {
-      console.log(subItem.shopifyItem.variant.title)
       return subItem.shopifyItem.variant.title.split("-")[0]
     }
     if (stepName === "CASE") {
@@ -524,28 +523,48 @@ const Cart = () => {
                 </Link>
               </p>
               <div className="sub-title-customize">
-                {item.lineItems.map((subItem, subIndex) => {
-                  return (
-                    <div className="sub-item" key={subItem.shopifyItem.id}>
-                      <div className="step-name">
-                        <p>{stepMap.get(subIndex)}</p>
-                      </div>
-                      <div className="sub-title" key={subItem.shopifyItem.id}>
-                        <span key={subItem.shopifyItem.id}>
-                          {formatItemTitle(
-                            subItem,
-                            stepMap.get(subIndex),
-                            item.isCustom
-                          )}
-                        </span>
-                        <span className="price">
-                          {subItem.shopifyItem.variant.price === "0.00"
-                            ? "Free"
-                            : `$${subItem.shopifyItem.variant.price}`}
-                        </span>
-                      </div>
-                    </div>
+                {Array.from({ length: 6 }, (v, i) => i).map(subIndex => {
+                  const subItems = item.lineItems.filter(
+                    el => Number(el.stepNumber) === subIndex
                   )
+                  if (subItems) {
+                    return (
+                      <React.Fragment key={subIndex}>
+                        {subItems.map((subItem, i) => (
+                          <div
+                            className="sub-item"
+                            key={subItem.shopifyItem.id}
+                          >
+                            {i === 0 && (
+                              <div className="step-name">
+                                <p>{stepMap.get(subIndex)}</p>
+                              </div>
+                            )}
+
+                            <div
+                              className="sub-title"
+                              key={subItem.shopifyItem.id}
+                            >
+                              <span key={subItem.shopifyItem.id}>
+                                {formatItemTitle(
+                                  subItem,
+                                  stepMap.get(subIndex),
+                                  item.isCustom
+                                )}
+                              </span>
+                              <span className="price">
+                                {subItem.shopifyItem.variant.price === "0.00"
+                                  ? "Free"
+                                  : `$${subItem.shopifyItem.variant.price}`}
+                              </span>
+                            </div>
+                          </div>
+                        ))}
+                      </React.Fragment>
+                    )
+                  } else {
+                    return null
+                  }
                 })}
                 <hr />
                 <span className="price total-price">

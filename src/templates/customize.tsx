@@ -123,7 +123,14 @@ const Customize = ({
     let { price } = variant.shopify
     Object.keys(selectedVariants).forEach(key => {
       price = Number(price)
-      price += Number(selectedVariants[key].price)
+      // step 4 has multiple values
+      if (key === "step4") {
+        selectedVariants[key].forEach(el => {
+          price += Number(el.price)
+        })
+      } else {
+        price += Number(selectedVariants[key].price)
+      }
     })
     price = Number(price.toFixed(2))
     setCurrentPrice(price)

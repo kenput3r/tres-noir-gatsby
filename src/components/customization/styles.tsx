@@ -41,7 +41,8 @@ export const Component = styled.form`
       margin-bottom: 0;
       text-transform: uppercase;
     }
-    input[type="radio"] {
+    input[type="radio"],
+    input[type="checkbox"] {
       height: calc(100% - 10px);
       opacity: 0;
       position: absolute;
