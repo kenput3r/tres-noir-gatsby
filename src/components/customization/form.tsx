@@ -296,12 +296,6 @@ const Form = ({
   }
 
   useEffect(() => {
-    if (hasSavedCustomized[`step${currentStep}`] === false) {
-      handleChange(null, shopifyCollection.products[0].variants[0], false)
-    }
-  }, [])
-
-  useEffect(() => {
     // remove lens coatings that are no longer eligible if step3 changes
     if (
       (currentStep === 4 &&
@@ -317,6 +311,12 @@ const Form = ({
           ),
         ],
       })
+    }
+  }, [])
+
+  useEffect(() => {
+    if (hasSavedCustomized[`step${currentStep}`] === false) {
+      handleChange(null, shopifyCollection.products[0].variants[0], false)
     }
   }, [])
 
@@ -380,8 +380,6 @@ const Form = ({
           } else {
             blockedSelections.push("Anti-Reflective - Standard")
           }
-        } else {
-          console.log("NOMPE ")
         }
         break
       // if currentStep is 1 or 5, do nothing
