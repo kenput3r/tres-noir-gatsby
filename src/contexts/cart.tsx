@@ -27,6 +27,8 @@ const isBrowser = typeof window !== "undefined"
 const DefaultContext = {
   isDrawerOpen: false,
   setIsDrawerOpen: (value: boolean) => {},
+  isCartDrawerOpen: false,
+  setIsCartDrawerOpen: (value: boolean) => {},
   isActive: "",
   setIsActive: (value: string) => {},
   closeDrawer: () => {},
@@ -96,6 +98,7 @@ export const CartProvider = ({ children }) => {
   const { renderErrorModal } = useContext(ErrorModalContext)
 
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
+  const [isCartDrawerOpen, setIsCartDrawerOpen] = useState(false)
   const [isActive, setIsActive] = useState("shop")
   const [checkout, setCheckout] = useState<any>()
   const [isAddingToCart, setIsAddingToCart] = useState<boolean>(false)
@@ -462,6 +465,7 @@ export const CartProvider = ({ children }) => {
         rebuildBundles(updatedCheckout)
         setCheckout(updatedCheckout)
         setIsAddingToCart(false)
+        setIsCartDrawerOpen(true)
       } catch (err: any) {
         console.error(err)
         setIsAddingToCart(false)
@@ -490,6 +494,7 @@ export const CartProvider = ({ children }) => {
         }
         setCheckout(updatedCheckout)
         setIsAddingToCart(false)
+        setIsCartDrawerOpen(true)
       } catch (err: any) {
         console.error(err)
         setIsAddingToCart(false)
@@ -522,6 +527,7 @@ export const CartProvider = ({ children }) => {
         rebuildBundles(updatedCheckout)
         setCheckout(updatedCheckout)
         setIsAddingToCart(false)
+        setIsCartDrawerOpen(true)
       } catch (err: any) {
         console.error(err)
         setIsAddingToCart(false)
@@ -549,6 +555,7 @@ export const CartProvider = ({ children }) => {
         // add necessary data to localStorage to be able to resume from cart later on
         addCustomToLocalStorage(key, resumeData, sku, handle)
         setIsAddingToCart(false)
+        setIsCartDrawerOpen(true)
       } catch (err: any) {
         console.error(err)
         setIsAddingToCart(false)
@@ -682,6 +689,8 @@ export const CartProvider = ({ children }) => {
     return {
       isDrawerOpen,
       setIsDrawerOpen,
+      isCartDrawerOpen,
+      setIsCartDrawerOpen,
       isActive,
       setIsActive,
       closeDrawer,
@@ -704,6 +713,8 @@ export const CartProvider = ({ children }) => {
   }, [
     isDrawerOpen,
     setIsDrawerOpen,
+    isCartDrawerOpen,
+    setIsCartDrawerOpen,
     isActive,
     setIsActive,
     checkout,

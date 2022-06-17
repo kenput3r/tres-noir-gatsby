@@ -230,7 +230,7 @@ const ProductDetails: React.FC<Props> = ({
           </div>
 
           <div className="details">
-            <p>TEMPLE WIDTH</p>
+            <p>TEMPLE LENGTH</p>
             <p>{frameDimensions[2]} mm</p>
           </div>
         </div>
