@@ -529,7 +529,7 @@ const Cart = () => {
                   )
                   if (subItems) {
                     return (
-                      <React.Fragment key={subIndex}>
+                      <div key={subIndex}>
                         {subItems.map((subItem, i) => (
                           <div
                             className="sub-item"
@@ -560,7 +560,7 @@ const Cart = () => {
                             </div>
                           </div>
                         ))}
-                      </React.Fragment>
+                      </div>
                     )
                   } else {
                     return null
