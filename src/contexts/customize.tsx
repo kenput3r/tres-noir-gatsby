@@ -221,37 +221,6 @@ export const CustomizeProvider = ({ children }: { children: ReactChild }) => {
     setSelectedVariants(defaultSelectedVariants)
   }
 
-  useEffect(() => {
-    const isBrowser: boolean = typeof window !== "undefined"
-    if (isBrowser) {
-      const urlParams = new URLSearchParams(window.location.search)
-      const custom_id = urlParams.get("custom_id")
-      const customsResume = localStorage.getItem("customs-resume")
-      if (customsResume && custom_id) {
-        const customsStorage = JSON.parse(
-          customsResume
-        ) as SelectedVariantStorage
-        const parsedCustoms = customsStorage.value.customs
-        const resumedSelectedVariants =
-          parsedCustoms[Number(custom_id)].selectedVariants
-        const handle = parsedCustoms[Number(custom_id)].handle
-        const sku = parsedCustoms[Number(custom_id)].sku
-        // prepare context for editing
-        // setting context
-        setSelectedVariants(resumedSelectedVariants)
-        // setting savedCustomized context so radio won't default to top option
-        setHasSavedCustomized({
-          step1: true,
-          step2: true,
-          step3: true,
-          step4: true,
-          case: true,
-        })
-        setCurrentStep(5)
-      }
-    }
-  }, [])
-
   const value = useMemo(
     () => ({
       currentStep,

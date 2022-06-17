@@ -213,20 +213,6 @@ const Step5 = (props: {
           },
         ],
       },
-      // {
-      //   variantId: step4.storefrontId,
-      //   quantity: 1,
-      //   customAttributes: [
-      //     {
-      //       key: "customizationId",
-      //       value: matchingKey,
-      //     },
-      //     {
-      //       key: "customizationStep",
-      //       value: "4",
-      //     },
-      //   ],
-      // },
       {
         variantId: selectedVariants.case.storefrontId,
         quantity: 1,

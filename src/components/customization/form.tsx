@@ -9,6 +9,7 @@ import { Link } from "gatsby"
 import { GatsbyImage } from "gatsby-plugin-image"
 import { Component } from "./styles"
 import {
+  SelectedVariantStorage,
   ShopifyCollection,
   ShopifyProduct,
   ShopifyVariant,
@@ -317,6 +318,39 @@ const Form = ({
   useEffect(() => {
     if (hasSavedCustomized[`step${currentStep}`] === false) {
       handleChange(null, shopifyCollection.products[0].variants[0], false)
+    }
+  }, [])
+
+  // restore on refresh
+  useEffect(() => {
+    if (!hasSavedCustomized.step1) {
+      const isBrowser: boolean = typeof window !== "undefined"
+      if (isBrowser) {
+        const urlParams = new URLSearchParams(window.location.search)
+        const custom_id = urlParams.get("custom_id")
+        if (!custom_id) return
+        const customsResume = localStorage.getItem("customs-resume")
+        if (customsResume && custom_id) {
+          const customsStorage = JSON.parse(
+            customsResume
+          ) as SelectedVariantStorage
+          const parsedCustoms = customsStorage.value.customs
+          const resumedSelectedVariants =
+            parsedCustoms[Number(custom_id)].selectedVariants
+          // prepare context for editing
+          // setting context
+          setSelectedVariants(resumedSelectedVariants)
+          // setting savedCustomized context so radio won't default to top option
+          setHasSavedCustomized({
+            step1: true,
+            step2: true,
+            step3: true,
+            step4: true,
+            case: true,
+          })
+          setCurrentStep(5)
+        }
+      }
     }
   }, [])
 
