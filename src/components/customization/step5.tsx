@@ -109,7 +109,7 @@ const Step5 = (props: {
   currentPrice: any
   variant: ShopifyProductVariant
   productImage: any
-  resumedItem: any
+  resumedItem: string | null | undefined
   completeVariant: any
   casesAvailable: string[]
 }) => {
@@ -344,17 +344,6 @@ const Step5 = (props: {
           price: step3.price,
           compareAtPrice: "",
         },
-        // {
-        //   title: step4.title,
-        //   legacyResourceId: step4.legacyResourceId,
-        //   sku: step4.sku,
-        //   productType: step4.product.productType,
-        //   image: step4?.image?.originalSrc ? step4.image?.originalSrc : "",
-        //   url: step4.product.onlineStoreUrl,
-        //   vendor: step4.product.vendor,
-        //   price: step4.price,
-        //   compareAtPrice: "",
-        // },
       ],
     }
     step4.forEach(el => {
