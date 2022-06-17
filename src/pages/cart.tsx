@@ -1,227 +1,21 @@
 import React, { useEffect, useContext, useRef } from "react"
 import { Link, navigate } from "gatsby"
-import { GatsbyImage, StaticImage } from "gatsby-plugin-image"
-import styled from "styled-components"
+import { StaticImage } from "gatsby-plugin-image"
 import Layout from "../components/layout"
 import SEO from "../components/seo"
 import Loader from "../components/loader"
-import QuantitySelector from "../components/quantity-selector"
 import { CartContext } from "../contexts/cart"
 import { CustomerContext } from "../contexts/customer"
-import { tnItem, tnSubItem } from "../types/checkout"
+import { tnItem } from "../types/checkout"
 import { startedCheckoutGTMEvent } from "../helpers/gtm"
-import { VscClose } from "react-icons/vsc"
 import UpsellCart from "../components/upsell-cart"
-import { SelectedVariants, SelectedVariantStorage } from "../types/global"
+import { SelectedVariantStorage } from "../types/global"
 import { CustomizeContext } from "../contexts/customize"
 
-const Page = styled.div`
-  .cart-wrapper {
-    max-width: 860px;
-    width: 100%;
-    padding-left: 22px;
-    padding-right: 22px;
-    h2 {
-      font-weight: normal;
-    }
-    padding-top: 30px;
-    ul {
-      .wrapper {
-        padding: 0;
-      }
-      margin: 0;
-      li {
-        padding: 5px;
-        border-radius: 10px;
-        .close-btn {
-          text-align: right;
-          padding: 0px 3px 3px 3px;
-          a {
-            text-align: right;
-            svg {
-              font-size: 1.65rem;
-            }
-          }
-        }
-        list-style: none;
-        background: white;
-        margin: 30px 0;
-        .card {
-          display: flex;
-          justify-content: space-between;
-          padding: 0 10px 20px 10px;
-          > div {
-            flex: 1;
-            padding: 0 10px;
-          }
-          @media (max-width: 600px) {
-            flex-direction: column;
-            .card-image {
-              max-width: 280px;
-              align-self: center;
-            }
-          }
-        }
-        .card-items {
-          .quantity-selector {
-            margin-top: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            .price {
-              color: var(--color-grey-dark);
-              font-size: 100%;
-              font-family: var(--sub-heading-font);
-            }
-          }
-        }
-        .title {
-          /* font-weight: bold; */
-          margin-bottom: 0;
-          a {
-            color: #000;
-            text-decoration: none;
-          }
-        }
-        .sub-title {
-          display: flex;
-          justify-content: space-between;
-          color: var(--color-grey-dark);
-          span {
-            font-family: var(--sub-heading-font);
-          }
-        }
-        .sub-title-customize {
-          display: flex;
-          justify-content: space-between;
-          flex-direction: column;
-          color: var(--color-grey-dark);
-          span {
-            font-size: 85%;
-            font-family: var(--sub-heading-font);
-          }
-          .price {
-            text-align: right;
-          }
-        }
-        /* img {
-          width: 100px;
-          height: auto;
-        } */
-        .remove-item {
-          text-decoration: none;
-          /* font-weight: bold; */
-          color: #000;
-        }
-      }
-    }
-    .subtotal {
-      text-align: right;
-      p {
-        :first-child {
-          font-size: 1.75rem;
-        }
-        :not(:first-child) {
-          color: var(--color-grey-dark);
-          font-family: var(--sub-heading-font);
-        }
-        margin-bottom: 10px;
-      }
-    }
-    .btn-container {
-      text-align: right;
-      padding: 15px 0;
-      button,
-      .button {
-        background-color: #000;
-        border-radius: 0;
-        border: 1px solid #000;
-        color: #fff;
-        display: block;
-        font-family: var(--sub-heading-font);
-        padding: 10px 20px;
-        text-decoration: none;
-        text-transform: uppercase;
-        font-family: var(--heading-font);
-        -webkit-appearance: button-bevel;
-        :hover {
-          cursor: pointer;
-        }
-        @media only screen and (max-width: 480px) {
-          display: inline-block;
-        }
-      }
-      /* a {
-        text-decoration: none;
-        color: #000;
-      } */
-    }
-    p,
-    span,
-    a,
-    h2 {
-      font-family: var(--heading-font);
-      text-transform: uppercase;
-    }
-    :nth-child(1) {
-      background: #e0e0e0;
-    }
-    :nth-child(2) {
-      background: white;
-    }
-    hr {
-      background-color: black;
-      margin-bottom: 0;
-      margin: 5px 0 5px 0;
-    }
-  }
-  .customized {
-    .step-name {
-      color: black;
-    }
-  }
-  .grey-background {
-    background: #e0e0e0;
-  }
-  .empty-cart {
-    p {
-      font-family: var(--heading-font);
-      color: var(--color-grey-dark);
-      font-size: 130%;
-    }
-    h1 {
-      text-transform: uppercase;
-      font-weight: normal;
-      text-align: center;
-    }
-    .empty-flex {
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      padding: 40px 0;
-    }
-  }
-  .no-events {
-    pointer-events: none;
-    opacity: 0.5;
-  }
-  .checkout-loading {
-    min-height: 42px;
-    min-width: 165px;
-    position: relative;
-    @media only screen and (max-width: 468px) {
-      min-height: 39px;
-      min-width: 152px;
-    }
-    div {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-    }
-  }
-`
+import { Page } from "../components/cart/styles"
+import StandardProduct from "../components/cart/standard-product"
+import GlassesProduct from "../components/cart/glasses-product"
+import CustomProduct from "../components/cart/custom-product"
 
 const Cart = () => {
   const {
@@ -242,7 +36,9 @@ const Cart = () => {
   stepMap.set(3, "LENS MATERIAL")
   stepMap.set(4, "LENS COATING")
   stepMap.set(5, "CASE")
+
   const loadingOverlay = useRef<HTMLDivElement>(null)
+
   useEffect(() => {
     if (checkout) {
       if (checkout.lineItems.length > 0) {
@@ -310,260 +106,6 @@ const Cart = () => {
     loadingOverlay.current?.classList.remove("no-events")
   }
 
-  const totalSum = lineItems => {
-    let sum = 0
-    lineItems.forEach(item => {
-      sum += parseFloat(item.shopifyItem.variant.price)
-    })
-    return sum.toFixed(2)
-  }
-
-  const priceTimesQuantity = (price: string, quantity: number) => {
-    return (Number(price) * quantity).toFixed(2)
-  }
-
-  const formatItemTitle = (
-    subItem: tnSubItem,
-    stepName: string,
-    isCustom: boolean
-  ) => {
-    if (subItem.stepNumber === "0" && isCustom) {
-      console.log(subItem.shopifyItem.variant.title)
-      return subItem.shopifyItem.variant.title.split("-")[0]
-    }
-    if (stepName === "CASE") {
-      let spl = subItem.shopifyItem.title.split("AO")[0]
-      return spl.slice(0, -2)
-    }
-    if (subItem.shopifyItem.variant.title === "Default Title") {
-      return subItem.shopifyItem.title
-    } else {
-      return `${subItem.shopifyItem.title} - ${subItem.shopifyItem.variant.title}`
-    }
-  }
-
-  // clean this up after demo
-  const orderTnLineItems = lineItems => {
-    const order = ["0", "1", "2", "3", "4", "5"]
-    lineItems.sort((a, b) => {
-      return order.indexOf(a.stepNumber) - order.indexOf(b.stepNumber)
-    })
-    return lineItems
-  }
-
-  const renderStandardProduct = (item: tnItem) => {
-    const line = item.lineItems[0].shopifyItem
-    return (
-      <li key={line.id}>
-        <div className="close-btn">
-          <a
-            className="remove-item"
-            href="#"
-            onClick={() => removeSingleProduct(item)}
-          >
-            <VscClose className="text-btn" />
-          </a>
-        </div>
-        <div className="card">
-          <div className="card-image">
-            {item.image ? (
-              <GatsbyImage
-                image={item.image}
-                alt={line.variant.title}
-              ></GatsbyImage>
-            ) : (
-              <StaticImage
-                src="../images/product-no-image.jpg"
-                alt="No image"
-              ></StaticImage>
-            )}
-          </div>
-          <div className="card-items">
-            <div>
-              <p className="title">
-                <Link to={`/products/${line.variant.product.handle}`}>
-                  {line.title}
-                </Link>
-              </p>
-              <div className="sub-title">
-                <span>
-                  {line.variant.title !== "Default Title"
-                    ? line.variant.title
-                    : ""}
-                </span>
-
-                <span className="price">${line.variant.price}</span>
-              </div>
-            </div>
-            <hr />
-            <div className="quantity-selector">
-              <QuantitySelector
-                lineId={line.id}
-                quantity={line.quantity}
-                imageId={item.id}
-                updateQuantity={updateQuantity}
-              />
-              <span className="price total-price">
-                ${priceTimesQuantity(line.variant.price, line.quantity)}
-              </span>
-            </div>
-          </div>
-        </div>
-      </li>
-    )
-  }
-
-  const renderSunglasses = (item: tnItem) => {
-    const sunglassesStepMap = new Map()
-    sunglassesStepMap.set(1, "CASE")
-    // fix this
-    item.lineItems = orderTnLineItems(item.lineItems)
-    return (
-      <li key={item.id} className="customized">
-        <div className="close-btn">
-          <a
-            className="remove-item"
-            href="#"
-            onClick={() => removeMultipleProducts(item)}
-          >
-            <VscClose />
-          </a>
-        </div>
-        <div className="card">
-          <div className="card-image">
-            {item.image ? (
-              <GatsbyImage
-                image={item.image}
-                alt={item.lineItems[0].shopifyItem.variant.title}
-              ></GatsbyImage>
-            ) : (
-              <StaticImage
-                src="../images/product-no-image.jpg"
-                alt="no-image"
-              ></StaticImage>
-            )}
-          </div>
-          <div>
-            <div>
-              <p className="title">
-                <Link
-                  to={`/products/${item.lineItems[0].shopifyItem.variant.product.handle}`}
-                >
-                  {item.lineItems[0].shopifyItem.title}
-                </Link>
-              </p>
-              <div className="sub-title-customize">
-                {item.lineItems.map((subItem, subIndex) => {
-                  return (
-                    <div className="sub-item" key={subItem.shopifyItem.id}>
-                      <div className="step-name">
-                        <p>{sunglassesStepMap.get(subIndex)}</p>
-                      </div>
-                      <div className="sub-title" key={subItem.shopifyItem.id}>
-                        <span key={subItem.shopifyItem.id}>
-                          {formatItemTitle(
-                            subItem,
-                            sunglassesStepMap.get(subIndex),
-                            item.isCustom
-                          )}
-                        </span>
-                        <span className="price">
-                          {subItem.shopifyItem.variant.price === "0.00"
-                            ? "Free"
-                            : `$${subItem.shopifyItem.variant.price}`}
-                        </span>
-                      </div>
-                    </div>
-                  )
-                })}
-                <hr />
-                <span className="price total-price">
-                  ${totalSum(item.lineItems)}
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </li>
-    )
-  }
-
-  const renderCustomProduct = (item: tnItem) => {
-    return (
-      <li key={item.id} className="customized">
-        <div className="close-btn">
-          <a
-            className="remove-item"
-            href="#"
-            onClick={() => removeMultipleProducts(item)}
-          >
-            <VscClose />
-          </a>
-        </div>
-        <div className="card">
-          <div className="card-image">
-            {item.image ? (
-              <GatsbyImage
-                image={item.image}
-                alt={item.lineItems[0].shopifyItem.variant.title}
-              ></GatsbyImage>
-            ) : (
-              <StaticImage
-                src="../images/product-no-image.jpg"
-                alt="no-image"
-              ></StaticImage>
-            )}
-          </div>
-          <div>
-            <div>
-              <p className="title">
-                <Link
-                  to={`/products/${item.lineItems[0].shopifyItem.variant.product.handle}`}
-                >
-                  {item.lineItems[0].shopifyItem.title}
-                </Link>
-              </p>
-              <div className="sub-title-customize">
-                {item.lineItems.map((subItem, subIndex) => {
-                  return (
-                    <div className="sub-item" key={subItem.shopifyItem.id}>
-                      <div className="step-name">
-                        <p>{stepMap.get(subIndex)}</p>
-                      </div>
-                      <div className="sub-title" key={subItem.shopifyItem.id}>
-                        <span key={subItem.shopifyItem.id}>
-                          {formatItemTitle(
-                            subItem,
-                            stepMap.get(subIndex),
-                            item.isCustom
-                          )}
-                        </span>
-                        <span className="price">
-                          {subItem.shopifyItem.variant.price === "0.00"
-                            ? "Free"
-                            : `$${subItem.shopifyItem.variant.price}`}
-                        </span>
-                      </div>
-                    </div>
-                  )
-                })}
-                <hr />
-                <span className="price total-price">
-                  ${totalSum(item.lineItems)}
-                </span>
-              </div>
-            </div>
-            <div className="edit-product">
-              <button className="btn" onClick={evt => editGlasses(item)}>
-                EDIT
-              </button>
-            </div>
-          </div>
-        </div>
-      </li>
-    )
-  }
-
   const renderContent = () => {
     if (checkout) {
       if (checkout?.lineItems.length === 0) {
@@ -601,14 +143,35 @@ const Cart = () => {
                 <ul>
                   {checkout &&
                     checkout.tnLineItems &&
-                    checkout.tnLineItems.map((item: tnItem) => {
+                    checkout.tnLineItems.map((item: tnItem, index) => {
                       if (item) {
                         if (item.isCustom) {
-                          return renderCustomProduct(item)
+                          return (
+                            <CustomProduct
+                              key={`cart-item-${index}`}
+                              stepMap={stepMap}
+                              item={item}
+                              removeMultipleProducts={removeMultipleProducts}
+                              editGlasses={editGlasses}
+                            />
+                          )
                         } else if (item.lineItems.length === 2) {
-                          return renderSunglasses(item)
+                          return (
+                            <GlassesProduct
+                              key={`cart-item-${index}`}
+                              item={item}
+                              removeMultipleProducts={removeMultipleProducts}
+                            />
+                          )
                         }
-                        return renderStandardProduct(item)
+                        return (
+                          <StandardProduct
+                            key={`cart-item-${index}`}
+                            item={item}
+                            removeSingleProduct={removeSingleProduct}
+                            updateQuantity={updateQuantity}
+                          />
+                        )
                       }
                     })}
                 </ul>
