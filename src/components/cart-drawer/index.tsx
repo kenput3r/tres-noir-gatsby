@@ -22,6 +22,7 @@ const Component = styled.div`
   background-color: white;
   z-index: 100000;
   max-height: 100vh;
+  height: 100vh;
   /* max-width: 100%; */
   width: 400px;
   /* @media screen and (max-width: 400px) {
@@ -69,6 +70,7 @@ const Component = styled.div`
   .cart-products {
     overflow-y: auto;
     z-index: 100001;
+    //height: 100vh;
   }
   .item-card {
     border: 0.5px solid #c5c5c5;
