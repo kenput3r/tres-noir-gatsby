@@ -5,19 +5,18 @@ import React, {
   useMemo,
   useReducer,
 } from "react"
-import { rxType } from "../types/customize"
 
-// interface rxDetails {
-//   sph: string
-//   cyl: string
-//   axis: string
-//   add: string
-//   pd: string
-// }
-// interface rxType {
-//   right: rxDetails
-//   left: rxDetails
-// }
+interface rxDetails {
+  sph: string
+  cyl: string
+  axis: string
+  add: string
+  pd: string
+}
+interface rxType {
+  right: rxDetails
+  left: rxDetails
+}
 
 const rxInit: rxType = {
   right: {
