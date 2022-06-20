@@ -65,6 +65,8 @@ enum LENSE_COLORS {
   BROWN_GRADIENT = "brown gradient",
   GREEN = "green",
   GREEN_GRADIENT = "green gradient",
+  G15 = "G15",
+  G15_GRADIENT = "g15 gradient",
   CLEAR = "clear",
 }
 
@@ -85,16 +87,24 @@ const ProductDetails: React.FC<Props> = ({
     if (lensType !== "glasses") {
       switch (lensColor) {
         case LENSE_COLORS.SMOKE:
-        case LENSE_COLORS.SMOKE_GRADIENT:
           imageData = lensColors.smoke
           break
+        case LENSE_COLORS.SMOKE_GRADIENT:
+          imageData = lensColors.smoke_gradient
+          break
         case LENSE_COLORS.BROWN:
-        case LENSE_COLORS.BROWN_GRADIENT:
           imageData = lensColors.brown
           break
+        case LENSE_COLORS.BROWN_GRADIENT:
+          imageData = lensColors.brown_gradient
+          break
         case LENSE_COLORS.GREEN:
+        case LENSE_COLORS.G15:
+          imageData = lensColors.g15
+          break
         case LENSE_COLORS.GREEN_GRADIENT:
-          imageData = lensColors.green
+        case LENSE_COLORS.G15_GRADIENT:
+          imageData = lensColors.g15
           break
         default:
           imageData = lensColors.clear
