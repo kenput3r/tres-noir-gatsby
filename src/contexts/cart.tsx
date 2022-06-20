@@ -297,7 +297,12 @@ export const CartProvider = ({ children }) => {
     checkout.lineItems.forEach(item => {
       // non-custom item
       if (item.customAttributes.length === 0) {
-        itemsMap.set(item.variant.sku, [{ shopifyItem: item }])
+        // gift card does not have a sku, using id instead
+        if (item.variant.product.handle === "gift-card") {
+          itemsMap.set(item.variant.id, [{ shopifyItem: item }])
+        } else {
+          itemsMap.set(item.variant.sku, [{ shopifyItem: item }])
+        }
       } else {
         // custom item
         const foundProperties = item.customAttributes
