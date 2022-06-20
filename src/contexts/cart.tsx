@@ -296,7 +296,6 @@ export const CartProvider = ({ children }) => {
     let itemsMap = new Map()
     checkout.lineItems.forEach(item => {
       // non-custom item
-      console.log("item", item)
       if (item.customAttributes.length === 0) {
         // gift card does not have a sku, using id instead
         if (item.variant.product.handle === "gift-card") {
