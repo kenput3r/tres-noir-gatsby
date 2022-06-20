@@ -32,6 +32,8 @@ const Form = ({
     hasSavedCustomized,
     setHasSavedCustomized,
   } = useContext(CustomizeContext)
+  const variantRef = useRef<any>(null)
+  variantRef.current = selectedVariants
   const stepMap = new Map()
   stepMap.set(1, "RX TYPE")
   stepMap.set(2, "LENS TYPE")
@@ -44,6 +46,7 @@ const Form = ({
   const errorRefs = useRef({})
   const continueBtn = useRef<HTMLButtonElement>(null)
   const [filteredCollection, setFilteredCollection] = useState<string[]>([])
+  const [editHasError, setEditHasError] = useState(false)
 
   const handleChange = (
     evt: React.ChangeEvent<HTMLInputElement> | null,
@@ -72,6 +75,11 @@ const Form = ({
       ...hasSavedCustomized,
       [`step${currentStep}`]: isSetFromEvent,
     })
+
+    if (editHasError) {
+      enableContinue()
+    }
+
     if (currentStep === 4) {
       const blockedSelections: string[] = []
       if (
@@ -354,6 +362,23 @@ const Form = ({
     }
   }, [])
 
+  // disables the Continue step for customers that edit a frame and edit an invalid option
+  const disableContinue = () => {
+    setEditHasError(true)
+    removeChildNodes(messageRef.current)
+    let node = document.createElement("li")
+    node.textContent = "Please make a valid selection"
+    messageRef.current?.appendChild(node)
+    continueBtn.current?.classList.add("disable")
+  }
+  // enables the Continue step once a customer selects a new option when selecting an invalid option on the previous
+  // step after editing
+  const enableContinue = () => {
+    continueBtn.current?.classList.remove("disable")
+    removeChildNodes(messageRef.current)
+    setEditHasError(false)
+  }
+
   // useEffect with steps to filter collection
   useEffect(() => {
     // temp array to store blocked selections
@@ -361,12 +386,25 @@ const Form = ({
     switch (currentStep) {
       case 2:
         if (selectedVariants.step1.product.title === "Bifocal") {
+          const validationArr = [
+            "Blue Light Blocking",
+            "Polarized-G15",
+            "XTRActive Polarized",
+            "Transitions - For Progressive",
+          ]
           blockedSelections.push(
             "Blue Light Blocking",
             "Polarized-G15",
             "XTRActive Polarized",
             "Transitions - For Progressive"
           )
+          if (
+            validationArr.includes(
+              selectedVariants[`step${currentStep}`].product.title
+            )
+          ) {
+            disableContinue()
+          }
         }
         // XTractive Polarized is only for Progressive and Single Vision
         if (
@@ -374,6 +412,12 @@ const Form = ({
           selectedVariants.step1.product.title !== "Single Vision"
         ) {
           blockedSelections.push("XTRActive Polarized")
+          if (
+            selectedVariants[`step${currentStep}`].product.title ===
+            "XTRActive Polarized"
+          ) {
+            disableContinue()
+          }
         }
         break
       case 3:
@@ -385,6 +429,12 @@ const Form = ({
           selectedVariants.step2.product.title === "Transitions"
         ) {
           blockedSelections.push("Hi-Index")
+          //
+          if (
+            selectedVariants[`step${currentStep}`].product.title === "Hi-Index"
+          ) {
+            disableContinue()
+          }
         }
         // if Polarized G15 option, disabled Hi-Index
         else if (
@@ -392,27 +442,55 @@ const Form = ({
           selectedVariants.step2.title === "G15"
         ) {
           blockedSelections.push("Hi-Index")
+          if (
+            selectedVariants[`step${currentStep}`].product.title === "Hi-Index"
+          ) {
+            disableContinue()
+          }
         }
         break
       case 4:
         // if poly carbonate or hi index, disable scratch coat and uv coat
+        const selectedCoatings = selectedVariants.step4.map(
+          el => el.product.title
+        )
         if (
           selectedVariants.step3.product.title === "Poly Carbonate" ||
           selectedVariants.step3.product.title === "Hi-Index"
         ) {
           blockedSelections.push("Scratch Coat", "UV Coat")
+          //
+          if (
+            selectedCoatings.some(v => ["Scratch Coat, UV Coat"].includes(v))
+          ) {
+            disableContinue()
+          }
         }
-        const selectedCoatings = selectedVariants.step4.map(
-          el => el.product.title
-        )
+
         if (
           selectedCoatings.includes("Anti-Reflective - Standard") ||
           selectedCoatings.includes("Anti-Reflective Coat - Premium")
         ) {
           if (selectedCoatings.includes("Anti-Reflective - Standard")) {
             blockedSelections.push("Anti-Reflective Coat - Premium")
+            //
+            if (
+              selectedCoatings.some(v =>
+                ["Anti-Reflective Coat - Premium"].includes(v)
+              )
+            ) {
+              disableContinue()
+            }
           } else {
             blockedSelections.push("Anti-Reflective - Standard")
+            //
+            if (
+              selectedCoatings.some(v =>
+                ["Anti-Reflective - Standard"].includes(v)
+              )
+            ) {
+              disableContinue()
+            }
           }
         }
         break
