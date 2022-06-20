@@ -83,7 +83,7 @@ const SunglassesItem = (props: { item: tnItem }) => {
                 ? ""
                 : item.lineItems[0].shopifyItem.variant.title}
             </p>
-            <p className="subtitle">+ {formatCaseName(item.lineItems[1].shopifyItem.title)}</p>
+            <p className="subtitle">+ {formatCaseName(item.lineItems[item.lineItems.length - 1].shopifyItem.title)}</p>
           </div>
           <div className="price-quantity">
             <p>${totalSum(item.lineItems)} USD</p>
