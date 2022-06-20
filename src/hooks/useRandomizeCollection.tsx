@@ -21,6 +21,7 @@ export const useRandomizeCollection = (currentProductId: string) => {
             hasOnlyDefaultVariant
             hasOutOfStockVariants
             onlineStoreUrl
+            storefrontId
             variants {
               title
               sku
@@ -73,9 +74,10 @@ export const useRandomizeCollection = (currentProductId: string) => {
         hasOutOfStockVariants: boolean
         productType: string
         onlineStoreUrl: string | null
+        storefrontId: string
       }) => {
         return (
-          el.id !== currentProductId &&
+          el.storefrontId !== currentProductId &&
           !el.tags.includes("upsell_item") &&
           !el.hasOutOfStockVariants &&
           el.productType !== "Gift Card" &&
