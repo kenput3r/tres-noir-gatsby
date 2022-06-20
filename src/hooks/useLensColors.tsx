@@ -9,12 +9,22 @@ export const useLensColors = () => {
             gatsbyImageData(quality: 40, height: 55)
           }
         }
+        smoke_gradient: file(relativePath: { eq: "smoke-gradient-lens.png" }) {
+          childImageSharp {
+            gatsbyImageData(quality: 40, height: 55)
+          }
+        }
         brown: file(relativePath: { eq: "brown-lens.png" }) {
           childImageSharp {
             gatsbyImageData(quality: 40, height: 55)
           }
         }
-        green: file(relativePath: { eq: "green-lens.png" }) {
+        brown_gradient: file(relativePath: { eq: "brown-gradient-lens.png" }) {
+          childImageSharp {
+            gatsbyImageData(quality: 40, height: 55)
+          }
+        }
+        g15: file(relativePath: { eq: "g15-lens.png" }) {
           childImageSharp {
             gatsbyImageData(quality: 40, height: 55)
           }
