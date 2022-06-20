@@ -92,7 +92,7 @@ const CustomItem = (props: { item: tnItem }) => {
               + {customizationSize(item.lineItems.length)} Customizations
             </p>
             <p className="subtitle">
-              + {formatCaseName(item.lineItems[5].shopifyItem.title)}
+              + {formatCaseName(item.lineItems[item.lineItems.length - 1].shopifyItem.title)}
             </p>
           </div>
           <div className="price-quantity">
