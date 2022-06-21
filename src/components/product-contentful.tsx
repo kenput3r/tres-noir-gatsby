@@ -6,7 +6,6 @@ import {
   ContentfulProduct,
   ContentfulProductVariant,
 } from "../types/contentful"
-import { SelectedVariantContext } from "../contexts/selectedVariant"
 import ProductOptionsCarousel from "../components/product-options-carousel"
 import ProductAction from "./collection-product-action"
 
@@ -86,41 +85,27 @@ interface Props {
 }
 
 const ProductContentful = ({ data, color, collectionHandle }: Props) => {
-  const { setSelectedVariantContext } = useContext(SelectedVariantContext)
-
   const isSunglasses = collectionHandle.includes("sunglasses")
 
-  const defaultImage = isSunglasses
-    ? data.variants[0].featuredImage.data
-    : data.variants[0].featuredImageClear?.data
-    ? data.variants[0].featuredImageClear.data
-    : data.variants[0].featuredImage.data
+  const [variantSku, setVariantSku] = useState<string>(data.variants[0].sku)
 
-  const [variantImage, setVariantImage] =
-    useState<IGatsbyImageData>(defaultImage)
-
-  const [selectedVariant, setSelectedVariant] = useState({
-    contentful: data.variants[0],
-  })
-
-  const [productLink, setProductLink] = useState(
-    isSunglasses
-      ? `/products/${data.handle}?lens_type=sunglasses`
-      : `/products/${data.handle}?lens_type=glasses`
+  const [variantImage, setVariantImage] = useState<IGatsbyImageData>(
+    !isSunglasses && data.variants[0].featuredImageClear?.data
+      ? data.variants[0].featuredImageClear.data
+      : data.variants[0].featuredImage.data
   )
 
+  const productLink = isSunglasses
+    ? `/products/${data.handle}?lens_type=sunglasses`
+    : `/products/${data.handle}?lens_type=glasses`
+
   const selectVariant = (variant: ContentfulProductVariant) => {
-    const defaultImage = isSunglasses
-      ? variant.featuredImage.data
-      : variant.featuredImageClear?.data
-      ? variant.featuredImageClear.data
-      : variant.featuredImage.data
-    setVariantImage(defaultImage)
-    setSelectedVariant({
-      contentful: variant,
-    })
-    setSelectedVariantContext(variant.sku)
-    setProductLink(productLink => `${productLink}&variant=${variant.sku}`)
+    const image =
+      !isSunglasses && variant.featuredImageClear?.data
+        ? variant.featuredImageClear.data
+        : variant.featuredImage.data
+    setVariantImage(image)
+    setVariantSku(variant.sku)
   }
 
   let hasNewStyles: boolean = false
@@ -130,23 +115,20 @@ const ProductContentful = ({ data, color, collectionHandle }: Props) => {
   return (
     <Component>
       <article className="product-container">
-        <Link to={productLink}>
+        <Link to={`${productLink}&variant=${variantSku}`}>
           <Img image={variantImage} alt={data.title} />
           {hasNewStyles && <div className="new-styles">New!</div>}
         </Link>
         <ProductAction>
-          <Link to={productLink}>View Product</Link>
+          <Link to={`${productLink}&variant=${variantSku}`}>View Product</Link>
         </ProductAction>
       </article>
       <h3>
-        <Link to={productLink}>{data.title}</Link>
+        <Link to={`${productLink}&variant=${variantSku}`}>{data.title}</Link>
       </h3>
 
       <ProductOptionsCarousel
-        uniqueId={`Product-${data.title
-          .toLowerCase()
-          .replace(" ", "-")
-          .replace(/[^a-z0-9]/gi, "")}`}
+        uniqueId={`product-${data.id}`}
         variants={data.variants}
         clickHandler={selectVariant}
         color={color}

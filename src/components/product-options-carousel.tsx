@@ -186,7 +186,7 @@ const ProductOptionsCarousel = ({
           {variants.map((variant: ContentfulProductVariant, i: number) => (
             <SwiperSlide
               key={`${uniqueId}-${i}`}
-              onClick={e => {
+              onClick={() => {
                 clickHandler(variant)
                 setActiveIndex(i)
               }}
