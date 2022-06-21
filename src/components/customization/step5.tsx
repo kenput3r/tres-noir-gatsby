@@ -147,6 +147,9 @@ const Step5 = (props: {
       if (addedToCart) {
         setCurrentStep(1)
         setSelectedVariantsToDefault()
+        rxInfoDispatch({
+          type: `reset`,
+        })
       }
     }
   }, [addedToCart])

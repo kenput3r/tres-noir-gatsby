@@ -17,6 +17,9 @@ import {
 import { CustomizeContext } from "../../contexts/customize"
 import { RxInfoContext } from "../../contexts/rxInfo"
 import { FaQuestionCircle } from "react-icons/fa"
+import { LocalCheckout } from "../../types/checkout"
+// import { CartContext } from "../../contexts/cart"
+import { rxType } from "../../types/checkout"
 
 const Form = ({
   shopifyCollection,
@@ -32,8 +35,7 @@ const Form = ({
     hasSavedCustomized,
     setHasSavedCustomized,
   } = useContext(CustomizeContext)
-  const variantRef = useRef<any>(null)
-  variantRef.current = selectedVariants
+  // const { checkout } = useContext(CartContext)
   const stepMap = new Map()
   stepMap.set(1, "RX TYPE")
   stepMap.set(2, "LENS TYPE")
@@ -338,16 +340,34 @@ const Form = ({
         const custom_id = urlParams.get("custom_id")
         if (!custom_id) return
         const customsResume = localStorage.getItem("customs-resume")
-        if (customsResume && custom_id) {
+        const checkoutString = localStorage.getItem("checkout")
+        if (customsResume && custom_id && checkoutString) {
           const customsStorage = JSON.parse(
             customsResume
           ) as SelectedVariantStorage
+          const checkoutStorage = JSON.parse(checkoutString) as LocalCheckout
+          const customInCheckout = checkoutStorage.value?.tnLineItems?.find(
+            el => el.id === custom_id
+          )
+          const rxAttr =
+            customInCheckout?.lineItems[1].shopifyItem.customAttributes.find(
+              el => el.key === "Prescription"
+            ).value
+          if (rxAttr !== "Non-Prescription") {
+            // set Rx
+            const prescription = JSON.parse(rxAttr) as rxType
+            rxInfoDispatch({
+              type: `full`,
+              payload: prescription,
+            })
+          }
           const parsedCustoms = customsStorage.value.customs
           const resumedSelectedVariants =
             parsedCustoms[Number(custom_id)].selectedVariants
           // prepare context for editing
           // setting context
           setSelectedVariants(resumedSelectedVariants)
+          // set rx context
           // setting savedCustomized context so radio won't default to top option
           setHasSavedCustomized({
             step1: true,

@@ -53,6 +53,8 @@ const actionList = {
   LEFT_AXIS: "left-axis",
   LEFT_ADD: "left-add",
   LEFT_PD: "left-pd",
+  FULL: "full",
+  RESET: "reset",
 }
 const reducer = (state, action) => {
   switch (action.type) {
@@ -76,6 +78,10 @@ const reducer = (state, action) => {
       return { ...state, left: { ...state.left, add: action.payload } }
     case actionList.LEFT_PD:
       return { ...state, left: { ...state.left, pd: action.payload } }
+    case actionList.FULL:
+      return action.payload
+    case actionList.RESET:
+      return rxInit
     default:
       return state
   }
