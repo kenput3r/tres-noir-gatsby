@@ -182,6 +182,40 @@ const defaultSelectedVariants = {
   },
 }
 
+const defaultVariant = {
+  image: {
+    originalSrc: "",
+    altText: "",
+    localFile: {
+      childImageSharp: {
+        gatsbyImageData: {},
+      },
+    },
+  },
+  legacyResourceId: "",
+  price: "0.00",
+  product: {
+    title: "",
+    description: "",
+    onlineStoreUrl: "",
+    productType: "",
+    collections: {
+      handle: "",
+      title: "",
+    },
+    vendor: "",
+  },
+  selectedOptions: [
+    {
+      name: "",
+      value: "",
+    },
+  ],
+  storefrontId: "",
+  sku: "",
+  title: "",
+}
+
 const defaultContext = {
   currentStep: 1,
   setCurrentStep: (currentStep: number) => {},
@@ -198,6 +232,7 @@ const defaultContext = {
     case: false,
   },
   setHasSavedCustomized: (hasSavedCustomized: SavedCustomizeContexts) => {},
+  defaultVariant: defaultVariant,
 }
 
 export const CustomizeContext = createContext(defaultContext)
@@ -232,6 +267,7 @@ export const CustomizeProvider = ({ children }: { children: ReactChild }) => {
       setSelectedVariantsToDefault,
       hasSavedCustomized,
       setHasSavedCustomized,
+      defaultVariant,
     }),
     [
       currentStep,
@@ -242,6 +278,7 @@ export const CustomizeProvider = ({ children }: { children: ReactChild }) => {
       setSelectedVariants,
       hasSavedCustomized,
       setHasSavedCustomized,
+      defaultVariant,
     ]
   )
 

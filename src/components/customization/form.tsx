@@ -17,6 +17,8 @@ import {
 import { CustomizeContext } from "../../contexts/customize"
 import { RxInfoContext } from "../../contexts/rxInfo"
 import { FaQuestionCircle } from "react-icons/fa"
+import { LocalCheckout } from "../../types/checkout"
+import { rxType } from "../../types/checkout"
 
 const Form = ({
   shopifyCollection,
@@ -31,7 +33,9 @@ const Form = ({
     setSelectedVariants,
     hasSavedCustomized,
     setHasSavedCustomized,
+    defaultVariant,
   } = useContext(CustomizeContext)
+  // const { checkout } = useContext(CartContext)
   const stepMap = new Map()
   stepMap.set(1, "RX TYPE")
   stepMap.set(2, "LENS TYPE")
@@ -44,6 +48,7 @@ const Form = ({
   const errorRefs = useRef({})
   const continueBtn = useRef<HTMLButtonElement>(null)
   const [filteredCollection, setFilteredCollection] = useState<string[]>([])
+  const [editHasError, setEditHasError] = useState(false)
 
   const handleChange = (
     evt: React.ChangeEvent<HTMLInputElement> | null,
@@ -72,6 +77,11 @@ const Form = ({
       ...hasSavedCustomized,
       [`step${currentStep}`]: isSetFromEvent,
     })
+
+    if (editHasError) {
+      enableContinue()
+    }
+
     if (currentStep === 4) {
       const blockedSelections: string[] = []
       if (
@@ -123,10 +133,11 @@ const Form = ({
         toggleAntiReflective(blockedSelections, name, checked)
         // do not let removal of one
         if (selectedVariants.step4.length === 1) {
-          setSelectedVariants({
-            ...selectedVariants,
-            [`step${currentStep}`]: [shopifyCollection.products[0].variants[0]],
-          })
+          // setSelectedVariants({
+          //   ...selectedVariants,
+          //   [`step${currentStep}`]: [shopifyCollection.products[0].variants[0]],
+          // })
+          disableContinue(4)
         } else {
           const arr = selectedVariants.step4
           const index = arr.findIndex(el => variant.sku === el.sku)
@@ -321,6 +332,31 @@ const Form = ({
     }
   }, [])
 
+  // useEffect to fix bug where Non Precription Lens selection will still error out
+  useEffect(() => {
+    if (
+      currentStep === 1 &&
+      selectedVariants.step1.product.title === "Non-Prescription Lens"
+    ) {
+      enableContinue()
+    }
+  }, [currentStep, selectedVariants])
+
+  // will disable continue button if none are selected
+  useEffect(() => {
+    if (
+      currentStep === 4 &&
+      hasSavedCustomized.step4 &&
+      selectedVariants.step4[0].product.title === ""
+    ) {
+      disableContinue(4)
+      // setSelectedVariants({
+      //   ...selectedVariants,
+      //   [`step${currentStep}`]: [shopifyCollection.products[0].variants[0]],
+      // })
+    }
+  }, [currentStep])
+
   // restore on refresh
   useEffect(() => {
     if (!hasSavedCustomized.step1) {
@@ -330,16 +366,34 @@ const Form = ({
         const custom_id = urlParams.get("custom_id")
         if (!custom_id) return
         const customsResume = localStorage.getItem("customs-resume")
-        if (customsResume && custom_id) {
+        const checkoutString = localStorage.getItem("checkout")
+        if (customsResume && custom_id && checkoutString) {
           const customsStorage = JSON.parse(
             customsResume
           ) as SelectedVariantStorage
+          const checkoutStorage = JSON.parse(checkoutString) as LocalCheckout
+          const customInCheckout = checkoutStorage.value?.tnLineItems?.find(
+            el => el.id === custom_id
+          )
+          const rxAttr =
+            customInCheckout?.lineItems[1].shopifyItem.customAttributes.find(
+              el => el.key === "Prescription"
+            ).value
+          if (rxAttr !== "Non-Prescription") {
+            // set Rx
+            const prescription = JSON.parse(rxAttr) as rxType
+            rxInfoDispatch({
+              type: `full`,
+              payload: prescription,
+            })
+          }
           const parsedCustoms = customsStorage.value.customs
           const resumedSelectedVariants =
             parsedCustoms[Number(custom_id)].selectedVariants
           // prepare context for editing
           // setting context
           setSelectedVariants(resumedSelectedVariants)
+          // set rx context
           // setting savedCustomized context so radio won't default to top option
           setHasSavedCustomized({
             step1: true,
@@ -354,6 +408,31 @@ const Form = ({
     }
   }, [])
 
+  // disables the Continue step for customers that edit a frame and edit an invalid option
+  const disableContinue = (currentStep: number) => {
+    setEditHasError(true)
+    removeChildNodes(messageRef.current)
+    let node = document.createElement("li")
+    node.textContent = "Please make a valid selection"
+    messageRef.current?.appendChild(node)
+    continueBtn.current?.classList.add("disable")
+    // clear context for step 4 edit
+    if (currentStep === 4) {
+      setSelectedVariants({
+        ...selectedVariants,
+        ["step4"]: [defaultVariant],
+      })
+      //selectedVariants.step4 =
+    }
+  }
+  // enables the Continue step once a customer selects a new option when selecting an invalid option on the previous
+  // step after editing
+  const enableContinue = () => {
+    continueBtn.current?.classList.remove("disable")
+    removeChildNodes(messageRef.current)
+    setEditHasError(false)
+  }
+
   // useEffect with steps to filter collection
   useEffect(() => {
     // temp array to store blocked selections
@@ -361,12 +440,25 @@ const Form = ({
     switch (currentStep) {
       case 2:
         if (selectedVariants.step1.product.title === "Bifocal") {
+          const validationArr = [
+            "Blue Light Blocking",
+            "Polarized-G15",
+            "XTRActive Polarized",
+            "Transitions - For Progressive",
+          ]
           blockedSelections.push(
             "Blue Light Blocking",
             "Polarized-G15",
             "XTRActive Polarized",
             "Transitions - For Progressive"
           )
+          if (
+            validationArr.includes(
+              selectedVariants[`step${currentStep}`].product.title
+            )
+          ) {
+            disableContinue(currentStep)
+          }
         }
         // XTractive Polarized is only for Progressive and Single Vision
         if (
@@ -374,6 +466,12 @@ const Form = ({
           selectedVariants.step1.product.title !== "Single Vision"
         ) {
           blockedSelections.push("XTRActive Polarized")
+          if (
+            selectedVariants[`step${currentStep}`].product.title ===
+            "XTRActive Polarized"
+          ) {
+            disableContinue(currentStep)
+          }
         }
         break
       case 3:
@@ -385,6 +483,12 @@ const Form = ({
           selectedVariants.step2.product.title === "Transitions"
         ) {
           blockedSelections.push("Hi-Index")
+          //
+          if (
+            selectedVariants[`step${currentStep}`].product.title === "Hi-Index"
+          ) {
+            disableContinue(currentStep)
+          }
         }
         // if Polarized G15 option, disabled Hi-Index
         else if (
@@ -392,27 +496,55 @@ const Form = ({
           selectedVariants.step2.title === "G15"
         ) {
           blockedSelections.push("Hi-Index")
+          if (
+            selectedVariants[`step${currentStep}`].product.title === "Hi-Index"
+          ) {
+            disableContinue(currentStep)
+          }
         }
         break
       case 4:
         // if poly carbonate or hi index, disable scratch coat and uv coat
+        const selectedCoatings = selectedVariants.step4.map(
+          el => el.product.title
+        )
         if (
           selectedVariants.step3.product.title === "Poly Carbonate" ||
           selectedVariants.step3.product.title === "Hi-Index"
         ) {
           blockedSelections.push("Scratch Coat", "UV Coat")
+          //
+          if (
+            selectedCoatings.some(v => ["Scratch Coat", "UV Coat"].includes(v))
+          ) {
+            disableContinue(currentStep)
+          }
         }
-        const selectedCoatings = selectedVariants.step4.map(
-          el => el.product.title
-        )
+
         if (
           selectedCoatings.includes("Anti-Reflective - Standard") ||
           selectedCoatings.includes("Anti-Reflective Coat - Premium")
         ) {
           if (selectedCoatings.includes("Anti-Reflective - Standard")) {
             blockedSelections.push("Anti-Reflective Coat - Premium")
+            //
+            if (
+              ["Anti-Reflective Coat - Premium"].some(v =>
+                selectedCoatings.includes(v)
+              )
+            ) {
+              disableContinue(currentStep)
+            }
           } else {
             blockedSelections.push("Anti-Reflective - Standard")
+            //
+            if (
+              ["Anti-Reflective - Standard"].some(v =>
+                selectedCoatings.includes(v)
+              )
+            ) {
+              disableContinue(currentStep)
+            }
           }
         }
         break
