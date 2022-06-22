@@ -11,7 +11,6 @@ import ProductCarousel from "../components/product-carousel"
 import Layout from "../components/layout"
 import SEO from "../components/seo"
 import { CartContext } from "../contexts/cart"
-import { SelectedVariantContext } from "../contexts/selectedVariant"
 import { addedToCartGTMEvent, viewedProductGTMEvent } from "../helpers/gtm"
 import Product from "./product"
 import { CustomizeContext } from "../contexts/customize"
@@ -260,10 +259,6 @@ const ProductCustomizable = ({
     shopifyProduct.variants.length
   )
 
-  const { selectedVariantContext, setSelectedVariantContext } = useContext(
-    SelectedVariantContext
-  )
-
   const getImageSet = (variant: any) => {
     let defaultImageSet: IGatsbyImageData[]
     switch (lensType) {
@@ -294,7 +289,7 @@ const ProductCustomizable = ({
       if (params.get("variant")) paramSku = params.get("variant")
     }
 
-    const sku = paramSku || selectedVariantContext
+    const sku = paramSku || null
     if (sku) {
       const contentful = contentfulProduct.variants.find(
         (_variant: any) => _variant.sku === sku
@@ -371,7 +366,6 @@ const ProductCustomizable = ({
         contentful: variant,
         shopify,
       })
-      setSelectedVariantContext(variant.sku)
     }
   }
 

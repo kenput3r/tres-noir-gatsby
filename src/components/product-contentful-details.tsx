@@ -65,7 +65,7 @@ enum LENSE_COLORS {
   BROWN_GRADIENT = "brown gradient",
   GREEN = "green",
   GREEN_GRADIENT = "green gradient",
-  G15 = "G15",
+  G15 = "g15",
   G15_GRADIENT = "g15 gradient",
   CLEAR = "clear",
 }

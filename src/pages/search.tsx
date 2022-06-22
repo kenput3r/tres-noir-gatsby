@@ -1,6 +1,5 @@
-import React, { useContext, useEffect } from "react"
+import React from "react"
 import styled from "styled-components"
-import { SelectedVariantContext } from "../contexts/selectedVariant"
 import Layout from "../components/layout"
 import SEO from "../components/seo"
 // search
@@ -56,14 +55,6 @@ const PaginationContainer = styled.div`
 `
 
 const Search = ({ location: { state } }: Location) => {
-  const { setSelectedVariantContext } = useContext(SelectedVariantContext)
-
-  useEffect(() => {
-    // reset selected variant
-    // search will show default variant, this will set default variant
-    setSelectedVariantContext("")
-  }, [])
-
   const Results = connectStateResults(({ searchState, searchResults }) => {
     return searchState && searchState.query ? (
       searchResults && searchResults.nbHits !== 0 ? (
