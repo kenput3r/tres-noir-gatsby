@@ -1,5 +1,10 @@
 import { IGatsbyImageData } from "gatsby-plugin-image"
 
+export interface LocalCheckout {
+  value: Checkout
+  expiry: number
+}
+
 export interface Checkout {
   appliedGiftCards: string[]
   completedAt: null | string
