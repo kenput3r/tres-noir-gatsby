@@ -78,7 +78,8 @@ const DefaultContext = {
     image: IGatsbyImageData,
     resumeData: SelectedVariants,
     sku: string,
-    handle: string
+    handle: string,
+    activateDrawer: boolean
   ) => {},
   removeProductFromCart: (lineItemId: string, imageId: string) => {},
   removeProductsFromCart: (lineItemIds: string[], imageId: string) => {},
@@ -546,7 +547,8 @@ export const CartProvider = ({ children }) => {
       image: IGatsbyImageData,
       resumeData: SelectedVariants,
       sku: string,
-      handle: string
+      handle: string,
+      activateDrawer: boolean
     ) => {
       try {
         setIsAddingToCart(true)
@@ -560,7 +562,7 @@ export const CartProvider = ({ children }) => {
         // add necessary data to localStorage to be able to resume from cart later on
         addCustomToLocalStorage(key, resumeData, sku, handle)
         setIsAddingToCart(false)
-        setIsCartDrawerOpen(true)
+        if (activateDrawer) setIsCartDrawerOpen(true)
       } catch (err: any) {
         console.error(err)
         setIsAddingToCart(false)

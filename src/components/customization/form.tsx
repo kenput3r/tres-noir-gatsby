@@ -18,7 +18,6 @@ import { CustomizeContext } from "../../contexts/customize"
 import { RxInfoContext } from "../../contexts/rxInfo"
 import { FaQuestionCircle } from "react-icons/fa"
 import { LocalCheckout } from "../../types/checkout"
-// import { CartContext } from "../../contexts/cart"
 import { rxType } from "../../types/checkout"
 
 const Form = ({
@@ -34,6 +33,7 @@ const Form = ({
     setSelectedVariants,
     hasSavedCustomized,
     setHasSavedCustomized,
+    defaultVariant,
   } = useContext(CustomizeContext)
   // const { checkout } = useContext(CartContext)
   const stepMap = new Map()
@@ -133,10 +133,11 @@ const Form = ({
         toggleAntiReflective(blockedSelections, name, checked)
         // do not let removal of one
         if (selectedVariants.step4.length === 1) {
-          setSelectedVariants({
-            ...selectedVariants,
-            [`step${currentStep}`]: [shopifyCollection.products[0].variants[0]],
-          })
+          // setSelectedVariants({
+          //   ...selectedVariants,
+          //   [`step${currentStep}`]: [shopifyCollection.products[0].variants[0]],
+          // })
+          disableContinue(4)
         } else {
           const arr = selectedVariants.step4
           const index = arr.findIndex(el => variant.sku === el.sku)
@@ -331,6 +332,31 @@ const Form = ({
     }
   }, [])
 
+  // useEffect to fix bug where Non Precription Lens selection will still error out
+  useEffect(() => {
+    if (
+      currentStep === 1 &&
+      selectedVariants.step1.product.title === "Non-Prescription Lens"
+    ) {
+      enableContinue()
+    }
+  }, [currentStep, selectedVariants])
+
+  // will disable continue button if none are selected
+  useEffect(() => {
+    if (
+      currentStep === 4 &&
+      hasSavedCustomized.step4 &&
+      selectedVariants.step4[0].product.title === ""
+    ) {
+      disableContinue(4)
+      // setSelectedVariants({
+      //   ...selectedVariants,
+      //   [`step${currentStep}`]: [shopifyCollection.products[0].variants[0]],
+      // })
+    }
+  }, [currentStep])
+
   // restore on refresh
   useEffect(() => {
     if (!hasSavedCustomized.step1) {
@@ -383,13 +409,21 @@ const Form = ({
   }, [])
 
   // disables the Continue step for customers that edit a frame and edit an invalid option
-  const disableContinue = () => {
+  const disableContinue = (currentStep: number) => {
     setEditHasError(true)
     removeChildNodes(messageRef.current)
     let node = document.createElement("li")
     node.textContent = "Please make a valid selection"
     messageRef.current?.appendChild(node)
     continueBtn.current?.classList.add("disable")
+    // clear context for step 4 edit
+    if (currentStep === 4) {
+      setSelectedVariants({
+        ...selectedVariants,
+        ["step4"]: [defaultVariant],
+      })
+      //selectedVariants.step4 =
+    }
   }
   // enables the Continue step once a customer selects a new option when selecting an invalid option on the previous
   // step after editing
@@ -423,7 +457,7 @@ const Form = ({
               selectedVariants[`step${currentStep}`].product.title
             )
           ) {
-            disableContinue()
+            disableContinue(currentStep)
           }
         }
         // XTractive Polarized is only for Progressive and Single Vision
@@ -436,7 +470,7 @@ const Form = ({
             selectedVariants[`step${currentStep}`].product.title ===
             "XTRActive Polarized"
           ) {
-            disableContinue()
+            disableContinue(currentStep)
           }
         }
         break
@@ -453,7 +487,7 @@ const Form = ({
           if (
             selectedVariants[`step${currentStep}`].product.title === "Hi-Index"
           ) {
-            disableContinue()
+            disableContinue(currentStep)
           }
         }
         // if Polarized G15 option, disabled Hi-Index
@@ -465,7 +499,7 @@ const Form = ({
           if (
             selectedVariants[`step${currentStep}`].product.title === "Hi-Index"
           ) {
-            disableContinue()
+            disableContinue(currentStep)
           }
         }
         break
@@ -481,9 +515,9 @@ const Form = ({
           blockedSelections.push("Scratch Coat", "UV Coat")
           //
           if (
-            selectedCoatings.some(v => ["Scratch Coat, UV Coat"].includes(v))
+            selectedCoatings.some(v => ["Scratch Coat", "UV Coat"].includes(v))
           ) {
-            disableContinue()
+            disableContinue(currentStep)
           }
         }
 
@@ -495,21 +529,21 @@ const Form = ({
             blockedSelections.push("Anti-Reflective Coat - Premium")
             //
             if (
-              selectedCoatings.some(v =>
-                ["Anti-Reflective Coat - Premium"].includes(v)
+              ["Anti-Reflective Coat - Premium"].some(v =>
+                selectedCoatings.includes(v)
               )
             ) {
-              disableContinue()
+              disableContinue(currentStep)
             }
           } else {
             blockedSelections.push("Anti-Reflective - Standard")
             //
             if (
-              selectedCoatings.some(v =>
-                ["Anti-Reflective - Standard"].includes(v)
+              ["Anti-Reflective - Standard"].some(v =>
+                selectedCoatings.includes(v)
               )
             ) {
-              disableContinue()
+              disableContinue(currentStep)
             }
           }
         }

@@ -78,6 +78,9 @@ const Page = styled.div`
         }
         .title {
           /* font-weight: bold; */
+          :hover {
+            text-decoration: underline;
+          }
           margin-bottom: 0;
           a {
             color: #000;
@@ -279,7 +282,6 @@ const Cart = () => {
             payload: prescription,
           })
         }
-
         // prepare context for editing
         // setting context
         setSelectedVariants(resumedSelectedVariants)
