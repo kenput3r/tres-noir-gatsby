@@ -11,7 +11,11 @@ import ProductCarousel from "../components/product-carousel"
 import Layout from "../components/layout"
 import SEO from "../components/seo"
 import { CartContext } from "../contexts/cart"
-import { addedToCartGTMEvent, viewedProductGTMEvent } from "../helpers/gtm"
+import {
+  addedToCartGTMEvent,
+  addedCustomizedToCartGTMEvent,
+  viewedProductGTMEvent,
+} from "../helpers/gtm"
 import Product from "./product"
 import { CustomizeContext } from "../contexts/customize"
 import FreeShipping from "../components/free-shipping"
@@ -401,6 +405,44 @@ const ProductCustomizable = ({
         selectedVariant.contentful.imageSet[0].data,
         matchingKey
       )
+
+      // updated to use case
+      const productData = {
+        main: {
+          title: shopifyProduct.title,
+          legacyResourceId: shopifyProduct.legacyResourceId,
+          sku: selectedVariant.shopify.sku,
+          productType: shopifyProduct.productType,
+          image: selectedVariant?.shopify?.image?.originalSrc
+            ? selectedVariant.shopify.image?.originalSrc
+            : shopifyProduct.featuredImage.originalSrc,
+          url: shopifyProduct.onlineStoreUrl,
+          vendor: shopifyProduct.vendor,
+          price: selectedVariant.shopify.price,
+          compareAtPrice: selectedVariant.shopify.compareAtPrice,
+          collections: shopifyProduct.collections.map(
+            (collection: { title: string }) => collection.title
+          ),
+          quantity: 1,
+        },
+        addOns: [
+          {
+            title: selectedCase.title,
+            legacyResourceId: selectedCase.legacyResourceId,
+            sku: selectedCase.sku,
+            productType: selectedCase.product.productType,
+            image: selectedCase?.image?.originalSrc
+              ? selectedCase.image?.originalSrc
+              : "",
+            url: selectedCase.product.onlineStoreUrl,
+            vendor: selectedCase.product.vendor,
+            price: selectedCase.price,
+            compareAtPrice: "",
+          },
+        ],
+      }
+      addedCustomizedToCartGTMEvent(productData)
+
       return
     }
     addProductToCart(
