@@ -361,6 +361,19 @@ const Step5 = (props: {
       })
     })
     // add cases
+    productData.addOns.push({
+      title: selectedVariants.case.title,
+      legacyResourceId: selectedVariants.case.legacyResourceId,
+      sku: selectedVariants.case.sku,
+      productType: selectedVariants.case.product.productType,
+      image: selectedVariants.case?.image?.originalSrc
+        ? selectedVariants.case.image?.originalSrc
+        : "",
+      url: selectedVariants.case.product.onlineStoreUrl,
+      vendor: selectedVariants.case.product.vendor,
+      price: selectedVariants.case.price,
+      compareAtPrice: "",
+    })
     addedCustomizedToCartGTMEvent(productData)
   }
 
