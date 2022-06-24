@@ -432,7 +432,6 @@ export const CartProvider = ({ children }) => {
       }
       try {
         // Check if checkout exists
-        console.log("exists?", getCheckoutCookie())
         const checkoutId = isBrowser ? getCheckoutCookie() : null
         let checkout: Cart | Checkout
         // if Checkout exists, fetch it from Shopify
