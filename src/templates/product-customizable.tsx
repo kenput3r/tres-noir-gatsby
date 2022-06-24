@@ -600,7 +600,7 @@ const ProductCustomizable = ({
                     >
                       CUSTOMIZE
                     </Link>
-                    <p className="small">Click for Polarized, Rx, and more</p>
+                    <p className="small">Customize for Polarized, Rx, and more</p>
                   </div>
                 )}
               </div>
