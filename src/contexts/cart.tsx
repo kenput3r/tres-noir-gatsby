@@ -22,6 +22,8 @@ const client = Client.buildClient({
   storefrontAccessToken: process.env.GATSBY_STORE_STOREFRONT_TOKEN as string,
 })
 
+import Cookies from "js-cookie"
+
 const isBrowser = typeof window !== "undefined"
 
 const DefaultContext = {
@@ -108,19 +110,20 @@ export const CartProvider = ({ children }) => {
    * @function getCheckoutCookie - gets the current non-expired chechout cookie
    */
   const getCheckoutCookie = () => {
-    const name = "shopifyCheckout="
-    const decodedDocumentCookie = decodeURIComponent(document.cookie)
-    const cookies = decodedDocumentCookie.split(";")
-    for (let cookie of cookies) {
-      while (cookie.charAt(0) === " ") {
-        cookie = cookie.substring(1)
-      }
-      if (cookie.indexOf(name) === 0) {
-        cookie = cookie.substring(name.length, cookie.length)
-        return cookie
-      }
-    }
-    return null
+    // const name = "shopifyCheckout="
+    // const decodedDocumentCookie = decodeURIComponent(document.cookie)
+    // const cookies = decodedDocumentCookie.split(";")
+    // for (let cookie of cookies) {
+    //   while (cookie.charAt(0) === " ") {
+    //     cookie = cookie.substring(1)
+    //   }
+    //   if (cookie.indexOf(name) === 0) {
+    //     cookie = cookie.substring(name.length, cookie.length)
+    //     return cookie
+    //   }
+    // }
+    // return null
+    return Cookies.get("shopifyCheckout")
   }
 
   /**
@@ -130,7 +133,12 @@ export const CartProvider = ({ children }) => {
   const getNewCheckout = async () => {
     const newCheckout = await client.checkout.create()
     if (isBrowser) {
-      document.cookie = `shopifyCheckout=${newCheckout.id};max-age=2592000;SameSite=Strict;`
+      // document.cookie = `shopifyCheckout=${newCheckout.id};max-age=2592000;SameSite=Strict;`
+      Cookies.set("shopifyCheckout", String(newCheckout.id), {
+        sameSite: "strict",
+        expires: 2592000,
+      })
+      createBadgeCount(newCheckout)
       const now = new Date()
       // removing local storage objects
       localStorage.removeItem("checkout")
@@ -174,6 +182,27 @@ export const CartProvider = ({ children }) => {
     // } catch (e) {
     //   console.error(e)
     // }
+  }
+
+  // creates cookie with cart item total for shopify site to use
+
+  const createBadgeCount = checkout => {
+    if (isBrowser) {
+      let cartCount = 0
+      if (checkout.tnLineItems) {
+        checkout.tnLineItems.forEach((item: tnItem) => {
+          if (!item.isCustom) {
+            cartCount += item.lineItems[0].shopifyItem.quantity
+          } else {
+            cartCount += 1
+          }
+        })
+        Cookies.set("tnCartCounter", String(cartCount), {
+          expires: 2592000,
+          domain: ".tresnoir.com",
+        })
+      }
+    }
   }
 
   // adds a product from custom products local storage
@@ -375,6 +404,7 @@ export const CartProvider = ({ children }) => {
         })
       )
     }
+    createBadgeCount(checkout)
   }
 
   // Shopify Buy Cart types outdated
@@ -402,6 +432,7 @@ export const CartProvider = ({ children }) => {
       }
       try {
         // Check if checkout exists
+        console.log("exists?", getCheckoutCookie())
         const checkoutId = isBrowser ? getCheckoutCookie() : null
         let checkout: Cart | Checkout
         // if Checkout exists, fetch it from Shopify
