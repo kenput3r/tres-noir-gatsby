@@ -110,19 +110,6 @@ export const CartProvider = ({ children }) => {
    * @function getCheckoutCookie - gets the current non-expired chechout cookie
    */
   const getCheckoutCookie = () => {
-    // const name = "shopifyCheckout="
-    // const decodedDocumentCookie = decodeURIComponent(document.cookie)
-    // const cookies = decodedDocumentCookie.split(";")
-    // for (let cookie of cookies) {
-    //   while (cookie.charAt(0) === " ") {
-    //     cookie = cookie.substring(1)
-    //   }
-    //   if (cookie.indexOf(name) === 0) {
-    //     cookie = cookie.substring(name.length, cookie.length)
-    //     return cookie
-    //   }
-    // }
-    // return null
     return Cookies.get("shopifyCheckout")
   }
 
@@ -133,7 +120,6 @@ export const CartProvider = ({ children }) => {
   const getNewCheckout = async () => {
     const newCheckout = await client.checkout.create()
     if (isBrowser) {
-      // document.cookie = `shopifyCheckout=${newCheckout.id};max-age=2592000;SameSite=Strict;`
       Cookies.set("shopifyCheckout", String(newCheckout.id), {
         sameSite: "strict",
         expires: 2592000,
@@ -173,15 +159,6 @@ export const CartProvider = ({ children }) => {
       )
     }
     return newCheckout
-    // try {
-    //   const newCheckout = await client.checkout.create()
-    //   if (isBrowser) {
-    //     document.cookie = `shopifyCheckout=${newCheckout.id};max-age=2592000`
-    //   }
-    //   return newCheckout
-    // } catch (e) {
-    //   console.error(e)
-    // }
   }
 
   // creates cookie with cart item total for shopify site to use
@@ -443,18 +420,6 @@ export const CartProvider = ({ children }) => {
             localCheckout = JSON.parse(localCheckout as string) as LocalCheckout
             checkout = await validateLocalCheckout(localCheckout)
           } else {
-            // local checkout doesn't exist, get checkout and create local
-            // checkout = await client.checkout.fetch(checkoutId)
-            // if (isBrowser) {
-            //   const now = new Date()
-            //   localStorage.setItem(
-            //     "checkout",
-            //     JSON.stringify({
-            //       value: checkout,
-            //       expiry: now.getTime() + 2592000,
-            //     })
-            //   )
-            // }
             // create new checkout
             checkout = await getNewCheckout()
           }
