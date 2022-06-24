@@ -23,6 +23,7 @@ import Spinner from "../components/spinner"
 import CaseGridSunglasses from "../components/case-grid-sunglasses"
 import ProductDetails from "../components/product-contentful-details"
 import { useCaseCollection } from "../hooks/useCaseCollection"
+import { useFilterDuplicateFrames } from "../hooks/useFilterDuplicateFrames"
 
 const Page = styled.div`
   .shipping-message {
@@ -236,6 +237,11 @@ const ProductCustomizable = ({
   }
 
   const [lensType, setLensType] = useState<string>("sunglasses")
+  contentfulProduct.variants = useFilterDuplicateFrames(
+    lensType,
+    contentfulProduct.variants
+  )
+
   const [imageSet, setImageSet] = useState<any>(
     contentfulProduct.variants[0].imageSet
   )
