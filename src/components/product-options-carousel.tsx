@@ -7,7 +7,6 @@ import styled from "styled-components"
 import { ContentfulProductVariant } from "../types/contentful"
 
 import "swiper/css"
-import NotFoundPage from "../pages/404"
 
 const Component = styled.div`
   .navigation {

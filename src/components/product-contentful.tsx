@@ -8,6 +8,7 @@ import {
 } from "../types/contentful"
 import ProductOptionsCarousel from "../components/product-options-carousel"
 import ProductAction from "./collection-product-action"
+import { useFilterDuplicateFrames } from "../hooks/useFilterDuplicateFrames"
 
 const Component = styled.article`
   margin-bottom: 1.45rem;
@@ -86,6 +87,11 @@ interface Props {
 
 const ProductContentful = ({ data, color, collectionHandle }: Props) => {
   const isSunglasses = collectionHandle.includes("sunglasses")
+  const lensType = collectionHandle.includes("sunglasses")
+    ? "sunglasses"
+    : "glasses"
+
+  data.variants = useFilterDuplicateFrames(lensType, data.variants)
 
   const [variantSku, setVariantSku] = useState<string>(data.variants[0].sku)
 
