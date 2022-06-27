@@ -110,7 +110,7 @@ const Product = ({ data }: { data: ShopifyProduct }) => {
             </ProductAction>
           ) : (
             <ProductAction>
-              {quantityLevels && quantityLevels[data.variants[0].sku] !== 0 ? (
+              {quantityLevels && quantityLevels[data.variants[0].sku] > 0 ? (
                 <button type="button" onClick={handleAddToCart}>
                   {isAddingToCart ? <Spinner /> : `Add To Cart`}
                 </button>
