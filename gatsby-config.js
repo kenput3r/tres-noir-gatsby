@@ -53,6 +53,17 @@ module.exports = {
     author: `@SuavecitoInc`,
   },
   plugins: [
+    {
+      resolve: "@sentry/gatsby",
+      options: {
+        dsn: process.env.SENTRY_DSN, // this is the default
+        tracesSampleRate: 1, // or tracesSampler (see above)
+        browserTracingOptions: {
+          // disable creating spans for XHR requests
+          traceXHR: false,
+        },
+      },
+    },
     `gatsby-plugin-react-helmet`,
     {
       resolve: "gatsby-plugin-google-tagmanager",
