@@ -5,6 +5,7 @@ import Spinner from "./spinner"
 const Button = styled.button`
   min-height: 42px;
   min-width: 150px;
+  border-radius: 0% !important;
 
   @media only screen and (max-width: 468px) {
     min-height: 40px;

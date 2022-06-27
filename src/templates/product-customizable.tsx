@@ -78,6 +78,9 @@ const Page = styled.div`
     font-size: 3rem;
     text-transform: uppercase;
     margin-bottom: 0;
+    @media screen and (max-width: 480px) {
+      font-size: 2.25rem;
+    }
   }
   .fit {
     color: var(--color-grey-dark);
@@ -137,6 +140,11 @@ const Page = styled.div`
       &.right {
         align-self: end;
         text-align: right;
+        a {
+          @media screen and (max-width: 480px) {
+            font-size: 1.5rem;
+          }
+        }
       }
       a {
         color: var(--color-grey-dark);
@@ -167,6 +175,7 @@ const Page = styled.div`
       text-decoration: none;
       text-align: center;
       -webkit-appearance: button-bevel;
+      border-radius: 0%;
     }
     p {
       color: var(--color-grey-dark);
