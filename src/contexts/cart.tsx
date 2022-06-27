@@ -124,13 +124,13 @@ export const CartProvider = ({ children }) => {
         sameSite: "strict",
         expires: 2592000,
       })
-      createBadgeCount(newCheckout)
       const now = new Date()
       // removing local storage objects
       localStorage.removeItem("checkout")
       localStorage.removeItem("cart-images")
       localStorage.removeItem("customs-resume")
       newCheckout["tnLineItems"] = []
+      createBadgeCount(newCheckout)
       localStorage.setItem(
         "checkout",
         JSON.stringify({ value: newCheckout, expiry: now.getTime() + 2592000 })
@@ -352,7 +352,9 @@ export const CartProvider = ({ children }) => {
       else if (value.length === 2) {
         itemsToAdd.push({
           id: key,
-          lineItems: value,
+          lineItems: value.sort((a, b) => {
+            return a.stepNumber - b.stepNumber
+          }),
           image: getImageFromLocalStorage(key),
           isCustom: false,
         })
@@ -402,6 +404,7 @@ export const CartProvider = ({ children }) => {
           localStorage.removeItem("checkout")
           localStorage.removeItem("cart-images")
           localStorage.removeItem("customs-resume")
+          Cookies.remove("tnCartCounter")
           // eslint-disable-next-line no-return-await
           return await getNewCheckout()
         }
