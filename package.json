@@ -5,6 +5,7 @@
   "version": "0.1.0",
   "author": "Kyle Mathews <mathews.kyle@gmail.com>",
   "dependencies": {
+    "@sentry/gatsby": "^7.3.0",
     "algoliasearch": "^4.13.0",
     "babel-plugin-styled-components": "^2.0.7",
     "contentful": "^9.1.12",
