@@ -78,6 +78,9 @@ const Page = styled.div`
     font-size: 3rem;
     text-transform: uppercase;
     margin-bottom: 0;
+    @media screen and (max-width: 480px) {
+      font-size: 2.25rem;
+    }
   }
   .fit {
     color: var(--color-grey-dark);
@@ -137,6 +140,11 @@ const Page = styled.div`
       &.right {
         align-self: end;
         text-align: right;
+        a {
+          @media screen and (max-width: 480px) {
+            font-size: 1.5rem;
+          }
+        }
       }
       a {
         color: var(--color-grey-dark);
@@ -167,6 +175,7 @@ const Page = styled.div`
       text-decoration: none;
       text-align: center;
       -webkit-appearance: button-bevel;
+      border-radius: 0%;
     }
     p {
       color: var(--color-grey-dark);
@@ -342,6 +351,34 @@ const ProductCustomizable = ({
     })
     setSelectedVariantsToDefault()
   }, [])
+
+  // will swap to the first available variant if selected is sold out
+  useEffect(() => {
+    console.log("q", quantityLevels)
+    console.log("a", shopifyProduct.variants)
+    if (quantityLevels && Object.keys(quantityLevels).length !== 0) {
+      const current = selectedVariant
+      if (quantityLevels[current.shopify.sku] == 0) {
+        for (let key in quantityLevels) {
+          if (quantityLevels[key] > 0) {
+            const shopify = shopifyProduct.variants.find(
+              (_variant: any) => _variant.sku === key
+            )
+            const contentful = contentfulProduct.variants.find(
+              (_variant: any) => _variant.sku === key
+            )
+            if (shopify && contentful) {
+              setSelectedVariant({
+                contentful: contentful,
+                shopify: shopify,
+              })
+            }
+            break
+          }
+        }
+      }
+    }
+  }, [quantityLevels])
 
   // cart
   const { addProductToCart, isAddingToCart, addSunglassesToCart } =
@@ -571,7 +608,7 @@ const ProductCustomizable = ({
               </div>
               <div className="actions">
                 {quantityLevels &&
-                quantityLevels[selectedVariant.shopify.sku] === 0 ? (
+                quantityLevels[selectedVariant.shopify.sku] <= 0 ? (
                   <div className="align-start">
                     <button type="button" className="sold-out">
                       SOLD OUT
@@ -600,7 +637,9 @@ const ProductCustomizable = ({
                     >
                       CUSTOMIZE
                     </Link>
-                    <p className="small">Customize for Polarized, Rx, and more</p>
+                    <p className="small">
+                      Customize for Polarized, Rx, and more
+                    </p>
                   </div>
                 )}
               </div>

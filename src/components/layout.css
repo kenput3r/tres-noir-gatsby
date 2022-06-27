@@ -638,6 +638,7 @@ pre tt:after {
   cursor: pointer;
   -webkit-appearance: button-bevel;
   border: none;
+  border-radius: 0%;
 }
 .button:hover,
 .btn:hover,

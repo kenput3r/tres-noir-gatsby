@@ -336,8 +336,7 @@ const Product = ({ data: { shopifyProduct } }: any) => {
                     name="quantity"
                     id="quantity"
                     disabled={
-                      quantityLevels &&
-                      quantityLevels[selectedVariant.sku] === 0
+                      quantityLevels && quantityLevels[selectedVariant.sku] <= 0
                         ? true
                         : false
                     }
