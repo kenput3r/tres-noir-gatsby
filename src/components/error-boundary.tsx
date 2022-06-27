@@ -1,5 +1,5 @@
 import React from "react"
-import * as Sentry from "@sentry/browser"
+import * as Sentry from "@sentry/gatsby"
 
 interface Props {
   error: any
