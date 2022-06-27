@@ -352,7 +352,9 @@ export const CartProvider = ({ children }) => {
       else if (value.length === 2) {
         itemsToAdd.push({
           id: key,
-          lineItems: value,
+          lineItems: value.sort((a, b) => {
+            return a.stepNumber - b.stepNumber
+          }),
           image: getImageFromLocalStorage(key),
           isCustom: false,
         })
