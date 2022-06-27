@@ -1,23 +1,26 @@
 import React from "react"
+import * as Sentry from "@sentry/gatsby"
 
 interface Props {
   error: any
   errorInfo: any
+  eventId: string
 }
 
 class ErrorBoundary extends React.Component<{ children: any }, Props> {
   constructor(props: { children: any } | Readonly<{ children: any }>) {
     super(props)
-    this.state = { error: null, errorInfo: null }
+    this.state = { error: null, errorInfo: null, eventId: "" }
   }
 
   componentDidCatch(error: any, errorInfo: any) {
     // Catch errors in any components below and re-render with error message
-    this.setState({
-      error: error,
-      errorInfo: errorInfo,
-    })
     // You can also log error messages to an error reporting service here
+    Sentry.withScope(scope => {
+      scope.setExtras(errorInfo)
+      const eventId = Sentry.captureException(error)
+      this.setState({ eventId, errorInfo, error })
+    })
   }
 
   render() {
