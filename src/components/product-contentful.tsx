@@ -1,7 +1,7 @@
-import React, { useState, useContext } from "react"
+import React, { useState } from "react"
 import { Link } from "gatsby"
 import styled from "styled-components"
-import { GatsbyImage as Img, IGatsbyImageData } from "gatsby-plugin-image"
+import { GatsbyImage as Img } from "gatsby-plugin-image"
 import {
   ContentfulProduct,
   ContentfulProductVariant,
@@ -93,25 +93,15 @@ const ProductContentful = ({ data, color, collectionHandle }: Props) => {
 
   data.variants = useFilterDuplicateFrames(lensType, data.variants)
 
-  const [variantSku, setVariantSku] = useState<string>(data.variants[0].sku)
-
-  const [variantImage, setVariantImage] = useState<IGatsbyImageData>(
-    !isSunglasses && data.variants[0].featuredImageClear?.data
-      ? data.variants[0].featuredImageClear.data
-      : data.variants[0].featuredImage.data
-  )
+  const [selectedVariant, setSelectedVariant] =
+    useState<ContentfulProductVariant>(data.variants[0])
 
   const productLink = isSunglasses
     ? `/products/${data.handle}?lens_type=sunglasses`
     : `/products/${data.handle}?lens_type=glasses`
 
   const selectVariant = (variant: ContentfulProductVariant) => {
-    const image =
-      !isSunglasses && variant.featuredImageClear?.data
-        ? variant.featuredImageClear.data
-        : variant.featuredImage.data
-    setVariantImage(image)
-    setVariantSku(variant.sku)
+    setSelectedVariant(variant)
   }
 
   let hasNewStyles: boolean = false
@@ -121,16 +111,27 @@ const ProductContentful = ({ data, color, collectionHandle }: Props) => {
   return (
     <Component>
       <article className="product-container">
-        <Link to={`${productLink}&variant=${variantSku}`}>
-          <Img image={variantImage} alt={data.title} />
+        <Link to={`${productLink}&variant=${selectedVariant.sku}`}>
+          <Img
+            image={
+              !isSunglasses && selectedVariant.featuredImageClear?.data
+                ? selectedVariant.featuredImageClear.data
+                : selectedVariant.featuredImage.data
+            }
+            alt={data.title}
+          />
           {hasNewStyles && <div className="new-styles">New!</div>}
         </Link>
         <ProductAction>
-          <Link to={`${productLink}&variant=${variantSku}`}>View Product</Link>
+          <Link to={`${productLink}&variant=${selectedVariant.sku}`}>
+            View Product
+          </Link>
         </ProductAction>
       </article>
       <h3>
-        <Link to={`${productLink}&variant=${variantSku}`}>{data.title}</Link>
+        <Link to={`${productLink}&variant=${selectedVariant.sku}`}>
+          {data.title}
+        </Link>
       </h3>
 
       <ProductOptionsCarousel

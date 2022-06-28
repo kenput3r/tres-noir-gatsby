@@ -239,7 +239,7 @@ export const CustomizeContext = createContext(defaultContext)
 
 export const CustomizeProvider = ({ children }: { children: ReactChild }) => {
   const [currentStep, setCurrentStep] = useState(1)
-  const [productUrl, setProductUrl] = useState("/")
+  const [productUrl, setProductUrl] = useState("")
   const [hasSavedCustomized, setHasSavedCustomized] = useState({
     step1: false,
     step2: false,
