@@ -1,10 +1,6 @@
 import React, { useState, useEffect, useContext } from "react"
 import { Link, graphql } from "gatsby"
-import {
-  StaticImage,
-  GatsbyImage as Img,
-  IGatsbyImageData,
-} from "gatsby-plugin-image"
+import { StaticImage, GatsbyImage as Img } from "gatsby-plugin-image"
 import styled from "styled-components"
 import { useQuantityQuery } from "../hooks/useQuantityQuery"
 import ProductCarousel from "../components/product-carousel"
@@ -251,20 +247,12 @@ const ProductCustomizable = ({
     contentfulProduct.variants
   )
 
-  const [imageSet, setImageSet] = useState<any>(
-    contentfulProduct.variants[0].imageSet
-  )
-
   const [selectedVariant, setSelectedVariant] = useState({
     contentful: contentfulProduct?.variants && contentfulProduct.variants[0],
     shopify: shopifyProduct.variants.find(
       (variant: any) => variant.sku === contentfulProduct.variants[0].sku
     ),
   })
-
-  const [customizeUrl, setCustomizeUrl] = useState<string>(
-    `/products/${contentfulProduct.handle}/customize?variant=${contentfulProduct.variants[0].sku}`
-  )
 
   const caseCollection = useCaseCollection()
 
@@ -277,26 +265,6 @@ const ProductCustomizable = ({
     shopifyProduct.handle,
     shopifyProduct.variants.length
   )
-
-  const getImageSet = (variant: any) => {
-    let defaultImageSet: IGatsbyImageData[]
-    switch (lensType) {
-      case LensType.GLASSES:
-        defaultImageSet = variant.imageSetClear
-          ? variant.imageSetClear
-          : variant.imageSet
-        break
-      case LensType.SUNGLASSES:
-        defaultImageSet = variant.imageSet
-        break
-      case null:
-        defaultImageSet = variant.imageSet
-        break
-      default:
-        defaultImageSet = variant.imageSet
-    }
-    return defaultImageSet
-  }
 
   useEffect(() => {
     let paramSku: null | string = null
@@ -326,12 +294,6 @@ const ProductCustomizable = ({
     }
   }, [])
 
-  useEffect(() => {
-    const defaultImageSet = getImageSet(contentfulProduct.variants[0])
-    setImageSet(defaultImageSet)
-    updateCustomizeUrl()
-  }, [lensType])
-
   const {
     setSelectedVariantsToDefault,
     setCurrentStep,
@@ -340,7 +302,9 @@ const ProductCustomizable = ({
   } = useContext(CustomizeContext)
 
   useEffect(() => {
-    setProductUrl(`/products/${contentfulProduct.handle}`)
+    setProductUrl(
+      `/products/${contentfulProduct.handle}/?variant=${contentfulProduct.sku}`
+    )
     setCurrentStep(1)
     setHasSavedCustomized({
       step1: false,
@@ -354,9 +318,20 @@ const ProductCustomizable = ({
 
   // will swap to the first available variant if selected is sold out
   useEffect(() => {
-    console.log("q", quantityLevels)
-    console.log("a", shopifyProduct.variants)
-    if (quantityLevels && Object.keys(quantityLevels).length !== 0) {
+    let paramSku: null | string = null
+    const isBrowser = typeof window !== "undefined"
+    if (isBrowser) {
+      const params = new URLSearchParams(location.search)
+      if (params.get("lens_type"))
+        setLensType(params.get("lens_type") || "glasses")
+      if (params.get("variant")) paramSku = params.get("variant")
+    }
+    // if variant not supplied select first available
+    if (
+      !paramSku &&
+      quantityLevels &&
+      Object.keys(quantityLevels).length !== 0
+    ) {
       const current = selectedVariant
       if (quantityLevels[current.shopify.sku] == 0) {
         for (let key in quantityLevels) {
@@ -413,13 +388,12 @@ const ProductCustomizable = ({
         contentful: variant,
         shopify,
       })
+      // update url
+      setProductUrl(
+        `/products/${contentfulProduct.handle}/?variant=${contentfulProduct.sku}`
+      )
     }
   }
-
-  useEffect(() => {
-    updateImageSet()
-    updateCustomizeUrl()
-  }, [selectedVariant])
 
   const handleAddToCart = () => {
     const id = selectedVariant.shopify.storefrontId
@@ -514,17 +488,6 @@ const ProductCustomizable = ({
     addedToCartGTMEvent(productData)
   }
 
-  const updateImageSet = () => {
-    const defaultImageSet = getImageSet(selectedVariant.contentful)
-    setImageSet(defaultImageSet)
-  }
-
-  const updateCustomizeUrl = () => {
-    let url = `/products/${contentfulProduct.handle}/customize?variant=${selectedVariant.shopify.sku}`
-    if (lensType !== LensType.SUNGLASSES) url = `${url}&lens_type=${lensType}`
-    setCustomizeUrl(url)
-  }
-
   return (
     <Layout>
       <SEO title={shopifyProduct.title} />
@@ -533,7 +496,13 @@ const ProductCustomizable = ({
         <div className="row">
           <div className="col images">
             <ProductCarousel
-              imageSet={selectedVariant?.contentful && imageSet}
+              imageSet={
+                selectedVariant?.contentful &&
+                lensType === LensType.GLASSES &&
+                selectedVariant.contentful.imageSetClear
+                  ? selectedVariant.contentful.imageSetClear
+                  : selectedVariant.contentful.imageSet
+              }
             />
           </div>
           <div className="col">
@@ -633,7 +602,14 @@ const ProductCustomizable = ({
 
                     <Link
                       className="btn"
-                      to={contentfulProduct && customizeUrl}
+                      // to={contentfulProduct && customizeUrl}
+                      to={`/products/${
+                        contentfulProduct.handle
+                      }/customize?variant=${selectedVariant.shopify.sku}${
+                        lensType !== LensType.SUNGLASSES
+                          ? `&lens_type=${lensType}`
+                          : ""
+                      }`}
                     >
                       CUSTOMIZE
                     </Link>
