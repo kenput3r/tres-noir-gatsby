@@ -35,7 +35,7 @@ const Form = ({
     setHasSavedCustomized,
     defaultVariant,
   } = useContext(CustomizeContext)
-  // const { checkout } = useContext(CartContext)
+
   const stepMap = new Map()
   stepMap.set(1, "RX TYPE")
   stepMap.set(2, "LENS TYPE")
@@ -133,10 +133,6 @@ const Form = ({
         toggleAntiReflective(blockedSelections, name, checked)
         // do not let removal of one
         if (selectedVariants.step4.length === 1) {
-          // setSelectedVariants({
-          //   ...selectedVariants,
-          //   [`step${currentStep}`]: [shopifyCollection.products[0].variants[0]],
-          // })
           disableContinue(4)
         } else {
           const arr = selectedVariants.step4
@@ -350,10 +346,6 @@ const Form = ({
       selectedVariants.step4[0].product.title === ""
     ) {
       disableContinue(4)
-      // setSelectedVariants({
-      //   ...selectedVariants,
-      //   [`step${currentStep}`]: [shopifyCollection.products[0].variants[0]],
-      // })
     }
   }, [currentStep])
 

@@ -18,8 +18,7 @@ import {
   ShopifyProduct,
   ShopifyProductVariant,
 } from "../types/customize"
-import { ImageHashTable, ImageStorage } from "../types/checkout"
-// import Product from "../components/product"
+import { ImageStorage } from "../types/checkout"
 
 const Page = styled.div`
   .row {
@@ -96,20 +95,20 @@ const Customize = ({
     if (contentful && shopify) {
       const _variant = { contentful, shopify }
       setVariant(_variant)
-      let handle = `/products/${contentfulProduct.handle}`
-      if (lensType) handle = `${handle}?lens_type=${lensType}`
+      let handle = `/products/${contentfulProduct.handle}?variant=${contentful.sku}`
+      if (lensType) handle = `${handle}&lens_type=${lensType}`
       setProductUrl(handle)
-      if (previewRef.current) {
-        const previewImage = previewRef.current.querySelector(
-          ".gatsby-image-wrapper img[data-main-image]"
-        )
-        // previewImage.addEventListener("loadstart", function (e) {
-        //   console.log("Preview Image Load Started")
-        // })
-        // previewImage.addEventListener("loadend", function (e) {
-        //   console.log("Preview Image Load Ended")
-        // })
-      }
+      // if (previewRef.current) {
+      //   const previewImage = previewRef.current.querySelector(
+      //     ".gatsby-image-wrapper img[data-main-image]"
+      //   )
+      //   // previewImage.addEventListener("loadstart", function (e) {
+      //   //   console.log("Preview Image Load Started")
+      //   // })
+      //   // previewImage.addEventListener("loadend", function (e) {
+      //   //   console.log("Preview Image Load Ended")
+      //   // })
+      // }
     }
   }, [
     contentfulProduct?.handle,

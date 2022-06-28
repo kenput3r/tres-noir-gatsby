@@ -95,7 +95,6 @@ const ProductOptionsCarousel = ({
     )
     let found: { index: number; dominantColor: string; frameColors: any }[] = []
     options.forEach(option => {
-      let targetIndex: number
       if (option.getAttribute("data-frame-colors")?.includes(color)) {
         const index = Number(option.getAttribute("data-index"))
         const dominantColor = option.getAttribute("data-dominant-color") || ""
