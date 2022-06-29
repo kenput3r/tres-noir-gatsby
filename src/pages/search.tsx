@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useState } from "react"
 import styled from "styled-components"
 import Layout from "../components/layout"
 import SEO from "../components/seo"
@@ -31,7 +31,11 @@ interface Location {
 
 const hitsPerPage = 18
 
-const Page = styled.div``
+const Page = styled.div`
+  @media only screen and (max-width: 468px) {
+    min-height: calc(100vh - 152px - 250px);
+  }
+`
 
 const PaginationContainer = styled.div`
   display: flex;
@@ -80,7 +84,7 @@ const Search = ({ location: { state } }: Location) => {
         <SEO title="Search" />
         <Page>
           <h1 className="text-center">SEARCH</h1>
-          <div className="text-center">
+          <div className="text-center search-box">
             <SearchBox />
           </div>
           <Results />
