@@ -285,6 +285,13 @@ const Page = styled.div`
       margin: auto 0;
     }
   }
+  .row {
+    span {
+      .gatsby-image-wrapper {
+        vertical-align: middle;
+      }
+    }
+  }
 `
 
 const LearnMore = ({ data: { contentfulProduct } }: any) => {
@@ -306,6 +313,14 @@ const LearnMore = ({ data: { contentfulProduct } }: any) => {
   //   })
   // }
 
+  let productTitle = contentfulProduct.title
+  if (
+    productTitle.includes("Mooneyes") ||
+    productTitle.includes("Low Bridge Fit")
+  ) {
+    productTitle = productTitle.split("-")[0]
+  }
+
   useEffect(() => {
     if (typeof window !== `undefined`) {
       const observer = new IntersectionObserver(
@@ -325,7 +340,7 @@ const LearnMore = ({ data: { contentfulProduct } }: any) => {
 
   return (
     <Layout>
-      <SEO title={contentfulProduct.title} />
+      <SEO title={productTitle} />
       <Page>
         <h1
           id="StickyHeading"
@@ -342,7 +357,7 @@ const LearnMore = ({ data: { contentfulProduct } }: any) => {
                 height={25}
                 className="diamonds"
               />
-              <span className="product-title">{contentfulProduct.title}</span>
+              <span className="product-title">{productTitle}</span>
               <StaticImage
                 src="../../images/double-diamonds.png"
                 alt="Double Diamonds"
@@ -382,7 +397,7 @@ const LearnMore = ({ data: { contentfulProduct } }: any) => {
         <section className="fit-info">
           <div className="wrapper">
             <p className="h2">
-              {contentfulProduct.title} frames are a{" "}
+              {productTitle} frames are a{" "}
               {contentfulProduct.frameWidth.length > 1
                 ? `${contentfulProduct.frameWidth[0]} to ${contentfulProduct.frameWidth[1]}`
                 : contentfulProduct.frameWidth[0]}{" "}
@@ -404,8 +419,8 @@ const LearnMore = ({ data: { contentfulProduct } }: any) => {
         {contentfulProduct.rxAble && (
           <section className="rx-able">
             <p className="h2">
-              <span className="upper">{contentfulProduct.title}</span> frames
-              are <span>RX-able.</span>
+              <span className="upper">{productTitle}</span> frames are{" "}
+              <span>RX-able.</span>
             </p>
             <div className="row wrapper">
               <div className="col">

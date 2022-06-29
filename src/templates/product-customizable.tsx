@@ -132,6 +132,9 @@ const Page = styled.div`
       flex: 1;
       &.left {
         align-self: start;
+        @media screen and (max-width: 480px) {
+          font-size: 1.5rem;
+        }
       }
       &.right {
         align-self: end;
@@ -333,7 +336,7 @@ const ProductCustomizable = ({
       Object.keys(quantityLevels).length !== 0
     ) {
       const current = selectedVariant
-      if (quantityLevels[current.shopify.sku] == 0) {
+      if (quantityLevels[current.shopify.sku] <= 0) {
         for (let key in quantityLevels) {
           if (quantityLevels[key] > 0) {
             const shopify = shopifyProduct.variants.find(
