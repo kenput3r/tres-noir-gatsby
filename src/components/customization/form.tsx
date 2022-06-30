@@ -561,14 +561,6 @@ const Form = ({
     return found
   }
 
-  // useEffect(() => {
-  //   const entries = document.querySelector(".button-row")
-  //   const observer = new IntersectionObserver(entries => {
-  //     console.log(entries)
-  //   })
-  //   observer.observe(entries)
-  // })
-
   return (
     <Component>
       <div className="step-header" ref={topRef}>
