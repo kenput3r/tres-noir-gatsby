@@ -91,15 +91,17 @@ const About = () => {
               </h2>
               <article>
                 <p>
-                  Tres Noir is built around making quality product and selling
-                  it at a fair price. We believe no one should ever overpay for
-                  a pair of sunglasses. We are the anti-luxoticca, anti-big
-                  business, eyewear company. We've built the brand around our
-                  style and our interests. We believe the customer is above all
-                  else and pride ourselves on exceptional service - the result
-                  is a loyal and satisfied customer base. We hope that you
-                  invest in a pair of Tres Noir Eyewear and find out for
-                  yourself.
+                  Tres Noir was built around the mission of crafting
+                  high-quality eyewear and offering it at a fair price. We
+                  believe no one should overpay for a pair of sunglasses.
+                  Consider us the anti-luxottica, anti-big business eyewear
+                  company. We’re a West Coast lifestyle brand that draws
+                  inspiration from our deep-seeded roots in car culture and rock
+                  n roll. It’s not limited to a certain aesthetic or way of
+                  life, but more so, an attitude that promotes and carries
+                  authenticity. We believe the customer is above all else and we
+                  pride ourselves in providing exceptional service and quality;
+                  the end result is a loyal and satisfied customer base.
                 </p>
                 <ul>
                   <p>PRODUCT FEATURES:</p>
