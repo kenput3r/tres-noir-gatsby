@@ -76,15 +76,14 @@ const Page = styled.div`
       display: flex;
     }
   }
-  /* .button-row {
+  .button-row {
     @media screen and (max-width: 760px) {
-      position: fixed;
+      position: sticky;
       bottom: 0;
-      width: 100vw;
-      display: flex;
+      padding: 10px 0;
     }
     background-color: white;
-  } */
+  }
 `
 
 const Customize = ({
