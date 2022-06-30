@@ -54,6 +54,37 @@ const Page = styled.div`
       padding: 5px;
     }
   }
+  .mobile {
+    display: none;
+    @media screen and (max-width: 760px) {
+      display: block;
+    }
+  }
+  .desktop {
+    display: block;
+    @media screen and (max-width: 760px) {
+      display: none;
+    }
+  }
+  .sticky-mobile {
+    @media screen and (max-width: 760px) {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: white;
+      padding-bottom: 5px;
+      display: flex;
+    }
+  }
+  /* .button-row {
+    @media screen and (max-width: 760px) {
+      position: fixed;
+      bottom: 0;
+      width: 100vw;
+      display: flex;
+    }
+    background-color: white;
+  } */
 `
 
 const Customize = ({
@@ -177,15 +208,26 @@ const Customize = ({
       <SEO title="customize" />
       <Page>
         <div className="row product-customize">
-          <div className="col preview" ref={previewRef}>
+          <div className="desktop col preview" ref={previewRef}>
             <GatsbyImage
               image={currentImage.data}
               alt={currentImage.altText}
               loading="eager"
             />
           </div>
-          <div className="col steps">
+          {/* div for sticky mobile */}
+          <div className="mobile col sticky-mobile" ref={previewRef}>
+            <GatsbyImage
+              image={currentImage.data}
+              alt={currentImage.altText}
+              loading="eager"
+            />
             <CustomizationProgress step={currentStep} />
+          </div>
+          <div className="col steps">
+            <div className="desktop">
+              <CustomizationProgress step={currentStep} />
+            </div>
             <p className="current-price">
               <span>${currentPrice}</span>
             </p>

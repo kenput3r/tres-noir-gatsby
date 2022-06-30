@@ -47,6 +47,7 @@ const Form = ({
   const [isFormValid, setIsFormValid] = useState(true)
   const errorRefs = useRef({})
   const continueBtn = useRef<HTMLButtonElement>(null)
+  const topRef = useRef<HTMLDivElement>(null)
   const [filteredCollection, setFilteredCollection] = useState<string[]>([])
   const [editHasError, setEditHasError] = useState(false)
 
@@ -180,6 +181,7 @@ const Form = ({
     rxInfoDispatch({ type: evt.target.id, payload: evt.target.value })
     isNowValid()
   }
+
   const clearErrors = (evt: ChangeEvent<HTMLSelectElement>) => {
     let id: string = evt.target.id
     // disable axis whether a cyl value is present or not
@@ -293,6 +295,9 @@ const Form = ({
   }
 
   const handleSteps = (num: number) => {
+    // scroll to top
+    const customizeDiv = topRef.current?.closest(".product-customize")
+    customizeDiv?.scrollIntoView()
     if (currentStep !== 1 || !isRxAble) {
       setCurrentStep(currentStep + num)
       return
@@ -556,9 +561,17 @@ const Form = ({
     return found
   }
 
+  // useEffect(() => {
+  //   const entries = document.querySelector(".button-row")
+  //   const observer = new IntersectionObserver(entries => {
+  //     console.log(entries)
+  //   })
+  //   observer.observe(entries)
+  // })
+
   return (
     <Component>
-      <div className="step-header">
+      <div className="step-header" ref={topRef}>
         <p>Choose your {stepMap.get(currentStep)}</p>
       </div>
       {shopifyCollection.products.map((product: ShopifyProduct, index) => {
@@ -566,7 +579,6 @@ const Form = ({
         if (product.variants[0].image === null) {
           product.variants[0].image = product.images[0]
         }
-        console.log("PRODUCT", product)
         return (
           <React.Fragment key={product.id}>
             {product.variants.length === 1 &&
@@ -947,7 +959,7 @@ const Form = ({
           </div>
         </div>
       ) : null}
-      <div className="row">
+      <div className="row button-row">
         {currentStep === 1 ? (
           <Link className="button" to={productUrl}>
             GO BACK

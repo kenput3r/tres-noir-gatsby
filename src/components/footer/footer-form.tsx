@@ -23,6 +23,11 @@ const Component = styled.div`
       line-height: 25px;
     }
   }
+  div.form-group {
+    @media screen and (min-width: 601px) {
+      width: 100%;
+    }
+  }
   button {
     background-color: #000;
     color: #fff;
@@ -104,7 +109,7 @@ const Component = styled.div`
 const FooterForm = () => {
   const [emailInput, setEmailInput] = useState("")
   const emailMsg = useRef<null | HTMLDivElement>(null)
-  const formRef = useRef<null | HTMLFormElement>(null)
+  const formRef = useRef<null | HTMLDivElement>(null)
   const buttonRef = useRef<null | HTMLButtonElement>(null)
 
   const fetchReq = async (inEmail: string) => {
@@ -187,23 +192,20 @@ const FooterForm = () => {
   return (
     <Component>
       <p>Sign up for our newsletter</p>
-      <form
-        className="form-group"
-        onSubmit={submitNewletter}
-        ref={formRef}
-        noValidate
-      >
-        <input
-          type="email"
-          placeholder="Email Address"
-          name="emailAddress"
-          onChange={evt => setEmailInput(evt.target.value)}
-        />
-        <button ref={buttonRef} type="submit" onSubmit={submitNewletter}>
-          <FaChevronRight className="btn-chevron-right"></FaChevronRight>
-          <FaCheck className="hide btn-check"></FaCheck>
-          <FaSpinner className="hide btn-spinner spinner"></FaSpinner>
-        </button>
+      <form className="form-group" onSubmit={submitNewletter} noValidate>
+        <div className="form-group" ref={formRef}>
+          <input
+            type="email"
+            placeholder="Email Address"
+            name="emailAddress"
+            onChange={evt => setEmailInput(evt.target.value)}
+          />
+          <button ref={buttonRef} type="submit" onSubmit={submitNewletter}>
+            <FaChevronRight className="btn-chevron-right"></FaChevronRight>
+            <FaCheck className="hide btn-check"></FaCheck>
+            <FaSpinner className="hide btn-spinner spinner"></FaSpinner>
+          </button>
+        </div>
       </form>
       <div className="email-error" ref={emailMsg}></div>
     </Component>
