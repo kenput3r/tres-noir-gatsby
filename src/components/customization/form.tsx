@@ -447,7 +447,8 @@ const Form = ({
             "Blue Light Blocking",
             "Polarized-G15",
             "XTRActive Polarized-Smoke",
-            "Transitions - For Progressive"
+            "Transitions - For Progressive-Smoke",
+            "Transitions - For Progressive-Brown"
           )
           if (
             validationArr.includes(
