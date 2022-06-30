@@ -435,13 +435,13 @@ const Form = ({
           const validationArr = [
             "Blue Light Blocking",
             "Polarized-G15",
-            "XTRActive Polarized",
+            "XTRActive Polarized-Smoke",
             "Transitions - For Progressive",
           ]
           blockedSelections.push(
             "Blue Light Blocking",
             "Polarized-G15",
-            "XTRActive Polarized",
+            "XTRActive Polarized-Smoke",
             "Transitions - For Progressive"
           )
           if (
@@ -457,7 +457,7 @@ const Form = ({
           selectedVariants.step1.product.title !== "Progressive" &&
           selectedVariants.step1.product.title !== "Single Vision"
         ) {
-          blockedSelections.push("XTRActive Polarized")
+          blockedSelections.push("XTRActive Polarized-Smoke")
           if (
             selectedVariants[`step${currentStep}`].product.title ===
             "XTRActive Polarized"
@@ -566,9 +566,11 @@ const Form = ({
         if (product.variants[0].image === null) {
           product.variants[0].image = product.images[0]
         }
+        console.log("PRODUCT", product)
         return (
           <React.Fragment key={product.id}>
-            {product.variants.length === 1 ? (
+            {product.variants.length === 1 &&
+            product.variants[0].title.includes("Default") ? (
               <div
                 className={`product-option ${
                   filteredCollection.includes(product.title) ? "inactive" : ""
