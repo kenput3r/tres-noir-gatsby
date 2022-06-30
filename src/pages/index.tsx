@@ -134,11 +134,16 @@ const Page = styled.div`
     margin-left: -15px;
     margin-right: -15px;
   }
-  /* .about-image {
-    :hover {
-      opacity: 0.65;
+  .navigation {
+    .nav-prev,
+    .nav-next {
+      a {
+        svg {
+          fill: var(--color-grey-dark);
+        }
+      }
     }
-  } */
+  }
 `
 
 const IndexPage = ({
