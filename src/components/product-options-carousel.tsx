@@ -7,7 +7,6 @@ import styled from "styled-components"
 import { ContentfulProductVariant } from "../types/contentful"
 
 import "swiper/css"
-import NotFoundPage from "../pages/404"
 
 const Component = styled.div`
   .navigation {
@@ -96,7 +95,6 @@ const ProductOptionsCarousel = ({
     )
     let found: { index: number; dominantColor: string; frameColors: any }[] = []
     options.forEach(option => {
-      let targetIndex: number
       if (option.getAttribute("data-frame-colors")?.includes(color)) {
         const index = Number(option.getAttribute("data-index"))
         const dominantColor = option.getAttribute("data-dominant-color") || ""
@@ -186,7 +184,7 @@ const ProductOptionsCarousel = ({
           {variants.map((variant: ContentfulProductVariant, i: number) => (
             <SwiperSlide
               key={`${uniqueId}-${i}`}
-              onClick={e => {
+              onClick={() => {
                 clickHandler(variant)
                 setActiveIndex(i)
               }}

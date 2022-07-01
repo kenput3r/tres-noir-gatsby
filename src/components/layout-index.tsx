@@ -8,6 +8,7 @@ import { identifyCustomerGTMEvent } from "../helpers/gtm"
 import Header from "./header"
 import Drawer from "./drawer"
 import Footer from "./footer"
+import CartDrawer from "./cart-drawer"
 import "./fonts.css"
 import "./layout.css"
 
@@ -53,6 +54,7 @@ const Layout = ({ children }: LayoutProps) => {
       <Main>{children}</Main>
       <Footer />
       <ErrorModal />
+      <CartDrawer />
     </>
   )
 }

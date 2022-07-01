@@ -109,8 +109,9 @@ const Step5 = (props: {
   currentPrice: any
   variant: ShopifyProductVariant
   productImage: any
-  resumedItem: any
+  resumedItem: string | null | undefined
   completeVariant: any
+  casesAvailable: string[]
 }) => {
   const {
     productTitle,
@@ -119,6 +120,7 @@ const Step5 = (props: {
     productImage,
     resumedItem,
     completeVariant,
+    casesAvailable,
   } = props
   const {
     currentStep,
@@ -145,6 +147,9 @@ const Step5 = (props: {
       if (addedToCart) {
         setCurrentStep(1)
         setSelectedVariantsToDefault()
+        rxInfoDispatch({
+          type: `reset`,
+        })
       }
     }
   }, [addedToCart])
@@ -212,20 +217,6 @@ const Step5 = (props: {
         ],
       },
       {
-        variantId: step4.storefrontId,
-        quantity: 1,
-        customAttributes: [
-          {
-            key: "customizationId",
-            value: matchingKey,
-          },
-          {
-            key: "customizationStep",
-            value: "4",
-          },
-        ],
-      },
-      {
         variantId: selectedVariants.case.storefrontId,
         quantity: 1,
         customAttributes: [
@@ -240,6 +231,23 @@ const Step5 = (props: {
         ],
       },
     ]
+    // updated step 4
+    step4.forEach(el => {
+      stepItems.push({
+        variantId: el.storefrontId,
+        quantity: 1,
+        customAttributes: [
+          {
+            key: "customizationId",
+            value: matchingKey,
+          },
+          {
+            key: "customizationStep",
+            value: "4",
+          },
+        ],
+      })
+    })
     const frameVariant = {
       variantId: variant.storefrontId,
       quantity: 1,
@@ -257,15 +265,27 @@ const Step5 = (props: {
     stepItems.unshift(frameVariant)
     if (resumedItem) {
       await removeCustomProductWithId(resumedItem)
+      await addProductCustomToCart(
+        stepItems,
+        matchingKey,
+        productImage,
+        selectedVariants,
+        variant.sku,
+        variant.product.handle,
+        false
+      )
+      //
+    } else {
+      await addProductCustomToCart(
+        stepItems,
+        matchingKey,
+        productImage,
+        selectedVariants,
+        variant.sku,
+        variant.product.handle,
+        true
+      )
     }
-    await addProductCustomToCart(
-      stepItems,
-      matchingKey,
-      productImage,
-      selectedVariants,
-      variant.sku,
-      variant.product.handle
-    )
     // boolean to determine whether a frame has been added to cart
     // if true, then the selectedVariant context will reset and currentStep will be 1
     setAddedToCart(true)
@@ -325,19 +345,35 @@ const Step5 = (props: {
           price: step3.price,
           compareAtPrice: "",
         },
-        {
-          title: step4.title,
-          legacyResourceId: step4.legacyResourceId,
-          sku: step4.sku,
-          productType: step4.product.productType,
-          image: step4?.image?.originalSrc ? step4.image?.originalSrc : "",
-          url: step4.product.onlineStoreUrl,
-          vendor: step4.product.vendor,
-          price: step4.price,
-          compareAtPrice: "",
-        },
       ],
     }
+    step4.forEach(el => {
+      productData.addOns.push({
+        title: el.title,
+        legacyResourceId: el.legacyResourceId,
+        sku: el.sku,
+        productType: el.product.productType,
+        image: el?.image?.originalSrc ? el.image?.originalSrc : "",
+        url: el.product.onlineStoreUrl,
+        vendor: el.product.vendor,
+        price: el.price,
+        compareAtPrice: "",
+      })
+    })
+    // add cases
+    productData.addOns.push({
+      title: selectedVariants.case.title,
+      legacyResourceId: selectedVariants.case.legacyResourceId,
+      sku: selectedVariants.case.sku,
+      productType: selectedVariants.case.product.productType,
+      image: selectedVariants.case?.image?.originalSrc
+        ? selectedVariants.case.image?.originalSrc
+        : "",
+      url: selectedVariants.case.product.onlineStoreUrl,
+      vendor: selectedVariants.case.product.vendor,
+      price: selectedVariants.case.price,
+      compareAtPrice: "",
+    })
     addedCustomizedToCartGTMEvent(productData)
   }
 
@@ -345,7 +381,7 @@ const Step5 = (props: {
     <Component>
       <p>REVIEW YOUR CUSTOM GLASSES</p>
 
-      {Array.from({ length: 4 }, (_, i) => (
+      {Array.from({ length: 3 }, (_, i) => (
         <div key={i} className="product-option">
           <GatsbyImage
             image={
@@ -370,6 +406,37 @@ const Step5 = (props: {
             className="edit-btn"
             type="button"
             onClick={() => setCurrentStep(i + 1)}
+          >
+            <StaticImage
+              src="../../images/edit.png"
+              alt="Edit Line Item"
+              placeholder="tracedSVG"
+              style={{ marginBottom: 0, maxWidth: 26 }}
+            />
+          </button>
+        </div>
+      ))}
+
+      {selectedVariants.step4.map((el, i) => (
+        <div key={i} className="product-option">
+          <GatsbyImage
+            image={
+              el.image.localFile.childImageSharp
+                .gatsbyImageData as IGatsbyImageData
+            }
+            alt={el.image.altText || "Placeholder"}
+          />
+          <div className="product-description">
+            <h4>
+              {el.product.title} <span className="price">+ ${el.price}</span>
+            </h4>
+            <p>{el.product.description}</p>
+          </div>
+
+          <button
+            className="edit-btn"
+            type="button"
+            onClick={() => setCurrentStep(4)}
           >
             <StaticImage
               src="../../images/edit.png"
@@ -409,7 +476,7 @@ const Step5 = (props: {
           {isAddingToCart ? <Spinner /> : buttonLabel()}
         </button>
       </div>
-      <CaseGridCustomize />
+      <CaseGridCustomize casesAvailable={casesAvailable} />
     </Component>
   )
 }

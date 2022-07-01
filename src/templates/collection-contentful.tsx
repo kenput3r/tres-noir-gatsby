@@ -1,7 +1,6 @@
 import React, { useContext, useState, useEffect } from "react"
 import { graphql } from "gatsby"
 import styled from "styled-components"
-import { SelectedVariantContext } from "../contexts/selectedVariant"
 import Product from "../components/product-contentful"
 import Layout from "../components/layout"
 import SEO from "../components/seo"
@@ -35,11 +34,7 @@ const CollectionContentful = ({
     collection.products
   )
 
-  const { setSelectedVariantContext } = useContext(SelectedVariantContext)
-
   useEffect(() => {
-    // reset selected variant context
-    setSelectedVariantContext("")
     const collectionInfo = {
       handle: collection.handle,
       title: collection.name,

@@ -18,8 +18,7 @@ import {
   ShopifyProduct,
   ShopifyProductVariant,
 } from "../types/customize"
-import { ImageHashTable, ImageStorage } from "../types/checkout"
-// import Product from "../components/product"
+import { ImageStorage } from "../types/checkout"
 
 const Page = styled.div`
   .row {
@@ -53,6 +52,62 @@ const Page = styled.div`
       display: inline-block;
       font-family: var(--sub-heading-font);
       padding: 5px;
+    }
+  }
+  .mobile {
+    display: none;
+    @media screen and (max-width: 760px) {
+      display: block;
+    }
+  }
+  .desktop {
+    display: block;
+    @media screen and (max-width: 760px) {
+      display: none;
+    }
+  }
+  .sticky-mobile {
+    @media screen and (max-width: 760px) {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: white;
+      padding-bottom: 5px;
+      display: flex;
+    }
+  }
+  .button-row {
+    @media screen and (max-width: 760px) {
+      position: sticky;
+      bottom: 0;
+      // padding: 10px 0;
+      border-top: 1px solid grey;
+      width: calc(100% + 30px);
+      transform: translateX(-15px);
+      padding: 10px 15px;
+    }
+    background-color: white;
+  }
+  /* new */
+  @media screen and (max-width: 760px) {
+    .sticky-mobile {
+      width: calc(100% + 30px);
+      transform: translateX(-15px);
+      padding: 0 15px;
+      border-bottom: 1px solid grey;
+      // box-shadow: 0 4px 4px rgba(128, 128, 128, 0.4);
+      .mobile-flex {
+        display: flex;
+        flex-direction: row;
+        div {
+          flex: 1;
+          &.current-price {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+          }
+        }
+      }
     }
   }
 `
@@ -96,20 +151,20 @@ const Customize = ({
     if (contentful && shopify) {
       const _variant = { contentful, shopify }
       setVariant(_variant)
-      let handle = `/products/${contentfulProduct.handle}`
-      if (lensType) handle = `${handle}?lens_type=${lensType}`
+      let handle = `/products/${contentfulProduct.handle}?variant=${contentful.sku}`
+      if (lensType) handle = `${handle}&lens_type=${lensType}`
       setProductUrl(handle)
-      if (previewRef.current) {
-        const previewImage = previewRef.current.querySelector(
-          ".gatsby-image-wrapper img[data-main-image]"
-        )
-        // previewImage.addEventListener("loadstart", function (e) {
-        //   console.log("Preview Image Load Started")
-        // })
-        // previewImage.addEventListener("loadend", function (e) {
-        //   console.log("Preview Image Load Ended")
-        // })
-      }
+      // if (previewRef.current) {
+      //   const previewImage = previewRef.current.querySelector(
+      //     ".gatsby-image-wrapper img[data-main-image]"
+      //   )
+      //   // previewImage.addEventListener("loadstart", function (e) {
+      //   //   console.log("Preview Image Load Started")
+      //   // })
+      //   // previewImage.addEventListener("loadend", function (e) {
+      //   //   console.log("Preview Image Load Ended")
+      //   // })
+      // }
     }
   }, [
     contentfulProduct?.handle,
@@ -123,7 +178,14 @@ const Customize = ({
     let { price } = variant.shopify
     Object.keys(selectedVariants).forEach(key => {
       price = Number(price)
-      price += Number(selectedVariants[key].price)
+      // step 4 has multiple values
+      if (key === "step4") {
+        selectedVariants[key].forEach(el => {
+          price += Number(el.price)
+        })
+      } else {
+        price += Number(selectedVariants[key].price)
+      }
     })
     price = Number(price.toFixed(2))
     setCurrentPrice(price)
@@ -171,16 +233,34 @@ const Customize = ({
       <SEO title="customize" />
       <Page>
         <div className="row product-customize">
-          <div className="col preview" ref={previewRef}>
+          <div className="desktop col preview" ref={previewRef}>
             <GatsbyImage
               image={currentImage.data}
               alt={currentImage.altText}
               loading="eager"
             />
           </div>
-          <div className="col steps">
+          {/* div for sticky mobile */}
+          <div className="mobile col sticky-mobile" ref={previewRef}>
+            <div className="mobile-flex">
+              <GatsbyImage
+                image={currentImage.data}
+                alt={currentImage.altText}
+                loading="eager"
+              />
+              <div className="current-price">
+                <p>
+                  <span>${currentPrice}</span>
+                </p>
+              </div>
+            </div>
             <CustomizationProgress step={currentStep} />
-            <p className="current-price">
+          </div>
+          <div className="col steps">
+            <div className="desktop">
+              <CustomizationProgress step={currentStep} />
+            </div>
+            <p className="current-price desktop">
               <span>${currentPrice}</span>
             </p>
             <div className="current-step">
@@ -196,6 +276,7 @@ const Customize = ({
                   productImage={currentImage.data}
                   resumedItem={getResumedItem()}
                   completeVariant={variant}
+                  casesAvailable={contentfulProduct.casesAvailable}
                 />
               )}
             </div>
@@ -213,6 +294,7 @@ export const query = graphql`
     contentfulProduct(handle: { eq: $handle }) {
       handle
       fitDimensions
+      casesAvailable
       variants {
         colorName
         sku

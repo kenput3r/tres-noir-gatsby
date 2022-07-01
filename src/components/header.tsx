@@ -12,7 +12,7 @@ import { FaSearch, FaFacebookF, FaBars } from "react-icons/fa"
 import { useClickAway } from "react-use"
 import { TiSocialInstagram } from "react-icons/ti"
 import DesktopNavigation from "./desktopNavigation"
-import CartIcon from "./cart-icon"
+import CartIcon from "./cart-drawer/cart-icon"
 
 const Component = styled.header`
   font-family: var(--sub-heading-font);
@@ -216,10 +216,7 @@ const Header = ({
               <FaSearch className="text-btn" />
             </Link>
 
-            <a
-              href="https://www.tresnoir.com/account/login"
-              className="login-text"
-            >
+            <a href="https://www.tresnoir.com/account" className="login-text">
               <StaticImage
                 className="img-btn"
                 src="../images/icon-user.png"

@@ -1,5 +1,10 @@
 import { IGatsbyImageData } from "gatsby-plugin-image"
 
+export interface LocalCheckout {
+  value: Checkout
+  expiry: number
+}
+
 export interface Checkout {
   appliedGiftCards: string[]
   completedAt: null | string
@@ -88,4 +93,16 @@ export interface CustomLineItem {
   variantId: string
   quantity: number
   customAttributes: { key: string; value: string }[]
+}
+
+export interface rxDetails {
+  sph: string
+  cyl: string
+  axis: string
+  add: string
+  pd: string
+}
+export interface rxType {
+  right: rxDetails
+  left: rxDetails
 }

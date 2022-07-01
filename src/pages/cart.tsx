@@ -8,12 +8,13 @@ import Loader from "../components/loader"
 import QuantitySelector from "../components/quantity-selector"
 import { CartContext } from "../contexts/cart"
 import { CustomerContext } from "../contexts/customer"
-import { tnItem, tnSubItem } from "../types/checkout"
+import { tnItem, tnSubItem, rxType } from "../types/checkout"
 import { startedCheckoutGTMEvent } from "../helpers/gtm"
 import { VscClose } from "react-icons/vsc"
 import UpsellCart from "../components/upsell-cart"
 import { SelectedVariants, SelectedVariantStorage } from "../types/global"
 import { CustomizeContext } from "../contexts/customize"
+import { RxInfoContext } from "../contexts/rxInfo"
 
 const Page = styled.div`
   .cart-wrapper {
@@ -77,6 +78,9 @@ const Page = styled.div`
         }
         .title {
           /* font-weight: bold; */
+          :hover {
+            text-decoration: underline;
+          }
           margin-bottom: 0;
           a {
             color: #000;
@@ -233,6 +237,8 @@ const Cart = () => {
 
   const { associateCheckout } = useContext(CustomerContext)
 
+  const { rxInfo, rxInfoDispatch } = useContext(RxInfoContext)
+
   const { setSelectedVariants, setCurrentStep, setHasSavedCustomized } =
     useContext(CustomizeContext)
 
@@ -264,6 +270,18 @@ const Cart = () => {
         const resumedSelectedVariants = parsedCustoms[item.id].selectedVariants
         const handle = parsedCustoms[item.id].handle
         const sku = parsedCustoms[item.id].sku
+
+        // grab prescription and set context
+        const rxAttr = item.lineItems[1].shopifyItem.customAttributes.find(
+          el => el.key === "Prescription"
+        ).value
+        if (rxAttr !== "Non-Prescription") {
+          const prescription = JSON.parse(rxAttr) as rxType
+          rxInfoDispatch({
+            type: `full`,
+            payload: prescription,
+          })
+        }
         // prepare context for editing
         // setting context
         setSelectedVariants(resumedSelectedVariants)
@@ -328,7 +346,6 @@ const Cart = () => {
     isCustom: boolean
   ) => {
     if (subItem.stepNumber === "0" && isCustom) {
-      console.log(subItem.shopifyItem.variant.title)
       return subItem.shopifyItem.variant.title.split("-")[0]
     }
     if (stepName === "CASE") {
@@ -340,15 +357,6 @@ const Cart = () => {
     } else {
       return `${subItem.shopifyItem.title} - ${subItem.shopifyItem.variant.title}`
     }
-  }
-
-  // clean this up after demo
-  const orderTnLineItems = lineItems => {
-    const order = ["0", "1", "2", "3", "4", "5"]
-    lineItems.sort((a, b) => {
-      return order.indexOf(a.stepNumber) - order.indexOf(b.stepNumber)
-    })
-    return lineItems
   }
 
   const renderStandardProduct = (item: tnItem) => {
@@ -416,8 +424,6 @@ const Cart = () => {
   const renderSunglasses = (item: tnItem) => {
     const sunglassesStepMap = new Map()
     sunglassesStepMap.set(1, "CASE")
-    // fix this
-    item.lineItems = orderTnLineItems(item.lineItems)
     return (
       <li key={item.id} className="customized">
         <div className="close-btn">
@@ -524,28 +530,48 @@ const Cart = () => {
                 </Link>
               </p>
               <div className="sub-title-customize">
-                {item.lineItems.map((subItem, subIndex) => {
-                  return (
-                    <div className="sub-item" key={subItem.shopifyItem.id}>
-                      <div className="step-name">
-                        <p>{stepMap.get(subIndex)}</p>
-                      </div>
-                      <div className="sub-title" key={subItem.shopifyItem.id}>
-                        <span key={subItem.shopifyItem.id}>
-                          {formatItemTitle(
-                            subItem,
-                            stepMap.get(subIndex),
-                            item.isCustom
-                          )}
-                        </span>
-                        <span className="price">
-                          {subItem.shopifyItem.variant.price === "0.00"
-                            ? "Free"
-                            : `$${subItem.shopifyItem.variant.price}`}
-                        </span>
-                      </div>
-                    </div>
+                {Array.from({ length: 6 }, (v, i) => i).map(subIndex => {
+                  const subItems = item.lineItems.filter(
+                    el => Number(el.stepNumber) === subIndex
                   )
+                  if (subItems) {
+                    return (
+                      <div key={subIndex}>
+                        {subItems.map((subItem, i) => (
+                          <div
+                            className="sub-item"
+                            key={subItem.shopifyItem.id}
+                          >
+                            {i === 0 && (
+                              <div className="step-name">
+                                <p>{stepMap.get(subIndex)}</p>
+                              </div>
+                            )}
+
+                            <div
+                              className="sub-title"
+                              key={subItem.shopifyItem.id}
+                            >
+                              <span key={subItem.shopifyItem.id}>
+                                {formatItemTitle(
+                                  subItem,
+                                  stepMap.get(subIndex),
+                                  item.isCustom
+                                )}
+                              </span>
+                              <span className="price">
+                                {subItem.shopifyItem.variant.price === "0.00"
+                                  ? "Free"
+                                  : `$${subItem.shopifyItem.variant.price}`}
+                              </span>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )
+                  } else {
+                    return null
+                  }
                 })}
                 <hr />
                 <span className="price total-price">

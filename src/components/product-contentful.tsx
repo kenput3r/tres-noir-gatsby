@@ -1,14 +1,14 @@
-import React, { useState, useContext } from "react"
+import React, { useState } from "react"
 import { Link } from "gatsby"
 import styled from "styled-components"
-import { GatsbyImage as Img, IGatsbyImageData } from "gatsby-plugin-image"
+import { GatsbyImage as Img } from "gatsby-plugin-image"
 import {
   ContentfulProduct,
   ContentfulProductVariant,
 } from "../types/contentful"
-import { SelectedVariantContext } from "../contexts/selectedVariant"
 import ProductOptionsCarousel from "../components/product-options-carousel"
 import ProductAction from "./collection-product-action"
+import { useFilterDuplicateFrames } from "../hooks/useFilterDuplicateFrames"
 
 const Component = styled.article`
   margin-bottom: 1.45rem;
@@ -86,41 +86,22 @@ interface Props {
 }
 
 const ProductContentful = ({ data, color, collectionHandle }: Props) => {
-  const { setSelectedVariantContext } = useContext(SelectedVariantContext)
-
   const isSunglasses = collectionHandle.includes("sunglasses")
+  const lensType = collectionHandle.includes("sunglasses")
+    ? "sunglasses"
+    : "glasses"
 
-  const defaultImage = isSunglasses
-    ? data.variants[0].featuredImage.data
-    : data.variants[0].featuredImageClear?.data
-    ? data.variants[0].featuredImageClear.data
-    : data.variants[0].featuredImage.data
+  data.variants = useFilterDuplicateFrames(lensType, data.variants)
 
-  const [variantImage, setVariantImage] =
-    useState<IGatsbyImageData>(defaultImage)
+  const [selectedVariant, setSelectedVariant] =
+    useState<ContentfulProductVariant>(data.variants[0])
 
-  const [selectedVariant, setSelectedVariant] = useState({
-    contentful: data.variants[0],
-  })
-
-  const [productLink, setProductLink] = useState(
-    isSunglasses
-      ? `/products/${data.handle}?lens_type=sunglasses`
-      : `/products/${data.handle}?lens_type=glasses`
-  )
+  const productLink = isSunglasses
+    ? `/products/${data.handle}?lens_type=sunglasses`
+    : `/products/${data.handle}?lens_type=glasses`
 
   const selectVariant = (variant: ContentfulProductVariant) => {
-    const defaultImage = isSunglasses
-      ? variant.featuredImage.data
-      : variant.featuredImageClear?.data
-      ? variant.featuredImageClear.data
-      : variant.featuredImage.data
-    setVariantImage(defaultImage)
-    setSelectedVariant({
-      contentful: variant,
-    })
-    setSelectedVariantContext(variant.sku)
-    setProductLink(productLink => `${productLink}&variant=${variant.sku}`)
+    setSelectedVariant(variant)
   }
 
   let hasNewStyles: boolean = false
@@ -130,23 +111,31 @@ const ProductContentful = ({ data, color, collectionHandle }: Props) => {
   return (
     <Component>
       <article className="product-container">
-        <Link to={productLink}>
-          <Img image={variantImage} alt={data.title} />
+        <Link to={`${productLink}&variant=${selectedVariant.sku}`}>
+          <Img
+            image={
+              !isSunglasses && selectedVariant.featuredImageClear?.data
+                ? selectedVariant.featuredImageClear.data
+                : selectedVariant.featuredImage.data
+            }
+            alt={data.title}
+          />
           {hasNewStyles && <div className="new-styles">New!</div>}
         </Link>
         <ProductAction>
-          <Link to={productLink}>View Product</Link>
+          <Link to={`${productLink}&variant=${selectedVariant.sku}`}>
+            View Product
+          </Link>
         </ProductAction>
       </article>
       <h3>
-        <Link to={productLink}>{data.title}</Link>
+        <Link to={`${productLink}&variant=${selectedVariant.sku}`}>
+          {data.title}
+        </Link>
       </h3>
 
       <ProductOptionsCarousel
-        uniqueId={`Product-${data.title
-          .toLowerCase()
-          .replace(" ", "-")
-          .replace(/[^a-z0-9]/gi, "")}`}
+        uniqueId={`product-${data.id}`}
         variants={data.variants}
         clickHandler={selectVariant}
         color={color}

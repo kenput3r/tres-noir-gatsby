@@ -54,6 +54,8 @@ exports.createPages = async ({ graphql, actions: { createPage } }) => {
 
       if (productType === "Glasses") {
         template = "product-customizable"
+      } else if (productType === "Gift Card" || productType === "Gift Cards") {
+        template = "gift-card"
       }
 
       if (
@@ -73,9 +75,7 @@ exports.createPages = async ({ graphql, actions: { createPage } }) => {
   )
   pageable.data.allShopifyProduct.edges.forEach(
     async ({ node: { handle, id, productType } }) => {
-      if (
-        productType === "Glasses"
-      ) {
+      if (productType === "Glasses") {
         createPage({
           path: `/products/${handle}/customize`,
           component: path.resolve(`./src/templates/customize.tsx`),
@@ -100,17 +100,15 @@ exports.createPages = async ({ graphql, actions: { createPage } }) => {
       })
     }
   )
-  pageable.data.allContentfulProduct.edges.forEach(
-    ({ node: { handle }}) => {
-      createPage({
-        path: `/${handle}`,
-        component: path.resolve(`./src/templates/learn-more/index.tsx`),
-        context: {
-          handle,
-        },
-      })
-    }
-  )
+  pageable.data.allContentfulProduct.edges.forEach(({ node: { handle } }) => {
+    createPage({
+      path: `/${handle}`,
+      component: path.resolve(`./src/templates/learn-more/index.tsx`),
+      context: {
+        handle,
+      },
+    })
+  })
   pageable.data.allContentfulCollection.edges.forEach(
     ({ node: { handle } }) => {
       const template = "collection-contentful"
@@ -139,5 +137,3 @@ exports.onCreateWebpackConfig = ({ stage, loaders, actions }) => {
     })
   }
 }
-
-

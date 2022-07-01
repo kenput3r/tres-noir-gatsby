@@ -1,9 +1,9 @@
 import React, { useContext } from "react"
 import { Link } from "gatsby"
-import { CartContext } from "../contexts/cart"
+import { CartContext } from "../../contexts/cart"
 import { StaticImage } from "gatsby-plugin-image"
 import styled from "styled-components"
-import { tnItem } from "../types/checkout"
+import { tnItem } from "../../types/checkout"
 
 const Component = styled.div`
   .cart-icon-container {
@@ -15,14 +15,14 @@ const Component = styled.div`
     left: 16px;
     border-radius: 50%;
     background: black;
-    height: 20px;
-    width: 20px;
+    height: 22px;
+    width: 22px;
     display: grid;
     place-items: center;
     .cart-number {
       text-align: center;
       color: white;
-      font-size: 0.75rem;
+      font-size: 0.7rem;
       vertical-align: middle;
       margin-top: -2px;
       @media screen and (max-width: 480px) {
@@ -55,7 +55,7 @@ const CartIcon = () => {
           <div className="cart-icon">
             <StaticImage
               className="img-btn"
-              src="../images/cart.png"
+              src="../../images/cart.png"
               alt="Shopping Cart"
               placeholder="tracedSVG"
               style={{ marginBottom: 0, maxWidth: 26 }}

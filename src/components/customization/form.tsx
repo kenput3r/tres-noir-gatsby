@@ -7,320 +7,18 @@ import React, {
 } from "react"
 import { Link } from "gatsby"
 import { GatsbyImage } from "gatsby-plugin-image"
-import styled from "styled-components"
-import { FaQuestionCircle } from "react-icons/fa"
-
+import { Component } from "./styles"
 import {
+  SelectedVariantStorage,
   ShopifyCollection,
   ShopifyProduct,
   ShopifyVariant,
 } from "../../types/global"
 import { CustomizeContext } from "../../contexts/customize"
 import { RxInfoContext } from "../../contexts/rxInfo"
-
-const Component = styled.form`
-  padding: 10px;
-  .step-header {
-    font-family: var(--heading-font);
-    text-transform: uppercase;
-  }
-  .product-option {
-    background-color: var(--color-grey-light);
-    border-radius: 4px;
-    display: flex;
-    flex-direction: row;
-    margin-bottom: 5px;
-    padding: 10px;
-    position: relative;
-    &.with-variants {
-      flex-wrap: wrap;
-    }
-    > div {
-      padding: 0 10px;
-    }
-    p {
-      line-height: 1;
-      margin-bottom: 0;
-    }
-    .gatsby-image-wrapper {
-      max-width: 40px;
-      max-height: 40px;
-    }
-    img {
-      align-self: center;
-    }
-    .product-description {
-      max-width: calc(100% - 65px);
-      min-height: 40px;
-    }
-    h4,
-    h6 {
-      font-family: var(--sub-heading-font);
-      margin-bottom: 0;
-      text-transform: uppercase;
-    }
-    input[type="radio"] {
-      height: calc(100% - 10px);
-      opacity: 0;
-      position: absolute;
-      width: calc(100% - 10px);
-      z-index: 2;
-      :hover {
-        cursor: pointer;
-      }
-      :checked ~ .checkmark:after {
-        display: block;
-      }
-    }
-    .checkmark {
-      border: 1px solid #000;
-      border-radius: 50%;
-      height: 25px;
-      position: relative;
-      width: 25px;
-      align-self: center;
-      margin-left: auto;
-      padding-left: 0;
-      :after {
-        content: "";
-        position: absolute;
-        display: none;
-        left: 7px;
-        top: 2px;
-        width: 8px;
-        height: 16px;
-        border: solid #000;
-        border-width: 0 3px 3px 0;
-        -webkit-transform: rotate(45deg);
-        -ms-transform: rotate(45deg);
-        transform: rotate(45deg);
-      }
-    }
-    .disabled {
-      :after {
-        display: block;
-        left: 11px;
-        top: 0px;
-        border-width: 0 1px 0 0;
-        width: 0px;
-        height: 24px;
-        transform: rotate(135deg);
-      }
-    }
-  }
-  .row {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    margin-top: 25px;
-  }
-  button,
-  .button {
-    background-color: #000;
-    border-radius: 0;
-    border: 1px solid #000;
-    color: #fff;
-    display: block;
-    font-family: var(--sub-heading-font);
-    padding: 10px 20px;
-    text-decoration: none;
-    &:hover {
-      cursor: pointer;
-      background-color: #808080;
-      // box-shadow: none;
-      border-color: #808080;
-    }
-    @media only screen and (max-width: 480px) {
-      display: inline-block;
-    }
-  }
-  .rx-info {
-    font-family: var(--sub-heading-font);
-    .rx-box {
-      display: flex;
-      justify-content: space-between;
-      margin: 25px 0;
-      .rx-col {
-        :nth-of-type(odd) {
-          margin-right: 25px;
-          @media only screen and (max-width: 480px) {
-            margin-right: 10px;
-          }
-        }
-        flex: 1;
-        p {
-          text-align: center;
-          margin-bottom: 5px;
-        }
-        .rx-select {
-          border-bottom: 1px solid #808080;
-          display: flex;
-          padding: 1px;
-          align-items: center;
-          label {
-            color: #808080;
-          }
-          select {
-            margin-left: 15px;
-            width: 100%;
-            border: none;
-            color: black;
-          }
-        }
-      }
-    }
-    .rx-box:nth-of-type(2) {
-      .rx-col {
-        .rx-select {
-          .pd-box {
-            display: flex;
-            column-gap: 12px;
-            align-items: center;
-            @media screen and (max-width: 480px) {
-              column-gap: 5px;
-            }
-            div {
-              display: flex;
-              position: relative;
-              .tooltip-text {
-                visibility: hidden;
-                width: 100px;
-                background-color: #555;
-                color: #fff;
-                text-align: center;
-                border-radius: 6px;
-                padding: 5px 3px;
-                position: absolute;
-                z-index: 1;
-                bottom: 125%;
-                left: 50%;
-                margin-left: -50px;
-                opacity: 0;
-                transition: opacity 0.3s;
-                a {
-                  color: inherit;
-                  text-decoration: inherit;
-                }
-                ::after {
-                  content: "";
-                  position: absolute;
-                  top: 100%;
-                  left: 50%;
-                  margin-left: -5px;
-                  border-width: 5px;
-                  border-style: solid;
-                  border-color: #555 transparent transparent transparent;
-                }
-              }
-              :hover .tooltip-text {
-                visibility: visible;
-                opacity: 1;
-              }
-            }
-          }
-          flex-direction: column;
-          select {
-            margin: 0;
-          }
-        }
-        :nth-child(2) {
-          .rx-select {
-            .pd-box {
-              div {
-                .tooltip-text {
-                  margin-left: -80px;
-                  left: unset;
-                  ::after {
-                    left: 90%;
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-    .rx-prism {
-      p {
-        color: #808080;
-        margin: 0;
-        span {
-          color: initial;
-        }
-      }
-    }
-  }
-  ul.variants {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    flex-basis: 100%;
-    margin: 0 auto;
-    padding: 10px 5%;
-    li {
-      display: flex;
-      flex-direction: row;
-      height: 30px;
-      margin-bottom: 5px;
-      padding-right: 15px;
-      position: relative;
-      width: 50%;
-      @media only screen and (max-width: 768px) {
-        width: 100%;
-      }
-      .variant-image {
-        max-height: 30px;
-        max-width: 30px;
-      }
-      .variant-description {
-        display: flex;
-        flex-direction: row;
-        justify-content: center;
-        align-items: center;
-      }
-      div {
-        padding-left: 5px;
-      }
-      p {
-        line-height: 0.5;
-      }
-      .checkmark {
-        flex-shrink: 0;
-        @media only screen and (min-width: 1024px) {
-          margin-right: 40px;
-        }
-        @media only screen and (min-width: 1200px) {
-          margin-right: 25%;
-        }
-      }
-    }
-  }
-  .form-error {
-    font-family: var(--sub-heading-font);
-    font-size: 0.95rem;
-    color: red;
-    min-height: 65px;
-    margin-bottom: 0;
-    margin-top: 10px;
-    li {
-      margin: 0;
-    }
-  }
-  .select-error {
-    outline: 2px solid red;
-  }
-  .hide {
-    display: none;
-  }
-  .disable {
-    pointer-events: none;
-    opacity: 0.3;
-  }
-  .inactive {
-    pointer-events: none;
-    opacity: 0.5;
-  }
-`
+import { FaQuestionCircle } from "react-icons/fa"
+import { LocalCheckout } from "../../types/checkout"
+import { rxType } from "../../types/checkout"
 
 const Form = ({
   shopifyCollection,
@@ -335,7 +33,9 @@ const Form = ({
     setSelectedVariants,
     hasSavedCustomized,
     setHasSavedCustomized,
+    defaultVariant,
   } = useContext(CustomizeContext)
+
   const stepMap = new Map()
   stepMap.set(1, "RX TYPE")
   stepMap.set(2, "LENS TYPE")
@@ -347,9 +47,12 @@ const Form = ({
   const [isFormValid, setIsFormValid] = useState(true)
   const errorRefs = useRef({})
   const continueBtn = useRef<HTMLButtonElement>(null)
+  const topRef = useRef<HTMLDivElement>(null)
   const [filteredCollection, setFilteredCollection] = useState<string[]>([])
+  const [editHasError, setEditHasError] = useState(false)
 
   const handleChange = (
+    evt: React.ChangeEvent<HTMLInputElement> | null,
     variant: ShopifyVariant,
     isSetFromEvent: boolean = true
   ) => {
@@ -362,31 +65,128 @@ const Form = ({
     } else if (variant.product?.title === "Single Vision") {
       rxInfoDispatch({ type: `right-add`, payload: "" })
       rxInfoDispatch({ type: `left-add`, payload: "" })
-      errorRefs.current[`select-right-add`].classList.add("disable")
-      errorRefs.current[`select-right-add`].querySelector("select").value = ""
-      errorRefs.current[`select-left-add`].classList.add("disable")
-      errorRefs.current[`select-left-add`].querySelector("select").value = ""
+      if (errorRefs.current[`select-right-add`])
+        errorRefs.current[`select-right-add`].classList.add("disable")
+      if (errorRefs.current[`select-right-add`])
+        errorRefs.current[`select-right-add`].querySelector("select").value = ""
+      if (errorRefs.current[`select-left-add`])
+        errorRefs.current[`select-left-add`].classList.add("disable")
+      if (errorRefs.current[`select-left-add`])
+        errorRefs.current[`select-left-add`].querySelector("select").value = ""
     }
     setHasSavedCustomized({
       ...hasSavedCustomized,
       [`step${currentStep}`]: isSetFromEvent,
     })
-    setSelectedVariants({
-      ...selectedVariants,
-      [`step${currentStep}`]: variant,
-    })
+
+    if (editHasError) {
+      enableContinue()
+    }
+
+    if (currentStep === 4) {
+      const blockedSelections: string[] = []
+      if (
+        selectedVariants.step3.product.title === "Poly Carbonate" ||
+        selectedVariants.step3.product.title === "Hi-Index"
+      ) {
+        blockedSelections.push("Scratch Coat", "UV Coat")
+      }
+      const checked =
+        isSetFromEvent === false
+          ? true
+          : evt !== null
+          ? evt.target.checked
+          : false
+      const name = evt?.target.getAttribute("name") as string
+      if (checked) {
+        toggleAntiReflective(blockedSelections, name, checked)
+
+        // no coating
+        if (name === "No Coating") {
+          setSelectedVariants({
+            ...selectedVariants,
+            [`step${currentStep}`]: [variant],
+          })
+        } else {
+          const found = selectedVariants.step4.find(
+            el => variant.sku === el.sku
+          )
+          if (!found) {
+            if (
+              selectedVariants.step4.length === 1 &&
+              selectedVariants.step4[0].price === "0.00"
+            ) {
+              setSelectedVariants({
+                ...selectedVariants,
+                [`step${currentStep}`]: [variant],
+              })
+            } else {
+              // remove no coating
+              setSelectedVariants({
+                ...selectedVariants,
+                [`step${currentStep}`]: [...selectedVariants.step4, variant],
+              })
+            }
+          }
+        }
+      } else {
+        // remove
+        toggleAntiReflective(blockedSelections, name, checked)
+        // do not let removal of one
+        if (selectedVariants.step4.length === 1) {
+          disableContinue(4)
+        } else {
+          const arr = selectedVariants.step4
+          const index = arr.findIndex(el => variant.sku === el.sku)
+          if (index !== -1) arr.splice(index, 1)
+          setSelectedVariants({
+            ...selectedVariants,
+            [`step${currentStep}`]: arr,
+          })
+        }
+      }
+    } else {
+      setSelectedVariants({
+        ...selectedVariants,
+        [`step${currentStep}`]: variant,
+      })
+    }
   }
+
+  const toggleAntiReflective = (
+    blockedSelections: string[],
+    name: string | null,
+    checked: boolean
+  ) => {
+    if (checked) {
+      if (name && name.includes("Anti-Reflective")) {
+        if (name === "Anti-Reflective - Standard") {
+          blockedSelections.push("Anti-Reflective Coat - Premium")
+        } else {
+          blockedSelections.push("Anti-Reflective - Standard")
+        }
+      } else if (
+        name &&
+        !name.includes("Anti-Reflective") &&
+        name !== "No Coating"
+      ) {
+        blockedSelections = [...filteredCollection]
+      }
+    }
+    setFilteredCollection([...new Set(blockedSelections)])
+  }
+
   const handleRx = (evt: ChangeEvent<HTMLSelectElement>) => {
     clearErrors(evt)
     rxInfoDispatch({ type: evt.target.id, payload: evt.target.value })
     isNowValid()
   }
+
   const clearErrors = (evt: ChangeEvent<HTMLSelectElement>) => {
     let id: string = evt.target.id
     // disable axis whether a cyl value is present or not
     if (id.includes("cyl")) {
       let subId = id.split("-")[0]
-      console.log(subId)
       if (evt.target.value !== "0.00") {
         errorRefs.current[`select-${subId}-axis`].classList.remove("disable")
         return
@@ -419,6 +219,7 @@ const Form = ({
     let msg = messageRef.current.querySelector(`#error-${id}`)
     if (msg) msg.remove()
   }
+
   const range = (
     start: number,
     end: number,
@@ -433,11 +234,13 @@ const Form = ({
     }
     return arr
   }
+
   const removeChildNodes = (parent: HTMLElement) => {
     while (parent.firstChild) {
       parent.removeChild(parent.firstChild)
     }
   }
+
   const verifyForm = () => {
     let isValid = true
     let messages: HTMLElement[] = []
@@ -482,6 +285,7 @@ const Form = ({
     setIsFormValid(isValid)
     return isValid
   }
+
   const isNowValid = () => {
     // will re enable the button once all form errors are cleared
     if (isFormValid) return
@@ -489,7 +293,11 @@ const Form = ({
       continueBtn.current?.classList.remove("disable")
     }
   }
+
   const handleSteps = (num: number) => {
+    // scroll to top
+    const customizeDiv = topRef.current?.closest(".product-customize")
+    customizeDiv?.scrollIntoView()
     if (currentStep !== 1 || !isRxAble) {
       setCurrentStep(currentStep + num)
       return
@@ -501,11 +309,126 @@ const Form = ({
   }
 
   useEffect(() => {
-    // console.log("hasSaved", hasSavedCustomized[`step${currentStep}`])
-    if (hasSavedCustomized[`step${currentStep}`] === false) {
-      handleChange(shopifyCollection.products[0].variants[0], false)
+    // remove lens coatings that are no longer eligible if step3 changes
+    if (
+      (currentStep === 4 &&
+        selectedVariants.step3.product.title === "Poly Carbonate") ||
+      selectedVariants.step3.product.title === "Hi-Index"
+    ) {
+      const coatings: string[] = ["Scratch Coat", "UV Coat"]
+      setSelectedVariants({
+        ...selectedVariants,
+        ["step4"]: [
+          ...selectedVariants.step4.filter(
+            el => !coatings.includes(el.product.title)
+          ),
+        ],
+      })
     }
   }, [])
+
+  useEffect(() => {
+    if (hasSavedCustomized[`step${currentStep}`] === false) {
+      handleChange(null, shopifyCollection.products[0].variants[0], false)
+    }
+  }, [])
+
+  // useEffect to fix bug where Non Precription Lens selection will still error out
+  useEffect(() => {
+    if (
+      currentStep === 1 &&
+      selectedVariants.step1.product.title === "Non-Prescription Lens"
+    ) {
+      enableContinue()
+    }
+  }, [currentStep, selectedVariants])
+
+  // will disable continue button if none are selected
+  useEffect(() => {
+    if (
+      currentStep === 4 &&
+      hasSavedCustomized.step4 &&
+      selectedVariants.step4[0].product.title === ""
+    ) {
+      disableContinue(4)
+    }
+  }, [currentStep])
+
+  // restore on refresh
+  useEffect(() => {
+    if (!hasSavedCustomized.step1) {
+      const isBrowser: boolean = typeof window !== "undefined"
+      if (isBrowser) {
+        const urlParams = new URLSearchParams(window.location.search)
+        const custom_id = urlParams.get("custom_id")
+        if (!custom_id) return
+        const customsResume = localStorage.getItem("customs-resume")
+        const checkoutString = localStorage.getItem("checkout")
+        if (customsResume && custom_id && checkoutString) {
+          const customsStorage = JSON.parse(
+            customsResume
+          ) as SelectedVariantStorage
+          const checkoutStorage = JSON.parse(checkoutString) as LocalCheckout
+          const customInCheckout = checkoutStorage.value?.tnLineItems?.find(
+            el => el.id === custom_id
+          )
+          const rxAttr =
+            customInCheckout?.lineItems[1].shopifyItem.customAttributes.find(
+              el => el.key === "Prescription"
+            ).value
+          if (rxAttr !== "Non-Prescription") {
+            // set Rx
+            const prescription = JSON.parse(rxAttr) as rxType
+            rxInfoDispatch({
+              type: `full`,
+              payload: prescription,
+            })
+          }
+          const parsedCustoms = customsStorage.value.customs
+          const resumedSelectedVariants =
+            parsedCustoms[Number(custom_id)].selectedVariants
+          // prepare context for editing
+          // setting context
+          setSelectedVariants(resumedSelectedVariants)
+          // set rx context
+          // setting savedCustomized context so radio won't default to top option
+          setHasSavedCustomized({
+            step1: true,
+            step2: true,
+            step3: true,
+            step4: true,
+            case: true,
+          })
+          setCurrentStep(5)
+        }
+      }
+    }
+  }, [])
+
+  // disables the Continue step for customers that edit a frame and edit an invalid option
+  const disableContinue = (currentStep: number) => {
+    setEditHasError(true)
+    removeChildNodes(messageRef.current)
+    let node = document.createElement("li")
+    node.textContent = "Please make a valid selection"
+    messageRef.current?.appendChild(node)
+    continueBtn.current?.classList.add("disable")
+    // clear context for step 4 edit
+    if (currentStep === 4) {
+      setSelectedVariants({
+        ...selectedVariants,
+        ["step4"]: [defaultVariant],
+      })
+      //selectedVariants.step4 =
+    }
+  }
+  // enables the Continue step once a customer selects a new option when selecting an invalid option on the previous
+  // step after editing
+  const enableContinue = () => {
+    continueBtn.current?.classList.remove("disable")
+    removeChildNodes(messageRef.current)
+    setEditHasError(false)
+  }
 
   // useEffect with steps to filter collection
   useEffect(() => {
@@ -514,21 +437,56 @@ const Form = ({
     switch (currentStep) {
       case 2:
         if (selectedVariants.step1.product.title === "Bifocal") {
+          const validationArr = [
+            "Blue Light Blocking",
+            "Polarized-G15",
+            "XTRActive Polarized-Smoke",
+            "Transitions - For Progressive",
+          ]
           blockedSelections.push(
             "Blue Light Blocking",
             "Polarized-G15",
-            "XTRActive Polarized"
+            "XTRActive Polarized-Smoke",
+            "Transitions - For Progressive-Smoke",
+            "Transitions - For Progressive-Brown"
           )
+          if (
+            validationArr.includes(
+              selectedVariants[`step${currentStep}`].product.title
+            )
+          ) {
+            disableContinue(currentStep)
+          }
+        }
+        // XTractive Polarized is only for Progressive and Single Vision
+        if (
+          selectedVariants.step1.product.title !== "Progressive" &&
+          selectedVariants.step1.product.title !== "Single Vision"
+        ) {
+          blockedSelections.push("XTRActive Polarized-Smoke")
+          if (
+            selectedVariants[`step${currentStep}`].product.title ===
+            "XTRActive Polarized"
+          ) {
+            disableContinue(currentStep)
+          }
         }
         break
       case 3:
-        // if Bifocal and Polarized or Gradient Tint, disable Hi-Index
+        // if Bifocal and Polarized or Gradient Tint or Transitions, disable Hi-Index
         if (
-          selectedVariants.step1.product.title === "Bifocal" &&
-          (selectedVariants.step2.product.title === "Polarized" ||
-            selectedVariants.step2.product.title === "Gradient Tint")
+          (selectedVariants.step1.product.title === "Bifocal" &&
+            (selectedVariants.step2.product.title === "Polarized" ||
+              selectedVariants.step2.product.title === "Gradient Tint")) ||
+          selectedVariants.step2.product.title === "Transitions"
         ) {
           blockedSelections.push("Hi-Index")
+          //
+          if (
+            selectedVariants[`step${currentStep}`].product.title === "Hi-Index"
+          ) {
+            disableContinue(currentStep)
+          }
         }
         // if Polarized G15 option, disabled Hi-Index
         else if (
@@ -536,15 +494,56 @@ const Form = ({
           selectedVariants.step2.title === "G15"
         ) {
           blockedSelections.push("Hi-Index")
+          if (
+            selectedVariants[`step${currentStep}`].product.title === "Hi-Index"
+          ) {
+            disableContinue(currentStep)
+          }
         }
         break
       case 4:
         // if poly carbonate or hi index, disable scratch coat and uv coat
+        const selectedCoatings = selectedVariants.step4.map(
+          el => el.product.title
+        )
         if (
           selectedVariants.step3.product.title === "Poly Carbonate" ||
           selectedVariants.step3.product.title === "Hi-Index"
         ) {
           blockedSelections.push("Scratch Coat", "UV Coat")
+          //
+          if (
+            selectedCoatings.some(v => ["Scratch Coat", "UV Coat"].includes(v))
+          ) {
+            disableContinue(currentStep)
+          }
+        }
+
+        if (
+          selectedCoatings.includes("Anti-Reflective - Standard") ||
+          selectedCoatings.includes("Anti-Reflective Coat - Premium")
+        ) {
+          if (selectedCoatings.includes("Anti-Reflective - Standard")) {
+            blockedSelections.push("Anti-Reflective Coat - Premium")
+            //
+            if (
+              ["Anti-Reflective Coat - Premium"].some(v =>
+                selectedCoatings.includes(v)
+              )
+            ) {
+              disableContinue(currentStep)
+            }
+          } else {
+            blockedSelections.push("Anti-Reflective - Standard")
+            //
+            if (
+              ["Anti-Reflective - Standard"].some(v =>
+                selectedCoatings.includes(v)
+              )
+            ) {
+              disableContinue(currentStep)
+            }
+          }
         }
         break
       // if currentStep is 1 or 5, do nothing
@@ -554,115 +553,145 @@ const Form = ({
     setFilteredCollection([...new Set(blockedSelections)])
   }, [currentStep])
 
+  const findStep4Selections = (id: string) => {
+    const find = selectedVariants.step4.find(el => {
+      return el.storefrontId === id
+    })
+    let found: boolean = false
+    if (find) found = true
+    return found
+  }
+
   return (
     <Component>
-      <div className="step-header">
+      <div className="step-header" ref={topRef}>
         <p>Choose your {stepMap.get(currentStep)}</p>
       </div>
-      {shopifyCollection.products.map((product: ShopifyProduct, index) => (
-        <React.Fragment key={product.id}>
-          {product.variants.length === 1 ? (
-            <div
-              className={`product-option ${
-                filteredCollection.includes(product.title) ? "inactive" : ""
-              }`}
-            >
-              <GatsbyImage
-                image={
-                  product.images[0].localFile.childImageSharp.gatsbyImageData
-                }
-                alt={product.images[0].altText || product.title}
-              />
-              <div className="product-description">
-                <h4>
-                  {product.title}{" "}
-                  <span className="price">
-                    {` + $${product.variants[0].price}`}
-                  </span>
-                </h4>
-                <p>{product.description}</p>
-              </div>
-              <input
-                type="radio"
-                name={`step${currentStep}`}
-                id={product.id}
-                aria-label={product.title}
-                onChange={() => handleChange(product.variants[0])}
-                checked={
-                  product.variants[0].storefrontId ===
-                  selectedVariants[`step${currentStep}`].storefrontId
-                }
-              />
-              {!filteredCollection.includes(product.title) ? (
-                <div className="checkmark" />
-              ) : (
-                <div className="checkmark disabled" />
-              )}
-            </div>
-          ) : (
-            <div className={`product-option with-variants`}>
-              <GatsbyImage
-                image={
-                  product.images[0].localFile.childImageSharp.gatsbyImageData
-                }
-                alt={product.images[0].altText || product.title}
-              />
-              <div className="product-description">
-                <h4>{product.title}</h4>
-                <p>{product.description}</p>
-              </div>
-              <ul className="variants">
-                {product.variants.map((variant: ShopifyVariant) => (
-                  <li
-                    key={variant.storefrontId}
-                    className={`${
-                      filteredCollection.includes(
-                        `${product.title}-${variant.title}`
-                      )
-                        ? "inactive"
-                        : ""
-                    }`}
-                  >
-                    <GatsbyImage
-                      image={
-                        variant.image.localFile.childImageSharp.gatsbyImageData
-                      }
-                      alt={variant.title}
-                      className="variant-image"
-                    />
-                    <div className="variant-description">
-                      <h6>
-                        {variant.title}
-                        <span className="price">
-                          {` + $${product.variants[0].price}`}
-                        </span>
-                      </h6>
-                    </div>
-                    <input
-                      type="radio"
-                      name={`step${currentStep}`}
-                      id={product.id}
-                      aria-label={product.title}
-                      onChange={() => handleChange(variant)}
-                      checked={
-                        variant.storefrontId ===
-                        selectedVariants[`step${currentStep}`].storefrontId
-                      }
-                    />
-                    {!filteredCollection.includes(
-                      `${product.title}-${variant.title}`
-                    ) ? (
-                      <div className="checkmark" />
-                    ) : (
-                      <div className="checkmark disabled" />
+      {shopifyCollection.products.map((product: ShopifyProduct, index) => {
+        // fix variant.image is null
+        if (product.variants[0].image === null) {
+          product.variants[0].image = product.images[0]
+        }
+        return (
+          <React.Fragment key={product.id}>
+            {product.variants.length === 1 &&
+            product.variants[0].title.includes("Default") ? (
+              <div
+                className={`product-option ${
+                  filteredCollection.includes(product.title) ? "inactive" : ""
+                }`}
+              >
+                <GatsbyImage
+                  image={
+                    product.images[0].localFile.childImageSharp.gatsbyImageData
+                  }
+                  alt={product.images[0].altText || product.title}
+                />
+                <div className="product-description">
+                  <h4>
+                    {product.title}{" "}
+                    <span className="price">
+                      {` + $${product.variants[0].price}`}
+                    </span>
+                  </h4>
+                  <p>{product.description}</p>
+                </div>
+                {currentStep === 4 ? (
+                  <input
+                    type="checkbox"
+                    name={product.title}
+                    id={product.id}
+                    aria-label={product.title}
+                    onChange={evt => handleChange(evt, product.variants[0])}
+                    checked={findStep4Selections(
+                      product.variants[0].storefrontId
                     )}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-        </React.Fragment>
-      ))}
+                  />
+                ) : (
+                  <input
+                    type="radio"
+                    name={`step${currentStep}`}
+                    id={product.id}
+                    aria-label={product.title}
+                    onChange={evt => handleChange(evt, product.variants[0])}
+                    checked={
+                      product.variants[0].storefrontId ===
+                      selectedVariants[`step${currentStep}`].storefrontId
+                    }
+                  />
+                )}
+                {!filteredCollection.includes(product.title) ? (
+                  <div className="checkmark" />
+                ) : (
+                  <div className="checkmark disabled" />
+                )}
+              </div>
+            ) : (
+              <div className={`product-option with-variants`}>
+                <GatsbyImage
+                  image={
+                    product.images[0].localFile.childImageSharp.gatsbyImageData
+                  }
+                  alt={product.images[0].altText || product.title}
+                />
+                <div className="product-description">
+                  <h4>{product.title}</h4>
+                  <p>{product.description}</p>
+                </div>
+                <ul className="variants">
+                  {product.variants.map((variant: ShopifyVariant) => (
+                    <li
+                      key={variant.storefrontId}
+                      className={`${
+                        filteredCollection.includes(
+                          `${product.title}-${variant.title}`
+                        )
+                          ? "inactive"
+                          : ""
+                      }`}
+                    >
+                      <GatsbyImage
+                        image={
+                          variant.image.localFile.childImageSharp
+                            .gatsbyImageData
+                        }
+                        alt={variant.title}
+                        className="variant-image"
+                      />
+                      <div className="variant-description">
+                        <h6>
+                          {variant.title}
+                          <span className="price">
+                            {` + $${product.variants[0].price}`}
+                          </span>
+                        </h6>
+                      </div>
+                      <input
+                        type="radio"
+                        name={`step${currentStep}`}
+                        id={product.id}
+                        aria-label={product.title}
+                        onChange={evt => handleChange(evt, variant)}
+                        checked={
+                          variant.storefrontId ===
+                          selectedVariants[`step${currentStep}`].storefrontId
+                        }
+                      />
+                      {!filteredCollection.includes(
+                        `${product.title}-${variant.title}`
+                      ) ? (
+                        <div className="checkmark" />
+                      ) : (
+                        <div className="checkmark disabled" />
+                      )}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </React.Fragment>
+        )
+      })}
       {(currentStep === 1 &&
         selectedVariants.step1.product.title !== "Non-Prescription Lens") ||
       selectedVariants.step1.product.title === "" ? (
@@ -923,7 +952,7 @@ const Form = ({
           </div>
         </div>
       ) : null}
-      <div className="row">
+      <div className="row button-row">
         {currentStep === 1 ? (
           <Link className="button" to={productUrl}>
             GO BACK

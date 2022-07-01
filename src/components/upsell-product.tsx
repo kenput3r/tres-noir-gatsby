@@ -179,7 +179,7 @@ const UpsellProduct = (props: { upsellProduct: UpsellItem }) => {
           <p>${selectedVariant.price}</p>
         </div>
         <div>
-          {quantityLevels && quantityLevels[selectedVariant.sku] !== 0 ? (
+          {quantityLevels && quantityLevels[selectedVariant.sku] > 0 ? (
             <AddToCartButton
               handler={handleAddToCart}
               loading={isAddingToCart}

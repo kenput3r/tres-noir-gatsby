@@ -4,7 +4,6 @@ import { CartContext } from "../contexts/cart"
 import styled from "styled-components"
 import Layout from "../components/layout"
 import SEO from "../components/seo"
-import { useQuantityQuery } from "../hooks/useQuantityQuery"
 import { addedToCartGTMEvent, viewedProductGTMEvent } from "../helpers/gtm"
 import YouMayAlsoLike from "../components/you-may-also-like"
 import ProductImageGrid from "../components/product-image-grid"
@@ -167,14 +166,9 @@ const Page = styled.div`
     grid-template-columns: repeat(3, 1fr);
   }
 `
-const Product = ({ data: { shopifyProduct } }: any) => {
+const GiftCard = ({ data: { shopifyProduct } }: any) => {
   const [selectedVariant, setSelectedVariant] = useState(
     shopifyProduct.variants[0]
-  )
-
-  const quantityLevels = useQuantityQuery(
-    shopifyProduct.handle,
-    shopifyProduct.variants.length
   )
 
   // fire viewed product event
@@ -198,68 +192,31 @@ const Product = ({ data: { shopifyProduct } }: any) => {
     viewedProductGTMEvent(productData)
   }, [selectedVariant])
 
-  useEffect(() => {
-    let paramSku: null | string = null
-    const isBrowser = typeof window !== "undefined"
-    if (isBrowser) {
-      const params = new URLSearchParams(location.search)
-      if (params.get("variant")) paramSku = params.get("variant")
-    }
-    let firstVariant = shopifyProduct.variants[0]
-    // if variant param
-    if (paramSku) {
-      firstVariant = shopifyProduct.variants.find(
-        (_variant: any) => _variant.sku === paramSku
-      )
-    } else {
-      // first available
-      for (let key in quantityLevels) {
-        if (quantityLevels[key] > 0) {
-          firstVariant = shopifyProduct.variants.find(
-            (_variant: any) => _variant.sku === key
-          )
-          break
-        }
-      }
-    }
-
-    setSelectedVariant(firstVariant)
-  }, [quantityLevels])
-
   const [selectedVariantQuantity, setSelectedVariantQuantity] =
     useState<string>("1")
 
   const { addProductToCart, isAddingToCart } = useContext(CartContext)
 
   const handleVariant = (evt: ChangeEvent<HTMLSelectElement>) => {
-    const sku = evt.target.value
+    const legacyResourceId = evt.target.value
     const newVariant = shopifyProduct.variants.find(
-      (_variant: any) => _variant.sku === sku
+      (_variant: any) => _variant.legacyResourceId === legacyResourceId
     )
     setSelectedVariant(newVariant)
   }
 
   const quantityRange = () => {
-    let minRange = 0
-    if (quantityLevels) {
-      minRange = quantityLevels[selectedVariant.sku]
-    }
-    if (minRange === 0) {
-      return [0]
-    }
-    const range = minRange >= 10 ? 10 : minRange
-    return Array.from(Array(range), (_, index) => index + 1)
+    return Array.from(Array(10), (_, index) => index + 1)
   }
 
   const handleAddToCart = () => {
     const id = selectedVariant.storefrontId
-    const sku = selectedVariant.sku
+    const legacyResourceId = `gid://shopify/ProductVariant/${selectedVariant.legacyResourceId}`
     const image = selectedVariant.image
       ? selectedVariant.image.localFile.childImageSharp.gatsbyImageData
       : shopifyProduct.featuredImage.localFile.childImageSharp.gatsbyImageData
     const qty: number = +selectedVariantQuantity
-    addProductToCart(id, qty, sku, image)
-    //alert("ADDED TO CART")
+    addProductToCart(id, qty, legacyResourceId, image)
 
     const productData = {
       title: shopifyProduct.title,
@@ -306,14 +263,17 @@ const Product = ({ data: { shopifyProduct } }: any) => {
                       <p>{selectedVariant.selectedOptions[0].name}</p>
                       <div className="select-dropdown">
                         <select
-                          value={selectedVariant.sku}
+                          value={selectedVariant.legacyResourceId}
                           id="product-variants"
                           onChange={evt => handleVariant(evt)}
                         >
                           {sortVariants(shopifyProduct.variants).map(
                             element => {
                               return (
-                                <option key={element.sku} value={element.sku}>
+                                <option
+                                  key={element.legacyResourceId}
+                                  value={element.legacyResourceId}
+                                >
                                   {element.title}
                                 </option>
                               )
@@ -335,11 +295,6 @@ const Product = ({ data: { shopifyProduct } }: any) => {
                   <select
                     name="quantity"
                     id="quantity"
-                    disabled={
-                      quantityLevels && quantityLevels[selectedVariant.sku] <= 0
-                        ? true
-                        : false
-                    }
                     onChange={evt =>
                       setSelectedVariantQuantity(evt.target.value)
                     }
@@ -350,16 +305,11 @@ const Product = ({ data: { shopifyProduct } }: any) => {
                   </select>
                 </div>
                 <div>
-                  {quantityLevels &&
-                  quantityLevels[selectedVariant.sku] !== 0 ? (
-                    <AddToCartButton
-                      handler={handleAddToCart}
-                      loading={isAddingToCart}
-                      soldOut={false}
-                    />
-                  ) : (
-                    <AddToCartButton soldOut={true} />
-                  )}
+                  <AddToCartButton
+                    handler={handleAddToCart}
+                    loading={isAddingToCart}
+                    soldOut={false}
+                  />
                 </div>
               </div>
               <p className="product-description">
@@ -374,10 +324,10 @@ const Product = ({ data: { shopifyProduct } }: any) => {
   )
 }
 
-export default Product
+export default GiftCard
 
 export const query = graphql`
-  query ProductQueryShopify($handle: String) {
+  query GiftCardQueryShopify($handle: String) {
     shopifyProduct(handle: { eq: $handle }) {
       collections {
         handle

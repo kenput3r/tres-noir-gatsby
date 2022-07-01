@@ -22,11 +22,15 @@ const client = Client.buildClient({
   storefrontAccessToken: process.env.GATSBY_STORE_STOREFRONT_TOKEN as string,
 })
 
+import Cookies from "js-cookie"
+
 const isBrowser = typeof window !== "undefined"
 
 const DefaultContext = {
   isDrawerOpen: false,
   setIsDrawerOpen: (value: boolean) => {},
+  isCartDrawerOpen: false,
+  setIsCartDrawerOpen: (value: boolean) => {},
   isActive: "",
   setIsActive: (value: string) => {},
   closeDrawer: () => {},
@@ -76,7 +80,8 @@ const DefaultContext = {
     image: IGatsbyImageData,
     resumeData: SelectedVariants,
     sku: string,
-    handle: string
+    handle: string,
+    activateDrawer: boolean
   ) => {},
   removeProductFromCart: (lineItemId: string, imageId: string) => {},
   removeProductsFromCart: (lineItemIds: string[], imageId: string) => {},
@@ -96,6 +101,7 @@ export const CartProvider = ({ children }) => {
   const { renderErrorModal } = useContext(ErrorModalContext)
 
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
+  const [isCartDrawerOpen, setIsCartDrawerOpen] = useState(false)
   const [isActive, setIsActive] = useState("shop")
   const [checkout, setCheckout] = useState<any>()
   const [isAddingToCart, setIsAddingToCart] = useState<boolean>(false)
@@ -104,19 +110,7 @@ export const CartProvider = ({ children }) => {
    * @function getCheckoutCookie - gets the current non-expired chechout cookie
    */
   const getCheckoutCookie = () => {
-    const name = "shopifyCheckout="
-    const decodedDocumentCookie = decodeURIComponent(document.cookie)
-    const cookies = decodedDocumentCookie.split(";")
-    for (let cookie of cookies) {
-      while (cookie.charAt(0) === " ") {
-        cookie = cookie.substring(1)
-      }
-      if (cookie.indexOf(name) === 0) {
-        cookie = cookie.substring(name.length, cookie.length)
-        return cookie
-      }
-    }
-    return null
+    return Cookies.get("shopifyCheckout")
   }
 
   /**
@@ -126,13 +120,17 @@ export const CartProvider = ({ children }) => {
   const getNewCheckout = async () => {
     const newCheckout = await client.checkout.create()
     if (isBrowser) {
-      document.cookie = `shopifyCheckout=${newCheckout.id};max-age=2592000;SameSite=Strict;`
+      Cookies.set("shopifyCheckout", String(newCheckout.id), {
+        sameSite: "strict",
+        expires: 2592000,
+      })
       const now = new Date()
       // removing local storage objects
       localStorage.removeItem("checkout")
       localStorage.removeItem("cart-images")
       localStorage.removeItem("customs-resume")
       newCheckout["tnLineItems"] = []
+      createBadgeCount(newCheckout)
       localStorage.setItem(
         "checkout",
         JSON.stringify({ value: newCheckout, expiry: now.getTime() + 2592000 })
@@ -161,15 +159,27 @@ export const CartProvider = ({ children }) => {
       )
     }
     return newCheckout
-    // try {
-    //   const newCheckout = await client.checkout.create()
-    //   if (isBrowser) {
-    //     document.cookie = `shopifyCheckout=${newCheckout.id};max-age=2592000`
-    //   }
-    //   return newCheckout
-    // } catch (e) {
-    //   console.error(e)
-    // }
+  }
+
+  // creates cookie with cart item total for shopify site to use
+
+  const createBadgeCount = checkout => {
+    if (isBrowser) {
+      let cartCount = 0
+      if (checkout.tnLineItems) {
+        checkout.tnLineItems.forEach((item: tnItem) => {
+          if (!item.isCustom) {
+            cartCount += item.lineItems[0].shopifyItem.quantity
+          } else {
+            cartCount += 1
+          }
+        })
+        Cookies.set("tnCartCounter", String(cartCount), {
+          expires: 2592000,
+          domain: ".tresnoir.com",
+        })
+      }
+    }
   }
 
   // adds a product from custom products local storage
@@ -294,7 +304,12 @@ export const CartProvider = ({ children }) => {
     checkout.lineItems.forEach(item => {
       // non-custom item
       if (item.customAttributes.length === 0) {
-        itemsMap.set(item.variant.sku, [{ shopifyItem: item }])
+        // gift card does not have a sku, using id instead
+        if (item.variant.product.handle === "gift-card") {
+          itemsMap.set(item.variant.id, [{ shopifyItem: item }])
+        } else {
+          itemsMap.set(item.variant.sku, [{ shopifyItem: item }])
+        }
       } else {
         // custom item
         const foundProperties = item.customAttributes
@@ -337,7 +352,9 @@ export const CartProvider = ({ children }) => {
       else if (value.length === 2) {
         itemsToAdd.push({
           id: key,
-          lineItems: value,
+          lineItems: value.sort((a, b) => {
+            return a.stepNumber - b.stepNumber
+          }),
           image: getImageFromLocalStorage(key),
           isCustom: false,
         })
@@ -366,6 +383,7 @@ export const CartProvider = ({ children }) => {
         })
       )
     }
+    createBadgeCount(checkout)
   }
 
   // Shopify Buy Cart types outdated
@@ -386,6 +404,7 @@ export const CartProvider = ({ children }) => {
           localStorage.removeItem("checkout")
           localStorage.removeItem("cart-images")
           localStorage.removeItem("customs-resume")
+          Cookies.remove("tnCartCounter")
           // eslint-disable-next-line no-return-await
           return await getNewCheckout()
         }
@@ -404,18 +423,6 @@ export const CartProvider = ({ children }) => {
             localCheckout = JSON.parse(localCheckout as string) as LocalCheckout
             checkout = await validateLocalCheckout(localCheckout)
           } else {
-            // local checkout doesn't exist, get checkout and create local
-            // checkout = await client.checkout.fetch(checkoutId)
-            // if (isBrowser) {
-            //   const now = new Date()
-            //   localStorage.setItem(
-            //     "checkout",
-            //     JSON.stringify({
-            //       value: checkout,
-            //       expiry: now.getTime() + 2592000,
-            //     })
-            //   )
-            // }
             // create new checkout
             checkout = await getNewCheckout()
           }
@@ -462,6 +469,7 @@ export const CartProvider = ({ children }) => {
         rebuildBundles(updatedCheckout)
         setCheckout(updatedCheckout)
         setIsAddingToCart(false)
+        setIsCartDrawerOpen(true)
       } catch (err: any) {
         console.error(err)
         setIsAddingToCart(false)
@@ -490,6 +498,7 @@ export const CartProvider = ({ children }) => {
         }
         setCheckout(updatedCheckout)
         setIsAddingToCart(false)
+        setIsCartDrawerOpen(true)
       } catch (err: any) {
         console.error(err)
         setIsAddingToCart(false)
@@ -522,6 +531,7 @@ export const CartProvider = ({ children }) => {
         rebuildBundles(updatedCheckout)
         setCheckout(updatedCheckout)
         setIsAddingToCart(false)
+        setIsCartDrawerOpen(true)
       } catch (err: any) {
         console.error(err)
         setIsAddingToCart(false)
@@ -535,7 +545,8 @@ export const CartProvider = ({ children }) => {
       image: IGatsbyImageData,
       resumeData: SelectedVariants,
       sku: string,
-      handle: string
+      handle: string,
+      activateDrawer: boolean
     ) => {
       try {
         setIsAddingToCart(true)
@@ -549,6 +560,7 @@ export const CartProvider = ({ children }) => {
         // add necessary data to localStorage to be able to resume from cart later on
         addCustomToLocalStorage(key, resumeData, sku, handle)
         setIsAddingToCart(false)
+        if (activateDrawer) setIsCartDrawerOpen(true)
       } catch (err: any) {
         console.error(err)
         setIsAddingToCart(false)
@@ -682,6 +694,8 @@ export const CartProvider = ({ children }) => {
     return {
       isDrawerOpen,
       setIsDrawerOpen,
+      isCartDrawerOpen,
+      setIsCartDrawerOpen,
       isActive,
       setIsActive,
       closeDrawer,
@@ -704,6 +718,8 @@ export const CartProvider = ({ children }) => {
   }, [
     isDrawerOpen,
     setIsDrawerOpen,
+    isCartDrawerOpen,
+    setIsCartDrawerOpen,
     isActive,
     setIsActive,
     checkout,
