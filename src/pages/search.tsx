@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React from "react"
 import styled from "styled-components"
 import Layout from "../components/layout"
 import SEO from "../components/seo"
@@ -34,6 +34,14 @@ const hitsPerPage = 18
 const Page = styled.div`
   @media only screen and (max-width: 468px) {
     min-height: calc(100vh - 152px - 250px);
+    &.no-query {
+      display: flex;
+      flex-direction: column;
+      h1,
+      div {
+        flex: 1 0 auto;
+      }
+    }
   }
 `
 
@@ -62,19 +70,36 @@ const Search = ({ location: { state } }: Location) => {
   const Results = connectStateResults(({ searchState, searchResults }) => {
     return searchState && searchState.query ? (
       searchResults && searchResults.nbHits !== 0 ? (
-        <>
+        <Page>
+          <h1 className="page-title text-center">SEARCH</h1>
+          <div className="text-center search-box">
+            <SearchBox />
+          </div>
           <RefinementList attribute="product_type" />
           <Hits />
           {searchResults.nbHits > hitsPerPage && (
             <PaginationContainer>
               <CustomPagination />
             </PaginationContainer>
-          )}
-        </>
+          )}{" "}
+        </Page>
       ) : (
-        <div className="text-center">No Results</div>
+        <Page>
+          <h1 className="page-title text-center">SEARCH</h1>
+          <div className="text-center search-box">
+            <SearchBox />
+          </div>
+          <div className="text-center">No Results</div>
+        </Page>
       )
-    ) : null
+    ) : (
+      <Page className="no-query">
+        <h1 className="page-title text-center">SEARCH</h1>
+        <div className="text-center search-box">
+          <SearchBox />
+        </div>
+      </Page>
+    )
   })
 
   return (
@@ -82,13 +107,7 @@ const Search = ({ location: { state } }: Location) => {
       <InstantSearch searchClient={searchClient} indexName="Products">
         <Configure hitsPerPage={hitsPerPage} />
         <SEO title="Search" />
-        <Page>
-          <h1 className="text-center">SEARCH</h1>
-          <div className="text-center search-box">
-            <SearchBox />
-          </div>
-          <Results />
-        </Page>
+        <Results />
       </InstantSearch>
     </Layout>
   )
