@@ -1,7 +1,7 @@
 import styled from "styled-components"
 
 export const Component = styled.form`
-  padding: 10px;
+  padding: 10px 0;
   .step-header {
     font-family: var(--heading-font);
     text-transform: uppercase;

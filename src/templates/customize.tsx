@@ -80,9 +80,35 @@ const Page = styled.div`
     @media screen and (max-width: 760px) {
       position: sticky;
       bottom: 0;
-      padding: 10px 0;
+      // padding: 10px 0;
+      border-top: 1px solid grey;
+      width: calc(100% + 30px);
+      transform: translateX(-15px);
+      padding: 10px 15px;
     }
     background-color: white;
+  }
+  /* new */
+  @media screen and (max-width: 760px) {
+    .sticky-mobile {
+      width: calc(100% + 30px);
+      transform: translateX(-15px);
+      padding: 0 15px;
+      border-bottom: 1px solid grey;
+      // box-shadow: 0 4px 4px rgba(128, 128, 128, 0.4);
+      .mobile-flex {
+        display: flex;
+        flex-direction: row;
+        div {
+          flex: 1;
+          &.current-price {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+          }
+        }
+      }
+    }
   }
 `
 
@@ -216,18 +242,25 @@ const Customize = ({
           </div>
           {/* div for sticky mobile */}
           <div className="mobile col sticky-mobile" ref={previewRef}>
-            <GatsbyImage
-              image={currentImage.data}
-              alt={currentImage.altText}
-              loading="eager"
-            />
+            <div className="mobile-flex">
+              <GatsbyImage
+                image={currentImage.data}
+                alt={currentImage.altText}
+                loading="eager"
+              />
+              <div className="current-price">
+                <p>
+                  <span>${currentPrice}</span>
+                </p>
+              </div>
+            </div>
             <CustomizationProgress step={currentStep} />
           </div>
           <div className="col steps">
             <div className="desktop">
               <CustomizationProgress step={currentStep} />
             </div>
-            <p className="current-price">
+            <p className="current-price desktop">
               <span>${currentPrice}</span>
             </p>
             <div className="current-step">
