@@ -122,7 +122,7 @@ const FooterForm = () => {
         headers: headers,
         body: JSON.stringify({ inEmail }),
       }
-      const response = await fetch("api/newsletter", params)
+      const response = await fetch("/api/newsletter", params)
       return response
     } catch (error) {
       console.log("Error while fetching klaviyo request", error)
