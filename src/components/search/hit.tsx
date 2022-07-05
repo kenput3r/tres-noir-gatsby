@@ -40,7 +40,9 @@ const Component = styled.article`
 
 const Hit = ({ hit }: { hit: Props }) => {
   const pricing =
-    hit.price !== "" ? `$${hit.price}` : `From $${hit.min_variant_price}`
+    hit.price !== ""
+      ? `$${Number(hit.price).toFixed(2)}`
+      : `From $${Number(hit.min_variant_price).toFixed(2)}`
 
   return (
     <Component>
