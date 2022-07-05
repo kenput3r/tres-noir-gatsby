@@ -216,7 +216,10 @@ const Header = ({
               <FaSearch className="text-btn" />
             </Link>
 
-            <a href="https://www.tresnoir.com/account" className="login-text">
+            <a
+              href="https://account.tresnoir.com/account"
+              className="login-text"
+            >
               <StaticImage
                 className="img-btn"
                 src="../images/icon-user.png"
