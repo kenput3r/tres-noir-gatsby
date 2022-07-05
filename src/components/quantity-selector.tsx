@@ -21,12 +21,12 @@ const Selector = styled.div`
       border: none;
       text-align: center;
       width: 2rem;
-      /* vertical-align: top; */
       border: 1px solid black;
       border-top: 0;
       border-bottom: 0;
       color: var(--color-grey-dark);
       font-size: 0.8rem;
+      border-radius: 0;
     }
     .qty {
       cursor: pointer;

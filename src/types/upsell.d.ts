@@ -11,6 +11,7 @@ export interface UpsellItem {
         gatsbyImageData: IGatsbyImageData
       }
     }
+    originalSrc: string
   }
   handle: string
   hasOnlyDefaultVariant: boolean
@@ -31,14 +32,27 @@ export interface UpsellItemVariant {
         gatsbyImageData: IGatsbyImageData
       }
     }
+    originalSrc: string
   }
   inventoryQuantity: number
+  legacyResourceId: string
   position: number
   price: string
+  compareAtPrice: string
   selectedOptions: {
     name: string
   }[]
   sku: string
   storefrontId: string
   title: string
+  product: {
+    collections: { title: string }[]
+    featuredImage: {
+      originalSrc: string
+    }
+    onlineStoreUrl: string
+    productType: string
+    title: string
+    vendor: string
+  }
 }

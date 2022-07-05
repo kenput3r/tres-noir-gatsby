@@ -4,6 +4,7 @@ import { GatsbyImage, StaticImage } from "gatsby-plugin-image"
 import { Link } from "gatsby"
 import { CartContext } from "../contexts/cart"
 import styled from "styled-components"
+import { addedToCartGTMEvent } from "../helpers/gtm"
 import { UpsellItem, UpsellItemVariant } from "../types/upsell"
 import AddToCartButton from "./add-to-cart-button"
 
@@ -97,7 +98,9 @@ const UpsellProduct = (props: { upsellProduct: UpsellItem }) => {
 
     if (firstVariant) setSelectedVariant(firstVariant)
   }, [quantityLevels])
+
   const { addProductToCart, isAddingToCart } = useContext(CartContext)
+
   const handleAddToCart = () => {
     const id = selectedVariant.storefrontId
     const sku = selectedVariant.sku
@@ -106,6 +109,28 @@ const UpsellProduct = (props: { upsellProduct: UpsellItem }) => {
       : upsellProduct.featuredImage.localFile.childImageSharp.gatsbyImageData
 
     addProductToCart(id, 1, sku, image)
+    // gtm event
+    const productData = {
+      title:
+        selectedVariant.title === "Default Title"
+          ? selectedVariant.product.title
+          : selectedVariant.title,
+      legacyResourceId: selectedVariant.legacyResourceId,
+      sku: selectedVariant.sku,
+      productType: selectedVariant.product.productType,
+      image: selectedVariant?.image?.originalSrc
+        ? selectedVariant.image?.originalSrc
+        : selectedVariant.product.featuredImage.originalSrc,
+      url: selectedVariant.product.onlineStoreUrl,
+      vendor: selectedVariant.product.vendor,
+      price: selectedVariant.price,
+      compareAtPrice: selectedVariant.compareAtPrice,
+      collections: selectedVariant.product.collections.map(
+        (collection: { title: string }) => collection.title
+      ),
+      quantity: 1,
+    }
+    addedToCartGTMEvent(productData)
   }
 
   const handleVariant = (evt: ChangeEvent<HTMLSelectElement>) => {
