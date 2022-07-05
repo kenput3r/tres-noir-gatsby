@@ -14,6 +14,7 @@ export const useRandomizeCollection = (currentProductId: string) => {
                   gatsbyImageData(quality: 40, width: 400)
                 }
               }
+              originalSrc
             }
             title
             productType
@@ -27,18 +28,33 @@ export const useRandomizeCollection = (currentProductId: string) => {
               sku
               storefrontId
               price
+              compareAtPrice
               inventoryQuantity
               selectedOptions {
                 name
               }
+              legacyResourceId
               image {
                 localFile {
                   childImageSharp {
                     gatsbyImageData(quality: 40, width: 400)
                   }
                 }
+                originalSrc
               }
               position
+              product {
+                collections {
+                  title
+                }
+                featuredImage {
+                  originalSrc
+                }
+                onlineStoreUrl
+                productType
+                title
+                vendor
+              }
             }
             tags
             storefrontId

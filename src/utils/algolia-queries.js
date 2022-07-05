@@ -1,7 +1,7 @@
 const pagePath = `content`
 const indexName = `Products`
 
-const excludedProductTypes = ["Lense Customization", "Lenses"]
+const excludedProductTypes = ["Lense Customization", "Lenses", "Upsell AO"]
 
 const productsQuery = `{
   Shopify: allShopifyProduct {
