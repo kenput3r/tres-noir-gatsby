@@ -130,7 +130,6 @@ const UpsellProduct = (props: { upsellProduct: UpsellItem }) => {
       ),
       quantity: 1,
     }
-    console.log("PRODUCT DATA", productData)
     addedToCartGTMEvent(productData)
   }
 
