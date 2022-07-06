@@ -74,8 +74,23 @@ const getUpsellItems = () => {
           hasOnlyDefaultVariant
           variants {
             storefrontId
+            compareAtPrice
             price
             sku
+            title
+            legacyResourceId
+            product {
+              collections {
+                title
+              }
+              featuredImage {
+                originalSrc
+              }
+              onlineStoreUrl
+              productType
+              title
+              vendor
+            }
           }
           storefrontId
         }
