@@ -154,7 +154,7 @@ const IndexPage = ({
   data: HomePageQuery
 }) => (
   <Layout>
-    <SEO title="Home" />
+    <SEO title="Handmade Eyewear" isIndex={true} />
     <Page>
       <FreeShipping />
       <div className="hero container">
