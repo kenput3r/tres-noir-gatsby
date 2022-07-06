@@ -14,9 +14,10 @@ interface Props {
   lang?: string
   meta?: any
   title: string
+  isIndex?: boolean
 }
 
-const SEO = ({ description, lang, meta, title }: Props) => {
+const SEO = ({ description, lang, meta, title, isIndex = false }: Props) => {
   const { site } = useStaticQuery(
     graphql`
       query {
@@ -33,13 +34,26 @@ const SEO = ({ description, lang, meta, title }: Props) => {
 
   const metaDescription = description || site.siteMetadata.description
   const defaultTitle = site.siteMetadata?.title
+
+  const titleTemplate = () => {
+    if (defaultTitle) {
+      if (isIndex) {
+        return `${defaultTitle} | %s`
+      } else {
+        return `%s | ${defaultTitle}`
+      }
+    } else {
+      return undefined
+    }
+  }
+
   return (
     <Helmet
       htmlAttributes={{
         lang,
       }}
       title={title}
-      titleTemplate={defaultTitle ? `%s | ${defaultTitle}` : undefined}
+      titleTemplate={titleTemplate()}
       meta={[
         {
           name: `description`,
