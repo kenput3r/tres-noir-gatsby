@@ -516,6 +516,7 @@ export const query = graphql`
         storefrontId
         title
         product {
+          title
           handle
           onlineStoreUrl
           productType
