@@ -21,6 +21,7 @@ exports.createPages = async ({ graphql, actions: { createPage } }) => {
           node {
             handle
             id
+            title
           }
         }
       }
@@ -61,6 +62,7 @@ exports.createPages = async ({ graphql, actions: { createPage } }) => {
       if (
         productType !== "Lense Customization" &&
         productType !== "Lens Customization" &&
+        productType !== "Lenses" &&
         productType !== "Upsell AO"
       ) {
         createPage({
@@ -89,16 +91,31 @@ exports.createPages = async ({ graphql, actions: { createPage } }) => {
     }
   )
   pageable.data.allShopifyCollection.edges.forEach(
-    ({ node: { handle, id } }) => {
+    ({ node: { handle, id, title } }) => {
       const template = "collection"
-      createPage({
-        path: `/collections/${handle}`,
-        component: path.resolve(`./src/templates/${template}.tsx`),
-        context: {
-          id,
-          handle,
-        },
-      })
+      // exclude collections
+      const excludedCollections = [
+        "Lens Coating",
+        "Lens Material",
+        "Lenses",
+        "Lens Type",
+        "RX Type",
+        "Welcome",
+        "Home Page",
+        "Black Friday Sale",
+        "Case Add-ons",
+      ]
+
+      if (!excludedCollections.includes(title)) {
+        createPage({
+          path: `/collections/${handle}`,
+          component: path.resolve(`./src/templates/${template}.tsx`),
+          context: {
+            id,
+            handle,
+          },
+        })
+      }
     }
   )
   pageable.data.allContentfulProduct.edges.forEach(({ node: { handle } }) => {
