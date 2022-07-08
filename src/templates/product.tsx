@@ -186,7 +186,9 @@ const Product = ({ data: { shopifyProduct } }: any) => {
       productType: shopifyProduct.productType,
       image: selectedVariant.image?.originalSrc
         ? selectedVariant.image?.originalSrc
-        : shopifyProduct.featuredImage.originalSrc,
+        : shopifyProduct.featuredImage?.originalSrc
+        ? shopifyProduct.featuredImage.originalSrc
+        : "",
       url: shopifyProduct.onlineStoreUrl,
       vendor: shopifyProduct.vendor,
       price: selectedVariant.price,
@@ -268,7 +270,9 @@ const Product = ({ data: { shopifyProduct } }: any) => {
       productType: shopifyProduct.productType,
       image: selectedVariant?.image?.originalSrc
         ? selectedVariant.image?.originalSrc
-        : shopifyProduct.featuredImage.originalSrc,
+        : shopifyProduct.featuredImage?.originalSrc
+        ? shopifyProduct.featuredImage.originalSrc
+        : "",
       url: shopifyProduct.onlineStoreUrl,
       vendor: shopifyProduct.vendor,
       price: selectedVariant.price,

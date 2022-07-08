@@ -139,6 +139,7 @@ export interface ShopifyProductVariant {
     onlineStoreUrl: string
     productType: string
     vendor: string
+    title: string
   }
   sku: string
   storefrontId: string
