@@ -166,6 +166,7 @@ const Step5 = (props: {
 
     const today = new Date()
     const matchingKey: string = today.valueOf().toString()
+    const colorName = variant.title.split("-")[0]
     const stepItems = [
       {
         variantId: step1.storefrontId,
@@ -186,6 +187,10 @@ const Step5 = (props: {
                 ? JSON.stringify(rxInfo)
                 : "Non-Prescription",
           },
+          {
+            key: "_frameName",
+            value: `${variant.product.title} - ${colorName}`,
+          },
         ],
       },
       {
@@ -199,6 +204,10 @@ const Step5 = (props: {
           {
             key: "customizationStep",
             value: "2",
+          },
+          {
+            key: "_frameName",
+            value: `${variant.product.title} - ${colorName}`,
           },
         ],
       },
@@ -214,6 +223,10 @@ const Step5 = (props: {
             key: "customizationStep",
             value: "3",
           },
+          {
+            key: "_frameName",
+            value: `${variant.product.title} - ${colorName}`,
+          },
         ],
       },
       {
@@ -227,6 +240,10 @@ const Step5 = (props: {
           {
             key: "customizationStep",
             value: "5",
+          },
+          {
+            key: "_frameName",
+            value: `${variant.product.title} - ${colorName}`,
           },
         ],
       },
@@ -245,6 +262,10 @@ const Step5 = (props: {
             key: "customizationStep",
             value: "4",
           },
+          {
+            key: "_frameName",
+            value: `${variant.product.title} - ${colorName}`,
+          },
         ],
       })
     })
@@ -259,6 +280,10 @@ const Step5 = (props: {
         {
           key: "customizationStep",
           value: "0",
+        },
+        {
+          key: "_frameName",
+          value: `${variant.product.title} - ${colorName}`,
         },
       ],
     }

@@ -76,7 +76,7 @@ const ProductImageGrid = (props: { product: any; selectedVariant: any }) => {
           ></GatsbyImage>
         ) : (
           <StaticImage
-            src="../images/product-no-image.jpg"
+            src="../images/no-image-placeholder.jpg"
             alt="No image available"
           ></StaticImage>
         )}
