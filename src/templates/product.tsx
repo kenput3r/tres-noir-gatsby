@@ -203,7 +203,7 @@ const Product = ({ data: { shopifyProduct } }: any) => {
   useEffect(() => {
     let paramSku: null | string = null
     const isBrowser = typeof window !== "undefined"
-    if (isBrowser) {
+    if (isBrowser && !shopifyProduct.hasOnlyDefaultVariant) {
       const params = new URLSearchParams(location.search)
       if (params.get("variant")) paramSku = params.get("variant")
     }
