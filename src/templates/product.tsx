@@ -210,9 +210,10 @@ const Product = ({ data: { shopifyProduct } }: any) => {
     let firstVariant = shopifyProduct.variants[0]
     // if variant param
     if (paramSku) {
-      firstVariant = shopifyProduct.variants.find(
+      const foundVariant = shopifyProduct.variants.find(
         (_variant: any) => _variant.sku === paramSku
       )
+      if (foundVariant) firstVariant = foundVariant
     } else {
       // first available
       for (let key in quantityLevels) {
