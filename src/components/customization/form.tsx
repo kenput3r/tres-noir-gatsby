@@ -905,7 +905,7 @@ const Form = ({
                   defaultValue={rxInfo.right.pd}
                   onChange={evt => handleRx(evt)}
                 >
-                  {range(46, 80, 1, "right-pd").map(el => {
+                  {range(24, 80, 1, "right-pd").map(el => {
                     return (
                       <React.Fragment key={`right-pd-${el}`}>
                         <option value={el}>{el}</option>
@@ -933,7 +933,7 @@ const Form = ({
                   defaultValue={rxInfo.left.pd}
                   onChange={evt => handleRx(evt)}
                 >
-                  {range(46, 80, 1, "left-pd").map(el => {
+                  {range(24, 80, 1, "left-pd").map(el => {
                     return (
                       <React.Fragment key={`left-pd-${el}`}>
                         <option value={el}>{el}</option>
