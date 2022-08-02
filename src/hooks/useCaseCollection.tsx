@@ -12,6 +12,7 @@ export const useCaseCollection = () => {
             productType
             handle
             storefrontId
+            legacyResourceId
             featuredImage {
               localFile {
                 childImageSharp {
@@ -22,6 +23,7 @@ export const useCaseCollection = () => {
             variants {
               sku
               storefrontId
+              legacyResourceId
               title
               image {
                 originalSrc
