@@ -365,7 +365,7 @@ const ProductCustomizable = ({
   useEffect(() => {
     const productData = {
       title: shopifyProduct.title,
-      legacyResourceId: shopifyProduct.legacyResourceId,
+      legacyResourceId: selectedVariant.shopify.legacyResourceId,
       sku: selectedVariant.shopify.sku,
       productType: shopifyProduct.productType,
       image: selectedVariant?.shopify?.image?.originalSrc
@@ -430,7 +430,7 @@ const ProductCustomizable = ({
       const productData = {
         main: {
           title: shopifyProduct.title,
-          legacyResourceId: shopifyProduct.legacyResourceId,
+          legacyResourceId: selectedVariant.shopify.legacyResourceId,
           sku: selectedVariant.shopify.sku,
           productType: shopifyProduct.productType,
           image: selectedVariant?.shopify?.image?.originalSrc
@@ -473,7 +473,7 @@ const ProductCustomizable = ({
     )
     const productData = {
       title: shopifyProduct.title,
-      legacyResourceId: shopifyProduct.legacyResourceId,
+      legacyResourceId: selectedVariant.shopify.legacyResourceId,
       sku: selectedVariant.shopify.sku,
       productType: shopifyProduct.productType,
       image: selectedVariant?.shopify?.image?.originalSrc
