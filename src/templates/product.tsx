@@ -181,7 +181,7 @@ const Product = ({ data: { shopifyProduct } }: any) => {
   useEffect(() => {
     const productData = {
       title: shopifyProduct.title,
-      legacyResourceId: selectedVariant.shopify.legacyResourceId,
+      legacyResourceId: selectedVariant.legacyResourceId,
       sku: selectedVariant.sku,
       productType: shopifyProduct.productType,
       image: selectedVariant.image?.originalSrc
@@ -266,7 +266,7 @@ const Product = ({ data: { shopifyProduct } }: any) => {
 
     const productData = {
       title: shopifyProduct.title,
-      legacyResourceId: selectedVariant.shopify.legacyResourceId,
+      legacyResourceId: selectedVariant.legacyResourceId,
       sku: selectedVariant.sku,
       productType: shopifyProduct.productType,
       image: selectedVariant?.image?.originalSrc
