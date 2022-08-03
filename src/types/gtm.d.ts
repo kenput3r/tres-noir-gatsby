@@ -46,6 +46,7 @@ export interface ViewedProductPayload {
   Name: string
   Price: number
   ProductID: string
+  ProductType: string
   SKU: string
   Url: string
 }
@@ -59,12 +60,14 @@ export interface AddedToCartPayload {
   AddedItemImageURL: string
   AddedItemURL: string
   AddedItemPrice: number
+  AddedItemProductType: string
   AddedItemQuantity: number
   ItemNames: string[]
   Items: {
     ProductID: string
     SKU: string
     ProductName: string
+    ProductType: string
     Quantity: number
     ItemPrice: number
     RowTotal: number
