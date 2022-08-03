@@ -9,7 +9,9 @@ export interface ShopifyProduct {
         gatsbyImageData: IGatsbyImageData
       }
     }
+    originalSrc: string
   }
+  onlineStoreUrl: string
   priceRangeV2: {
     minVariantPrice: {
       amount: number
@@ -21,7 +23,13 @@ export interface ShopifyProduct {
   productType: string
   storefrontId: string
   title: string
-  variants: { title: string; sku: string; storefrontId: string }[]
+  variants: {
+    legacyResourceId: string
+    title: string
+    sku: string
+    storefrontId: string
+  }[]
+  vendor: string
 }
 
 export interface ShopifyCollection {
