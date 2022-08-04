@@ -75,7 +75,8 @@ const Product = ({
     data.priceRangeV2.minVariantPrice.amount.toString()
   ).toFixed(2)
 
-  const handleAddToCart = () => {
+  const handleAddToCart = (e: { preventDefault: () => void }) => {
+    e.preventDefault()
     const id = data.variants[0].storefrontId
     const sku = data.variants[0].sku
     const image = data.featuredImage.localFile.childImageSharp.gatsbyImageData

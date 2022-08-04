@@ -380,7 +380,7 @@ const ProductCustomizable = ({
       ),
     }
     viewedProductGTMEvent(productData)
-  }, [selectedVariant])
+  }, [])
 
   const selectVariant = (e: React.MouseEvent, variant: any) => {
     const shopify = shopifyProduct.variants.find(
@@ -398,7 +398,8 @@ const ProductCustomizable = ({
     }
   }
 
-  const handleAddToCart = () => {
+  const handleAddToCart = (e: { preventDefault: () => void }) => {
+    e.preventDefault()
     const id = selectedVariant.shopify.storefrontId
     if (lensType !== LensType.GLASSES) {
       const today = new Date()
