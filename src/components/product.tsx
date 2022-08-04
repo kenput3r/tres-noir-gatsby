@@ -7,6 +7,7 @@ import { ShopifyProduct } from "../types/shopify"
 import ProductAction from "./collection-product-action"
 import Spinner from "../components/spinner"
 import { useQuantityQuery } from "../hooks/useQuantityQuery"
+import { addedToCartGTMEvent } from "../helpers/gtm"
 
 const Component = styled.article`
   h3,
@@ -59,7 +60,13 @@ const Component = styled.article`
   }
 `
 
-const Product = ({ data }: { data: ShopifyProduct }) => {
+const Product = ({
+  data,
+  collection,
+}: {
+  data: ShopifyProduct
+  collection: string
+}) => {
   const quantityLevels = useQuantityQuery(data.handle, data.variants.length)
 
   const { addProductToCart, isAddingToCart } = useContext(CartContext)
@@ -74,6 +81,23 @@ const Product = ({ data }: { data: ShopifyProduct }) => {
     const image = data.featuredImage.localFile.childImageSharp.gatsbyImageData
     const qty = 1
     addProductToCart(id, qty, sku, image)
+
+    const productData = {
+      title: data.title,
+      legacyResourceId: data.variants[0].legacyResourceId,
+      sku: data.variants[0].sku,
+      productType: data.productType,
+      image: data?.featuredImage?.originalSrc
+        ? data.featuredImage.originalSrc
+        : "",
+      url: data.onlineStoreUrl,
+      vendor: data.vendor,
+      price: String(data.priceRangeV2.minVariantPrice.amount),
+      compareAtPrice: "",
+      collections: [collection],
+      quantity: qty,
+    }
+    addedToCartGTMEvent(productData)
   }
 
   return (

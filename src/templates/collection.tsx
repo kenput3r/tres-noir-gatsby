@@ -121,7 +121,11 @@ const Collection = ({
 
           <div className="grid">
             {collection.products.slice(0, 8).map((product: ShopifyProduct) => (
-              <Product key={product.handle} data={product} />
+              <Product
+                key={product.handle}
+                data={product}
+                collection={collection.title}
+              />
             ))}
           </div>
           {collectionImages &&
@@ -149,7 +153,11 @@ const Collection = ({
               collection.products
                 .slice(8, collectionSize)
                 .map((product: ShopifyProduct) => (
-                  <Product key={product.handle} data={product} />
+                  <Product
+                    key={product.handle}
+                    data={product}
+                    collection={collection.title}
+                  />
                 ))}
           </div>
         </div>
@@ -175,7 +183,9 @@ export const query = graphql`
               gatsbyImageData(width: 275, formats: [AUTO, WEBP], quality: 50)
             }
           }
+          originalSrc
         }
+        onlineStoreUrl
         priceRangeV2 {
           minVariantPrice {
             amount
@@ -188,10 +198,12 @@ export const query = graphql`
         storefrontId
         title
         variants {
+          legacyResourceId
           title
           sku
           storefrontId
         }
+        vendor
       }
     }
     contentfulShopifyCollectionImages(handle: { eq: $handle }) {

@@ -49,6 +49,7 @@ export const viewedProductGTMEvent = (productInfo: ShopifyProductInfo) => {
       ProductID: productInfo.legacyResourceId,
       SKU: productInfo.sku,
       Url: productInfo.url,
+      ProductType: productInfo.productType,
     }
 
     window.dataLayer.push({
@@ -69,6 +70,7 @@ export const addedToCartGTMEvent = (productInfo: ShopifyProductInfo) => {
       AddedItemImageURL: productInfo.image,
       AddedItemURL: productInfo.url,
       AddedItemPrice: Number(productInfo.price),
+      AddedItemProductType: productInfo.productType,
       AddedItemQuantity: Number(productInfo.quantity),
       ItemNames: [productInfo.title], // all product names
       // CheckoutURL: "http://www.example.com/path/to/checkout",
@@ -77,6 +79,7 @@ export const addedToCartGTMEvent = (productInfo: ShopifyProductInfo) => {
           ImageURL: productInfo.image,
           ItemPrice: Number(productInfo.price),
           ProductName: productInfo.title,
+          ProductType: productInfo.productType,
           // ProductCategories: item.collections,
           ProductID: productInfo.legacyResourceId,
           ProductURL: productInfo.url,
@@ -116,6 +119,7 @@ export const addedCustomizedToCartGTMEvent = (
       AddedItemImageURL: productInfo.main.image,
       AddedItemURL: productInfo.main.url,
       AddedItemPrice: Number(productInfo.main.price),
+      AddedItemProductType: "Glasses",
       AddedItemQuantity: 1,
       ItemNames: itemNames, // all product names
       Items: [],
@@ -126,6 +130,7 @@ export const addedCustomizedToCartGTMEvent = (
       ItemPrice: Number(productInfo.main.price),
       ProductName: productInfo.main.title,
       ProductID: productInfo.main.legacyResourceId,
+      ProductType: "Glasses",
       ProductURL: productInfo.main.url,
       Quantity: 1,
       RowTotal: Number(productInfo.main.price),
@@ -137,6 +142,7 @@ export const addedCustomizedToCartGTMEvent = (
         ImageURL: addOn.image,
         ItemPrice: Number(addOn.price),
         ProductName: addOn.title,
+        ProductType: addOn.productType,
         ProductID: addOn.legacyResourceId,
         ProductURL: addOn.url,
         Quantity: 1,
