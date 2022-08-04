@@ -198,7 +198,7 @@ const Product = ({ data: { shopifyProduct } }: any) => {
       ),
     }
     viewedProductGTMEvent(productData)
-  }, [selectedVariant])
+  }, [])
 
   useEffect(() => {
     let paramSku: null | string = null
@@ -254,7 +254,8 @@ const Product = ({ data: { shopifyProduct } }: any) => {
     return Array.from(Array(range), (_, index) => index + 1)
   }
 
-  const handleAddToCart = () => {
+  const handleAddToCart = (e: { preventDefault: () => void }) => {
+    e.preventDefault()
     const id = selectedVariant.storefrontId
     const sku = selectedVariant.sku
     const image = selectedVariant.image
@@ -358,7 +359,7 @@ const Product = ({ data: { shopifyProduct } }: any) => {
                   {quantityLevels &&
                   quantityLevels[selectedVariant.sku] !== 0 ? (
                     <AddToCartButton
-                      handler={handleAddToCart}
+                      handler={e => handleAddToCart(e)}
                       loading={isAddingToCart}
                       soldOut={false}
                     />
