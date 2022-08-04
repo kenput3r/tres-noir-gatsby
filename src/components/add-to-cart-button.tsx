@@ -14,7 +14,7 @@ const Button = styled.button`
 `
 
 interface Props {
-  handler?: () => void
+  handler?: (e) => void
   loading?: boolean
   soldOut: boolean
 }
@@ -27,10 +27,10 @@ const AddToCartButton: React.FC<Props> = ({
   const [self, setSelf] = useState<boolean>(false)
   const [addingToCart, setAddingToCart] = useState<boolean>(loading)
 
-  const handleAddToCart = () => {
+  const handleAddToCart = (e: any) => {
     setSelf(true)
     if (handler) {
-      handler()
+      handler(e)
       setAddingToCart(loading)
     }
   }
