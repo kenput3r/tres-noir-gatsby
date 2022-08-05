@@ -111,10 +111,7 @@ const UpsellProduct = (props: { upsellProduct: UpsellItem }) => {
     addProductToCart(id, 1, sku, image)
     // gtm event
     const productData = {
-      title:
-        selectedVariant.title === "Default Title"
-          ? selectedVariant.product.title
-          : selectedVariant.title,
+      title: selectedVariant.product.title,
       legacyResourceId: selectedVariant.legacyResourceId,
       sku: selectedVariant.sku,
       productType: selectedVariant.product.productType,
