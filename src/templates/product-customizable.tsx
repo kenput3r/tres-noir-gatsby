@@ -525,14 +525,17 @@ const ProductCustomizable = ({
               </p>
             </div>
             <form className="options">
-              <p className="selected-text-label">
-                Color:{" "}
-                <span>
-                  {lensType === LensType.GLASSES
-                    ? selectedVariant.shopify.title.split(" - ")[0]
-                    : selectedVariant.shopify.title}
-                </span>
-              </p>
+              {selectedVariant.shopify.title !== "Default Title" && (
+                <p className="selected-text-label">
+                  Color:{" "}
+                  <span>
+                    {lensType === LensType.GLASSES
+                      ? selectedVariant.shopify.title.split(" - ")[0]
+                      : selectedVariant.shopify.title}
+                  </span>
+                </p>
+              )}
+
               <div className="buttons">
                 {contentfulProduct &&
                   contentfulProduct.variants.map((variant: any) => (
