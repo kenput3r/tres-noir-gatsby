@@ -18,7 +18,10 @@ export default async function klaviyoFormHandler(req, res) {
         ],
       }),
     }
+    console.log('URL', url);
     const response = await fetch(url, options)
+    console.log('RESPONSE', response)
+    console.log('ERRORS', response.errors)
     if (response.ok) {
       return res.status(200).json("success")
     }
