@@ -6,10 +6,10 @@ export default async function klaviyoFormHandler(req, res) {
     const url: string = `https://a.klaviyo.com/api/v2/list/R4y2R5/subscribe?api_key=${process.env.KLAVIYO_PRIVATE_KEY}`
     const options = {
       method: "POST",
-      headers: {
+      headers: JSON.stringify({
         "Content-Type": "application/json",
         Accept: "application/json",
-      },
+      }),
       body: JSON.stringify({
         profiles: [
           {
