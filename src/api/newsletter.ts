@@ -27,5 +27,6 @@ export default async function klaviyoFormHandler(req, res) {
     return res.status(400).json("Error while posting to klaviyo")
   } catch (error) {
     console.log("Error on klaviyo form request", error)
+    return res.status(400).json("Error on klaviyo form request", JSON.stringify(error));
   }
 }
