@@ -1,5 +1,5 @@
 import fetch from "node-fetch"
-export default async function getOrderDetails(req, res) {
+export default async function addOrderNote(req, res) {
   try {
     const orderId = req.body.id
     console.log("orderId payload", orderId)
@@ -14,9 +14,6 @@ export default async function getOrderDetails(req, res) {
     const orderQuery = `
       query getOrderDetails($orderId: ID!){
         order(id: $orderId) {
-          name
-          id
-          note
           lineItems(first: 100) {
             edges {
               node {
@@ -46,12 +43,14 @@ export default async function getOrderDetails(req, res) {
         },
       }),
     })
+    console.log("backend raw response", response)
     const responseJson = await response.json()
+    console.log("backend json response", responseJson)
     if (response.ok) {
       return res.status(200).json(responseJson)
     }
 
-    return res.status(400).json("Error while fetching from admin api")
+    return res.status(400).json("Error while accessing shopify admin")
   } catch (error) {
     console.log("Error on fetching order details", error)
   }

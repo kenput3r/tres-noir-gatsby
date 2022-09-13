@@ -25,14 +25,12 @@ const ConfirmPrescription = () => {
   // get URL PARAMS and call hook
   // useEffect(() => {
   const isBrowser = typeof window !== "undefined"
-  let odCopy = []
+  let orderDetails
   if (isBrowser) {
     const params = new URLSearchParams(location.search)
     const orderId = params.get("id")
-    console.log("order id is", orderId)
-    const od = useOrderDetails(`gid://shopify/Order/${orderId}`)
-    odCopy = od
-    console.log("od", od)
+    const fetchedDetails = useOrderDetails(`gid://shopify/Order/${orderId}`)
+    orderDetails = fetchedDetails
   }
   return (
     <Layout>
@@ -44,8 +42,12 @@ const ConfirmPrescription = () => {
             you confirm your prescription, your purchase cannot be refunded.
           </p>
           <div>
-            {odCopy.length > 0 &&
-              odCopy.map(el => <PrescriptionTable order={el} />)}
+            {orderDetails &&
+              orderDetails.prescriptions &&
+              orderDetails.prescriptions.length > 0 &&
+              orderDetails.prescriptions.map((el, index) => (
+                <PrescriptionTable lineItem={el} key={`pt-${index}`} />
+              ))}
           </div>
         </div>
       </Page>

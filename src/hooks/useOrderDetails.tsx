@@ -38,18 +38,31 @@ export function useOrderDetails(orderId: string) {
       const json = await fetchQuery()
       if (json.data.order) {
         const orderDetails = json.data.order
+        const orderName = orderDetails.name
+        const orderNote = orderDetails.note
         const filtered = orderDetails.lineItems.edges.filter(el => {
           const lineItem = el.node
           // find Prescription and frame Name custom Attr
           const prescriptionCustomAttr = lineItem.customAttributes.filter(
-            el => el.key === "Prescription"
+            el => el.key === "Prescription" && el.value != "Non-Prescription"
           )
+          // add to filtered array if prescription exists
           if (prescriptionCustomAttr.length !== 0) {
             return lineItem
           }
         })
-        console.log("filtered", filtered)
-        return filtered
+        return {
+          prescriptions: filtered,
+          note: orderNote,
+          name: orderName,
+        }
+        /*
+          {
+            prescriptions: filtered,
+            note: orderNote
+            name: orderName
+          }
+         */
       } else {
         console.log(
           `Error while calling quantity fetch, error on order ${orderId}`
