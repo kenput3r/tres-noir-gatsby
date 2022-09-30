@@ -1,30 +1,31 @@
 import fetch from "node-fetch"
 export default async function addOrderNote(req, res) {
   try {
-    const orderId = req.body.id
-    console.log("orderId payload", orderId)
+    const parsedBody = JSON.parse(req.body)
+    const orderId = parsedBody.id
+    const orderNote = parsedBody.note
+    const orderInput = {
+      note: orderNote,
+      id: `gid://shopify/Order/${orderId}`,
+    }
     const url: string = process.env.GATSBY_STORE_MY_SHOPIFY
       ? `https://${process.env.GATSBY_STORE_MY_SHOPIFY}/admin/api/2022-04/graphql.json`
       : ""
-    console.log("url", url)
     const adminToken: string = process.env.GATSBY_STORE_TOKEN
       ? process.env.GATSBY_STORE_TOKEN
       : ""
 
     const orderQuery = `
-      query getOrderDetails($orderId: ID!){
-        order(id: $orderId) {
-          lineItems(first: 100) {
-            edges {
-              node {
-                id
-                name
-                customAttributes {
-                  key
-                  value
-                }
-              }
-            }
+      mutation updateOrderNote($input: OrderInput!){
+        orderUpdate(input: $input) {
+          order {
+            id
+            name
+            note
+          }
+          userErrors {
+            field
+            message
           }
         }
       }
@@ -39,7 +40,7 @@ export default async function addOrderNote(req, res) {
       body: JSON.stringify({
         query: orderQuery,
         variables: {
-          orderId: orderId,
+          input: orderInput,
         },
       }),
     })

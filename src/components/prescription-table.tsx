@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react"
+import React, { useState } from "react"
 import styled from "styled-components"
 
 const Component = styled.div`
@@ -37,20 +37,20 @@ const Component = styled.div`
     flex-direction: column;
     input[type="file"] {
       ::file-selector-button {
-        text-transform: uppercase;
         font-family: var(--heading-font);
         background-color: #000;
         /* box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.6); */
         color: #fff;
         display: inline-block;
-        font-size: 1rem;
-        padding: 8px 25px;
+        font-size: 0.8rem;
+        padding: 2px 10px;
         text-decoration: none;
         cursor: pointer;
         -webkit-appearance: button-bevel;
         border: none;
         border-radius: 0%;
       }
+      overflow: visible;
     }
     .btn {
       text-transform: uppercase;
@@ -82,6 +82,22 @@ const Component = styled.div`
   .button-flex-row {
     display: flex;
   }
+  .upload-row {
+    margin-top: 20px;
+    display: flex;
+    column-gap: 30px;
+    @media screen and (max-width: 480px) {
+      flex-direction: column;
+      justify-content: center;
+      align-items: baseline;
+      row-gap: 20px;
+    }
+  }
+  .success-msg {
+    color: green;
+    text-align: center;
+    padding: 10px 0px;
+  }
 `
 
 interface rxDetails {
@@ -96,91 +112,22 @@ interface rxType {
   left: rxDetails
 }
 
-const PrescriptionTable = ({ lineItem }) => {
-  const optionsRef = useRef<HTMLDivElement>(null)
-  const messageRef = useRef<HTMLDivElement>(null)
+const PrescriptionTable = ({ lineItem, index, orderId, orderDetails }) => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
-  const [showUpload, setShowUpload] = useState<boolean>(false)
+  const [showSucccess, setShowSuccess] = useState<boolean>(false)
+  const currentNote = orderDetails.note
 
-  const formatMeasurement = (msmt: string) => {
-    if (msmt === "0.00" || msmt === "00.00" || msmt === "0") {
-      return ""
-    }
-    return msmt
-  }
-  const confirmClicked = () => {
-    optionsRef.current?.classList.add("hide")
-    messageRef.current?.classList.remove("hide")
-  }
-  const orderName = "sample"
+  console.log("currentNote", currentNote)
   const customAttr = lineItem.node.customAttributes.filter(
     el => el.key === "Prescription"
   )
+  const foundFrameKey = lineItem.node.customAttributes.find(
+    el => el.key === "_frameName"
+  )
+  const frameName = foundFrameKey ? foundFrameKey.value : "Frame"
+
   const prescription = JSON.parse(customAttr[0].value) as rxType
 
-  return (
-    <Component>
-      <p>OrderName</p>
-      <div>
-        <table>
-          <tbody>
-            <tr>
-              <td></td>
-              <th>SPH</th>
-              <th>CYL</th>
-              <th>AXIS</th>
-              <th>ADD</th>
-              <th>PD</th>
-            </tr>
-            <tr>
-              <th>OD</th>
-              <td>{formatMeasurement(prescription.right.sph)}</td>
-              <td>{formatMeasurement(prescription.right.cyl)}</td>
-              <td>{formatMeasurement(prescription.right.axis)}</td>
-              <td>{formatMeasurement(prescription.right.add)}</td>
-              <td>{formatMeasurement(prescription.right.pd)}</td>
-            </tr>
-            <tr>
-              <th>OS</th>
-              <td>{formatMeasurement(prescription.left.sph)}</td>
-              <td>{formatMeasurement(prescription.left.cyl)}</td>
-              <td>{formatMeasurement(prescription.left.axis)}</td>
-              <td>{formatMeasurement(prescription.left.add)}</td>
-              <td>{formatMeasurement(prescription.left.pd)}</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-      {!showUpload ? (
-        <div>
-          <div className="confirmed hide" ref={messageRef}>
-            <p>This prescription has been confirmed.</p>
-          </div>
-          <div className="button-flex" ref={optionsRef}>
-            <button className="btn" onClick={evt => confirmClicked()}>
-              Confirm
-            </button>
-            <div className="middle">
-              <p>- OR -</p>
-              <p>Let us confirm for you</p>
-            </div>
-            <button className="btn" onClick={evt => setShowUpload(true)}>
-              Upload
-            </button>
-          </div>
-        </div>
-      ) : (
-        <ImageUpload
-          selectedFile={selectedFile}
-          setSelectedFile={setSelectedFile}
-          setShowUpload={setShowUpload}
-        />
-      )}
-    </Component>
-  )
-}
-
-const ImageUpload = ({ selectedFile, setSelectedFile, setShowUpload }) => {
   const getBase64Image = async file => {
     return new Promise(resolve => {
       const reader = new FileReader()
@@ -191,7 +138,6 @@ const ImageUpload = ({ selectedFile, setSelectedFile, setShowUpload }) => {
       }
     })
   }
-
   const uploadPrescriptionImage = async () => {
     try {
       if (!selectedFile) {
@@ -200,46 +146,152 @@ const ImageUpload = ({ selectedFile, setSelectedFile, setShowUpload }) => {
       }
       const endpoint = "/api/uploadPrescription"
       const results = await getBase64Image(selectedFile)
+      const formData = new FormData()
+      //@ts-ignore results holds the base64 encoded file
+      formData.append("file", results)
+      formData.append("name", `${frameName}-${index}-${orderId}`)
+
       const res = await fetch(endpoint, {
         method: "POST",
-        body: results,
+        body: formData,
       })
-      const resJson = await res.json()
-      console.log("res", resJson)
+      if (res.ok) {
+        const resJson = await res.json()
+        console.log("resJson", resJson)
+        const url = resJson.url
+        console.log("cloudinary url", url)
+        updateOrderNote(url)
+      }
     } catch (error) {
-      console.log("Error", error)
+      console.log("Error while calling uploadPrescriptionImage", error)
     }
   }
 
   const handleUpload = async () => {
     const res = await uploadPrescriptionImage()
-    console.log("upload res", res)
-    console.log("image upload")
+  }
+
+  const formatMeasurement = (msmt: string) => {
+    if (msmt === "0.00" || msmt === "00.00" || msmt === "0") {
+      return ""
+    }
+    return msmt
+  }
+  const confirmClicked = () => {
+    setShowSuccess(true)
+    // add frame to order note and mark as confirmed
+  }
+
+  const updateOrderNote = async (url?: string) => {
+    let newNote
+    if (!url) {
+      newNote = currentNote + url
+    } else {
+      newNote = currentNote + ""
+    }
+    console.log("orderId", orderId)
+    try {
+      const endpoint = "/api/addOrderNote"
+      const res = await fetch(endpoint, {
+        method: "POST",
+        body: JSON.stringify({
+          note: newNote,
+          id: orderId,
+        }),
+      })
+      console.log("addOrderNote response", res)
+      if (res.ok) {
+        setShowSuccess(true)
+      } else {
+        // must've been an error
+      }
+    } catch (error) {
+      console.log("Error while calling uploadOrderNote", error)
+    }
   }
 
   return (
-    <div className="button-flex">
-      <div>
-        <input
-          type="file"
-          name="prescriptionImage"
-          id="prescriptionImage"
-          accept="image/*"
-          onChange={evt => setSelectedFile(evt.target.files[0])}
-        />
-      </div>
-      <div className="button-flex-row">
-        <button className="btn" onClick={evt => setShowUpload(false)}>
-          Back
-        </button>
-        <button className="btn" onClick={evt => handleUpload()}>
-          Upload
-        </button>
-      </div>
-    </div>
+    <Component>
+      <>
+        <p>
+          {index}. {frameName}
+        </p>
+        <div>
+          <table>
+            <tbody>
+              <tr>
+                <td></td>
+                <th>SPH</th>
+                <th>CYL</th>
+                <th>AXIS</th>
+                <th>ADD</th>
+                <th>PD</th>
+              </tr>
+              <tr>
+                <th>OD</th>
+                <td>{formatMeasurement(prescription.right.sph)}</td>
+                <td>{formatMeasurement(prescription.right.cyl)}</td>
+                <td>{formatMeasurement(prescription.right.axis)}</td>
+                <td>{formatMeasurement(prescription.right.add)}</td>
+                <td>{formatMeasurement(prescription.right.pd)}</td>
+              </tr>
+              <tr>
+                <th>OS</th>
+                <td>{formatMeasurement(prescription.left.sph)}</td>
+                <td>{formatMeasurement(prescription.left.cyl)}</td>
+                <td>{formatMeasurement(prescription.left.axis)}</td>
+                <td>{formatMeasurement(prescription.left.add)}</td>
+                <td>{formatMeasurement(prescription.left.pd)}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        {!showSucccess ? (
+          <div>
+            <div className="confirmed hide">
+              <p>This prescription has been confirmed.</p>
+            </div>
+            <div className="button-flex">
+              <button className="btn" onClick={evt => confirmClicked()}>
+                Confirm
+              </button>
+              <div className="middle">
+                <p>- OR -</p>
+                <p>Let us confirm for you</p>
+              </div>
+              <div className="upload-row">
+                <input
+                  type="file"
+                  name="prescriptionImage"
+                  id="prescriptionImage"
+                  accept="image/*,application/pdf"
+                  onChange={
+                    /* @ts-ignore */
+                    evt => setSelectedFile(evt.target.files[0])
+                  }
+                />
+                <button className="btn" onClick={evt => handleUpload()}>
+                  Upload
+                </button>
+              </div>
+            </div>
+          </div>
+        ) : (
+          <>
+            <SuccessMessage frameName={frameName} />
+          </>
+        )}
+      </>
+    </Component>
   )
 }
 
-const SuccessMessage = () => {}
+const SuccessMessage = ({ frameName }) => {
+  return (
+    <div className="success-msg">
+      <p>Your prescription for {frameName} has been confirmed.</p>
+    </div>
+  )
+}
 
 export default PrescriptionTable

@@ -1,10 +1,35 @@
 import fetch from "node-fetch"
 import FormData from "form-data"
 import crypto from "crypto"
+
+export const config = {
+  bodyParser: {
+    json: {
+      type: "application/json",
+      limit: "32mb",
+    },
+    raw: {
+      type: "application/octet-stream",
+      limit: "32mb",
+    },
+    text: {
+      type: "text/plain",
+      limit: "32mb",
+    },
+    urlencoded: {
+      type: "application/x-www-form-urlencoded",
+      limit: "100mb",
+      extended: true,
+    },
+  },
+}
+
 export default async function uploadPrescription(req, res) {
+  // const uploadFile = multer.
   try {
-    const imageToUpload = req.body
-    const publicId = "test_image"
+    // const imageToUpload = req.body
+    const publicId = req.body.name
+    const imageToUpload = req.body.file
     const timeStamp = new Date().getTime()
     const cloudinaryApiSecret = process.env.CLOUDINARY_API_SECRET
     const cloudinaryApiKey = process.env.CLOUDINARY_API_KEY
@@ -16,7 +41,7 @@ export default async function uploadPrescription(req, res) {
     const computedHash = crypto.createHash("sha1").update(preSign).digest("hex")
     const formData = new FormData()
     formData.append("file", imageToUpload)
-    formData.append("public_id", "test_image")
+    formData.append("public_id", publicId)
     formData.append("api_key", cloudinaryApiKey)
     formData.append("timestamp", timeStamp)
     formData.append("signature", computedHash)
