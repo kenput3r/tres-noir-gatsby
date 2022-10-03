@@ -1,5 +1,6 @@
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import styled from "styled-components"
+import getCurrentOrderNote from "../api/getCurrentOrderNote"
 
 const Component = styled.div`
   margin: 20px 0;
@@ -115,19 +116,38 @@ interface rxType {
 const PrescriptionTable = ({ lineItem, index, orderId, orderDetails }) => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const [showSucccess, setShowSuccess] = useState<boolean>(false)
-  const currentNote = orderDetails.note
 
-  console.log("currentNote", currentNote)
   const customAttr = lineItem.node.customAttributes.filter(
     el => el.key === "Prescription"
   )
   const foundFrameKey = lineItem.node.customAttributes.find(
     el => el.key === "_frameName"
   )
+  const customId = lineItem.node.customAttributes.filter(
+    el => el.key === "customizationId"
+  )[0].value
+
   const frameName = foundFrameKey ? foundFrameKey.value : "Frame"
+  const frameIdentifier = `${frameName}- (${customId}): `
 
   const prescription = JSON.parse(customAttr[0].value) as rxType
 
+  const orderNote = orderDetails.note
+
+  const hasUploadedImage = async () => {
+    const orderNoteArr = orderNote.split(/\r?\n/)
+    orderNoteArr.forEach(str => {
+      if (str.includes(frameIdentifier)) {
+        setShowSuccess(true)
+      }
+    })
+  }
+
+  useEffect(() => {
+    hasUploadedImage()
+  }, [])
+
+  // returnd data ur given a file
   const getBase64Image = async file => {
     return new Promise(resolve => {
       const reader = new FileReader()
@@ -138,6 +158,24 @@ const PrescriptionTable = ({ lineItem, index, orderId, orderDetails }) => {
       }
     })
   }
+
+  // fetches order note in realtime so multiple frames dont overlap each other when it comes to adding order note
+  const fetchMostCurrentOrderNote = async () => {
+    try {
+      const endpoint = "/api/getCurrentOrderNote"
+      const res = await fetch(endpoint, {
+        method: "POST",
+        body: JSON.stringify({
+          id: orderId,
+        }),
+      })
+      const resJson = await res.json()
+      return resJson.order.note
+    } catch (error) {
+      console.error("Error while fetching most current order note", error)
+    }
+  }
+
   const uploadPrescriptionImage = async () => {
     try {
       if (!selectedFile) {
@@ -157,13 +195,11 @@ const PrescriptionTable = ({ lineItem, index, orderId, orderDetails }) => {
       })
       if (res.ok) {
         const resJson = await res.json()
-        console.log("resJson", resJson)
         const url = resJson.url
-        console.log("cloudinary url", url)
         updateOrderNote(url)
       }
     } catch (error) {
-      console.log("Error while calling uploadPrescriptionImage", error)
+      console.error("Error while calling uploadPrescriptionImage", error)
     }
   }
 
@@ -179,17 +215,23 @@ const PrescriptionTable = ({ lineItem, index, orderId, orderDetails }) => {
   }
   const confirmClicked = () => {
     setShowSuccess(true)
+    updateOrderNote("")
     // add frame to order note and mark as confirmed
   }
 
-  const updateOrderNote = async (url?: string) => {
-    let newNote
-    if (!url) {
-      newNote = currentNote + url
+  const updateOrderNote = async (url: string) => {
+    let newNote: string
+    const currentNote = await fetchMostCurrentOrderNote()
+    if (!currentNote.endsWith("\n")) {
+      newNote = currentNote + "\n"
     } else {
-      newNote = currentNote + ""
+      newNote = currentNote
     }
-    console.log("orderId", orderId)
+    if (url !== "") {
+      newNote += frameIdentifier + url + "\n"
+    } else {
+      newNote += frameIdentifier + "confirmed" + "\n"
+    }
     try {
       const endpoint = "/api/addOrderNote"
       const res = await fetch(endpoint, {
@@ -199,14 +241,13 @@ const PrescriptionTable = ({ lineItem, index, orderId, orderDetails }) => {
           id: orderId,
         }),
       })
-      console.log("addOrderNote response", res)
       if (res.ok) {
         setShowSuccess(true)
       } else {
         // must've been an error
       }
     } catch (error) {
-      console.log("Error while calling uploadOrderNote", error)
+      console.error("Error while calling uploadOrderNote", error)
     }
   }
 

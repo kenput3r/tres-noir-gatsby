@@ -1,33 +1,21 @@
 import fetch from "node-fetch"
-export default async function getOrderDetails(req, res) {
+export default async function getCurrentOrderNote(req, res) {
   try {
-    const orderId = req.body.id
+    const parsedBody = JSON.parse(req.body)
+    const orderId = parsedBody.id
     const url: string = process.env.GATSBY_STORE_MY_SHOPIFY
       ? `https://${process.env.GATSBY_STORE_MY_SHOPIFY}/admin/api/2022-04/graphql.json`
       : ""
-    console.log("url", url)
     const adminToken: string = process.env.GATSBY_STORE_TOKEN
       ? process.env.GATSBY_STORE_TOKEN
       : ""
 
     const orderQuery = `
-      query getOrderDetails($orderId: ID!){
+      query getOrderNote($orderId: ID!){
         order(id: $orderId) {
           name
           id
           note
-          lineItems(first: 100) {
-            edges {
-              node {
-                id
-                name
-                customAttributes {
-                  key
-                  value
-                }
-              }
-            }
-          }
         }
       }
     `
@@ -41,13 +29,15 @@ export default async function getOrderDetails(req, res) {
       body: JSON.stringify({
         query: orderQuery,
         variables: {
-          orderId: orderId,
+          orderId: `gid://shopify/Order/${orderId}`,
         },
       }),
     })
     const responseJson = await response.json()
+    console.log("responseJson", responseJson)
     if (response.ok) {
-      return res.status(200).json(responseJson)
+      console.log("sending", responseJson.data)
+      return res.status(200).json(responseJson.data)
     }
 
     return res.status(400).json("Error while fetching from admin api")

@@ -77,8 +77,4 @@ const ConfirmPrescription = () => {
   )
 }
 
-const NoURLParam = () => {
-  return <p>NoUrlParam</p>
-}
-
 export default ConfirmPrescription
