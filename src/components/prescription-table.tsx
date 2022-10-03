@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react"
 import styled from "styled-components"
-import getCurrentOrderNote from "../api/getCurrentOrderNote"
+import Loader from "./loader"
 
 const Component = styled.div`
   margin: 20px 0;
@@ -115,7 +115,8 @@ interface rxType {
 
 const PrescriptionTable = ({ lineItem, index, orderId, orderDetails }) => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
-  const [showSucccess, setShowSuccess] = useState<boolean>(false)
+  const [showSuccess, setShowSuccess] = useState<boolean>(false)
+  const [showLoader, setShowLoader] = useState<boolean>(false)
 
   const customAttr = lineItem.node.customAttributes.filter(
     el => el.key === "Prescription"
@@ -182,6 +183,7 @@ const PrescriptionTable = ({ lineItem, index, orderId, orderDetails }) => {
         console.log("No image added")
         return
       }
+      setShowLoader(true)
       const endpoint = "/api/uploadPrescription"
       const results = await getBase64Image(selectedFile)
       const formData = new FormData()
@@ -196,8 +198,9 @@ const PrescriptionTable = ({ lineItem, index, orderId, orderDetails }) => {
       if (res.ok) {
         const resJson = await res.json()
         const url = resJson.url
-        updateOrderNote(url)
+        const r = await updateOrderNote(url)
       }
+      setShowLoader(false)
     } catch (error) {
       console.error("Error while calling uploadPrescriptionImage", error)
     }
@@ -222,7 +225,9 @@ const PrescriptionTable = ({ lineItem, index, orderId, orderDetails }) => {
   const updateOrderNote = async (url: string) => {
     let newNote: string
     const currentNote = await fetchMostCurrentOrderNote()
-    if (!currentNote.endsWith("\n")) {
+    if (currentNote === "") {
+      newNote = currentNote
+    } else if (!currentNote.endsWith("\n")) {
       newNote = currentNote + "\n"
     } else {
       newNote = currentNote
@@ -287,7 +292,7 @@ const PrescriptionTable = ({ lineItem, index, orderId, orderDetails }) => {
             </tbody>
           </table>
         </div>
-        {!showSucccess ? (
+        {!showSuccess && !showLoader ? (
           <div>
             <div className="confirmed hide">
               <p>This prescription has been confirmed.</p>
@@ -317,6 +322,8 @@ const PrescriptionTable = ({ lineItem, index, orderId, orderDetails }) => {
               </div>
             </div>
           </div>
+        ) : !showSuccess && showLoader ? (
+          <Loader />
         ) : (
           <>
             <SuccessMessage frameName={frameName} />
