@@ -25,9 +25,7 @@ export const config = {
 }
 
 export default async function uploadPrescription(req, res) {
-  // const uploadFile = multer.
   try {
-    // const imageToUpload = req.body
     const publicId = req.body.name
     const imageToUpload = req.body.file
     const timeStamp = new Date().getTime()
