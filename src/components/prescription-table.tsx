@@ -216,6 +216,7 @@ const PrescriptionTable = ({ lineItem, index, orderId, orderDetails }) => {
         const resJson = await res.json()
         const url = resJson.url
         const r = await updateOrderNote(url)
+        const x = await markMetafieldAsTrue()
       }
       setShowLoader(false)
     } catch (error) {
@@ -236,6 +237,7 @@ const PrescriptionTable = ({ lineItem, index, orderId, orderDetails }) => {
   const confirmClicked = () => {
     setShowSuccess(true)
     updateOrderNote("")
+    markMetafieldAsTrue()
     // add frame to order note and mark as confirmed
   }
 
@@ -272,7 +274,7 @@ const PrescriptionTable = ({ lineItem, index, orderId, orderDetails }) => {
       console.error("Error while calling uploadOrderNote", error)
     }
   }
-  markMetafieldAsTrue()
+
   return (
     <Component>
       <>
