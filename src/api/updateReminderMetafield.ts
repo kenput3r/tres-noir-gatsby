@@ -1,11 +1,14 @@
 import fetch from "node-fetch"
-export default async function addOrderNote(req, res) {
+export default async function updateReminderMetafield(req, res) {
   try {
     const parsedBody = JSON.parse(req.body)
     const orderId = parsedBody.id
-    const orderNote = parsedBody.note
+    const metafieldId = "gid://shopify/Metafield/23035194867942"
     const orderInput = {
-      note: orderNote,
+      metafields: {
+        id: metafieldId,
+        value: "true",
+      },
       id: `gid://shopify/Order/${orderId}`,
     }
     const url: string = process.env.GATSBY_STORE_MY_SHOPIFY
@@ -16,12 +19,14 @@ export default async function addOrderNote(req, res) {
       : ""
 
     const orderQuery = `
-      mutation updateOrderNote($input: OrderInput!){
+      mutation updateOrderMetafield($input: OrderInput!){
         orderUpdate(input: $input) {
           order {
             id
-            name
-            note
+            metafield(namespace:"tresnoir", key: "has_received_prescription_reminder") {
+              value
+              id
+            }
           }
           userErrors {
             field
@@ -45,6 +50,7 @@ export default async function addOrderNote(req, res) {
       }),
     })
     const responseJson = await response.json()
+    console.log("backend json response", responseJson)
     if (response.ok) {
       return res.status(200).json(responseJson)
     }

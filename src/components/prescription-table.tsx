@@ -177,6 +177,23 @@ const PrescriptionTable = ({ lineItem, index, orderId, orderDetails }) => {
     }
   }
 
+  const markMetafieldAsTrue = async () => {
+    try {
+      const endpoint = "/api/updateReminderMetafield"
+      const res = await fetch(endpoint, {
+        method: "POST",
+        body: JSON.stringify({
+          id: orderId,
+        }),
+      })
+      const resJson = await res.json()
+      console.log("a", resJson)
+      return resJson
+    } catch (error) {
+      console.error("Error while fetching most current order note", error)
+    }
+  }
+
   const uploadPrescriptionImage = async () => {
     try {
       if (!selectedFile) {
@@ -255,7 +272,7 @@ const PrescriptionTable = ({ lineItem, index, orderId, orderDetails }) => {
       console.error("Error while calling uploadOrderNote", error)
     }
   }
-
+  markMetafieldAsTrue()
   return (
     <Component>
       <>
