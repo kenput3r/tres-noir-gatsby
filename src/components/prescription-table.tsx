@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from "react"
+import React, { useEffect, useState, useContext } from "react"
 import styled from "styled-components"
 import Loader from "./loader"
+import { ErrorModalContext } from "../contexts/error"
 
 const Component = styled.div`
   margin: 20px 0;
@@ -118,6 +119,8 @@ const PrescriptionTable = ({ lineItem, index, orderId, orderDetails }) => {
   const [showSuccess, setShowSuccess] = useState<boolean>(false)
   const [showLoader, setShowLoader] = useState<boolean>(false)
 
+  const { renderErrorModal } = useContext(ErrorModalContext)
+
   const customAttr = lineItem.node.customAttributes.filter(
     el => el.key === "Prescription"
   )
@@ -174,6 +177,7 @@ const PrescriptionTable = ({ lineItem, index, orderId, orderDetails }) => {
       return resJson.order.note
     } catch (error) {
       console.error("Error while fetching most current order note", error)
+      renderErrorModal()
     }
   }
 
@@ -187,17 +191,16 @@ const PrescriptionTable = ({ lineItem, index, orderId, orderDetails }) => {
         }),
       })
       const resJson = await res.json()
-      console.log("a", resJson)
       return resJson
     } catch (error) {
       console.error("Error while fetching most current order note", error)
+      renderErrorModal()
     }
   }
 
   const uploadPrescriptionImage = async () => {
     try {
       if (!selectedFile) {
-        console.log("No image added")
         return
       }
       setShowLoader(true)
@@ -221,6 +224,7 @@ const PrescriptionTable = ({ lineItem, index, orderId, orderDetails }) => {
       setShowLoader(false)
     } catch (error) {
       console.error("Error while calling uploadPrescriptionImage", error)
+      renderErrorModal()
     }
   }
 
@@ -269,9 +273,11 @@ const PrescriptionTable = ({ lineItem, index, orderId, orderDetails }) => {
         setShowSuccess(true)
       } else {
         // must've been an error
+        renderErrorModal()
       }
     } catch (error) {
       console.error("Error while calling uploadOrderNote", error)
+      renderErrorModal()
     }
   }
 
