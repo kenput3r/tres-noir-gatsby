@@ -142,6 +142,39 @@ const Step5 = (props: {
     useContext(RxInfoContext)
   const [addedToCart, setAddedToCart] = useState(false)
 
+  //
+  const [selectedFile, setSelectedFile] = useState(null)
+
+  const getBase64Image = async file => {
+    return new Promise(resolve => {
+      const reader = new FileReader()
+      reader.readAsDataURL(file)
+      reader.onloadend = () => {
+        const base64data = reader.result
+        resolve(base64data)
+      }
+    })
+  }
+
+  const uploadPrescriptionImage = async () => {
+    try {
+      if (!selectedFile) {
+        console.log("No image added")
+        return
+      }
+      const endpoint = "/api/uploadPrescription"
+      const results = await getBase64Image(selectedFile)
+      const res = await fetch(endpoint, {
+        method: "POST",
+        body: results,
+      })
+      const resJson = await res.json()
+      console.log("res", resJson)
+    } catch (error) {
+      console.log("Error", error)
+    }
+  }
+
   useEffect(() => {
     return () => {
       if (addedToCart) {
@@ -499,6 +532,27 @@ const Step5 = (props: {
           disabled={isAddingToCart}
         >
           {isAddingToCart ? <Spinner /> : buttonLabel()}
+        </button>
+      </div>
+      <div>
+        <label htmlFor="prescriptionImage"></label>
+        <input
+          type="file"
+          name="prescriptionImage"
+          id="prescriptionImage"
+          accept="image/*"
+          onChange={evt => setSelectedFile(evt.target.files[0])}
+        />
+        <button
+          id="prescriptionImageBtn"
+          name="prescpritionImageBtn"
+          onClick={() => {
+            console.log("click")
+            console.log("currentFile", selectedFile)
+            uploadPrescriptionImage()
+          }}
+        >
+          Submit
         </button>
       </div>
       <CaseGridCustomize casesAvailable={casesAvailable} />
