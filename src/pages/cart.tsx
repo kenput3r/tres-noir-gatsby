@@ -255,6 +255,7 @@ const Cart = () => {
         startedCheckoutGTMEvent(checkout)
       }
       associateCheckout(checkout.id)
+      console.log("current checkout is", checkout)
     }
   }, [checkout])
 
