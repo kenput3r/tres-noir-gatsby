@@ -335,7 +335,7 @@ const PrescriptionTable = ({ lineItem, index, orderId, orderDetails }) => {
                   type="file"
                   name="prescriptionImage"
                   id="prescriptionImage"
-                  accept="image/*"
+                  accept="image/*,application/pdf"
                   onChange={
                     /* @ts-ignore */
                     evt => setSelectedFile(evt.target.files[0])
