@@ -115,8 +115,8 @@ export interface ShopifyProduct {
   legacyResourceId: string
   onlineStoreUrl: string
   priceRangeV2: {
-    minVariantPrice: number
-    maxVariantPrice: number
+    minVariantPrice: string
+    maxVariantPrice: string
   }
   productType: string
   title: string
@@ -129,7 +129,7 @@ export interface ShopifyProductVariant {
   compareAtPrice: number | null
   id: string
   legacyResourceId: string
-  price: number
+  price: string
   product: {
     collections: {
       handle: string
