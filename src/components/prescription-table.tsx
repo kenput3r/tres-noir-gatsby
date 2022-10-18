@@ -139,6 +139,7 @@ const PrescriptionTable = ({ lineItem, index, orderId, orderDetails }) => {
   const orderNote = orderDetails.note
 
   const hasUploadedImage = async () => {
+    if (!orderNote) return
     const orderNoteArr = orderNote.split(/\r?\n/)
     orderNoteArr.forEach(str => {
       if (str.includes(frameIdentifier)) {
