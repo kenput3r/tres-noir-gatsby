@@ -91,7 +91,7 @@ const Component = styled.div`
     @media screen and (max-width: 480px) {
       flex-direction: column;
       justify-content: center;
-      align-items: baseline;
+      align-items: stretch;
       row-gap: 20px;
     }
   }
