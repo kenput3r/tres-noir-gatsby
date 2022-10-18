@@ -126,7 +126,7 @@ const Customize = ({
     contentful: contentfulProduct?.variants && contentfulProduct.variants[0],
     shopify: shopifyProduct.variants[0],
   })
-  const [currentPrice, setCurrentPrice] = useState(
+  const [currentPrice, setCurrentPrice] = useState<string>(
     shopifyProduct.variants[0].price
   )
   const [currentImage, setCurrentImage] = useState({
@@ -175,20 +175,23 @@ const Customize = ({
 
   /* UPDATE PRICING */
   useEffect(() => {
-    let { price } = variant.shopify
-    Object.keys(selectedVariants).forEach(key => {
-      price = Number(price)
-      // step 4 has multiple values
-      if (key === "step4") {
-        selectedVariants[key].forEach(el => {
-          price += Number(el.price)
+    let totalPrice = Number(variant.shopify.price)
+    for (let i = currentStep; i > 0; --i) {
+      const el =
+        i === 5 ? selectedVariants[`case`] : selectedVariants[`step${i}`]
+      if (i === 4) {
+        selectedVariants[`step4`].forEach(subEl => {
+          totalPrice += Number(subEl.price)
         })
       } else {
-        price += Number(selectedVariants[key].price)
+        totalPrice += Number(el.price)
       }
-    })
-    price = Number(price.toFixed(2))
-    setCurrentPrice(price)
+    }
+    setCurrentPrice(totalPrice.toFixed(2))
+  }, [selectedVariants])
+
+  /* UPDATE IMAGE */
+  useEffect(() => {
     changeImage(
       currentStep,
       selectedVariants,
