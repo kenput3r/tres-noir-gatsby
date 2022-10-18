@@ -416,6 +416,13 @@ export const CartProvider = ({ children }) => {
         let checkout: Cart | Checkout
         // if Checkout exists, fetch it from Shopify
         if (checkoutId) {
+          // fetch cart and check if completedAt
+          const tempCheckout = await client.checkout.fetch(checkoutId)
+          if (tempCheckout.completedAt) {
+            checkout = await getNewCheckout()
+            setCheckout(checkout)
+            return
+          }
           // Get Local Checkout
           let localCheckout: string | null | LocalCheckout =
             localStorage.getItem("checkout")
