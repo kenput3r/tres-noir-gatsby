@@ -247,7 +247,7 @@ const PrescriptionTable = ({ lineItem, index, orderId, orderDetails }) => {
   }
 
   const updateOrderNote = async (url: string) => {
-    let newNote: string
+    let newNote: string = ""
     const currentNote = await fetchMostCurrentOrderNote()
     if (currentNote === "" || !currentNote) {
       newNote = currentNote
