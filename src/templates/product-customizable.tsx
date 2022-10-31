@@ -257,6 +257,12 @@ const ProductCustomizable = ({
     ),
   })
 
+  const polarizedVariant = shopifyProduct.variants.find(el =>
+    el.sku.includes("PZ")
+  )
+
+  console.log("polarizedVariant", polarizedVariant)
+
   const caseCollection = useCaseCollection()
 
   const [selectedCase, setSelectedCase] = useState<any>(
