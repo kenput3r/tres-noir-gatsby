@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react"
+import React, { useState, useEffect, useContext, ChangeEvent } from "react"
 import { Link, graphql } from "gatsby"
 import { StaticImage, GatsbyImage as Img } from "gatsby-plugin-image"
 import styled from "styled-components"
@@ -18,6 +18,7 @@ import FreeShipping from "../components/free-shipping"
 import Spinner from "../components/spinner"
 import CaseGridSunglasses from "../components/case-grid-sunglasses"
 import ProductDetails from "../components/product-contentful-details"
+import PolarizedTooltip from "../components/polarize/polarized-tooltip"
 import { useCaseCollection } from "../hooks/useCaseCollection"
 import { useFilterDuplicateFrames } from "../hooks/useFilterDuplicateFrames"
 
@@ -189,6 +190,59 @@ const Page = styled.div`
   .align-start {
     align-self: start;
   }
+  .polarized-actions {
+    display: flex;
+    align-items: center;
+    span {
+      font-size: 1.8rem;
+      font-family: var(--sub-heading-font);
+    }
+    .polarized-switch {
+      display: flex;
+      input[type="checkbox"] {
+        height: 0;
+        width: 0;
+        visibility: hidden;
+      }
+
+      label {
+        cursor: pointer;
+        text-indent: -9999px;
+        width: 85px;
+        height: 40px;
+        background: grey;
+        display: block;
+        border-radius: 100px;
+        position: relative;
+      }
+
+      label:after {
+        content: "";
+        position: absolute;
+        top: 5px;
+        left: 5px;
+        width: 30px;
+        height: 30px;
+        background: #fff;
+        border-radius: 90px;
+        transition: 0.3s;
+      }
+
+      input:checked + label {
+        background: #22b473;
+      }
+
+      input:checked + label:after {
+        left: calc(100% - 5px);
+        transform: translateX(-100%);
+      }
+
+      label:active:after {
+        width: 30px;
+      }
+    }
+  }
+
   @media only screen and (max-width: 500px) {
     .shipping-message {
       .h3 {
@@ -257,12 +311,12 @@ const ProductCustomizable = ({
     ),
   })
 
-  const polarizedVariant = shopifyProduct.variants.find(el =>
-    el.sku.includes("PZ")
-  )
-
-  console.log("polarizedVariant", polarizedVariant)
-
+  const [polarizedVariant, setPolarizedVariant] = useState({
+    contentful: contentfulProduct?.variants && contentfulProduct.variants[0],
+    shopify: shopifyProduct.variants.find(
+      (variant: any) => variant.sku === contentfulProduct.variants[0].sku
+    ),
+  })
   const caseCollection = useCaseCollection()
 
   const [selectedCase, setSelectedCase] = useState<any>(
@@ -274,6 +328,59 @@ const ProductCustomizable = ({
     shopifyProduct.handle,
     shopifyProduct.variants.length
   )
+
+  // switch selected variant to its polarized counterpart, toggled from switch
+  const switchToPolarized = (evt: ChangeEvent<HTMLInputElement>) => {
+    console.log("polarizedVariant", polarizedVariant)
+    // if switch is toggled
+    if (evt.target.checked) {
+      if (polarizedVariant) {
+        // set polarized variant to non polarized version
+        setPolarizedVariant({
+          contentful: selectedVariant.contentful,
+          shopify: selectedVariant.shopify,
+        })
+        // set selected variant to polarized version
+        setSelectedVariant({
+          contentful: selectedVariant.contentful,
+          shopify: polarizedVariant.shopify,
+        })
+      } else {
+        console.log("does not exist")
+      }
+    }
+    // if switch is untoggled
+    else {
+      if (polarizedVariant) {
+        // set polarized variant to non polarized version
+        setPolarizedVariant({
+          contentful: selectedVariant.contentful,
+          shopify: selectedVariant.shopify,
+        })
+        // set selected variant to polarized version
+        setSelectedVariant({
+          contentful: selectedVariant.contentful,
+          shopify: polarizedVariant.shopify,
+        })
+      }
+    }
+  }
+
+  // sets polarizedVariant to the correct polarized variant for corresponding frame
+  useEffect(() => {
+    const contentfulData = selectedVariant.contentful
+    const sku = selectedVariant.shopify.sku
+    const polVar = shopifyProduct.variants.find(
+      _variant => _variant.sku === `${sku}PZ` || _variant.sku === `${sku}-PZ`
+    )
+    if (polVar) {
+      console.log("found polarized variant", polVar)
+      setPolarizedVariant({
+        contentful: contentfulData,
+        shopify: polVar,
+      })
+    }
+  }, [selectedVariant])
 
   useEffect(() => {
     let paramSku: null | string = null
@@ -388,6 +495,7 @@ const ProductCustomizable = ({
     viewedProductGTMEvent(productData)
   }, [])
 
+  // click event handler for variant options
   const selectVariant = (e: React.MouseEvent, variant: any) => {
     const shopify = shopifyProduct.variants.find(
       (_variant: any) => _variant.sku === variant.sku
@@ -588,6 +696,23 @@ const ProductCustomizable = ({
                   </span>
                 </p>
               </div>
+              {lensType === LensType.SUNGLASSES && (
+                <>
+                  <div className="polarized-actions">
+                    <div className="polarized-switch">
+                      <input
+                        type="checkbox"
+                        id="switch"
+                        onChange={evt => switchToPolarized(evt)}
+                      />
+                      <label htmlFor="switch">Toggle</label>
+                    </div>
+                    <span>Polarized</span>
+                    <PolarizedTooltip />
+                  </div>
+                </>
+              )}
+
               <div className="actions">
                 {quantityLevels &&
                 quantityLevels[selectedVariant.shopify.sku] <= 0 ? (
