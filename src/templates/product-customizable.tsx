@@ -253,7 +253,7 @@ const Page = styled.div`
   .disable {
     pointer-events: none;
     cursor: not-allowed;
-    opacity: 0.5;
+    opacity: 0.2;
   }
 
   @media only screen and (max-width: 500px) {
@@ -405,7 +405,11 @@ const ProductCustomizable = ({
     }
     // if current variant is not polarized, but has a polarized option
     else if (polVar) {
+      customizeBtn?.classList.remove("disable")
       polarizedToggle?.classList.remove("disable")
+      const polarizedSwitch: HTMLInputElement | null | undefined =
+        polarizedToggle?.querySelector("#switch")
+      if (polarizedSwitch) polarizedSwitch.checked = false
       setPolarizedVariant({
         contentful: contentfulData,
         shopify: polVar,
@@ -748,7 +752,10 @@ const ProductCustomizable = ({
                         <label htmlFor="switch">Toggle</label>
                       </div>
                       <span>Polarized</span>
-                      <PolarizedTooltip />
+                      <PolarizedTooltip
+                        showPolarizedModal={showPolarizedModal}
+                        setShowPolarizedModal={setShowPolarizedModal}
+                      />
                     </div>
                   </>
                 )}

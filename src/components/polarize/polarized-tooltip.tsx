@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useEffect } from "react"
 import styled from "styled-components"
 import { AiOutlineQuestionCircle } from "react-icons/ai"
 
@@ -9,15 +9,22 @@ const Component = styled.div`
   }
 `
 
-const showModal = () => {
-  console.log("show")
-}
-
-const PolarizedTooltip = () => {
+const PolarizedTooltip = ({
+  showPolarizedModal,
+  setShowPolarizedModal,
+}: {
+  showPolarizedModal: boolean
+  setShowPolarizedModal: (value: boolean) => void
+}) => {
+  useEffect(() => {
+    console.log("showPolarizedModal state is now", showPolarizedModal)
+  }, [showPolarizedModal])
   return (
     <>
       <Component>
-        <AiOutlineQuestionCircle onClick={showModal} />
+        <AiOutlineQuestionCircle
+          onClick={evt => setShowPolarizedModal(!showPolarizedModal)}
+        />
       </Component>
     </>
   )

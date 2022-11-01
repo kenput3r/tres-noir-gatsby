@@ -20,7 +20,13 @@ const Container = styled.div`
   background-color: #e5e5e5;
 `
 
-const PolarizedModal = () => {
+const PolarizedModal = ({
+  showPolarizedModal,
+  setShowPolarizedModal,
+}: {
+  showPolarizedModal: boolean
+  setShowPolarizedModal: (value: boolean) => void
+}) => {
   return (
     <>
       <StyledModal>
