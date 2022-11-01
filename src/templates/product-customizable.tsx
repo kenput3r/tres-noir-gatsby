@@ -1,4 +1,10 @@
-import React, { useState, useEffect, useContext, ChangeEvent } from "react"
+import React, {
+  useState,
+  useEffect,
+  useContext,
+  useRef,
+  ChangeEvent,
+} from "react"
 import { Link, graphql } from "gatsby"
 import { StaticImage, GatsbyImage as Img } from "gatsby-plugin-image"
 import styled from "styled-components"
@@ -157,7 +163,7 @@ const Page = styled.div`
     flex-direction: column;
     align-items: flex-end;
     font-family: var(--sub-heading-font);
-    div {
+    div:not(.polarized-actions) {
       display: flex;
       flex-direction: column;
     }
@@ -193,6 +199,8 @@ const Page = styled.div`
   .polarized-actions {
     display: flex;
     align-items: center;
+    column-gap: 10px;
+    margin-bottom: 15px;
     span {
       font-size: 1.8rem;
       font-family: var(--sub-heading-font);
@@ -208,8 +216,8 @@ const Page = styled.div`
       label {
         cursor: pointer;
         text-indent: -9999px;
-        width: 85px;
-        height: 40px;
+        width: 70px;
+        height: 35px;
         background: grey;
         display: block;
         border-radius: 100px;
@@ -219,7 +227,7 @@ const Page = styled.div`
       label:after {
         content: "";
         position: absolute;
-        top: 5px;
+        top: 3px;
         left: 5px;
         width: 30px;
         height: 30px;
@@ -238,9 +246,14 @@ const Page = styled.div`
       }
 
       label:active:after {
-        width: 30px;
+        width: 20px;
       }
     }
+  }
+  .disable {
+    pointer-events: none;
+    cursor: not-allowed;
+    opacity: 0.5;
   }
 
   @media only screen and (max-width: 500px) {
@@ -323,18 +336,26 @@ const ProductCustomizable = ({
     caseCollection[0].variants[0]
   )
 
+  const [showPolarizedModal, setShowPolarizedModal] = useState<boolean>(false)
+
   // return default Product Page if contentful values do not exist
   const quantityLevels = useQuantityQuery(
     shopifyProduct.handle,
     shopifyProduct.variants.length
   )
 
+  // ref to toggle disable classes on buttons
+  const actionsRef = useRef<HTMLDivElement>(null)
+
   // switch selected variant to its polarized counterpart, toggled from switch
+  // grey out customize option
   const switchToPolarized = (evt: ChangeEvent<HTMLInputElement>) => {
-    console.log("polarizedVariant", polarizedVariant)
+    const customizeBtn = actionsRef.current?.querySelector("#customize-btn")
     // if switch is toggled
     if (evt.target.checked) {
       if (polarizedVariant) {
+        // disable customize
+        customizeBtn?.classList.add("disable")
         // set polarized variant to non polarized version
         setPolarizedVariant({
           contentful: selectedVariant.contentful,
@@ -352,6 +373,8 @@ const ProductCustomizable = ({
     // if switch is untoggled
     else {
       if (polarizedVariant) {
+        // enable customize
+        customizeBtn?.classList.remove("disable")
         // set polarized variant to non polarized version
         setPolarizedVariant({
           contentful: selectedVariant.contentful,
@@ -368,17 +391,33 @@ const ProductCustomizable = ({
 
   // sets polarizedVariant to the correct polarized variant for corresponding frame
   useEffect(() => {
+    if (lensType === LensType.GLASSES) return
     const contentfulData = selectedVariant.contentful
     const sku = selectedVariant.shopify.sku
     const polVar = shopifyProduct.variants.find(
       _variant => _variant.sku === `${sku}PZ` || _variant.sku === `${sku}-PZ`
     )
-    if (polVar) {
-      console.log("found polarized variant", polVar)
+    const polarizedToggle =
+      actionsRef.current?.querySelector("#polarized-toggle")
+    const customizeBtn = actionsRef.current?.querySelector("#customize-btn")
+    // if current Variant is polarized
+    if (selectedVariant.shopify.sku.includes("PZ")) {
+    }
+    // if current variant is not polarized, but has a polarized option
+    else if (polVar) {
+      polarizedToggle?.classList.remove("disable")
       setPolarizedVariant({
         contentful: contentfulData,
         shopify: polVar,
       })
+    }
+    // if current variant is not polarized and has no polarized options
+    else {
+      customizeBtn?.classList.remove("disable")
+      polarizedToggle?.classList.add("disable")
+      const polarizedSwitch: HTMLInputElement | null | undefined =
+        polarizedToggle?.querySelector("#switch")
+      if (polarizedSwitch) polarizedSwitch.checked = false
     }
   }, [selectedVariant])
 
@@ -696,27 +735,26 @@ const ProductCustomizable = ({
                   </span>
                 </p>
               </div>
-              {lensType === LensType.SUNGLASSES && (
-                <>
-                  <div className="polarized-actions">
-                    <div className="polarized-switch">
-                      <input
-                        type="checkbox"
-                        id="switch"
-                        onChange={evt => switchToPolarized(evt)}
-                      />
-                      <label htmlFor="switch">Toggle</label>
+              <div className="actions" ref={actionsRef}>
+                {lensType === LensType.SUNGLASSES && (
+                  <>
+                    <div className="polarized-actions" id="polarized-toggle">
+                      <div className="polarized-switch">
+                        <input
+                          type="checkbox"
+                          id="switch"
+                          onChange={evt => switchToPolarized(evt)}
+                        />
+                        <label htmlFor="switch">Toggle</label>
+                      </div>
+                      <span>Polarized</span>
+                      <PolarizedTooltip />
                     </div>
-                    <span>Polarized</span>
-                    <PolarizedTooltip />
-                  </div>
-                </>
-              )}
-
-              <div className="actions">
+                  </>
+                )}
                 {quantityLevels &&
                 quantityLevels[selectedVariant.shopify.sku] <= 0 ? (
-                  <div className="align-start">
+                  <div>
                     <button type="button" className="sold-out">
                       SOLD OUT
                     </button>
@@ -731,6 +769,7 @@ const ProductCustomizable = ({
                           onClick={handleAddToCart}
                           className="add-to-cart btn"
                           disabled={isAddingToCart}
+                          id="add-to-cart-btn"
                         >
                           {isAddingToCart ? <Spinner /> : `ADD TO CART`}
                         </button>
@@ -741,6 +780,7 @@ const ProductCustomizable = ({
                     <Link
                       className="btn"
                       // to={contentfulProduct && customizeUrl}
+                      id="customize-btn"
                       to={`/products/${
                         contentfulProduct.handle
                       }/customize?variant=${selectedVariant.shopify.sku}${
