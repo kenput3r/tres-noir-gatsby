@@ -1,7 +1,9 @@
-import React from "react"
+import React, { useRef } from "react"
+import { useClickAway } from "react-use"
 import Modal from "react-modal"
 import styled from "styled-components"
 import PolarizedSlider from "./polarized-slider"
+import { VscClose } from "react-icons/vsc"
 
 Modal.setAppElement(`#___gatsby`)
 Modal.defaultStyles.overlay.zIndex = 9999
@@ -18,44 +20,38 @@ const StyledModal = styled(Modal)`
 const Container = styled.div`
   z-index: 100;
   box-sizing: border-box;
-  background-color: #d9d9d9;
+  background-color: #e5e5e5;
   color: #000;
   width: 750px;
   max-width: 100%;
-  padding: 2rem 1rem;
   position: relative;
-  @media only screen and (max-width: 1024px) {
-    width: 768px;
-    padding: 2rem 4rem;
+  border-radius: 15px;
+  padding: 1.5rem 2rem;
+  p {
+    font-family: var(--sub-heading-font);
+    margin-bottom: 0;
+    font-weight: normal;
+    letter-spacing: normal;
   }
-  @media only screen and (max-width: 768px) {
-    width: 500px;
+  .heading {
+    font-size: 1.5rem;
+    margin-bottom: 18px;
   }
-  @media only screen and (max-width: 468px) {
-    width: 100%;
+  .description {
+    margin-bottom: 20px;
   }
-  .content {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    h3 {
-      font-size: 51px;
-      margin-top: 2rem;
-      text-transform: uppercase;
+
+  .close-btn {
+    position: absolute;
+    right: 5px;
+    top: 8px;
+    cursor: pointer;
+    text-align: right;
+    padding: 0px 3px 3px 3px;
+    svg {
+      text-align: right;
+      font-size: 1.65rem;
     }
-    .error-message {
-      font-size: 26px;
-      text-transform: uppercase;
-      text-align: center;
-    }
-    .btn {
-      font-size: 32px;
-      padding: 15px 30px;
-    }
-  }
-  .error-icon {
-    transform: translateX(15%);
   }
 `
 
@@ -66,15 +62,28 @@ const PolarizedModal = ({
   showPolarizedModal: boolean
   setShowPolarizedModal: (value: boolean) => void
 }) => {
+  const closeModal = () => {
+    setShowPolarizedModal(false)
+  }
+
+  const clickRef = useRef(null)
+
+  useClickAway(clickRef, () => {
+    closeModal()
+  })
+
   return (
     <>
-      <StyledModal isOpen={showPolarizedModal}>
-        <Container>
-          <p>Polarized Lenses</p>
-          <p>
+      <StyledModal isOpen={showPolarizedModal} onRequestClose={closeModal}>
+        <Container ref={clickRef}>
+          <div className="close-btn" onClick={() => closeModal()}>
+            <VscClose className="text-btn" />
+          </div>
+          <p className="heading">Polarized Lenses</p>
+          <p className="description">
             Polarized lenses reduce flare across surfaces deflecting the sun's
             rays. They can help reduce eyestrain, especially for those who spend
-            a lot f time outdoors, around water, or in snow.
+            a lot of time outdoors, around water, or in snow.
           </p>
           <PolarizedSlider />
         </Container>
