@@ -27,6 +27,21 @@ const Container = styled.div`
   position: relative;
   border-radius: 15px;
   padding: 1.5rem 2rem;
+  @media only screen and (max-width: 768px) {
+    width: 500px;
+  }
+  @media only screen and (max-width: 500px) {
+    width: 395å0px;
+  }
+  @media only screen and (max-width: 325px) {
+    width: 280px;
+  }
+  @media only screen and (max-width: 350px) {
+    width: 325px;
+  }
+  @media only screen and (max-width: 468px) {
+    width: 350px;
+  }
   p {
     font-family: var(--sub-heading-font);
     margin-bottom: 0;
