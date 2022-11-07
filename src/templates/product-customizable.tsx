@@ -367,7 +367,6 @@ const ProductCustomizable = ({
           shopify: polarizedVariant.shopify,
         })
       } else {
-        console.log("does not exist")
       }
     }
     // if switch is untoggled
