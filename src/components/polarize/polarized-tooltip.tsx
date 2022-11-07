@@ -17,9 +17,7 @@ const PolarizedTooltip = ({
   showPolarizedModal: boolean
   setShowPolarizedModal: (value: boolean) => void
 }) => {
-  useEffect(() => {
-    console.log("showPolarizedModal state is now", showPolarizedModal)
-  }, [showPolarizedModal])
+  useEffect(() => {}, [showPolarizedModal])
   return (
     <>
       <PolarizedModal

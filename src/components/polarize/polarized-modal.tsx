@@ -22,7 +22,7 @@ const Container = styled.div`
   box-sizing: border-box;
   background-color: #e5e5e5;
   color: #000;
-  width: 750px;
+  width: 900px;
   max-width: 100%;
   position: relative;
   border-radius: 15px;
