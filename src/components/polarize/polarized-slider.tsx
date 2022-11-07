@@ -28,6 +28,7 @@ const Component = styled.section`
     height: 300px;
     img {
       object-fit: cover !important;
+      object-position: left left !important;
     }
   }
 `
@@ -50,13 +51,21 @@ const PolarizedSlider = () => {
         }
         itemOne={
           <ReactCompareSliderImage
-            src="https://cdn.shopify.com/s/files/1/0140/0012/8057/files/Non_Polarized_Image.jpg?v=1667847223"
+            src={
+              screenWidth < 481
+                ? "https://cdn.shopify.com/s/files/1/0140/0012/8057/files/Non_Polarized_Mobile.jpg?v=1667850484"
+                : "https://cdn.shopify.com/s/files/1/0140/0012/8057/files/Non_Polarized_Image.jpg?v=1667847223"
+            }
             alt="Non-Polarized"
           />
         }
         itemTwo={
           <ReactCompareSliderImage
-            src="https://cdn.shopify.com/s/files/1/0140/0012/8057/files/Polarized_Image.jpg?v=1667847223"
+            src={
+              screenWidth < 481
+                ? "https://cdn.shopify.com/s/files/1/0140/0012/8057/files/Polarized_Mobile.jpg?v=1667850483"
+                : "https://cdn.shopify.com/s/files/1/0140/0012/8057/files/Polarized_Image.jpg?v=1667847223"
+            }
             alt="Polarized"
           />
         }
@@ -64,14 +73,5 @@ const PolarizedSlider = () => {
     </Component>
   )
 }
-
-// const CustomImage = () => {
-//   return (
-//     <StaticImage
-//       src="https://cdn.shopify.com/s/files/1/0140/0012/8057/files/Non_Polarized_Image.jpg?v=1667847223"
-//       alt="Non-Polarized"
-//     />
-//   )
-// }
 
 export default PolarizedSlider
