@@ -418,7 +418,7 @@ export const CartProvider = ({ children }) => {
         if (checkoutId) {
           // fetch cart and check if completedAt
           const tempCheckout = await client.checkout.fetch(checkoutId)
-          if (tempCheckout.completedAt) {
+          if (tempCheckout && tempCheckout.completedAt) {
             checkout = await getNewCheckout()
             setCheckout(checkout)
             return
