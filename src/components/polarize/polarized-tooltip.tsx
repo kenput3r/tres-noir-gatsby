@@ -33,7 +33,10 @@ const PolarizedTooltip = ({
   showPolarizedModal: boolean
   setShowPolarizedModal: (value: boolean) => void
 }) => {
-  useEffect(() => {}, [showPolarizedModal])
+  const openModal = evt => {
+    evt.preventDefault()
+    setShowPolarizedModal(!showPolarizedModal)
+  }
   return (
     <>
       <PolarizedModal
@@ -44,7 +47,7 @@ const PolarizedTooltip = ({
         <button
           className="polarized-tooltip"
           title="What's this?"
-          onClick={evt => setShowPolarizedModal(!showPolarizedModal)}
+          onClick={evt => openModal(evt)}
         >
           <AiOutlineQuestionCircle />
         </button>
