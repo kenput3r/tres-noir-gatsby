@@ -8,6 +8,7 @@ import {
 } from "../types/contentful"
 import ProductOptionsCarousel from "../components/product-options-carousel"
 import ProductAction from "./collection-product-action"
+import { useFilterHiddenCustomizableVariants } from "../hooks/useFilterHiddenCustomizableVariants"
 import { useFilterDuplicateFrames } from "../hooks/useFilterDuplicateFrames"
 
 const Component = styled.article`
@@ -83,14 +84,33 @@ interface Props {
   data: ContentfulProduct
   color: null | string
   collectionHandle: string
+  shopifyProduct: {
+    handle: string
+    variants: {
+      sku: string
+      metafields: {
+        key: string
+        value: string
+      }[]
+    }[]
+  }
 }
 
-const ProductContentful = ({ data, color, collectionHandle }: Props) => {
+const ProductContentful = ({
+  data,
+  color,
+  collectionHandle,
+  shopifyProduct,
+}: Props) => {
   const isSunglasses = collectionHandle.includes("sunglasses")
   const lensType = collectionHandle.includes("sunglasses")
     ? "sunglasses"
     : "glasses"
 
+  // remove variants marked as 'hidden' in shopify
+  if (shopifyProduct) {
+    data.variants = useFilterHiddenCustomizableVariants(data, shopifyProduct)
+  }
   data.variants = useFilterDuplicateFrames(lensType, data.variants)
 
   const [selectedVariant, setSelectedVariant] =
