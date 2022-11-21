@@ -27,6 +27,7 @@ import ProductDetails from "../components/product-contentful-details"
 import PolarizedTooltip from "../components/polarize/polarized-tooltip"
 import { useCaseCollection } from "../hooks/useCaseCollection"
 import { useFilterDuplicateFrames } from "../hooks/useFilterDuplicateFrames"
+import { useFilterHiddenCustomizableVariants } from "../hooks/useFilterHiddenCustomizableVariants"
 
 const Page = styled.div`
   .shipping-message {
@@ -305,6 +306,12 @@ const ProductCustomizable = ({
     return Product({ data: { shopifyProduct } })
   }
 
+  // remove hidden variants
+  contentfulProduct.variants = useFilterHiddenCustomizableVariants(
+    contentfulProduct,
+    shopifyProduct
+  )
+
   // check if lens type is set
   enum LensType {
     GLASSES = "glasses",
@@ -551,6 +558,15 @@ const ProductCustomizable = ({
       setProductUrl(
         `/products/${contentfulProduct.handle}/?variant=${contentfulProduct.sku}`
       )
+      // update url
+      const isBrowser = typeof window !== "undefined"
+      if (isBrowser) {
+        const params = new URLSearchParams(location.search)
+        params.set("variant", variant.sku)
+        const { protocol, pathname, host } = window.location
+        const newUrl = `${protocol}//${host}${pathname}?${params.toString()}`
+        window.history.pushState({}, "", newUrl)
+      }
     }
   }
 
@@ -909,6 +925,12 @@ export const query = graphql`
         title
         selectedOptions {
           name
+        }
+        metafields {
+          key
+          id
+          value
+          namespace
         }
       }
     }
