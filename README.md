@@ -16,3 +16,9 @@
     </td>
   </tr>
 </table>
+
+## Setup
+
+### Hiding Variants
+
+Hiding incomplete Shopify variants depends on a variant metafield `tresnoir.hide_online`. In order for this metafield to be avaialable in collection templates, both Shopify and Contentful collections need to be available. Therefore There should be both a Shopify and Contentful collection created.

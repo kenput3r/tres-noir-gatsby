@@ -46,6 +46,7 @@ const CollectionContentful = ({
   }, [])
 
   const getShopifyProduct = product => {
+    if (!shopifyCollection?.products) return null
     const shopifyProduct = shopifyCollection.products.find(
       shopifyProduct => (shopifyProduct.handle = product.handle)
     )
