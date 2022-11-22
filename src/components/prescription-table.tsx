@@ -250,7 +250,7 @@ const PrescriptionTable = ({ lineItem, index, orderId, orderDetails }) => {
     let newNote: string = ""
     const currentNote = await fetchMostCurrentOrderNote()
     if (currentNote === "" || !currentNote) {
-      newNote = currentNote
+      newNote = ""
     } else if (!currentNote.endsWith("\n")) {
       newNote = currentNote + "\n"
     } else {
