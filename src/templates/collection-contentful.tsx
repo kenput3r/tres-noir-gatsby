@@ -22,9 +22,12 @@ const Grid = styled.div`
 const CollectionContentful = ({
   data,
 }: {
-  data: { contentfulCollection: ContentfulCollection }
+  data: {
+    contentfulCollection: ContentfulCollection
+    shopifyCollection: { products: any[] }
+  }
 }) => {
-  const { contentfulCollection: collection } = data
+  const { contentfulCollection: collection, shopifyCollection } = data
   const defaultFilters = { frameWidth: "", colorName: "" }
   const [filters, setFilters] = useState<{
     frameWidth: string
@@ -41,6 +44,14 @@ const CollectionContentful = ({
     }
     viewedCollectionGTMEvent(collectionInfo)
   }, [])
+
+  const getShopifyProduct = product => {
+    if (!shopifyCollection?.products) return null
+    const shopifyProduct = shopifyCollection.products.find(
+      shopifyProduct => (shopifyProduct.handle = product.handle)
+    )
+    return shopifyProduct
+  }
 
   return (
     <Layout>
@@ -70,12 +81,14 @@ const CollectionContentful = ({
           {products.length ? (
             Array.from(products.slice(0, 6)).map(
               (product: ContentfulProduct) => {
+                const shopifyProduct = getShopifyProduct(product)
                 return (
                   <Product
                     key={product.id}
                     data={product}
                     color={filters.colorName}
                     collectionHandle={collection.handle}
+                    shopifyProduct={shopifyProduct}
                   />
                 )
               }
@@ -94,14 +107,18 @@ const CollectionContentful = ({
 
         <Grid>
           {products.length > 6 &&
-            Array.from(products.slice(6)).map((product: ContentfulProduct) => (
-              <Product
-                key={product.id}
-                data={product}
-                color={filters.colorName}
-                collectionHandle={collection.handle}
-              />
-            ))}
+            Array.from(products.slice(6)).map((product: ContentfulProduct) => {
+              const shopifyProduct = getShopifyProduct(product)
+              return (
+                <Product
+                  key={product.id}
+                  data={product}
+                  color={filters.colorName}
+                  collectionHandle={collection.handle}
+                  shopifyProduct={shopifyProduct}
+                />
+              )
+            })}
         </Grid>
       </div>
     </Layout>
@@ -148,6 +165,19 @@ export const query = graphql`
           }
           frameColor
           dominantFrameColor
+        }
+      }
+    }
+    shopifyCollection(handle: { eq: $handle }) {
+      products {
+        handle
+        variants {
+          sku
+          metafields {
+            key
+            namespace
+            value
+          }
         }
       }
     }
