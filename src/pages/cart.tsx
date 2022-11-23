@@ -361,6 +361,7 @@ const Cart = () => {
 
   const renderStandardProduct = (item: tnItem) => {
     const line = item.lineItems[0].shopifyItem
+    console.log("LINE", line)
     return (
       <li key={line.id}>
         <div className="close-btn">
@@ -460,6 +461,20 @@ const Cart = () => {
               </p>
               <div className="sub-title-customize">
                 {item.lineItems.map((subItem, subIndex) => {
+                  // new discounts
+                  const hasDiscount =
+                    subItem.shopifyItem.discountAllocations.length > 0
+                  let price = subItem.shopifyItem.variant.price
+                  if (hasDiscount) {
+                    price = (
+                      Number(price) -
+                      Number(
+                        subItem.shopifyItem.discountAllocations[0]
+                          .allocatedAmount.amount
+                      )
+                    ).toFixed(2)
+                  }
+                  // new discounts
                   return (
                     <div className="sub-item" key={subItem.shopifyItem.id}>
                       <div className="step-name">
@@ -474,9 +489,10 @@ const Cart = () => {
                           )}
                         </span>
                         <span className="price">
-                          {subItem.shopifyItem.variant.price === "0.00"
+                          {price === "0.00" ? "Free" : `$${price}`}
+                          {/* {subItem.shopifyItem.variant.price === "0.00"
                             ? "Free"
-                            : `$${subItem.shopifyItem.variant.price}`}
+                            : `$${subItem.shopifyItem.variant.price}`} */}
                         </span>
                       </div>
                     </div>

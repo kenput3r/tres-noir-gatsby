@@ -40,7 +40,17 @@ const SunglassesItem = (props: { item: tnItem }) => {
   const totalSum = lineItems => {
     let sum = 0
     lineItems.forEach(item => {
-      sum += parseFloat(item.shopifyItem.variant.price)
+      // new discounts
+      const hasDiscount = item.shopifyItem.discountAllocations.length > 0
+      let price = item.shopifyItem.variant.price
+      if (hasDiscount) {
+        price = (
+          Number(price) -
+          Number(item.shopifyItem.discountAllocations[0].allocatedAmount.amount)
+        ).toFixed(2)
+      }
+      // new discounts
+      sum += parseFloat(price)
     })
     return sum.toFixed(2)
   }
@@ -83,7 +93,12 @@ const SunglassesItem = (props: { item: tnItem }) => {
                 ? ""
                 : item.lineItems[0].shopifyItem.variant.title}
             </p>
-            <p className="subtitle">+ {formatCaseName(item.lineItems[item.lineItems.length - 1].shopifyItem.title)}</p>
+            <p className="subtitle">
+              +{" "}
+              {formatCaseName(
+                item.lineItems[item.lineItems.length - 1].shopifyItem.title
+              )}
+            </p>
           </div>
           <div className="price-quantity">
             <p>${totalSum(item.lineItems)} USD</p>
