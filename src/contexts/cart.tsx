@@ -608,29 +608,24 @@ export const CartProvider = ({ children }) => {
       try {
         if (hasDiscount) {
           setIsRemovingFromCart(true)
-          // check if cart contains only 2 items
+          const firstLineItem = lineItemIds.shift()
 
-          if (checkout) {
-            if (
-              checkout.discountApplications.length > 0 &&
-              checkout.lineItems.length === 2
-            ) {
-              const newCheckout = await getNewCheckout()
-              setCheckout(newCheckout)
-              return
-            }
-          }
-
-          for (const lineItemId of lineItemIds) {
+          const updatedCheckout = await client.checkout.removeLineItems(
+            checkout.id,
+            [firstLineItem as string]
+          )
+          rebuildBundles(updatedCheckout)
+          setCheckout(updatedCheckout)
+          if (updatedCheckout) {
             const updatedCheckout = await client.checkout.removeLineItems(
               checkout.id,
-              [lineItemId]
+              lineItemIds
             )
+            removeFromImageStorage(imageId)
+            removeCustomFromLocalStorage(imageId)
             rebuildBundles(updatedCheckout)
             setCheckout(updatedCheckout)
           }
-          removeFromImageStorage(imageId)
-          removeCustomFromLocalStorage(imageId)
           setIsRemovingFromCart(false)
         } else {
           setIsRemovingFromCart(true)
@@ -644,12 +639,66 @@ export const CartProvider = ({ children }) => {
           setCheckout(updatedCheckout)
           setIsRemovingFromCart(false)
         }
+        setIsRemovingFromCart(false)
       } catch (err: any) {
         console.error(err)
         setIsRemovingFromCart(false)
         renderErrorModal()
       }
     }
+
+    console.log("CHECKOUT", checkout)
+
+    // const removeProductsFromCart = async (
+    //   lineItemIds: string[],
+    //   imageId: string,
+    //   hasDiscount: boolean = false
+    // ) => {
+    //   try {
+    //     if (hasDiscount) {
+    //       setIsRemovingFromCart(true)
+    //       // check if cart contains only 2 items
+
+    //       if (checkout) {
+    //         if (
+    //           checkout.discountApplications.length > 0 &&
+    //           checkout.lineItems.length === 2
+    //         ) {
+    //           const newCheckout = await getNewCheckout()
+    //           setCheckout(newCheckout)
+    //           return
+    //         }
+    //       }
+
+    //       for (const lineItemId of lineItemIds) {
+    //         const updatedCheckout = await client.checkout.removeLineItems(
+    //           checkout.id,
+    //           [lineItemId]
+    //         )
+    //         rebuildBundles(updatedCheckout)
+    //         setCheckout(updatedCheckout)
+    //       }
+    //       removeFromImageStorage(imageId)
+    //       removeCustomFromLocalStorage(imageId)
+    //       setIsRemovingFromCart(false)
+    //     } else {
+    //       setIsRemovingFromCart(true)
+    //       const updatedCheckout = await client.checkout.removeLineItems(
+    //         checkout.id,
+    //         lineItemIds
+    //       )
+    //       removeFromImageStorage(imageId)
+    //       removeCustomFromLocalStorage(imageId)
+    //       rebuildBundles(updatedCheckout)
+    //       setCheckout(updatedCheckout)
+    //       setIsRemovingFromCart(false)
+    //     }
+    //   } catch (err: any) {
+    //     console.error(err)
+    //     setIsRemovingFromCart(false)
+    //     renderErrorModal()
+    //   }
+    // }
 
     // const removeProductsFromCart = async (
     //   lineItemIds: string[],
