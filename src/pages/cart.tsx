@@ -331,7 +331,14 @@ const Cart = () => {
   const totalSum = lineItems => {
     let sum = 0
     lineItems.forEach(item => {
-      sum += parseFloat(item.shopifyItem.variant.price)
+      const hasDiscount = item.shopifyItem.discountAllocations.length > 0
+      let price = item.shopifyItem.variant.price
+      if (hasDiscount) {
+        price =
+          Number(price) -
+          Number(item.shopifyItem.discountAllocations[0].allocatedAmount.amount)
+      }
+      sum += parseFloat(price)
     })
     return sum.toFixed(2)
   }
@@ -361,7 +368,6 @@ const Cart = () => {
 
   const renderStandardProduct = (item: tnItem) => {
     const line = item.lineItems[0].shopifyItem
-    console.log("LINE", line)
     return (
       <li key={line.id}>
         <div className="close-btn">

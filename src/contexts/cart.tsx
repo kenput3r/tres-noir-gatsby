@@ -598,14 +598,27 @@ export const CartProvider = ({ children }) => {
       imageId: string
     ) => {
       try {
-        const updatedCheckout = await client.checkout.removeLineItems(
-          checkout.id,
-          lineItemIds
-        )
-        removeFromImageStorage(imageId)
-        removeCustomFromLocalStorage(imageId)
-        rebuildBundles(updatedCheckout)
-        setCheckout(updatedCheckout)
+        // const updatedCheckout = await client.checkout.removeLineItems(
+        //   checkout.id,
+        //   lineItemIds
+        // )
+        // removeFromImageStorage(imageId)
+        // removeCustomFromLocalStorage(imageId)
+        // rebuildBundles(updatedCheckout)
+        // setCheckout(updatedCheckout)
+
+        // fix for removing discounted item
+        for (const lineItemId of lineItemIds) {
+          const updatedCheckout = await client.checkout.removeLineItems(
+            checkout.id,
+            [lineItemId]
+          )
+
+          removeFromImageStorage(imageId)
+          removeCustomFromLocalStorage(imageId)
+          rebuildBundles(updatedCheckout)
+          setCheckout(updatedCheckout)
+        }
       } catch (err: any) {
         console.error(err)
         renderErrorModal()
