@@ -368,7 +368,6 @@ const Cart = () => {
 
   const renderStandardProduct = (item: tnItem) => {
     const line = item.lineItems[0].shopifyItem
-    console.log("LINE", line)
     return (
       <li key={line.id}>
         <div className="close-btn">
