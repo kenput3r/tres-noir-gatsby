@@ -303,12 +303,16 @@ const Cart = () => {
   }
 
   const removeMultipleProducts = async (item: tnItem) => {
+    let hasDiscount = false
     const lineIds = item.lineItems.map(item => {
+      if (item.shopifyItem.discountAllocations.length > 0) {
+        hasDiscount = true
+      }
       return item.shopifyItem.id
     })
 
     loadingOverlay.current?.classList.add("no-events")
-    await removeProductsFromCart(lineIds, item.id)
+    await removeProductsFromCart(lineIds, item.id, hasDiscount)
     loadingOverlay.current?.classList.remove("no-events")
   }
 

@@ -64,7 +64,7 @@ const Component = styled.div`
   }
 `
 
-const Spinner = () => {
+const Spinner = ({ fill = "#FFFFFF" }: { fill?: "#FFFFFF" | "#000000" }) => {
   return (
     <Component>
       <svg
@@ -76,7 +76,7 @@ const Spinner = () => {
       >
         <path
           d="M7.229 1.173a9.25 9.25 0 1 0 11.655 11.412 1.25 1.25 0 1 0-2.4-.698 6.75 6.75 0 1 1-8.506-8.329 1.25 1.25 0 1 0-.75-2.385z"
-          fill="#FFFFFF"
+          fill={fill}
         />
       </svg>
     </Component>

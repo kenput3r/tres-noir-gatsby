@@ -28,12 +28,16 @@ const CustomItem = (props: { item: tnItem }) => {
 
   const removeMultipleProducts = async (item: tnItem) => {
     const loadingContainer = loadingOverlay.current?.closest(".cart-products")
+    let hasDiscount = false
     const lineIds = item.lineItems.map(item => {
+      if (item.shopifyItem.discountAllocations.length > 0) {
+        hasDiscount = true
+      }
       return item.shopifyItem.id
     })
 
     loadingContainer?.classList.add("no-events")
-    await removeProductsFromCart(lineIds, item.id)
+    await removeProductsFromCart(lineIds, item.id, hasDiscount)
     loadingContainer?.classList.remove("no-events")
   }
 
@@ -92,7 +96,10 @@ const CustomItem = (props: { item: tnItem }) => {
               + {customizationSize(item.lineItems.length)} Customizations
             </p>
             <p className="subtitle">
-              + {formatCaseName(item.lineItems[item.lineItems.length - 1].shopifyItem.title)}
+              +{" "}
+              {formatCaseName(
+                item.lineItems[item.lineItems.length - 1].shopifyItem.title
+              )}
             </p>
           </div>
           <div className="price-quantity">
