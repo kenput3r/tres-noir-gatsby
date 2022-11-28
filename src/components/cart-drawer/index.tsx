@@ -10,6 +10,7 @@ import { useSpring, animated, config } from "react-spring"
 import ShopifyItem from "./products/shopify-item"
 import SunglassesItem from "./products/sunglasses-item"
 import CustomItem from "./products/custom-item"
+import Loader from "../loader"
 
 const Component = styled.div`
   display: flex;
@@ -186,9 +187,24 @@ const Component = styled.div`
   }
 `
 
+const LoaderContainer = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`
+
 const CartDrawer = () => {
-  const { checkout, isCartDrawerOpen, setIsCartDrawerOpen } =
-    useContext(CartContext)
+  const {
+    checkout,
+    isCartDrawerOpen,
+    setIsCartDrawerOpen,
+    isRemovingFromCart,
+  } = useContext(CartContext)
   const clickRef = useRef(null)
 
   useClickAway(clickRef, () => {
@@ -244,6 +260,11 @@ const CartDrawer = () => {
                   return <CustomItem item={item} key={item.id} />
                 }
               })}
+            {isRemovingFromCart && (
+              <LoaderContainer>
+                <Loader />
+              </LoaderContainer>
+            )}
           </div>
           <div className="sticky-bottom">
             <p>

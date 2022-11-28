@@ -97,7 +97,7 @@ const DefaultContext = {
   ) => {},
   addDiscountCode: (code: string) => {},
   removeDiscountCode: () => {},
-  isLoading: false,
+  isRemovingFromCart: false,
 }
 
 export const CartContext = createContext(DefaultContext)
@@ -111,7 +111,7 @@ export const CartProvider = ({ children }) => {
   const [checkout, setCheckout] = useState<any>()
   const [isAddingToCart, setIsAddingToCart] = useState<boolean>(false)
 
-  const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [isRemovingFromCart, setIsRemovingFromCart] = useState<boolean>(false)
 
   /**
    * @function getCheckoutCookie - gets the current non-expired chechout cookie
@@ -606,9 +606,8 @@ export const CartProvider = ({ children }) => {
       hasDiscount: boolean = false
     ) => {
       try {
-        setIsLoading(true)
         if (hasDiscount) {
-          console.log("HAS DISCOUNT", hasDiscount)
+          setIsRemovingFromCart(true)
           // check if cart contains only 2 items
 
           if (checkout) {
@@ -632,9 +631,9 @@ export const CartProvider = ({ children }) => {
           }
           removeFromImageStorage(imageId)
           removeCustomFromLocalStorage(imageId)
-          setIsLoading(false)
+          setIsRemovingFromCart(false)
         } else {
-          console.log("DOES NOT HAVE DISCOUNT", hasDiscount)
+          setIsRemovingFromCart(true)
           const updatedCheckout = await client.checkout.removeLineItems(
             checkout.id,
             lineItemIds
@@ -643,10 +642,11 @@ export const CartProvider = ({ children }) => {
           removeCustomFromLocalStorage(imageId)
           rebuildBundles(updatedCheckout)
           setCheckout(updatedCheckout)
+          setIsRemovingFromCart(false)
         }
       } catch (err: any) {
         console.error(err)
-        setIsLoading(false)
+        setIsRemovingFromCart(false)
         renderErrorModal()
       }
     }
@@ -686,11 +686,15 @@ export const CartProvider = ({ children }) => {
     // removes an item from cart given a customization id, used for editing an item in cart
     const removeCustomProductWithId = async (id: string) => {
       try {
+        let hasDiscount = false
         const itemToRemove = checkout.tnLineItems.find(item => item.id === id)
         const lineIds = itemToRemove.lineItems.map(item => {
+          if (item.shopifyItem.discountAllocations.length > 0) {
+            hasDiscount = true
+          }
           return item.shopifyItem.id
         })
-        await removeProductsFromCart(lineIds, itemToRemove.id)
+        await removeProductsFromCart(lineIds, itemToRemove.id, hasDiscount)
       } catch (err: any) {
         console.error(err)
         renderErrorModal()
@@ -792,7 +796,7 @@ export const CartProvider = ({ children }) => {
       addProductCustomToCart,
       // for sunglasses
       addSunglassesToCart,
-      isLoading,
+      isRemovingFromCart,
     }
   }, [
     isDrawerOpen,
@@ -804,7 +808,7 @@ export const CartProvider = ({ children }) => {
     checkout,
     isAddingToCart,
     setIsAddingToCart,
-    isLoading,
+    isRemovingFromCart,
   ])
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>

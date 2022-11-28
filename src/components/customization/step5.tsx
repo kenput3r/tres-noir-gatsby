@@ -137,7 +137,7 @@ const Step5 = (props: {
     removeCustomProductWithId,
     isAddingToCart,
     setIsAddingToCart,
-    isLoading,
+    isRemovingFromCart,
   } = useContext(CartContext)
   const { isRxAble, setRxAble, rxInfo, rxInfoDispatch } =
     useContext(RxInfoContext)
@@ -498,9 +498,9 @@ const Step5 = (props: {
           type="button"
           onClick={handleAddToCart}
           className="add-to-cart btn"
-          disabled={isAddingToCart || isLoading}
+          disabled={isAddingToCart || isRemovingFromCart}
         >
-          {isAddingToCart || isLoading ? <Spinner /> : buttonLabel()}
+          {isAddingToCart || isRemovingFromCart ? <Spinner /> : buttonLabel()}
         </button>
       </div>
       <CaseGridCustomize casesAvailable={casesAvailable} />

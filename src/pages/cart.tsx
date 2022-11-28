@@ -1,4 +1,4 @@
-import React, { useEffect, useContext, useRef } from "react"
+import React, { useEffect, useContext, useRef, useState } from "react"
 import { Link, navigate } from "gatsby"
 import { GatsbyImage, StaticImage } from "gatsby-plugin-image"
 import styled from "styled-components"
@@ -15,6 +15,17 @@ import UpsellCart from "../components/upsell-cart"
 import { SelectedVariants, SelectedVariantStorage } from "../types/global"
 import { CustomizeContext } from "../contexts/customize"
 import { RxInfoContext } from "../contexts/rxInfo"
+
+const LoaderContainer = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`
 
 const Page = styled.div`
   .cart-wrapper {
@@ -225,6 +236,9 @@ const Page = styled.div`
       transform: translate(-50%, -50%);
     }
   }
+  .grey-background {
+    position: relative;
+  }
 `
 
 const Cart = () => {
@@ -233,6 +247,7 @@ const Cart = () => {
     removeProductFromCart,
     updateProductInCart,
     removeProductsFromCart,
+    isRemovingFromCart,
   } = useContext(CartContext)
 
   const { associateCheckout } = useContext(CustomerContext)
@@ -435,6 +450,7 @@ const Cart = () => {
   const renderSunglasses = (item: tnItem) => {
     const sunglassesStepMap = new Map()
     sunglassesStepMap.set(1, "CASE")
+
     return (
       <li key={item.id} className="customized">
         <div className="close-btn">
@@ -677,6 +693,11 @@ const Cart = () => {
                   </a>
                 </div>
               </section>
+              {isRemovingFromCart && (
+                <LoaderContainer>
+                  <Loader />
+                </LoaderContainer>
+              )}
             </div>
             <section className="cart-wrapper wrapper">
               <UpsellCart />
