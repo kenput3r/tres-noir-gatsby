@@ -84,7 +84,11 @@ const DefaultContext = {
     activateDrawer: boolean
   ) => {},
   removeProductFromCart: (lineItemId: string, imageId: string) => {},
-  removeProductsFromCart: (lineItemIds: string[], imageId: string) => {},
+  removeProductsFromCart: (
+    lineItemIds: string[],
+    imageId: string,
+    hasDiscount?: boolean
+  ) => {},
   removeCustomProductWithId: (id: string) => {},
   updateProductInCart: (
     variantId: string,
@@ -93,6 +97,7 @@ const DefaultContext = {
   ) => {},
   addDiscountCode: (code: string) => {},
   removeDiscountCode: () => {},
+  isRemovingFromCart: false,
 }
 
 export const CartContext = createContext(DefaultContext)
@@ -105,6 +110,8 @@ export const CartProvider = ({ children }) => {
   const [isActive, setIsActive] = useState("shop")
   const [checkout, setCheckout] = useState<any>()
   const [isAddingToCart, setIsAddingToCart] = useState<boolean>(false)
+
+  const [isRemovingFromCart, setIsRemovingFromCart] = useState<boolean>(false)
 
   /**
    * @function getCheckoutCookie - gets the current non-expired chechout cookie
@@ -595,44 +602,99 @@ export const CartProvider = ({ children }) => {
 
     const removeProductsFromCart = async (
       lineItemIds: string[],
-      imageId: string
+      imageId: string,
+      hasDiscount: boolean = false
     ) => {
       try {
-        // const updatedCheckout = await client.checkout.removeLineItems(
-        //   checkout.id,
-        //   lineItemIds
-        // )
-        // removeFromImageStorage(imageId)
-        // removeCustomFromLocalStorage(imageId)
-        // rebuildBundles(updatedCheckout)
-        // setCheckout(updatedCheckout)
+        if (hasDiscount) {
+          setIsRemovingFromCart(true)
+          // check if cart contains only 2 items
 
-        // fix for removing discounted item
-        for (const lineItemId of lineItemIds) {
+          if (checkout) {
+            if (
+              checkout.discountApplications.length > 0 &&
+              checkout.lineItems.length === 2
+            ) {
+              const newCheckout = await getNewCheckout()
+              setCheckout(newCheckout)
+              return
+            }
+          }
+
+          for (const lineItemId of lineItemIds) {
+            const updatedCheckout = await client.checkout.removeLineItems(
+              checkout.id,
+              [lineItemId]
+            )
+            rebuildBundles(updatedCheckout)
+            setCheckout(updatedCheckout)
+          }
+          removeFromImageStorage(imageId)
+          removeCustomFromLocalStorage(imageId)
+          setIsRemovingFromCart(false)
+        } else {
+          setIsRemovingFromCart(true)
           const updatedCheckout = await client.checkout.removeLineItems(
             checkout.id,
-            [lineItemId]
+            lineItemIds
           )
-
           removeFromImageStorage(imageId)
           removeCustomFromLocalStorage(imageId)
           rebuildBundles(updatedCheckout)
           setCheckout(updatedCheckout)
+          setIsRemovingFromCart(false)
         }
       } catch (err: any) {
         console.error(err)
+        setIsRemovingFromCart(false)
         renderErrorModal()
       }
     }
 
+    // const removeProductsFromCart = async (
+    //   lineItemIds: string[],
+    //   imageId: string
+    // ) => {
+    //   try {
+    //     // const updatedCheckout = await client.checkout.removeLineItems(
+    //     //   checkout.id,
+    //     //   lineItemIds
+    //     // )
+    //     // removeFromImageStorage(imageId)
+    //     // removeCustomFromLocalStorage(imageId)
+    //     // rebuildBundles(updatedCheckout)
+    //     // setCheckout(updatedCheckout)
+
+    //     // fix for removing discounted item
+    //     for (const lineItemId of lineItemIds) {
+    //       const updatedCheckout = await client.checkout.removeLineItems(
+    //         checkout.id,
+    //         [lineItemId]
+    //       )
+
+    //       removeFromImageStorage(imageId)
+    //       removeCustomFromLocalStorage(imageId)
+    //       rebuildBundles(updatedCheckout)
+    //       setCheckout(updatedCheckout)
+    //     }
+    //   } catch (err: any) {
+    //     console.error(err)
+    //     renderErrorModal()
+    //   }
+    // }
+
     // removes an item from cart given a customization id, used for editing an item in cart
     const removeCustomProductWithId = async (id: string) => {
       try {
+        let hasDiscount = false
         const itemToRemove = checkout.tnLineItems.find(item => item.id === id)
         const lineIds = itemToRemove.lineItems.map(item => {
+          if (item.shopifyItem.discountAllocations.length > 0) {
+            hasDiscount = true
+          }
           return item.shopifyItem.id
         })
-        await removeProductsFromCart(lineIds, itemToRemove.id)
+        await removeProductsFromCart(lineIds, itemToRemove.id, hasDiscount)
       } catch (err: any) {
         console.error(err)
         renderErrorModal()
@@ -734,6 +796,7 @@ export const CartProvider = ({ children }) => {
       addProductCustomToCart,
       // for sunglasses
       addSunglassesToCart,
+      isRemovingFromCart,
     }
   }, [
     isDrawerOpen,
@@ -745,6 +808,7 @@ export const CartProvider = ({ children }) => {
     checkout,
     isAddingToCart,
     setIsAddingToCart,
+    isRemovingFromCart,
   ])
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>
