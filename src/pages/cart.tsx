@@ -1,4 +1,4 @@
-import React, { useEffect, useContext, useRef } from "react"
+import React, { useEffect, useContext, useRef, useState } from "react"
 import { Link, navigate } from "gatsby"
 import { GatsbyImage, StaticImage } from "gatsby-plugin-image"
 import styled from "styled-components"
@@ -15,6 +15,18 @@ import UpsellCart from "../components/upsell-cart"
 import { SelectedVariants, SelectedVariantStorage } from "../types/global"
 import { CustomizeContext } from "../contexts/customize"
 import { RxInfoContext } from "../contexts/rxInfo"
+
+const LoaderContainer = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(204, 204, 204, 0.6);
+`
 
 const Page = styled.div`
   .cart-wrapper {
@@ -233,6 +245,7 @@ const Cart = () => {
     removeProductFromCart,
     updateProductInCart,
     removeProductsFromCart,
+    isRemovingFromCart,
   } = useContext(CartContext)
 
   const { associateCheckout } = useContext(CustomerContext)
@@ -303,12 +316,16 @@ const Cart = () => {
   }
 
   const removeMultipleProducts = async (item: tnItem) => {
+    let hasDiscount = false
     const lineIds = item.lineItems.map(item => {
+      if (item.shopifyItem.discountAllocations.length > 0) {
+        hasDiscount = true
+      }
       return item.shopifyItem.id
     })
 
     loadingOverlay.current?.classList.add("no-events")
-    await removeProductsFromCart(lineIds, item.id)
+    await removeProductsFromCart(lineIds, item.id, hasDiscount)
     loadingOverlay.current?.classList.remove("no-events")
   }
 
@@ -431,6 +448,7 @@ const Cart = () => {
   const renderSunglasses = (item: tnItem) => {
     const sunglassesStepMap = new Map()
     sunglassesStepMap.set(1, "CASE")
+
     return (
       <li key={item.id} className="customized">
         <div className="close-btn">
@@ -677,6 +695,11 @@ const Cart = () => {
             <section className="cart-wrapper wrapper">
               <UpsellCart />
             </section>
+            {isRemovingFromCart && (
+              <LoaderContainer>
+                <Loader />
+              </LoaderContainer>
+            )}
           </section>
         )
       }
