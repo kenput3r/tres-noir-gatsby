@@ -28,12 +28,16 @@ const SunglassesItem = (props: { item: tnItem }) => {
 
   const removeMultipleProducts = async (item: tnItem) => {
     const loadingContainer = loadingOverlay.current?.closest(".cart-products")
+    let hasDiscount = false
     const lineIds = item.lineItems.map(item => {
+      if (item.shopifyItem.discountAllocations.length > 0) {
+        hasDiscount = true
+      }
       return item.shopifyItem.id
     })
 
     loadingContainer?.classList.add("no-events")
-    await removeProductsFromCart(lineIds, item.id)
+    await removeProductsFromCart(lineIds, item.id, hasDiscount)
     loadingContainer?.classList.remove("no-events")
   }
 
