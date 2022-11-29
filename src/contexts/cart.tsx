@@ -606,8 +606,9 @@ export const CartProvider = ({ children }) => {
       hasDiscount: boolean = false
     ) => {
       try {
+        setIsRemovingFromCart(true)
         if (hasDiscount) {
-          setIsRemovingFromCart(true)
+          // setIsRemovingFromCart(true)
           const firstLineItem = lineItemIds.shift()
 
           const updatedCheckout = await client.checkout.removeLineItems(
@@ -626,9 +627,9 @@ export const CartProvider = ({ children }) => {
             rebuildBundles(updatedCheckout)
             setCheckout(updatedCheckout)
           }
-          setIsRemovingFromCart(false)
+          // setIsRemovingFromCart(false)
         } else {
-          setIsRemovingFromCart(true)
+          // setIsRemovingFromCart(true)
           const updatedCheckout = await client.checkout.removeLineItems(
             checkout.id,
             lineItemIds
@@ -637,7 +638,7 @@ export const CartProvider = ({ children }) => {
           removeCustomFromLocalStorage(imageId)
           rebuildBundles(updatedCheckout)
           setCheckout(updatedCheckout)
-          setIsRemovingFromCart(false)
+          // setIsRemovingFromCart(false)
         }
         setIsRemovingFromCart(false)
       } catch (err: any) {
@@ -646,8 +647,6 @@ export const CartProvider = ({ children }) => {
         renderErrorModal()
       }
     }
-
-    console.log("CHECKOUT", checkout)
 
     // const removeProductsFromCart = async (
     //   lineItemIds: string[],

@@ -17,7 +17,7 @@ import { CustomizeContext } from "../contexts/customize"
 import { RxInfoContext } from "../contexts/rxInfo"
 
 const LoaderContainer = styled.div`
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
   right: 0;
@@ -25,6 +25,7 @@ const LoaderContainer = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  background-color: rgba(204, 204, 204, 0.6);
 `
 
 const Page = styled.div`
@@ -235,9 +236,6 @@ const Page = styled.div`
       left: 50%;
       transform: translate(-50%, -50%);
     }
-  }
-  .grey-background {
-    position: relative;
   }
 `
 
@@ -693,15 +691,15 @@ const Cart = () => {
                   </a>
                 </div>
               </section>
-              {isRemovingFromCart && (
-                <LoaderContainer>
-                  <Loader />
-                </LoaderContainer>
-              )}
             </div>
             <section className="cart-wrapper wrapper">
               <UpsellCart />
             </section>
+            {isRemovingFromCart && (
+              <LoaderContainer>
+                <Loader />
+              </LoaderContainer>
+            )}
           </section>
         )
       }
