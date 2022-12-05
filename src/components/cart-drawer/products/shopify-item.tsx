@@ -38,6 +38,19 @@ const ShopifyItem = (props: { item: tnItem }) => {
     return (Number(price) * quantity).toFixed(2)
   }
 
+  const hasDiscount =
+    item.lineItems[0].shopifyItem.discountAllocations.length > 0
+  let price: string | number = item.lineItems[0].shopifyItem.variant.price
+  if (hasDiscount) {
+    price = (
+      Number(price) -
+      Number(
+        item.lineItems[0].shopifyItem.discountAllocations[0].allocatedAmount
+          .amount
+      )
+    ).toString()
+  }
+
   return (
     <Component className="item-card" ref={loadingOverlay}>
       <div className="close-btn">
@@ -82,7 +95,7 @@ const ShopifyItem = (props: { item: tnItem }) => {
             <p>
               $
               {priceTimesQuantity(
-                item.lineItems[0].shopifyItem.variant.price,
+                price,
                 item.lineItems[0].shopifyItem.quantity
               )}{" "}
               USD
