@@ -154,6 +154,7 @@ const Collection = ({
                         : collection.title
                     }
                   />
+                  <div className="overlay"></div>
                 </div>
               </div>
             )}
