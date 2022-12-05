@@ -586,14 +586,31 @@ export const CartProvider = ({ children }) => {
       lineItemId: string,
       imageId: string
     ) => {
+      console.log("REMOVING", lineItemId)
       try {
-        const updatedCheckout = await client.checkout.removeLineItems(
-          checkout.id,
-          [lineItemId]
-        )
-        removeFromImageStorage(imageId)
-        rebuildBundles(updatedCheckout)
-        setCheckout(updatedCheckout)
+        if (
+          checkout.discountApplications.length > 0 &&
+          checkout.lineItems.length === 1
+        ) {
+          const newCheckout = await getNewCheckout()
+          setCheckout(newCheckout)
+          return
+        } else {
+          const updatedCheckout = await client.checkout.removeLineItems(
+            checkout.id,
+            [lineItemId]
+          )
+          removeFromImageStorage(imageId)
+          rebuildBundles(updatedCheckout)
+          setCheckout(updatedCheckout)
+        }
+        // const updatedCheckout = await client.checkout.removeLineItems(
+        //   checkout.id,
+        //   [lineItemId]
+        // )
+        // removeFromImageStorage(imageId)
+        // rebuildBundles(updatedCheckout)
+        // setCheckout(updatedCheckout)
       } catch (err: any) {
         console.error(err)
         renderErrorModal()
@@ -608,7 +625,6 @@ export const CartProvider = ({ children }) => {
       try {
         setIsRemovingFromCart(true)
         if (hasDiscount) {
-          // setIsRemovingFromCart(true)
           const firstLineItem = lineItemIds.shift()
 
           const updatedCheckout = await client.checkout.removeLineItems(
@@ -627,9 +643,7 @@ export const CartProvider = ({ children }) => {
             rebuildBundles(updatedCheckout)
             setCheckout(updatedCheckout)
           }
-          // setIsRemovingFromCart(false)
         } else {
-          // setIsRemovingFromCart(true)
           const updatedCheckout = await client.checkout.removeLineItems(
             checkout.id,
             lineItemIds
@@ -638,7 +652,6 @@ export const CartProvider = ({ children }) => {
           removeCustomFromLocalStorage(imageId)
           rebuildBundles(updatedCheckout)
           setCheckout(updatedCheckout)
-          // setIsRemovingFromCart(false)
         }
         setIsRemovingFromCart(false)
       } catch (err: any) {
@@ -755,6 +768,15 @@ export const CartProvider = ({ children }) => {
       imageId: string
     ) => {
       try {
+        if (
+          quantity === 0 &&
+          checkout.discountApplications.length > 0 &&
+          checkout.lineItems.length === 1
+        ) {
+          const newCheckout = await getNewCheckout()
+          setCheckout(newCheckout)
+          return
+        }
         const lineItems = [
           {
             id,

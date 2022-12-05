@@ -390,9 +390,15 @@ const Cart = () => {
     if (hasDiscount) {
       price = (
         Number(price) -
-        Number(line.discountAllocations[0].allocatedAmount.amount)
+        Number(line.discountAllocations[0].allocatedAmount.amount) /
+          line.quantity
       ).toString()
     }
+    const discountAllocation =
+      item.lineItems[0].shopifyItem.discountAllocations.length > 0
+        ? item.lineItems[0].shopifyItem.discountAllocations[0].allocatedAmount
+            .amount
+        : 0
     return (
       <li key={line.id}>
         <div className="close-btn">
@@ -444,7 +450,11 @@ const Cart = () => {
                 updateQuantity={updateQuantity}
               />
               <span className="price total-price">
-                ${priceTimesQuantity(price, line.quantity)}
+                $
+                {(
+                  Number(line.variant.price) * line.quantity -
+                  discountAllocation
+                ).toFixed(2)}
               </span>
             </div>
           </div>

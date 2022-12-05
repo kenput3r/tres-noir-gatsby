@@ -34,21 +34,14 @@ const ShopifyItem = (props: { item: tnItem }) => {
     loadingContainer?.classList.remove("no-events")
   }
 
-  const priceTimesQuantity = (price: string, quantity: number) => {
-    return (Number(price) * quantity).toFixed(2)
-  }
-
-  const hasDiscount =
+  const discountAllocation =
     item.lineItems[0].shopifyItem.discountAllocations.length > 0
-  let price: string | number = item.lineItems[0].shopifyItem.variant.price
-  if (hasDiscount) {
-    price = (
-      Number(price) -
-      Number(
-        item.lineItems[0].shopifyItem.discountAllocations[0].allocatedAmount
+      ? item.lineItems[0].shopifyItem.discountAllocations[0].allocatedAmount
           .amount
-      )
-    ).toString()
+      : 0
+
+  const priceTimesQuantity = (price: string, quantity: number) => {
+    return (Number(price) * quantity - discountAllocation).toFixed(2)
   }
 
   return (
@@ -95,7 +88,7 @@ const ShopifyItem = (props: { item: tnItem }) => {
             <p>
               $
               {priceTimesQuantity(
-                price,
+                item.lineItems[0].shopifyItem.variant.price,
                 item.lineItems[0].shopifyItem.quantity
               )}{" "}
               USD
