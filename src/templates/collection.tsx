@@ -69,6 +69,15 @@ const Page = styled.section`
       height: 200px;
     }
   }
+  .overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.25);
+    margin: 0 -15px;
+  }
 `
 
 const Collection = ({
@@ -111,6 +120,7 @@ const Collection = ({
                       : collection.title
                   }
                 />
+                <div className="overlay"></div>
               </div>
               <div className="top-right">
                 <h1>{collection.title}</h1>
@@ -144,6 +154,7 @@ const Collection = ({
                         : collection.title
                     }
                   />
+                  <div className="overlay"></div>
                 </div>
               </div>
             )}
