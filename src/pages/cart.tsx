@@ -385,6 +385,14 @@ const Cart = () => {
 
   const renderStandardProduct = (item: tnItem) => {
     const line = item.lineItems[0].shopifyItem
+    const hasDiscount = line.discountAllocations.length > 0
+    let price: string | number = line.variant.price
+    if (hasDiscount) {
+      price = (
+        Number(price) -
+        Number(line.discountAllocations[0].allocatedAmount.amount)
+      ).toString()
+    }
     return (
       <li key={line.id}>
         <div className="close-btn">
@@ -424,7 +432,7 @@ const Cart = () => {
                     : ""}
                 </span>
 
-                <span className="price">${line.variant.price}</span>
+                <span className="price">${Number(price).toFixed(2)}</span>
               </div>
             </div>
             <hr />
@@ -436,7 +444,7 @@ const Cart = () => {
                 updateQuantity={updateQuantity}
               />
               <span className="price total-price">
-                ${priceTimesQuantity(line.variant.price, line.quantity)}
+                ${priceTimesQuantity(price, line.quantity)}
               </span>
             </div>
           </div>
