@@ -383,6 +383,13 @@ const Cart = () => {
     }
   }
 
+  const hasCustomFrame = () => {
+    if (!checkout) {
+      return false
+    }
+    return checkout.tnLineItems.some((el: tnItem) => el.isCustom === true)
+  }
+
   const renderStandardProduct = (item: tnItem) => {
     const line = item.lineItems[0].shopifyItem
     const hasDiscount = line.discountAllocations.length > 0
@@ -702,6 +709,18 @@ const Cart = () => {
                     <span className="total">${checkout.subtotalPrice}</span>
                   </p>
                   <p>Delivery & Taxes are calculated at checkout.</p>
+                  {hasCustomFrame() === true && (
+                    <>
+                      <p>
+                        *All CUSTOM and RX orders will ship 7-10 business days.
+                      </p>
+                      <p>
+                        Rx & Custom Lenses are NON-REFUNDABLE. The return policy
+                        does not apply to Rx & Custom Orders. All sales are
+                        final for Rx & Custom lenses.
+                      </p>
+                    </>
+                  )}
                 </div>
                 <div className="btn-container">
                   <a href={checkout.webUrl} className="btn checkout">

@@ -163,10 +163,10 @@ const Component = styled.div`
       :first-of-type {
         font-size: 1.3rem;
       }
-      :last-of-type {
-        color: var(--color-grey-dark);
-        text-align: center;
-      }
+    }
+    .disclaimer {
+      color: var(--color-grey-dark);
+      text-align: center;
     }
   }
   .price-quantity {
@@ -234,6 +234,13 @@ const CartDrawer = () => {
     },
   })
 
+  const hasCustomFrame = () => {
+    if (!checkout) {
+      return false
+    }
+    return checkout.tnLineItems.some((el: tnItem) => el.isCustom === true)
+  }
+
   return (
     <animated.div style={{ ...slideInStyles }} className="animated">
       {checkout && checkout.tnLineItems.length !== 0 && (
@@ -287,7 +294,19 @@ const CartDrawer = () => {
                 CHECKOUT
               </a>
             </div>
-            <p>TAXES AND SHIPPING WILL BE CALCULATED AT CHECKOUT</p>
+            <p className="disclaimer">
+              TAXES AND SHIPPING WILL BE CALCULATED AT CHECKOUT
+            </p>
+            {hasCustomFrame() === true && (
+              <>
+                <p className="disclaimer">
+                  *ALL CUSTOM AND RX ORDERS WILL SHIP 7-10 BUSINESS DAYS.
+                </p>
+                <p className="disclaimer">
+                  RX & CUSTOM LENSES ARE NON-REFUNDABLE.
+                </p>
+              </>
+            )}
           </div>
         </Component>
       )}
