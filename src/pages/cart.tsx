@@ -237,6 +237,16 @@ const Page = styled.div`
       transform: translate(-50%, -50%);
     }
   }
+  .rx-disclaimers {
+    p {
+      font-family: var(--sub-heading-font);
+      color: var(--color-grey-dark);
+      margin: 0;
+      margin-bottom: 15px;
+      text-align: right;
+    }
+    margin-bottom: 25px;
+  }
 `
 
 const Cart = () => {
@@ -719,24 +729,24 @@ const Cart = () => {
                       }
                     })}
                 </ul>
+                {hasCustomFrame() === true && (
+                  <div className="rx-disclaimers">
+                    <p>
+                      *All CUSTOM and RX orders will ship 7-10 business days.
+                    </p>
+                    <p>
+                      Rx & Custom Lenses are NON-REFUNDABLE. The return policy
+                      does not apply to Rx & Custom Orders. All sales are final
+                      for Rx & Custom lenses.
+                    </p>
+                  </div>
+                )}
                 <div className="subtotal">
                   <p>
                     Subtotal:{" "}
                     <span className="total">${checkout.subtotalPrice}</span>
                   </p>
                   <p>Delivery & Taxes are calculated at checkout.</p>
-                  {hasCustomFrame() === true && (
-                    <>
-                      <p>
-                        *All CUSTOM and RX orders will ship 7-10 business days.
-                      </p>
-                      <p>
-                        Rx & Custom Lenses are NON-REFUNDABLE. The return policy
-                        does not apply to Rx & Custom Orders. All sales are
-                        final for Rx & Custom lenses.
-                      </p>
-                    </>
-                  )}
                 </div>
                 <div className="btn-container">
                   <a href={checkout.webUrl} className="btn checkout">

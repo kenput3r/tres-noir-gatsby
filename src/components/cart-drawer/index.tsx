@@ -160,13 +160,18 @@ const Component = styled.div`
       margin: 0;
       text-align: right;
       margin-bottom: 20px;
-      :first-of-type {
-        font-size: 1.3rem;
-      }
+    }
+    .subtotal {
+      font-size: 1.3rem;
+      margin-top: 20px;
     }
     .disclaimer {
       color: var(--color-grey-dark);
       text-align: center;
+    }
+    .rx-msg {
+      font-size: 95%;
+      margin-bottom: 10px;
     }
   }
   .price-quantity {
@@ -274,7 +279,17 @@ const CartDrawer = () => {
             )}
           </div>
           <div className="sticky-bottom">
-            <p>
+            {hasCustomFrame() === true && (
+              <>
+                <p className="disclaimer rx-msg">
+                  *ALL CUSTOM AND RX ORDERS WILL SHIP 7-10 BUSINESS DAYS.
+                </p>
+                <p className="disclaimer rx-msg">
+                  RX & CUSTOM LENSES ARE NON-REFUNDABLE.
+                </p>
+              </>
+            )}
+            <p className="subtotal">
               Subtotal: <span>${checkout.subtotalPrice} USD</span>
             </p>
 
@@ -297,16 +312,6 @@ const CartDrawer = () => {
             <p className="disclaimer">
               TAXES AND SHIPPING WILL BE CALCULATED AT CHECKOUT
             </p>
-            {hasCustomFrame() === true && (
-              <>
-                <p className="disclaimer">
-                  *ALL CUSTOM AND RX ORDERS WILL SHIP 7-10 BUSINESS DAYS.
-                </p>
-                <p className="disclaimer">
-                  RX & CUSTOM LENSES ARE NON-REFUNDABLE.
-                </p>
-              </>
-            )}
           </div>
         </Component>
       )}
