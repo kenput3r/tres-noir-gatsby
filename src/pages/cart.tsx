@@ -602,36 +602,52 @@ const Cart = () => {
                   if (subItems) {
                     return (
                       <div key={subIndex}>
-                        {subItems.map((subItem, i) => (
-                          <div
-                            className="sub-item"
-                            key={subItem.shopifyItem.id}
-                          >
-                            {i === 0 && (
-                              <div className="step-name">
-                                <p>{stepMap.get(subIndex)}</p>
-                              </div>
-                            )}
-
+                        {subItems.map((subItem, i) => {
+                          // new discounts
+                          const hasDiscount =
+                            subItem.shopifyItem.discountAllocations.length > 0
+                          let price = Number(
+                            subItem.shopifyItem.variant.price
+                          ).toFixed(2)
+                          if (hasDiscount) {
+                            price = (
+                              Number(price) -
+                              Number(
+                                subItem.shopifyItem.discountAllocations[0]
+                                  .allocatedAmount.amount
+                              )
+                            ).toFixed(2)
+                          }
+                          // new discounts
+                          return (
                             <div
-                              className="sub-title"
+                              className="sub-item"
                               key={subItem.shopifyItem.id}
                             >
-                              <span key={subItem.shopifyItem.id}>
-                                {formatItemTitle(
-                                  subItem,
-                                  stepMap.get(subIndex),
-                                  item.isCustom
-                                )}
-                              </span>
-                              <span className="price">
-                                {subItem.shopifyItem.variant.price === "0.00"
-                                  ? "Free"
-                                  : `$${subItem.shopifyItem.variant.price}`}
-                              </span>
+                              {i === 0 && (
+                                <div className="step-name">
+                                  <p>{stepMap.get(subIndex)}</p>
+                                </div>
+                              )}
+
+                              <div
+                                className="sub-title"
+                                key={subItem.shopifyItem.id}
+                              >
+                                <span key={subItem.shopifyItem.id}>
+                                  {formatItemTitle(
+                                    subItem,
+                                    stepMap.get(subIndex),
+                                    item.isCustom
+                                  )}
+                                </span>
+                                <span className="price">
+                                  {price === "0.00" ? "Free" : `$${price}`}
+                                </span>
+                              </div>
                             </div>
-                          </div>
-                        ))}
+                          )
+                        })}
                       </div>
                     )
                   } else {
