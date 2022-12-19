@@ -172,6 +172,7 @@ const Component = styled.div`
     .rx-msg {
       font-size: 95%;
       margin-bottom: 10px;
+      text-align: right;
     }
   }
   .price-quantity {
