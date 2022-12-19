@@ -12,7 +12,7 @@ const Component = styled.div`
 
 const BannerMessage = () => {
   const message =
-    "25% OFF Entire Website. *Excludes Rx, custom lenses and Mooneyes"
+    "25% OFF Entire Site. *Excludes Rx, custom lenses and Mooneyes"
   return <Component>{message}</Component>
 }
 
