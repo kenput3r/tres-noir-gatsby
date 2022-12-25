@@ -12,7 +12,7 @@ import { FaSearch, FaFacebookF, FaBars } from "react-icons/fa"
 import { useClickAway } from "react-use"
 import { TiSocialInstagram } from "react-icons/ti"
 import DesktopNavigation from "./desktopNavigation"
-import BannerMessage from "./banner-message"
+// import BannerMessage from "./banner-message"
 import CartIcon from "./cart-drawer/cart-icon"
 
 const Component = styled.header`
