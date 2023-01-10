@@ -57,7 +57,10 @@ const DefaultContext = {
       amount: "",
       currencyCode: "",
     },
-    totalPrice: "",
+    totalPrice: {
+      amount: "",
+      currencyCode: "",
+    },
     tnLineItems: [],
     webUrl: "",
   },

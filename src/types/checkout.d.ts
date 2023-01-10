@@ -29,7 +29,10 @@ export interface Checkout {
     amount: string
     currencyCode: string
   }
-  totalPrice: string
+  totalPrice: {
+    amount: string
+    currencyCode: string
+  }
   webUrl: string
 }
 
