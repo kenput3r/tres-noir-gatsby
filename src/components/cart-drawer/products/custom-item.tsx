@@ -50,7 +50,7 @@ const CustomItem = (props: { item: tnItem }) => {
     lineItems.forEach(item => {
       // new discounts
       const hasDiscount = item.shopifyItem.discountAllocations.length > 0
-      let price = item.shopifyItem.variant.price
+      let price = item.shopifyItem.variant.price.amount
       if (hasDiscount) {
         price = (
           Number(price) -
@@ -62,6 +62,14 @@ const CustomItem = (props: { item: tnItem }) => {
     })
     return sum.toFixed(2)
   }
+
+  // const totalSum = lineItems => {
+  //   let sum = 0
+  //   lineItems.forEach(item => {
+  //     sum += parseFloat(item.shopifyItem.variant.price.amount)
+  //   })
+  //   return sum.toFixed(2)
+  // }
 
   const formatItemTitle = (title: string) => {
     return title.split("-")[0]

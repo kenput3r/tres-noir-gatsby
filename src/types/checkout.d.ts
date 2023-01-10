@@ -21,7 +21,10 @@ export interface Checkout {
     currencyCode: string
   }
   note: null | string
-  subtotalPrice: string
+  subtotalPrice: {
+    amount: string
+    currencyCode: string
+  }
   subtotalPriceV2: {
     amount: string
     currencyCode: string
@@ -55,7 +58,11 @@ export interface LineItem {
       id: string
       src: string
     }
-    price: string
+    price: {
+      amount: string
+      currencyCode: string
+      type: any
+    }
     product: {
       handle: string
       id: string

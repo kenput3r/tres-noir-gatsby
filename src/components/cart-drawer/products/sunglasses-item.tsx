@@ -46,7 +46,7 @@ const SunglassesItem = (props: { item: tnItem }) => {
     lineItems.forEach(item => {
       // new discounts
       const hasDiscount = item.shopifyItem.discountAllocations.length > 0
-      let price = item.shopifyItem.variant.price
+      let price = item.shopifyItem.variant.price.amount
       if (hasDiscount) {
         price = (
           Number(price) -
