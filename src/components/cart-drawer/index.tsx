@@ -268,7 +268,10 @@ const CartDrawer = () => {
           </div>
           <div className="sticky-bottom">
             <p>
-              Subtotal: <span>${checkout.subtotalPrice} USD</span>
+              Subtotal:{" "}
+              <span>
+                ${Number(checkout.subtotalPrice.amount).toFixed(2)} USD
+              </span>
             </p>
 
             <div className="button-flex">
