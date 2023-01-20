@@ -606,42 +606,6 @@ export const CartProvider = ({ children }) => {
       }
     }
 
-    // fix for remove product from cart with discount
-    // const removeProductFromCart = async (
-    //   lineItemId: string,
-    //   imageId: string
-    // ) => {
-    //   console.log("REMOVING", lineItemId)
-    //   try {
-    //     if (
-    //       checkout.discountApplications.length > 0 &&
-    //       checkout.lineItems.length === 1
-    //     ) {
-    //       const newCheckout = await getNewCheckout()
-    //       setCheckout(newCheckout)
-    //       return
-    //     } else {
-    //       const updatedCheckout = await client.checkout.removeLineItems(
-    //         checkout.id,
-    //         [lineItemId]
-    //       )
-    //       removeFromImageStorage(imageId)
-    //       rebuildBundles(updatedCheckout)
-    //       setCheckout(updatedCheckout)
-    //     }
-    //     // const updatedCheckout = await client.checkout.removeLineItems(
-    //     //   checkout.id,
-    //     //   [lineItemId]
-    //     // )
-    //     // removeFromImageStorage(imageId)
-    //     // rebuildBundles(updatedCheckout)
-    //     // setCheckout(updatedCheckout)
-    //   } catch (err: any) {
-    //     console.error(err)
-    //     renderErrorModal()
-    //   }
-    // }
-
     const removeProductsFromCart = async (
       lineItemIds: string[],
       imageId: string,
@@ -661,51 +625,6 @@ export const CartProvider = ({ children }) => {
         renderErrorModal()
       }
     }
-
-    // fix for remove products from cart with discount
-    // const removeProductsFromCart = async (
-    //   lineItemIds: string[],
-    //   imageId: string,
-    //   hasDiscount: boolean = false
-    // ) => {
-    //   try {
-    //     setIsRemovingFromCart(true)
-    //     if (hasDiscount) {
-    //       const firstLineItem = lineItemIds.shift()
-
-    //       const updatedCheckout = await client.checkout.removeLineItems(
-    //         checkout.id,
-    //         [firstLineItem as string]
-    //       )
-    //       rebuildBundles(updatedCheckout)
-    //       setCheckout(updatedCheckout)
-    //       if (updatedCheckout) {
-    //         const updatedCheckout = await client.checkout.removeLineItems(
-    //           checkout.id,
-    //           lineItemIds
-    //         )
-    //         removeFromImageStorage(imageId)
-    //         removeCustomFromLocalStorage(imageId)
-    //         rebuildBundles(updatedCheckout)
-    //         setCheckout(updatedCheckout)
-    //       }
-    //     } else {
-    //       const updatedCheckout = await client.checkout.removeLineItems(
-    //         checkout.id,
-    //         lineItemIds
-    //       )
-    //       removeFromImageStorage(imageId)
-    //       removeCustomFromLocalStorage(imageId)
-    //       rebuildBundles(updatedCheckout)
-    //       setCheckout(updatedCheckout)
-    //     }
-    //     setIsRemovingFromCart(false)
-    //   } catch (err: any) {
-    //     console.error(err)
-    //     setIsRemovingFromCart(false)
-    //     renderErrorModal()
-    //   }
-    // }
 
     // removes an item from cart given a customization id, used for editing an item in cart
     const removeCustomProductWithId = async (id: string) => {
@@ -751,43 +670,6 @@ export const CartProvider = ({ children }) => {
         renderErrorModal()
       }
     }
-
-    // fix for update product from cart with discount
-    // const updateProductInCart = async (
-    //   id: string,
-    //   quantity: number,
-    //   imageId: string
-    // ) => {
-    //   try {
-    //     if (
-    //       quantity === 0 &&
-    //       checkout.discountApplications.length > 0 &&
-    //       checkout.lineItems.length === 1
-    //     ) {
-    //       const newCheckout = await getNewCheckout()
-    //       setCheckout(newCheckout)
-    //       return
-    //     }
-    //     const lineItems = [
-    //       {
-    //         id,
-    //         quantity,
-    //       },
-    //     ]
-    //     const updatedCheckout = await client.checkout.updateLineItems(
-    //       checkout.id,
-    //       lineItems
-    //     )
-    //     if (quantity === 0) {
-    //       removeFromImageStorage(imageId)
-    //     }
-    //     rebuildBundles(updatedCheckout)
-    //     setCheckout(updatedCheckout)
-    //   } catch (err: any) {
-    //     console.error(err)
-    //     renderErrorModal()
-    //   }
-    // }
 
     const addDiscountCode = async (code: string) => {
       try {
