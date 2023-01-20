@@ -237,16 +237,6 @@ const Page = styled.div`
       transform: translate(-50%, -50%);
     }
   }
-  .rx-disclaimers {
-    p {
-      font-family: var(--sub-heading-font);
-      color: var(--color-grey-dark);
-      margin: 0;
-      margin-bottom: 15px;
-      text-align: right;
-    }
-    margin-bottom: 25px;
-  }
 `
 
 const Cart = () => {
@@ -359,7 +349,7 @@ const Cart = () => {
     let sum = 0
     lineItems.forEach(item => {
       const hasDiscount = item.shopifyItem.discountAllocations.length > 0
-      let price = item.shopifyItem.variant.price
+      let price = item.shopifyItem.variant.price.amount
       if (hasDiscount) {
         price =
           Number(price) -
@@ -393,17 +383,10 @@ const Cart = () => {
     }
   }
 
-  const hasCustomFrame = () => {
-    if (!checkout) {
-      return false
-    }
-    return checkout.tnLineItems.some((el: tnItem) => el.isCustom === true)
-  }
-
   const renderStandardProduct = (item: tnItem) => {
     const line = item.lineItems[0].shopifyItem
     const hasDiscount = line.discountAllocations.length > 0
-    let price: string | number = line.variant.price
+    let price: string | number = line.variant.price.amount
     if (hasDiscount) {
       price = (
         Number(price) -
@@ -469,7 +452,7 @@ const Cart = () => {
               <span className="price total-price">
                 $
                 {(
-                  Number(line.variant.price) * line.quantity -
+                  Number(line.variant.price.amount) * line.quantity -
                   discountAllocation
                 ).toFixed(2)}
               </span>
@@ -523,7 +506,7 @@ const Cart = () => {
                   // new discounts
                   const hasDiscount =
                     subItem.shopifyItem.discountAllocations.length > 0
-                  let price = subItem.shopifyItem.variant.price
+                  let price = subItem.shopifyItem.variant.price.amount
                   if (hasDiscount) {
                     price = (
                       Number(price) -
@@ -549,9 +532,9 @@ const Cart = () => {
                         </span>
                         <span className="price">
                           {price === "0.00" ? "Free" : `$${price}`}
-                          {/* {subItem.shopifyItem.variant.price === "0.00"
+                          {/* {subItem.shopifyItem.variant.price.amount === "0.00"
                             ? "Free"
-                            : `$${subItem.shopifyItem.variant.price}`} */}
+                            : `$${subItem.shopifyItem.variant.price.amount}`} */}
                         </span>
                       </div>
                     </div>
@@ -617,7 +600,7 @@ const Cart = () => {
                           const hasDiscount =
                             subItem.shopifyItem.discountAllocations.length > 0
                           let price = Number(
-                            subItem.shopifyItem.variant.price
+                            subItem.shopifyItem.variant.price.amount
                           ).toFixed(2)
                           if (hasDiscount) {
                             price = (
@@ -652,6 +635,10 @@ const Cart = () => {
                                   )}
                                 </span>
                                 <span className="price">
+                                  {/* {subItem.shopifyItem.variant.price.amount ===
+                                  "0.00"
+                                    ? "Free"
+                                    : `$${subItem.shopifyItem.variant.price.amount}`} */}
                                   {price === "0.00" ? "Free" : `$${price}`}
                                 </span>
                               </div>
@@ -713,7 +700,9 @@ const Cart = () => {
               <section className="cart-items cart-wrapper wrapper">
                 <h2>
                   Your cart:{" "}
-                  <span className="total">${checkout.subtotalPrice}</span>
+                  <span className="total">
+                    ${Number(checkout.subtotalPrice.amount).toFixed(2)}
+                  </span>
                 </h2>
                 <ul>
                   {checkout &&
@@ -729,22 +718,12 @@ const Cart = () => {
                       }
                     })}
                 </ul>
-                {hasCustomFrame() === true && (
-                  <div className="rx-disclaimers">
-                    <p>
-                      *All CUSTOM and RX orders will ship 7-10 business days.
-                    </p>
-                    <p>
-                      Rx & Custom Lenses are NON-REFUNDABLE. The return policy
-                      does not apply to Rx & Custom Orders. All sales are final
-                      for Rx & Custom lenses.
-                    </p>
-                  </div>
-                )}
                 <div className="subtotal">
                   <p>
                     Subtotal:{" "}
-                    <span className="total">${checkout.subtotalPrice}</span>
+                    <span className="total">
+                      ${Number(checkout.subtotalPrice.amount).toFixed(2)}
+                    </span>
                   </p>
                   <p>Delivery & Taxes are calculated at checkout.</p>
                 </div>

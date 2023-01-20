@@ -88,7 +88,7 @@ const ShopifyItem = (props: { item: tnItem }) => {
             <p>
               $
               {priceTimesQuantity(
-                item.lineItems[0].shopifyItem.variant.price,
+                item.lineItems[0].shopifyItem.variant.price.amount,
                 item.lineItems[0].shopifyItem.quantity
               )}{" "}
               USD
