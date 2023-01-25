@@ -24,14 +24,14 @@ const rxInit: rxType = {
     cyl: "0.00",
     axis: "",
     add: "",
-    pd: "63",
+    pd: "63.0",
   },
   left: {
     sph: "0.00",
     cyl: "0.00",
     axis: "",
     add: "",
-    pd: "63",
+    pd: "63.0",
   },
 }
 
