@@ -373,7 +373,6 @@ const ProductCustomizable = ({
           contentful: selectedVariant.contentful,
           shopify: polarizedVariant.shopify,
         })
-      } else {
       }
     }
     // if switch is untoggled
@@ -401,13 +400,20 @@ const ProductCustomizable = ({
     const contentfulData = selectedVariant.contentful
     const sku = selectedVariant.shopify.sku
     const polVar = shopifyProduct.variants.find(
-      _variant => _variant.sku === `${sku}PZ` || _variant.sku === `${sku}-PZ`
+      _variant =>
+        _variant.sku === `${sku}PZ` ||
+        _variant.sku === `${sku}-PZ` ||
+        _variant.sku === `${sku}P` ||
+        _variant.sku === `${sku}-P`
     )
     const polarizedToggle =
       actionsRef.current?.querySelector("#polarized-toggle")
     const customizeBtn = actionsRef.current?.querySelector("#customize-btn")
     // if current Variant is polarized
-    if (selectedVariant.shopify.sku.includes("PZ")) {
+    if (
+      selectedVariant.shopify.sku.endsWith("PZ") ||
+      selectedVariant.shopify.sku.endsWith("P")
+    ) {
     }
     // if current variant is not polarized, but has a polarized option
     else if (polVar) {
