@@ -227,7 +227,7 @@ const Form = ({
     id: string
   ): string[] => {
     const arr: string[] = []
-    const format: number = step % 1 === 0 ? 0 : 2
+    const format: number = step % 1 === 0 ? 0 : step === 0.5 ? 1 : 2
     for (let i = start; i < end + step; i += step) {
       arr.push(i.toFixed(format))
       if (i === 0 && id.includes("sph")) arr.push("Plano")
@@ -905,7 +905,7 @@ const Form = ({
                   defaultValue={rxInfo.right.pd}
                   onChange={evt => handleRx(evt)}
                 >
-                  {range(24, 80, 1, "right-pd").map(el => {
+                  {range(24, 78.5, 0.5, "right-pd").map(el => {
                     return (
                       <React.Fragment key={`right-pd-${el}`}>
                         <option value={el}>{el}</option>
@@ -933,7 +933,7 @@ const Form = ({
                   defaultValue={rxInfo.left.pd}
                   onChange={evt => handleRx(evt)}
                 >
-                  {range(24, 80, 1, "left-pd").map(el => {
+                  {range(24, 78.5, 0.5, "left-pd").map(el => {
                     return (
                       <React.Fragment key={`left-pd-${el}`}>
                         <option value={el}>{el}</option>
