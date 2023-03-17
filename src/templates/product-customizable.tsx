@@ -394,19 +394,6 @@ const ProductCustomizable = ({
     }
   }
 
-  // function that checks if sku is Polarized
-  const isPolarizedSKU = (sku: string) => {
-    if (
-      sku === `${sku}PZ` ||
-      sku === `${sku}-PZ` ||
-      sku === `${sku}-P` ||
-      sku === `${sku}P`
-    ) {
-      return true
-    }
-    return false
-  }
-
   // sets polarizedVariant to the correct polarized variant for corresponding frame
   useEffect(() => {
     if (lensType === LensType.GLASSES) return
