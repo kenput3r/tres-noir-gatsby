@@ -12,7 +12,7 @@ const Component = styled.div`
 
 const BannerMessage = () => {
   const message =
-    "25% OFF Entire Site. *Excludes Rx, custom lenses and Mooneyes"
+    "ALL ORDERS PLACED NOW WILL NOT START SHIPPING UNTIL AUGUST 1ST. CUSTOM & RX ORDERS WILL START SHIPPING AUGUST 8TH."
   return <Component>{message}</Component>
 }
 
