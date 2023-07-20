@@ -11,6 +11,7 @@ import ShopifyItem from "./products/shopify-item"
 import SunglassesItem from "./products/sunglasses-item"
 import CustomItem from "./products/custom-item"
 import Loader from "../loader"
+import { CART_MESSAGE } from "../../utils/consts"
 
 const Component = styled.div`
   display: flex;
@@ -163,7 +164,7 @@ const Component = styled.div`
       :first-of-type {
         font-size: 1.3rem;
       }
-      :last-of-type {
+      :not(:first-of-type) {
         color: var(--color-grey-dark);
         text-align: center;
       }
@@ -291,6 +292,7 @@ const CartDrawer = () => {
               </a>
             </div>
             <p>TAXES AND SHIPPING WILL BE CALCULATED AT CHECKOUT</p>
+            {CART_MESSAGE && CART_MESSAGE !== "" && <p>{CART_MESSAGE}</p>}
           </div>
         </Component>
       )}

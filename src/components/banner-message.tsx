@@ -1,5 +1,6 @@
 import React from "react"
 import styled from "styled-components"
+import { BANNER_MESSAGE } from "../utils/consts"
 
 const Component = styled.div`
   background-color: #a30000;
@@ -11,9 +12,9 @@ const Component = styled.div`
 `
 
 const BannerMessage = () => {
-  const message =
-    "ALL ORDERS PLACED NOW WILL NOT START SHIPPING UNTIL AUGUST 1ST. CUSTOM & RX ORDERS WILL START SHIPPING AUGUST 8TH."
-  return <Component>{message}</Component>
+  return BANNER_MESSAGE && BANNER_MESSAGE !== "" ? (
+    <Component>{BANNER_MESSAGE}</Component>
+  ) : null
 }
 
 export default BannerMessage
