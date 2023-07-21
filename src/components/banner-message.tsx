@@ -9,6 +9,12 @@ const Component = styled.div`
   text-align: center;
   text-transform: uppercase;
   padding: 0.75em;
+  @media screen and (max-width: 414px) {
+    font-weight: normal;
+    font-size: 11px;
+    line-height: 12px;
+    padding: 8px;
+  }
 `
 
 const BannerMessage = () => {
