@@ -16,6 +16,8 @@ import { SelectedVariants, SelectedVariantStorage } from "../types/global"
 import { CustomizeContext } from "../contexts/customize"
 import { RxInfoContext } from "../contexts/rxInfo"
 
+import { CART_MESSAGE } from "../utils/consts"
+
 const LoaderContainer = styled.div`
   position: fixed;
   top: 0;
@@ -726,6 +728,7 @@ const Cart = () => {
                     </span>
                   </p>
                   <p>Delivery & Taxes are calculated at checkout.</p>
+                  {CART_MESSAGE && CART_MESSAGE !== "" && <p>{CART_MESSAGE}</p>}
                 </div>
                 <div className="btn-container">
                   <a href={checkout.webUrl} className="btn checkout">
