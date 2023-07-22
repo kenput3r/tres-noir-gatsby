@@ -26,6 +26,13 @@ const Component = styled.div`
   border: 0.5px solid #c5c5c5;
   border-top: none;
   font-family: var(--sub-heading-font);
+  .cart-message {
+    border: 1px solid;
+    background: white;
+    text-decoration: underline;
+    padding: 6px;
+    text-align: center;
+  }
   .header {
     position: sticky;
     top: 0;
@@ -292,7 +299,9 @@ const CartDrawer = () => {
               </a>
             </div>
             <p>TAXES AND SHIPPING WILL BE CALCULATED AT CHECKOUT</p>
-            {CART_MESSAGE && CART_MESSAGE !== "" && <p>{CART_MESSAGE}</p>}
+            {CART_MESSAGE && CART_MESSAGE !== "" && (
+              <p className="cart-message">{CART_MESSAGE}</p>
+            )}
           </div>
         </Component>
       )}
