@@ -2,6 +2,8 @@ import React from "react"
 import styled from "styled-components"
 import { StaticImage } from "gatsby-plugin-image"
 
+import { CUSTOM_SHIPPING_MESSAGE } from "../utils/consts"
+
 const Component = styled.div`
   text-align: center;
   .top-msg {
@@ -25,6 +27,8 @@ const Component = styled.div`
   }
 `
 
+const DEFAULT_MESSAGE = "ALL ORDERS SHIP SAME OR NEXT BUSINESS DAY"
+
 const FreeShipping = () => {
   return (
     <Component>
@@ -35,7 +39,11 @@ const FreeShipping = () => {
           width={38}
         />
         <p className="top-msg">FREE SHIPPING IN USA</p>
-        <p className="bottom-msg">ALL ORDERS SHIP SAME OR NEXT BUSINESS DAY</p>
+        <p className="bottom-msg">
+          {CUSTOM_SHIPPING_MESSAGE && CUSTOM_SHIPPING_MESSAGE !== ""
+            ? CUSTOM_SHIPPING_MESSAGE
+            : DEFAULT_MESSAGE}
+        </p>
       </div>
     </Component>
   )

@@ -31,6 +31,13 @@ const LoaderContainer = styled.div`
 `
 
 const Page = styled.div`
+  .cart-message {
+    border: 1px solid;
+    background: white;
+    text-decoration: underline;
+    padding: 6px;
+    text-align: center;
+  }
   .cart-wrapper {
     max-width: 860px;
     width: 100%;
@@ -728,7 +735,9 @@ const Cart = () => {
                     </span>
                   </p>
                   <p>Delivery & Taxes are calculated at checkout.</p>
-                  {CART_MESSAGE && CART_MESSAGE !== "" && <p>{CART_MESSAGE}</p>}
+                  {CART_MESSAGE && CART_MESSAGE !== "" && (
+                    <p className="cart-message">{CART_MESSAGE}</p>
+                  )}
                 </div>
                 <div className="btn-container">
                   <a href={checkout.webUrl} className="btn checkout">
