@@ -839,24 +839,4 @@ const Cart = () => {
   )
 }
 
-const ItemPrice = ({
-  currentPrice,
-  originalPrice,
-  hasDiscount,
-}: {
-  currentPrice: string
-  originalPrice: string
-  hasDiscount: boolean
-}) => {
-  const price =
-    currentPrice === "0.0" ? "Free" : Number(currentPrice).toFixed(2)
-  const ogPrice = Number(originalPrice).toFixed(2)
-  return (
-    <div className="price-group">
-      <span className="price">${price}</span>
-      {hasDiscount && <span className="original-price">${ogPrice}</span>}
-    </div>
-  )
-}
-
 export default Cart
