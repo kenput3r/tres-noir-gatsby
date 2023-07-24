@@ -128,14 +128,10 @@ const SunglassesItem = (props: { item: tnItem }) => {
             </p>
           </div>
           <div className="price-quantity">
-            <p>
-              ${totalSum(item.lineItems)}
-              {!hasDiscount && " USD"}
-            </p>
+            <p>${totalSum(item.lineItems)}</p>
             {hasDiscount && (
               <p className="original-price">
                 ${totalOriginalSum(item.lineItems)}
-                {hasDiscount && " USD"}
               </p>
             )}
           </div>

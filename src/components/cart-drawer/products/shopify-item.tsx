@@ -103,7 +103,6 @@ const ShopifyItem = (props: { item: tnItem }) => {
                   item.lineItems[0].shopifyItem.variant.price.amount,
                   item.lineItems[0].shopifyItem.quantity
                 )}
-                {!hasDiscount && " USD"}
               </p>
               {hasDiscount && (
                 <p className="original-price">
@@ -112,7 +111,6 @@ const ShopifyItem = (props: { item: tnItem }) => {
                     item.lineItems[0].shopifyItem.variant.price.amount,
                     item.lineItems[0].shopifyItem.quantity
                   )}
-                  {hasDiscount && " USD"}
                 </p>
               )}
             </div>
