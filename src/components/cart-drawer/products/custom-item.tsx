@@ -1,7 +1,6 @@
 import React, { useContext, useRef } from "react"
 import { tnItem } from "../../../types/checkout"
 import { GatsbyImage } from "gatsby-plugin-image"
-import QuantitySelector from "../../quantity-selector"
 import { CartContext } from "../../../contexts/cart"
 import styled from "styled-components"
 import { VscClose } from "react-icons/vsc"
@@ -16,12 +15,18 @@ const Component = styled.div`
   }
   .price-quantity {
     justify-content: flex-end !important;
+    display: flex;
+    column-gap: 10px;
+  }
+  .original-price {
+    text-decoration-line: line-through;
+    color: var(--color-grey-dark);
   }
 `
 
 const CustomItem = (props: { item: tnItem }) => {
   const { item } = props
-  const { updateProductInCart, removeProductsFromCart, setIsCartDrawerOpen } =
+  const { removeProductsFromCart, setIsCartDrawerOpen } =
     useContext(CartContext)
 
   const loadingOverlay = useRef<HTMLDivElement>(null)
@@ -63,13 +68,20 @@ const CustomItem = (props: { item: tnItem }) => {
     return sum.toFixed(2)
   }
 
-  // const totalSum = lineItems => {
-  //   let sum = 0
-  //   lineItems.forEach(item => {
-  //     sum += parseFloat(item.shopifyItem.variant.price.amount)
-  //   })
-  //   return sum.toFixed(2)
-  // }
+  const totalOriginalSum = lineItems => {
+    let sum = 0
+    lineItems.forEach(item => {
+      let price = item.shopifyItem.variant.price.amount
+      sum += parseFloat(price)
+    })
+    return sum.toFixed(2)
+  }
+
+  const checkForDiscountInBundle = (lineItems: any): boolean => {
+    return lineItems.some(
+      item => item.shopifyItem.discountAllocations.length > 0
+    )
+  }
 
   const formatItemTitle = (title: string) => {
     return title.split("-")[0]
@@ -79,6 +91,8 @@ const CustomItem = (props: { item: tnItem }) => {
     let spl = caseName.split("AO")[0]
     return spl.slice(0, -2)
   }
+
+  const hasDiscount = checkForDiscountInBundle(item.lineItems)
 
   return (
     <Component className="item-card" ref={loadingOverlay}>
@@ -122,7 +136,16 @@ const CustomItem = (props: { item: tnItem }) => {
             </p>
           </div>
           <div className="price-quantity">
-            <p>${totalSum(item.lineItems)} USD</p>
+            <p>
+              ${totalSum(item.lineItems)}
+              {!hasDiscount && " USD"}
+            </p>
+            {hasDiscount && (
+              <p className="original-price">
+                ${totalOriginalSum(item.lineItems)}
+                {hasDiscount && " USD"}
+              </p>
+            )}
           </div>
         </div>
       </div>

@@ -246,6 +246,14 @@ const Page = styled.div`
       transform: translate(-50%, -50%);
     }
   }
+  .price-group {
+    display: flex;
+    column-gap: 10px;
+    justify-content: end;
+  }
+  .original-price {
+    text-decoration-line: line-through;
+  }
 `
 
 const Cart = () => {
@@ -369,6 +377,21 @@ const Cart = () => {
     return sum.toFixed(2)
   }
 
+  const totalOriginalSum = lineItems => {
+    let sum = 0
+    lineItems.forEach(item => {
+      let price = item.shopifyItem.variant.price.amount
+      sum += parseFloat(price)
+    })
+    return sum.toFixed(2)
+  }
+
+  const checkForDiscountInBundle = (lineItems: any): boolean => {
+    return lineItems.some(
+      item => item.shopifyItem.discountAllocations.length > 0
+    )
+  }
+
   const priceTimesQuantity = (price: string, quantity: number) => {
     return (Number(price) * quantity).toFixed(2)
   }
@@ -395,6 +418,8 @@ const Cart = () => {
   const renderStandardProduct = (item: tnItem) => {
     const line = item.lineItems[0].shopifyItem
     const hasDiscount = line.discountAllocations.length > 0
+    const originalPrice = line.variant.price.amount
+
     let price: string | number = line.variant.price.amount
     if (hasDiscount) {
       price = (
@@ -408,6 +433,9 @@ const Cart = () => {
         ? item.lineItems[0].shopifyItem.discountAllocations[0].allocatedAmount
             .amount
         : 0
+    const totalOriginalPrice = (
+      Number(line.variant.price.amount) * line.quantity
+    ).toFixed(2)
     return (
       <li key={line.id}>
         <div className="close-btn">
@@ -446,8 +474,14 @@ const Cart = () => {
                     ? line.variant.title
                     : ""}
                 </span>
-
-                <span className="price">${Number(price).toFixed(2)}</span>
+                <div className="price-group">
+                  <span className="price">${Number(price).toFixed(2)}</span>
+                  {hasDiscount && (
+                    <span className="original-price">
+                      ${Number(originalPrice).toFixed(2)}
+                    </span>
+                  )}
+                </div>
               </div>
             </div>
             <hr />
@@ -458,13 +492,20 @@ const Cart = () => {
                 imageId={item.id}
                 updateQuantity={updateQuantity}
               />
-              <span className="price total-price">
-                $
-                {(
-                  Number(line.variant.price.amount) * line.quantity -
-                  discountAllocation
-                ).toFixed(2)}
-              </span>
+              <div className="price-group">
+                <span className="price">
+                  $
+                  {(
+                    Number(line.variant.price.amount) * line.quantity -
+                    discountAllocation
+                  ).toFixed(2)}
+                </span>
+                {hasDiscount && (
+                  <span className="price original-price">
+                    ${totalOriginalPrice}
+                  </span>
+                )}
+              </div>
             </div>
           </div>
         </div>
@@ -475,6 +516,7 @@ const Cart = () => {
   const renderSunglasses = (item: tnItem) => {
     const sunglassesStepMap = new Map()
     sunglassesStepMap.set(1, "CASE")
+    const hasDiscount = checkForDiscountInBundle(item.lineItems)
 
     return (
       <li key={item.id} className="customized">
@@ -516,6 +558,7 @@ const Cart = () => {
                   const hasDiscount =
                     subItem.shopifyItem.discountAllocations.length > 0
                   let price = subItem.shopifyItem.variant.price.amount
+                  const originalPrice = subItem.shopifyItem.variant.price.amount
                   if (hasDiscount) {
                     price = (
                       Number(price) -
@@ -539,20 +582,33 @@ const Cart = () => {
                             item.isCustom
                           )}
                         </span>
-                        <span className="price">
-                          {price === "0.00" ? "Free" : `$${price}`}
-                          {/* {subItem.shopifyItem.variant.price.amount === "0.00"
-                            ? "Free"
-                            : `$${subItem.shopifyItem.variant.price.amount}`} */}
-                        </span>
+                        <div className="price-group">
+                          <span className="price">
+                            {price === "0.00" || price === "0.0"
+                              ? "Free"
+                              : "$" + Number(price).toFixed(2)}
+                          </span>
+                          {hasDiscount && (
+                            <span className="original-price">
+                              ${Number(originalPrice).toFixed(2)}
+                            </span>
+                          )}
+                        </div>
                       </div>
                     </div>
                   )
                 })}
                 <hr />
-                <span className="price total-price">
-                  ${totalSum(item.lineItems)}
-                </span>
+                <div className="price-group">
+                  <span className="price total-price">
+                    ${totalSum(item.lineItems)}
+                  </span>
+                  {hasDiscount && (
+                    <span className="price original-price">
+                      ${totalOriginalSum(item.lineItems)}
+                    </span>
+                  )}
+                </div>
               </div>
             </div>
           </div>
@@ -562,6 +618,7 @@ const Cart = () => {
   }
 
   const renderCustomProduct = (item: tnItem) => {
+    const hasDiscount = checkForDiscountInBundle(item.lineItems)
     return (
       <li key={item.id} className="customized">
         <div className="close-btn">
@@ -608,9 +665,9 @@ const Cart = () => {
                           // new discounts
                           const hasDiscount =
                             subItem.shopifyItem.discountAllocations.length > 0
-                          let price = Number(
+                          let price = subItem.shopifyItem.variant.price.amount
+                          const originalPrice =
                             subItem.shopifyItem.variant.price.amount
-                          ).toFixed(2)
                           if (hasDiscount) {
                             price = (
                               Number(price) -
@@ -643,13 +700,18 @@ const Cart = () => {
                                     item.isCustom
                                   )}
                                 </span>
-                                <span className="price">
-                                  {/* {subItem.shopifyItem.variant.price.amount ===
-                                  "0.00"
-                                    ? "Free"
-                                    : `$${subItem.shopifyItem.variant.price.amount}`} */}
-                                  {price === "0.00" ? "Free" : `$${price}`}
-                                </span>
+                                <div className="price-group">
+                                  <span className="price">
+                                    {price === "0.00" || price === "0.0"
+                                      ? "Free"
+                                      : "$" + Number(price).toFixed(2)}
+                                  </span>
+                                  {hasDiscount && (
+                                    <span className="original-price">
+                                      ${Number(originalPrice).toFixed(2)}
+                                    </span>
+                                  )}
+                                </div>
                               </div>
                             </div>
                           )
@@ -661,9 +723,16 @@ const Cart = () => {
                   }
                 })}
                 <hr />
-                <span className="price total-price">
-                  ${totalSum(item.lineItems)}
-                </span>
+                <div className="price-group">
+                  <span className="price total-price">
+                    ${totalSum(item.lineItems)}
+                  </span>
+                  {hasDiscount && (
+                    <span className="price original-price">
+                      ${totalOriginalSum(item.lineItems)}
+                    </span>
+                  )}
+                </div>
               </div>
             </div>
             <div className="edit-product">
@@ -767,6 +836,26 @@ const Cart = () => {
       <SEO title="Cart" />
       <Page>{renderContent()}</Page>
     </Layout>
+  )
+}
+
+const ItemPrice = ({
+  currentPrice,
+  originalPrice,
+  hasDiscount,
+}: {
+  currentPrice: string
+  originalPrice: string
+  hasDiscount: boolean
+}) => {
+  const price =
+    currentPrice === "0.0" ? "Free" : Number(currentPrice).toFixed(2)
+  const ogPrice = Number(originalPrice).toFixed(2)
+  return (
+    <div className="price-group">
+      <span className="price">${price}</span>
+      {hasDiscount && <span className="original-price">${ogPrice}</span>}
+    </div>
   )
 }
 
