@@ -7,7 +7,12 @@ import styled from "styled-components"
 import { VscClose } from "react-icons/vsc"
 import { Link } from "gatsby"
 
-const Component = styled.div``
+const Component = styled.div`
+  .original-price {
+    text-decoration-line: line-through;
+    color: var(--color-grey-dark);
+  }
+`
 
 const ShopifyItem = (props: { item: tnItem }) => {
   const { item } = props
@@ -39,9 +44,15 @@ const ShopifyItem = (props: { item: tnItem }) => {
       ? item.lineItems[0].shopifyItem.discountAllocations[0].allocatedAmount
           .amount
       : 0
+  const hasDiscount =
+    item.lineItems[0].shopifyItem.discountAllocations.length > 0
 
   const priceTimesQuantity = (price: string, quantity: number) => {
     return (Number(price) * quantity - discountAllocation).toFixed(2)
+  }
+
+  const priceTimesQuantityOriginal = (price: string, quantity: number) => {
+    return (Number(price) * quantity).toFixed(2)
   }
 
   return (
@@ -85,14 +96,24 @@ const ShopifyItem = (props: { item: tnItem }) => {
               imageId={item.lineItems[0].shopifyItem.id}
               updateQuantity={updateQuantity}
             />
-            <p>
-              $
-              {priceTimesQuantity(
-                item.lineItems[0].shopifyItem.variant.price.amount,
-                item.lineItems[0].shopifyItem.quantity
-              )}{" "}
-              USD
-            </p>
+            <div className="price-wrapper">
+              <p>
+                $
+                {priceTimesQuantity(
+                  item.lineItems[0].shopifyItem.variant.price.amount,
+                  item.lineItems[0].shopifyItem.quantity
+                )}
+              </p>
+              {hasDiscount && (
+                <p className="original-price">
+                  $
+                  {priceTimesQuantityOriginal(
+                    item.lineItems[0].shopifyItem.variant.price.amount,
+                    item.lineItems[0].shopifyItem.quantity
+                  )}
+                </p>
+              )}
+            </div>
           </div>
         </div>
       </div>
