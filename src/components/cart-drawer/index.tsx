@@ -146,6 +146,7 @@ const Component = styled.div`
     }
   }
   .sticky-bottom {
+    box-shadow: 0px 5px 15px #888;
     flex-shrink: 0;
     position: sticky;
     bottom: 0;
