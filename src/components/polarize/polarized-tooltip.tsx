@@ -18,10 +18,11 @@ const Component = styled.div`
     border-radius: unset !important;
     font-size: unset;
     font-weight: normal;
-    line-height unset !important;
+    line-height: unset !important;
     padding: unset !important;
     text-align: center;
     vertical-align: middle !important;
+    appearance: initial;
     -webkit-appearance: button-bevel;
   }
 `
