@@ -181,6 +181,7 @@ const Page = styled.div`
       max-width: 100% !important;
       text-decoration: none;
       text-align: center;
+      appearance: initial;
       -webkit-appearance: button-bevel;
       border-radius: 0%;
     }
@@ -306,6 +307,10 @@ const ProductCustomizable = ({
     return Product({ data: { shopifyProduct } })
   }
 
+  // cart
+  const { addProductToCart, isAddingToCart, addSunglassesToCart } =
+    useContext(CartContext)
+
   // remove hidden variants
   contentfulProduct.variants = useFilterHiddenCustomizableVariants(
     contentfulProduct,
@@ -345,6 +350,14 @@ const ProductCustomizable = ({
 
   const [showPolarizedModal, setShowPolarizedModal] = useState<boolean>(false)
 
+  // used to swap polarized image if the lens color is different from original sku
+  const [polarizedImage, setPolarizedImage] = useState<
+    {
+      data: any
+      title: string
+    }[]
+  >([])
+
   // return default Product Page if contentful values do not exist
   const quantityLevels = useQuantityQuery(
     shopifyProduct.handle,
@@ -361,6 +374,45 @@ const ProductCustomizable = ({
     // if switch is toggled
     if (evt.target.checked) {
       if (polarizedVariant) {
+        // check if the lens color for polarized is different than unpolarized
+        // if it is, use string matching/interpolation to get the correct image
+        const defaultLensColor: string = selectedVariant.shopify.title
+          .toLowerCase()
+          .split("-")[1]
+          .replace("lens", "")
+          .trim()
+        const polarizedLensColor: string = polarizedVariant.shopify.title
+          .toLowerCase()
+          .split("-")[1]
+          .replace("lens", "")
+          .replace("polarized", "")
+          .trim()
+        // checks if polarized lens color is different from original lens color for a variant
+        if (polarizedLensColor !== defaultLensColor) {
+          // prefixes used for contentful image key
+          let imagePrefix = "sunGlasses"
+          const imageSuffix = "Lenses"
+          // if the polarized image is gradient, change prefix to use gradient contentful image keys
+          if (polarizedLensColor.includes("gradient")) {
+            imagePrefix = "gradientTint"
+          }
+          // format color for contentful image key
+          let formattedLensColor = polarizedLensColor.replace("gradient", "")
+          // capitalize color
+          formattedLensColor =
+            formattedLensColor.charAt(0).toUpperCase() +
+            formattedLensColor.slice(1)
+          // join prefix and suffix to get contentful image key
+          const polarizedImageKey =
+            imagePrefix + formattedLensColor + imageSuffix
+
+          const polarizedImageValue =
+            selectedVariant.contentful.customizations[polarizedImageKey]
+          // only swap the image if the key is valid, this prevents loading bad images
+          if (polarizedImageValue) {
+            setPolarizedImage([polarizedImageValue])
+          }
+        }
         // disable customize
         customizeBtn?.classList.add("disable")
         // set polarized variant to non polarized version
@@ -391,164 +443,10 @@ const ProductCustomizable = ({
           shopify: polarizedVariant.shopify,
         })
       }
+      // polarized switch has been set to off, reinitialize state and show old images
+      setPolarizedImage([])
     }
   }
-
-  // sets polarizedVariant to the correct polarized variant for corresponding frame
-  useEffect(() => {
-    if (lensType === LensType.GLASSES) return
-    const contentfulData = selectedVariant.contentful
-    const sku = selectedVariant.shopify.sku
-    const polVar = shopifyProduct.variants.find(
-      _variant =>
-        _variant.sku === `${sku}PZ` ||
-        _variant.sku === `${sku}-PZ` ||
-        _variant.sku === `${sku}P` ||
-        _variant.sku === `${sku}-P`
-    )
-    const polarizedToggle =
-      actionsRef.current?.querySelector("#polarized-toggle")
-    const customizeBtn = actionsRef.current?.querySelector("#customize-btn")
-    // if current Variant is polarized
-    if (
-      selectedVariant.shopify.sku.endsWith("PZ") ||
-      selectedVariant.shopify.sku.endsWith("P")
-    ) {
-    }
-    // if current variant is not polarized, but has a polarized option
-    else if (polVar) {
-      customizeBtn?.classList.remove("disable")
-      polarizedToggle?.classList.remove("disable")
-      const polarizedSwitch: HTMLInputElement | null | undefined =
-        polarizedToggle?.querySelector("#switch")
-      if (polarizedSwitch) polarizedSwitch.checked = false
-      setPolarizedVariant({
-        contentful: contentfulData,
-        shopify: polVar,
-      })
-    }
-    // if current variant is not polarized and has no polarized options
-    else {
-      customizeBtn?.classList.remove("disable")
-      polarizedToggle?.classList.add("disable")
-      const polarizedSwitch: HTMLInputElement | null | undefined =
-        polarizedToggle?.querySelector("#switch")
-      if (polarizedSwitch) polarizedSwitch.checked = false
-    }
-  }, [selectedVariant])
-
-  useEffect(() => {
-    let paramSku: null | string = null
-    const isBrowser = typeof window !== "undefined"
-    if (isBrowser) {
-      const params = new URLSearchParams(location.search)
-      if (params.get("lens_type"))
-        setLensType(params.get("lens_type") || "glasses")
-      if (params.get("variant")) paramSku = params.get("variant")
-    }
-
-    const sku = paramSku || null
-    if (sku) {
-      const contentful = contentfulProduct.variants.find(
-        (_variant: any) => _variant.sku === sku
-      )
-      const shopify = shopifyProduct.variants.find(
-        (_variant: any) => _variant.sku === sku
-      )
-      if (contentful && shopify) {
-        const variant = contentful
-        setSelectedVariant({
-          contentful: variant,
-          shopify,
-        })
-      }
-    }
-  }, [])
-
-  const {
-    setSelectedVariantsToDefault,
-    setCurrentStep,
-    setHasSavedCustomized,
-    setProductUrl,
-  } = useContext(CustomizeContext)
-
-  useEffect(() => {
-    setProductUrl(
-      `/products/${contentfulProduct.handle}/?variant=${contentfulProduct.sku}`
-    )
-    setCurrentStep(1)
-    setHasSavedCustomized({
-      step1: false,
-      step2: false,
-      step3: false,
-      step4: false,
-      case: false,
-    })
-    setSelectedVariantsToDefault()
-  }, [])
-
-  // will swap to the first available variant if selected is sold out
-  useEffect(() => {
-    let paramSku: null | string = null
-    const isBrowser = typeof window !== "undefined"
-    if (isBrowser) {
-      const params = new URLSearchParams(location.search)
-      if (params.get("lens_type"))
-        setLensType(params.get("lens_type") || "glasses")
-      if (params.get("variant")) paramSku = params.get("variant")
-    }
-    // if variant not supplied select first available
-    if (
-      !paramSku &&
-      quantityLevels &&
-      Object.keys(quantityLevels).length !== 0
-    ) {
-      const current = selectedVariant
-      if (quantityLevels[current.shopify.sku] <= 0) {
-        for (let key in quantityLevels) {
-          if (quantityLevels[key] > 0) {
-            const shopify = shopifyProduct.variants.find(
-              (_variant: any) => _variant.sku === key
-            )
-            const contentful = contentfulProduct.variants.find(
-              (_variant: any) => _variant.sku === key
-            )
-            if (shopify && contentful) {
-              setSelectedVariant({
-                contentful: contentful,
-                shopify: shopify,
-              })
-            }
-            break
-          }
-        }
-      }
-    }
-  }, [quantityLevels])
-
-  // cart
-  const { addProductToCart, isAddingToCart, addSunglassesToCart } =
-    useContext(CartContext)
-
-  useEffect(() => {
-    const productData = {
-      title: shopifyProduct.title,
-      legacyResourceId: selectedVariant.shopify.legacyResourceId,
-      sku: selectedVariant.shopify.sku,
-      productType: shopifyProduct.productType,
-      image: selectedVariant?.shopify?.image?.originalSrc
-        ? selectedVariant.shopify.image?.originalSrc
-        : shopifyProduct.featuredImage.originalSrc,
-      url: shopifyProduct.onlineStoreUrl,
-      vendor: shopifyProduct.vendor,
-      price: selectedVariant.shopify.price,
-      compareAtPrice: selectedVariant.shopify.compareAtPrice,
-      collections: shopifyProduct.collections.map(
-        (collection: { title: string }) => collection.title
-      ),
-    }
-    viewedProductGTMEvent(productData)
-  }, [])
 
   // click event handler for variant options
   const selectVariant = (e: React.MouseEvent, variant: any) => {
@@ -556,6 +454,9 @@ const ProductCustomizable = ({
       (_variant: any) => _variant.sku === variant.sku
     )
     if (shopify) {
+      // clear polarized image on change
+      setPolarizedImage([])
+      //
       setSelectedVariant({
         contentful: variant,
         shopify,
@@ -601,7 +502,10 @@ const ProductCustomizable = ({
             ],
           },
         ],
-        selectedVariant.contentful.imageSet[0].data,
+        // sets cart image to be correct polarized image if its a mismatch from non-polarized variant
+        polarizedImage.length !== 0
+          ? polarizedImage[0].data
+          : selectedVariant.contentful.imageSet[0].data,
         matchingKey
       )
 
@@ -670,6 +574,160 @@ const ProductCustomizable = ({
     addedToCartGTMEvent(productData)
   }
 
+  // use effects
+
+  useEffect(() => {
+    let paramSku: null | string = null
+    const isBrowser = typeof window !== "undefined"
+    if (isBrowser) {
+      const params = new URLSearchParams(location.search)
+      if (params.get("lens_type"))
+        setLensType(params.get("lens_type") || "glasses")
+      if (params.get("variant")) paramSku = params.get("variant")
+    }
+
+    const sku = paramSku || null
+    if (sku) {
+      const contentful = contentfulProduct.variants.find(
+        (_variant: any) => _variant.sku === sku
+      )
+      const shopify = shopifyProduct.variants.find(
+        (_variant: any) => _variant.sku === sku
+      )
+      if (contentful && shopify) {
+        const variant = contentful
+        setSelectedVariant({
+          contentful: variant,
+          shopify,
+        })
+      }
+    }
+  }, [])
+
+  const {
+    setSelectedVariantsToDefault,
+    setCurrentStep,
+    setHasSavedCustomized,
+    setProductUrl,
+  } = useContext(CustomizeContext)
+
+  useEffect(() => {
+    setProductUrl(
+      `/products/${contentfulProduct.handle}/?variant=${contentfulProduct.sku}`
+    )
+    setCurrentStep(1)
+    setHasSavedCustomized({
+      step1: false,
+      step2: false,
+      step3: false,
+      step4: false,
+      case: false,
+    })
+    setSelectedVariantsToDefault()
+  }, [])
+
+  useEffect(() => {
+    const productData = {
+      title: shopifyProduct.title,
+      legacyResourceId: selectedVariant.shopify.legacyResourceId,
+      sku: selectedVariant.shopify.sku,
+      productType: shopifyProduct.productType,
+      image: selectedVariant?.shopify?.image?.originalSrc
+        ? selectedVariant.shopify.image?.originalSrc
+        : shopifyProduct.featuredImage.originalSrc,
+      url: shopifyProduct.onlineStoreUrl,
+      vendor: shopifyProduct.vendor,
+      price: selectedVariant.shopify.price,
+      compareAtPrice: selectedVariant.shopify.compareAtPrice,
+      collections: shopifyProduct.collections.map(
+        (collection: { title: string }) => collection.title
+      ),
+    }
+    viewedProductGTMEvent(productData)
+  }, [])
+
+  // will swap to the first available variant if selected is sold out
+  useEffect(() => {
+    let paramSku: null | string = null
+    const isBrowser = typeof window !== "undefined"
+    if (isBrowser) {
+      const params = new URLSearchParams(location.search)
+      if (params.get("lens_type"))
+        setLensType(params.get("lens_type") || "glasses")
+      if (params.get("variant")) paramSku = params.get("variant")
+    }
+    // if variant not supplied select first available
+    if (
+      !paramSku &&
+      quantityLevels &&
+      Object.keys(quantityLevels).length !== 0
+    ) {
+      const current = selectedVariant
+      if (quantityLevels[current.shopify.sku] <= 0) {
+        for (let key in quantityLevels) {
+          if (quantityLevels[key] > 0) {
+            const shopify = shopifyProduct.variants.find(
+              (_variant: any) => _variant.sku === key
+            )
+            const contentful = contentfulProduct.variants.find(
+              (_variant: any) => _variant.sku === key
+            )
+            if (shopify && contentful) {
+              setSelectedVariant({
+                contentful: contentful,
+                shopify: shopify,
+              })
+            }
+            break
+          }
+        }
+      }
+    }
+  }, [quantityLevels])
+
+  // useEffect for initializing polarizedVariant on selectedVariant change
+  useEffect(() => {
+    if (lensType === LensType.GLASSES) return
+    const contentfulData = selectedVariant.contentful
+    const sku = selectedVariant.shopify.sku
+    const polVar = shopifyProduct.variants.find(
+      _variant =>
+        _variant.sku === `${sku}PZ` ||
+        _variant.sku === `${sku}-PZ` ||
+        _variant.sku === `${sku}P` ||
+        _variant.sku === `${sku}-P`
+    )
+    const polarizedToggle =
+      actionsRef.current?.querySelector("#polarized-toggle")
+    const customizeBtn = actionsRef.current?.querySelector("#customize-btn")
+    // if current Variant is polarized
+    if (
+      selectedVariant.shopify.sku.endsWith("PZ") ||
+      selectedVariant.shopify.sku.endsWith("P")
+    ) {
+    }
+    // if current variant is not polarized, but has a polarized option
+    else if (polVar) {
+      customizeBtn?.classList.remove("disable")
+      polarizedToggle?.classList.remove("disable")
+      const polarizedSwitch: HTMLInputElement | null | undefined =
+        polarizedToggle?.querySelector("#switch")
+      if (polarizedSwitch) polarizedSwitch.checked = false
+      setPolarizedVariant({
+        contentful: contentfulData,
+        shopify: polVar,
+      })
+    }
+    // if current variant is not polarized and has no polarized options
+    else {
+      customizeBtn?.classList.remove("disable")
+      polarizedToggle?.classList.add("disable")
+      const polarizedSwitch: HTMLInputElement | null | undefined =
+        polarizedToggle?.querySelector("#switch")
+      if (polarizedSwitch) polarizedSwitch.checked = false
+    }
+  }, [selectedVariant])
+
   return (
     <Layout>
       <SEO title={shopifyProduct.title} />
@@ -678,10 +736,13 @@ const ProductCustomizable = ({
         <div className="row">
           <div className="col images">
             <ProductCarousel
+              key={selectedVariant?.contentful.id}
               imageSet={
-                selectedVariant?.contentful &&
-                lensType === LensType.GLASSES &&
-                selectedVariant.contentful.imageSetClear
+                polarizedImage.length !== 0
+                  ? polarizedImage
+                  : selectedVariant?.contentful &&
+                    lensType === LensType.GLASSES &&
+                    selectedVariant.contentful.imageSetClear
                   ? selectedVariant.contentful.imageSetClear
                   : selectedVariant.contentful.imageSet
               }
@@ -877,6 +938,184 @@ export const query = graphql`
         imageSetClear {
           data: gatsbyImageData(layout: CONSTRAINED, width: 2048, height: 1365)
           title
+        }
+        customizations {
+          bifocal {
+            data: gatsbyImageData(
+              placeholder: TRACED_SVG
+              quality: 60
+              width: 800
+            )
+            title
+          }
+          bifocalGradientTintSmokeLenses {
+            data: gatsbyImageData(
+              placeholder: TRACED_SVG
+              quality: 60
+              width: 800
+            )
+            title
+          }
+          bifocalGradientTintBrownLenses {
+            data: gatsbyImageData(
+              placeholder: TRACED_SVG
+              quality: 60
+              width: 800
+            )
+            title
+          }
+          bifocalGradientTintG15Lenses {
+            data: gatsbyImageData(
+              placeholder: TRACED_SVG
+              quality: 60
+              width: 800
+            )
+            title
+          }
+          clear {
+            data: gatsbyImageData(
+              placeholder: TRACED_SVG
+              quality: 60
+              width: 800
+            )
+            title
+          }
+          gradientTintSmokeLenses {
+            data: gatsbyImageData(
+              placeholder: TRACED_SVG
+              quality: 60
+              width: 800
+            )
+            title
+          }
+          gradientTintBrownLenses {
+            data: gatsbyImageData(
+              placeholder: TRACED_SVG
+              quality: 60
+              width: 800
+            )
+            title
+          }
+          gradientTintG15Lenses {
+            data: gatsbyImageData(
+              placeholder: TRACED_SVG
+              quality: 60
+              width: 800
+            )
+            title
+          }
+          sunGlassesSmokeLenses {
+            data: gatsbyImageData(
+              placeholder: TRACED_SVG
+              quality: 60
+              width: 800
+            )
+            title
+          }
+          sunGlassesBrownLenses {
+            data: gatsbyImageData(
+              placeholder: TRACED_SVG
+              quality: 60
+              width: 800
+            )
+            title
+          }
+          sunGlassesGreenLenses {
+            data: gatsbyImageData(
+              placeholder: TRACED_SVG
+              quality: 60
+              width: 800
+            )
+            title
+          }
+          sunGlassesOrangeLenses {
+            data: gatsbyImageData(
+              placeholder: TRACED_SVG
+              quality: 60
+              width: 800
+            )
+            title
+          }
+          sunGlassesYellowLenses {
+            data: gatsbyImageData(
+              placeholder: TRACED_SVG
+              quality: 60
+              width: 800
+            )
+            title
+          }
+          sunGlassesBlueLenses {
+            data: gatsbyImageData(
+              placeholder: TRACED_SVG
+              quality: 60
+              width: 800
+            )
+            title
+          }
+          sunGlassesG15Lenses {
+            data: gatsbyImageData(
+              placeholder: TRACED_SVG
+              quality: 60
+              width: 800
+            )
+            title
+          }
+          sunGlassesSmokeLensesBifocal {
+            data: gatsbyImageData(
+              placeholder: TRACED_SVG
+              quality: 60
+              width: 800
+            )
+            title
+          }
+          sunGlassesBrownLensesBifocal {
+            data: gatsbyImageData(
+              placeholder: TRACED_SVG
+              quality: 60
+              width: 800
+            )
+            title
+          }
+          sunGlassesGreenLensesBifocal {
+            data: gatsbyImageData(
+              placeholder: TRACED_SVG
+              quality: 60
+              width: 800
+            )
+            title
+          }
+          sunGlassesOrangeLensesBifocal {
+            data: gatsbyImageData(
+              placeholder: TRACED_SVG
+              quality: 60
+              width: 800
+            )
+            title
+          }
+          sunGlassesYellowLensesBifocal {
+            data: gatsbyImageData(
+              placeholder: TRACED_SVG
+              quality: 60
+              width: 800
+            )
+            title
+          }
+          sunGlassesBlueLensesBifocal {
+            data: gatsbyImageData(
+              placeholder: TRACED_SVG
+              quality: 60
+              width: 800
+            )
+            title
+          }
+          sunGlassesG15LensesBifocal {
+            data: gatsbyImageData(
+              placeholder: TRACED_SVG
+              quality: 60
+              width: 800
+            )
+            title
+          }
         }
         id
         lensColor
