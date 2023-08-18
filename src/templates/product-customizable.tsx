@@ -311,6 +311,13 @@ const ProductCustomizable = ({
   const { addProductToCart, isAddingToCart, addSunglassesToCart } =
     useContext(CartContext)
 
+  const {
+    setSelectedVariantsToDefault,
+    setCurrentStep,
+    setHasSavedCustomized,
+    setProductUrl,
+  } = useContext(CustomizeContext)
+
   // remove hidden variants
   contentfulProduct.variants = useFilterHiddenCustomizableVariants(
     contentfulProduct,
@@ -603,13 +610,6 @@ const ProductCustomizable = ({
       }
     }
   }, [])
-
-  const {
-    setSelectedVariantsToDefault,
-    setCurrentStep,
-    setHasSavedCustomized,
-    setProductUrl,
-  } = useContext(CustomizeContext)
 
   useEffect(() => {
     setProductUrl(
