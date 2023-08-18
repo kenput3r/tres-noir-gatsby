@@ -448,6 +448,165 @@ const ProductCustomizable = ({
     }
   }
 
+<<<<<<< HEAD
+=======
+  // useEffect for initializing polarizedVariant on selectedVariant change
+  useEffect(() => {
+    if (lensType === LensType.GLASSES) return
+    const contentfulData = selectedVariant.contentful
+    const sku = selectedVariant.shopify.sku
+    const polVar = shopifyProduct.variants.find(
+      _variant =>
+        _variant.sku === `${sku}PZ` ||
+        _variant.sku === `${sku}-PZ` ||
+        _variant.sku === `${sku}P` ||
+        _variant.sku === `${sku}-P`
+    )
+    const polarizedToggle =
+      actionsRef.current?.querySelector("#polarized-toggle")
+    const customizeBtn = actionsRef.current?.querySelector("#customize-btn")
+    // if current Variant is polarized
+    if (
+      selectedVariant.shopify.sku.endsWith("PZ") ||
+      selectedVariant.shopify.sku.endsWith("P")
+    ) {
+    }
+    // if current variant is not polarized, but has a polarized option
+    else if (polVar) {
+      customizeBtn?.classList.remove("disable")
+      polarizedToggle?.classList.remove("disable")
+      const polarizedSwitch: HTMLInputElement | null | undefined =
+        polarizedToggle?.querySelector("#switch")
+      if (polarizedSwitch) polarizedSwitch.checked = false
+      setPolarizedVariant({
+        contentful: contentfulData,
+        shopify: polVar,
+      })
+    }
+    // if current variant is not polarized and has no polarized options
+    else {
+      customizeBtn?.classList.remove("disable")
+      polarizedToggle?.classList.add("disable")
+      const polarizedSwitch: HTMLInputElement | null | undefined =
+        polarizedToggle?.querySelector("#switch")
+      if (polarizedSwitch) polarizedSwitch.checked = false
+    }
+  }, [selectedVariant])
+
+  useEffect(() => {
+    let paramSku: null | string = null
+    const isBrowser = typeof window !== "undefined"
+    if (isBrowser) {
+      const params = new URLSearchParams(location.search)
+      if (params.get("lens_type"))
+        setLensType(params.get("lens_type") || "glasses")
+      if (params.get("variant")) paramSku = params.get("variant")
+    }
+
+    const sku = paramSku || null
+    if (sku) {
+      const contentful = contentfulProduct.variants.find(
+        (_variant: any) => _variant.sku === sku
+      )
+      const shopify = shopifyProduct.variants.find(
+        (_variant: any) => _variant.sku === sku
+      )
+      if (contentful && shopify) {
+        const variant = contentful
+        setSelectedVariant({
+          contentful: variant,
+          shopify,
+        })
+      }
+    }
+  }, [])
+
+  const {
+    setSelectedVariantsToDefault,
+    setCurrentStep,
+    setHasSavedCustomized,
+    setProductUrl,
+  } = useContext(CustomizeContext)
+
+  useEffect(() => {
+    setProductUrl(
+      `/products/${contentfulProduct.handle}/?variant=${contentfulProduct.sku}`
+    )
+    setCurrentStep(1)
+    setHasSavedCustomized({
+      step1: false,
+      step2: false,
+      step3: false,
+      step4: false,
+      case: false,
+    })
+    setSelectedVariantsToDefault()
+  }, [])
+
+  // will swap to the first available variant if selected is sold out
+  useEffect(() => {
+    let paramSku: null | string = null
+    const isBrowser = typeof window !== "undefined"
+    if (isBrowser) {
+      const params = new URLSearchParams(location.search)
+      if (params.get("lens_type"))
+        setLensType(params.get("lens_type") || "glasses")
+      if (params.get("variant")) paramSku = params.get("variant")
+    }
+    // if variant not supplied select first available
+    if (
+      !paramSku &&
+      quantityLevels &&
+      Object.keys(quantityLevels).length !== 0
+    ) {
+      const current = selectedVariant
+      if (quantityLevels[current.shopify.sku] <= 0) {
+        for (let key in quantityLevels) {
+          if (quantityLevels[key] > 0) {
+            const shopify = shopifyProduct.variants.find(
+              (_variant: any) => _variant.sku === key
+            )
+            const contentful = contentfulProduct.variants.find(
+              (_variant: any) => _variant.sku === key
+            )
+            if (shopify && contentful) {
+              setSelectedVariant({
+                contentful: contentful,
+                shopify: shopify,
+              })
+            }
+            break
+          }
+        }
+      }
+    }
+  }, [quantityLevels])
+
+  // cart
+  const { addProductToCart, isAddingToCart, addSunglassesToCart } =
+    useContext(CartContext)
+
+  useEffect(() => {
+    const productData = {
+      title: shopifyProduct.title,
+      legacyResourceId: selectedVariant.shopify.legacyResourceId,
+      sku: selectedVariant.shopify.sku,
+      productType: shopifyProduct.productType,
+      image: selectedVariant?.shopify?.image?.originalSrc
+        ? selectedVariant.shopify.image?.originalSrc
+        : shopifyProduct.featuredImage.originalSrc,
+      url: shopifyProduct.onlineStoreUrl,
+      vendor: shopifyProduct.vendor,
+      price: selectedVariant.shopify.price,
+      compareAtPrice: selectedVariant.shopify.compareAtPrice,
+      collections: shopifyProduct.collections.map(
+        (collection: { title: string }) => collection.title
+      ),
+    }
+    viewedProductGTMEvent(productData)
+  }, [])
+
+>>>>>>> bb35e747dc980ec491ea493f8248650cfdea43c7
   // click event handler for variant options
   const selectVariant = (e: React.MouseEvent, variant: any) => {
     const shopify = shopifyProduct.variants.find(
