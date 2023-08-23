@@ -458,11 +458,8 @@ const Form = ({
             disableContinue(currentStep)
           }
         }
-        // XTractive Polarized is only for Progressive and Single Vision
-        if (
-          selectedVariants.step1.product.title !== "Progressive" &&
-          selectedVariants.step1.product.title !== "Single Vision"
-        ) {
+        // XTractive Polarized is only disable
+        if (selectedVariants.step1.product.title === "Bifocal") {
           blockedSelections.push("XTRActive Polarized-Smoke")
           if (
             selectedVariants[`step${currentStep}`].product.title ===
