@@ -736,7 +736,7 @@ const ProductCustomizable = ({
         <div className="row">
           <div className="col images">
             <ProductCarousel
-              key={selectedVariant?.contentful.id}
+              key={`${selectedVariant?.contentful.id}-${lensType}`}
               imageSet={
                 polarizedImage.length !== 0
                   ? polarizedImage
