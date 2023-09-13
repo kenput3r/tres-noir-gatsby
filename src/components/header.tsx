@@ -9,7 +9,6 @@ import React, {
 import { StaticImage } from "gatsby-plugin-image"
 import styled from "styled-components"
 import { FaSearch, FaFacebookF, FaBars } from "react-icons/fa"
-import { IoAccessibilityOutline } from "react-icons/io5"
 import { useClickAway } from "react-use"
 import { TiSocialInstagram } from "react-icons/ti"
 import DesktopNavigation from "./desktopNavigation"
