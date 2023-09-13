@@ -9,6 +9,7 @@ import React, {
 import { StaticImage } from "gatsby-plugin-image"
 import styled from "styled-components"
 import { FaSearch, FaFacebookF, FaBars } from "react-icons/fa"
+import { IoAccessibilityOutline } from "react-icons/io5"
 import { useClickAway } from "react-use"
 import { TiSocialInstagram } from "react-icons/ti"
 import DesktopNavigation from "./desktopNavigation"
@@ -73,7 +74,7 @@ const Component = styled.header`
       padding: 0 10px;
     }
   }
-  .login-text {
+  .border-left {
     border-left: 1px solid var(--color-grey-dark);
     text-decoration: none;
   }
@@ -218,9 +219,24 @@ const Header = ({
               <FaSearch className="text-btn" />
             </Link>
 
+            <Link
+              to="/accessibility"
+              state={{ prevPath: currentPath }}
+              className="border-left"
+              title="Accessibility"
+            >
+              <StaticImage
+                className="img-btn"
+                src="../images/icon-accessibility.png"
+                alt="User"
+                placeholder="tracedSVG"
+                style={{ marginBottom: 0, maxWidth: 26 }}
+              />
+            </Link>
+
             <a
               href="https://account.tresnoir.com/account"
-              className="login-text"
+              className="border-left"
             >
               <StaticImage
                 className="img-btn"

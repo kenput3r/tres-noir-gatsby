@@ -10,12 +10,14 @@ import Footer from "./footer"
 import CartDrawer from "./cart-drawer"
 import "./fonts.css"
 import "./layout.css"
+import useUserWayAccessiblity from "../hooks/useUserWayAccessibility"
 
 interface LayoutProps {
   children: React.ReactNode
 }
 
 const Layout = ({ children }: LayoutProps) => {
+  const { initialize: initUserWay } = useUserWayAccessiblity()
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
   const data = useStaticQuery(graphql`
     query SiteTitleQuery {
@@ -31,6 +33,8 @@ const Layout = ({ children }: LayoutProps) => {
     // check for __tn_ce
     const ce = Cookies.get("__tn_ce")
     if (ce) identifyCustomerGTMEvent(atob(ce))
+    // init UserWay Accessibility
+    initUserWay()
   }, [])
 
   return (
