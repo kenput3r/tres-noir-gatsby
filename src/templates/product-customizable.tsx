@@ -28,6 +28,7 @@ import PolarizedTooltip from "../components/polarize/polarized-tooltip"
 import { useCaseCollection } from "../hooks/useCaseCollection"
 import { useFilterDuplicateFrames } from "../hooks/useFilterDuplicateFrames"
 import { useFilterHiddenCustomizableVariants } from "../hooks/useFilterHiddenCustomizableVariants"
+import FeaturedStyles from "../components/featured-styles"
 
 const Page = styled.div`
   .shipping-message {
@@ -56,6 +57,11 @@ const Page = styled.div`
         flex-direction: column-reverse;
       }
     }
+  }
+  .row-no-flex {
+    width: 1280px;
+    max-width: 100%;
+    margin: 0 auto;
   }
   .col {
     display: flex;
@@ -910,6 +916,11 @@ const ProductCustomizable = ({
             </div>
           )}
         </div>
+        {contentfulProduct.featuredStyles && (
+          <div className="row-no-flex">
+            <FeaturedStyles images={contentfulProduct.featuredStyles} />
+          </div>
+        )}
       </Page>
     </Layout>
   )
@@ -924,6 +935,10 @@ export const query = graphql`
       frameWidth
       fitDimensions
       casesAvailable
+      featuredStyles {
+        data: gatsbyImageData(placeholder: TRACED_SVG, quality: 60, width: 800)
+        title
+      }
       variants {
         colorName
         sku
