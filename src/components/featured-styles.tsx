@@ -12,13 +12,14 @@ const Component = styled.section`
   h3 {
     text-align: center;
     font-weight: normal;
-    font-size: 2rem;
     text-transform: uppercase;
     margin-bottom: 0;
-    @media screen and (max-width: 480px) {
-      font-size: 1.5rem;
-    }
+    font-size: 1.5rem;
     margin-bottom: 15px;
+    @media only screen and (min-width: 768px) {
+      font-size: 2rem;
+      margin-bottom: 35px;
+    }
   }
   .navigation {
     display: flex;
