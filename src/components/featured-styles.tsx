@@ -58,7 +58,7 @@ const FeaturedStyles = ({ images }: FeaturedStylesProps) => {
       <h3>Featured Styles</h3>
       <div className="navigation">
         <div className="nav-prev">
-          <a className="prev" role="button">
+          <a className="featured-style-carousel-prev" role="button">
             <Left />
           </a>
         </div>
@@ -66,8 +66,11 @@ const FeaturedStyles = ({ images }: FeaturedStylesProps) => {
           slidesPerView="auto"
           spaceBetween={10}
           loop={true}
-          navigation={{ nextEl: ".next", prevEl: ".prev" }}
-          className="carousel"
+          navigation={{
+            nextEl: ".featured-style-carousel-next",
+            prevEl: ".featured-style-carousel-prev",
+          }}
+          className="featured-style-carousel"
           breakpoints={{
             "480": {
               slidesPerView: 2,
@@ -102,7 +105,7 @@ const FeaturedStyles = ({ images }: FeaturedStylesProps) => {
           ))}
         </StyledSwiper>
         <div className="nav-next">
-          <a className="next" role="button">
+          <a className="featured-style-carousel-next" role="button">
             <Right />
           </a>
         </div>
