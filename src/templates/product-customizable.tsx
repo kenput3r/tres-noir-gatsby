@@ -29,6 +29,7 @@ import { useCaseCollection } from "../hooks/useCaseCollection"
 import { useFilterDuplicateFrames } from "../hooks/useFilterDuplicateFrames"
 import { useFilterHiddenCustomizableVariants } from "../hooks/useFilterHiddenCustomizableVariants"
 import FeaturedStyles from "../components/featured-styles"
+import ViewAsType from "../components/view-as-type"
 
 const Page = styled.div`
   .shipping-message {
@@ -485,7 +486,7 @@ const ProductCustomizable = ({
         params.set("variant", variant.sku)
         const { protocol, pathname, host } = window.location
         const newUrl = `${protocol}//${host}${pathname}?${params.toString()}`
-        window.history.pushState({}, "", newUrl)
+        // window.history.pushState({}, "", newUrl)
       }
     }
   }
@@ -585,6 +586,21 @@ const ProductCustomizable = ({
       quantity: 1,
     }
     addedToCartGTMEvent(productData)
+  }
+
+  // state handler for toggling between glasses vs sunglasses
+  const swapGlassesType = (type: "glasses" | "sunglasses") => {
+    setLensType(type)
+    // update url
+    setProductUrl(
+      `/products/${contentfulProduct.handle}/?variant=${contentfulProduct.sku}&lens_type=${type}`
+    )
+    const isBrowser = typeof window !== "undefined"
+    if (isBrowser) {
+      const params = new URLSearchParams(location.search)
+      params.set("lens_type", type)
+    }
+    // update url
   }
 
   // use effects
@@ -737,7 +753,7 @@ const ProductCustomizable = ({
   return (
     <Layout>
       <SEO title={shopifyProduct.title} />
-      <Page>
+      <Page key={lensType}>
         <FreeShipping />
         <div className="row">
           <div className="col images">
@@ -828,6 +844,10 @@ const ProductCustomizable = ({
                 </p>
               </div>
               <div className="actions" ref={actionsRef}>
+                <ViewAsType
+                  swapGlassesType={swapGlassesType}
+                  lensType={lensType}
+                />
                 {lensType === LensType.SUNGLASSES && (
                   <>
                     <div className="polarized-actions" id="polarized-toggle">
@@ -891,6 +911,10 @@ const ProductCustomizable = ({
                     </p>
                   </div>
                 )}
+                {/* <ViewAsType
+                  swapGlassesType={swapGlassesType}
+                  lensType={lensType}
+                /> */}
               </div>
             </form>
           </div>
