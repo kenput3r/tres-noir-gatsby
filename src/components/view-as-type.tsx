@@ -24,11 +24,11 @@ const Component = styled.div`
   }
   :hover {
     span {
-      color: var(--color-grey-light) !important;
+      color: #bfbfbf !important;
     }
     button {
-      color: var(--color-grey-light) !important;
-      border-color: var(--color-grey-light) !important;
+      color: #bfbfbf !important;
+      border-color: #bfbfbf !important;
     }
   }
 `
