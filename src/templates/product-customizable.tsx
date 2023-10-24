@@ -486,7 +486,7 @@ const ProductCustomizable = ({
         params.set("variant", variant.sku)
         const { protocol, pathname, host } = window.location
         const newUrl = `${protocol}//${host}${pathname}?${params.toString()}`
-        // window.history.pushState({}, "", newUrl)
+        window.history.pushState({}, "", newUrl)
       }
     }
   }
@@ -592,14 +592,14 @@ const ProductCustomizable = ({
   const swapGlassesType = (type: "glasses" | "sunglasses") => {
     setLensType(type)
     // update url
-    setProductUrl(
-      `/products/${contentfulProduct.handle}/?variant=${contentfulProduct.sku}&lens_type=${type}`
-    )
-    const isBrowser = typeof window !== "undefined"
-    if (isBrowser) {
-      const params = new URLSearchParams(location.search)
-      params.set("lens_type", type)
-    }
+    // setProductUrl(
+    //   `/products/${contentfulProduct.handle}/?variant=${contentfulProduct.sku}&lens_type=${type}`
+    // )
+    // const isBrowser = typeof window !== "undefined"
+    // if (isBrowser) {
+    //   const params = new URLSearchParams(location.search)
+    //   params.set("lens_type", type)
+    // }
     // update url
   }
 
@@ -911,10 +911,6 @@ const ProductCustomizable = ({
                     </p>
                   </div>
                 )}
-                {/* <ViewAsType
-                  swapGlassesType={swapGlassesType}
-                  lensType={lensType}
-                /> */}
               </div>
             </form>
           </div>
