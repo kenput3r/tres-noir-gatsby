@@ -844,10 +844,6 @@ const ProductCustomizable = ({
                 </p>
               </div>
               <div className="actions" ref={actionsRef}>
-                <ViewAsType
-                  swapGlassesType={swapGlassesType}
-                  lensType={lensType}
-                />
                 {lensType === LensType.SUNGLASSES && (
                   <>
                     <div className="polarized-actions" id="polarized-toggle">
