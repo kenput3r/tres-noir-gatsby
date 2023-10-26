@@ -90,7 +90,7 @@ const FeaturedStyles = ({ images }: FeaturedStylesProps) => {
           touchReleaseOnEdges={true}
           touchStartForcePreventDefault={true}
           watchSlidesProgress
-          swipeHandler=".carousel"
+          swipeHandler=".featured-style-carousel"
           threshold={15}
           observer={true}
         >
