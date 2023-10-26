@@ -35,6 +35,11 @@ const Component = styled.section`
   .nav-next {
     padding-left: 10px;
   }
+  .swiper-button-disabled {
+    svg {
+      color: var(--color-grey-light);
+    }
+  }
 `
 const StyledSwiper = styled(Swiper)`
   max-width: 100%;
@@ -65,7 +70,6 @@ const FeaturedStyles = ({ images }: FeaturedStylesProps) => {
         <StyledSwiper
           slidesPerView="auto"
           spaceBetween={10}
-          loop={true}
           navigation={{
             nextEl: ".featured-style-carousel-next",
             prevEl: ".featured-style-carousel-prev",
