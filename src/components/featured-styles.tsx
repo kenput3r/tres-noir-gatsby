@@ -72,12 +72,12 @@ const FeaturedStyles = ({ images }: FeaturedStylesProps) => {
           }}
           className="featured-style-carousel"
           breakpoints={{
-            "480": {
+            "600": {
               slidesPerView: 2,
               slidesPerGroup: 1,
               spaceBetween: 10,
             },
-            "768": {
+            "1024": {
               slidesPerView: 3,
               slidesPerGroup: 1,
               spaceBetween: 20,
@@ -90,7 +90,7 @@ const FeaturedStyles = ({ images }: FeaturedStylesProps) => {
           touchReleaseOnEdges={true}
           touchStartForcePreventDefault={true}
           watchSlidesProgress
-          swipeHandler=".carousel"
+          swipeHandler=".featured-style-carousel"
           threshold={15}
           observer={true}
         >
