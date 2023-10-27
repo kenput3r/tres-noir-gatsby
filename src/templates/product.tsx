@@ -243,15 +243,21 @@ const Product = ({ data: { shopifyProduct } }: any) => {
   }
 
   const quantityRange = () => {
-    let minRange = 0
-    if (quantityLevels) {
-      minRange = quantityLevels[selectedVariant.sku]
-    }
-    if (minRange === 0) {
+    try {
+      let minRange = 0
+      if (quantityLevels && quantityLevels[selectedVariant.sku]) {
+        minRange = quantityLevels[selectedVariant.sku]
+      }
+      if (minRange === 0) {
+        return [0]
+      }
+      const range = minRange >= 10 ? 10 : minRange
+      return range > 0
+        ? Array.from(Array(range > 0 ? range : 0), (_, index) => index + 1)
+        : [0]
+    } catch (error) {
       return [0]
     }
-    const range = minRange >= 10 ? 10 : minRange
-    return Array.from(Array(range), (_, index) => index + 1)
   }
 
   const handleAddToCart = (e: { preventDefault: () => void }) => {
@@ -356,8 +362,7 @@ const Product = ({ data: { shopifyProduct } }: any) => {
                   </select>
                 </div>
                 <div>
-                  {quantityLevels &&
-                  quantityLevels[selectedVariant.sku] !== 0 ? (
+                  {quantityLevels && quantityLevels[selectedVariant.sku] > 0 ? (
                     <AddToCartButton
                       handler={e => handleAddToCart(e)}
                       loading={isAddingToCart}

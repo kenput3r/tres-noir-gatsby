@@ -28,6 +28,8 @@ import PolarizedTooltip from "../components/polarize/polarized-tooltip"
 import { useCaseCollection } from "../hooks/useCaseCollection"
 import { useFilterDuplicateFrames } from "../hooks/useFilterDuplicateFrames"
 import { useFilterHiddenCustomizableVariants } from "../hooks/useFilterHiddenCustomizableVariants"
+import FeaturedStyles from "../components/featured-styles"
+import ViewAsType from "../components/view-as-type"
 
 const Page = styled.div`
   .shipping-message {
@@ -56,6 +58,11 @@ const Page = styled.div`
         flex-direction: column-reverse;
       }
     }
+  }
+  .row-no-flex {
+    width: 1280px;
+    max-width: 100%;
+    margin: 0 auto;
   }
   .col {
     display: flex;
@@ -581,6 +588,21 @@ const ProductCustomizable = ({
     addedToCartGTMEvent(productData)
   }
 
+  // state handler for toggling between glasses vs sunglasses
+  const swapGlassesType = (type: "glasses" | "sunglasses") => {
+    setLensType(type)
+    // update url
+    // setProductUrl(
+    //   `/products/${contentfulProduct.handle}/?variant=${contentfulProduct.sku}&lens_type=${type}`
+    // )
+    // const isBrowser = typeof window !== "undefined"
+    // if (isBrowser) {
+    //   const params = new URLSearchParams(location.search)
+    //   params.set("lens_type", type)
+    // }
+    // update url
+  }
+
   // use effects
 
   useEffect(() => {
@@ -731,7 +753,7 @@ const ProductCustomizable = ({
   return (
     <Layout>
       <SEO title={shopifyProduct.title} />
-      <Page>
+      <Page key={lensType}>
         <FreeShipping />
         <div className="row">
           <div className="col images">
@@ -910,6 +932,11 @@ const ProductCustomizable = ({
             </div>
           )}
         </div>
+        {contentfulProduct.featuredStyles && (
+          <div className="row-no-flex">
+            <FeaturedStyles images={contentfulProduct.featuredStyles} />
+          </div>
+        )}
       </Page>
     </Layout>
   )
@@ -924,6 +951,10 @@ export const query = graphql`
       frameWidth
       fitDimensions
       casesAvailable
+      featuredStyles {
+        data: gatsbyImageData(placeholder: TRACED_SVG, quality: 60, width: 800)
+        title
+      }
       variants {
         colorName
         sku
