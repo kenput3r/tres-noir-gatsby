@@ -486,7 +486,7 @@ const ProductCustomizable = ({
         params.set("variant", variant.sku)
         const { protocol, pathname, host } = window.location
         const newUrl = `${protocol}//${host}${pathname}?${params.toString()}`
-        window.history.pushState({}, "", newUrl)
+        window.history.replaceState({}, "", newUrl)
       }
     }
   }
