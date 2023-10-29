@@ -63,7 +63,8 @@ exports.createPages = async ({ graphql, actions: { createPage } }) => {
         productType !== "Lense Customization" &&
         productType !== "Lens Customization" &&
         productType !== "Lenses" &&
-        productType !== "Upsell AO"
+        productType !== "Upsell AO" &&
+        productType !== "Case Add-Ons"
       ) {
         createPage({
           path: `/products/${handle}`,
@@ -104,6 +105,8 @@ exports.createPages = async ({ graphql, actions: { createPage } }) => {
         "Home Page",
         "Black Friday Sale",
         "Case Add-ons",
+        "Mens",
+        "Womens",
       ]
 
       if (!excludedCollections.includes(title)) {

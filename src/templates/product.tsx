@@ -299,7 +299,14 @@ const Product = ({ data: { shopifyProduct } }: any) => {
 
   return (
     <Layout>
-      <SEO title={shopifyProduct.title} />
+      <SEO
+        title={shopifyProduct.title}
+        description={shopifyProduct.description}
+        image={{
+          url: shopifyProduct.featuredImage.originalSrc,
+          alt: shopifyProduct.featuredImage.altText,
+        }}
+      />
       <Page>
         <div className="row">
           <div className="col images">
@@ -342,37 +349,42 @@ const Product = ({ data: { shopifyProduct } }: any) => {
                   <p className="value">${selectedVariant.price} USD</p>
                 </div>
               </form>
-              <div className="actions">
-                <div className="select-wrapper">
-                  <select
-                    name="quantity"
-                    id="quantity"
-                    disabled={
-                      quantityLevels && quantityLevels[selectedVariant.sku] <= 0
-                        ? true
-                        : false
-                    }
-                    onChange={evt =>
-                      setSelectedVariantQuantity(evt.target.value)
-                    }
-                  >
-                    {quantityRange().map(el => {
-                      return <option key={`quantity-${el}`}>{el}</option>
-                    })}
-                  </select>
+              {selectedVariant.price > "0.00" && (
+                <div className="actions">
+                  <div className="select-wrapper">
+                    <select
+                      name="quantity"
+                      id="quantity"
+                      disabled={
+                        quantityLevels &&
+                        quantityLevels[selectedVariant.sku] <= 0
+                          ? true
+                          : false
+                      }
+                      onChange={evt =>
+                        setSelectedVariantQuantity(evt.target.value)
+                      }
+                    >
+                      {quantityRange().map(el => {
+                        return <option key={`quantity-${el}`}>{el}</option>
+                      })}
+                    </select>
+                  </div>
+                  <div>
+                    {quantityLevels &&
+                    quantityLevels[selectedVariant.sku] > 0 ? (
+                      <AddToCartButton
+                        handler={e => handleAddToCart(e)}
+                        loading={isAddingToCart}
+                        soldOut={false}
+                      />
+                    ) : (
+                      <AddToCartButton soldOut={true} />
+                    )}
+                  </div>
                 </div>
-                <div>
-                  {quantityLevels && quantityLevels[selectedVariant.sku] > 0 ? (
-                    <AddToCartButton
-                      handler={e => handleAddToCart(e)}
-                      loading={isAddingToCart}
-                      soldOut={false}
-                    />
-                  ) : (
-                    <AddToCartButton soldOut={true} />
-                  )}
-                </div>
-              </div>
+              )}
+
               <p className="product-description">
                 {shopifyProduct.description}
               </p>

@@ -381,6 +381,8 @@ const ProductCustomizable = ({
   // ref to toggle disable classes on buttons
   const actionsRef = useRef<HTMLDivElement>(null)
 
+  const seoDescription = contentfulProduct.styleDescription.styleDescription
+
   // switch selected variant to its polarized counterpart, toggled from switch
   // grey out customize option
   const switchToPolarized = (evt: ChangeEvent<HTMLInputElement>) => {
@@ -752,7 +754,14 @@ const ProductCustomizable = ({
 
   return (
     <Layout>
-      <SEO title={shopifyProduct.title} />
+      <SEO
+        title={shopifyProduct.title}
+        description={seoDescription}
+        image={{
+          url: shopifyProduct.featuredImage.originalSrc,
+          alt: shopifyProduct.featuredImage.altText,
+        }}
+      />
       <Page key={lensType}>
         <FreeShipping />
         <div className="row">
@@ -948,6 +957,9 @@ export const query = graphql`
   query ProductQuery($handle: String) {
     contentfulProduct(handle: { eq: $handle }) {
       handle
+      styleDescription {
+        styleDescription
+      }
       frameWidth
       fitDimensions
       casesAvailable

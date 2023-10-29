@@ -15,9 +15,22 @@ interface Props {
   meta?: any
   title: string
   isIndex?: boolean
+  image?: ImageMeta
 }
 
-const SEO = ({ description, lang, meta, title, isIndex = false }: Props) => {
+interface ImageMeta {
+  url: string
+  alt: string
+}
+
+const SEO = ({
+  description,
+  lang,
+  meta,
+  title,
+  isIndex = false,
+  image,
+}: Props) => {
   const { site } = useStaticQuery(
     graphql`
       query {
@@ -34,6 +47,10 @@ const SEO = ({ description, lang, meta, title, isIndex = false }: Props) => {
 
   const metaDescription = description || site.siteMetadata.description
   const defaultTitle = site.siteMetadata?.title
+  const defaultImage = image ?? {
+    url: "https://cdn.shopify.com/s/files/1/0140/0012/8057/files/tres-noir-independent-eyewear-co.png?v=1654107686",
+    alt: "Tres Noir Eyewear",
+  }
 
   const titleTemplate = () => {
     if (defaultTitle) {
@@ -66,6 +83,14 @@ const SEO = ({ description, lang, meta, title, isIndex = false }: Props) => {
         {
           property: `og:description`,
           content: metaDescription,
+        },
+        {
+          property: "og:image:url",
+          content: defaultImage.url,
+        },
+        {
+          property: "og:image:alt",
+          content: defaultImage.alt,
         },
         {
           property: `og:type`,
