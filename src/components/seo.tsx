@@ -46,30 +46,28 @@ const SEO = ({
   )
 
   const metaDescription = description || site.siteMetadata.description
-  const defaultTitle = site.siteMetadata?.title
+  const defaultTitle = site.siteMetadata.title
   const defaultImage = image ?? {
     url: "https://cdn.shopify.com/s/files/1/0140/0012/8057/files/tres-noir-independent-eyewear-co.png?v=1654107686",
     alt: "Tres Noir Eyewear",
   }
 
   const titleTemplate = () => {
-    if (defaultTitle) {
-      if (isIndex) {
-        return `${defaultTitle} | %s`
-      } else {
-        return `%s | ${defaultTitle}`
-      }
+    if (isIndex) {
+      return `${defaultTitle} | %s`
     } else {
-      return undefined
+      return `%s | ${defaultTitle}`
     }
   }
+
+  const formattedTitle = isIndex ? `${defaultTitle} - ${title}` : title
 
   return (
     <Helmet
       htmlAttributes={{
         lang,
       }}
-      title={title}
+      title={formattedTitle}
       titleTemplate={titleTemplate()}
       meta={[
         {
@@ -78,7 +76,7 @@ const SEO = ({
         },
         {
           property: `og:title`,
-          content: title,
+          content: formattedTitle,
         },
         {
           property: `og:description`,
@@ -106,7 +104,7 @@ const SEO = ({
         },
         {
           name: `twitter:title`,
-          content: title,
+          content: formattedTitle,
         },
         {
           name: `twitter:description`,
