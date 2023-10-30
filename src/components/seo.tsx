@@ -48,8 +48,8 @@ const SEO = ({
   const metaDescription = description || site.siteMetadata.description
   const defaultTitle = site.siteMetadata.title
   const defaultImage = image ?? {
-    url: "https://cdn.shopify.com/s/files/1/0140/0012/8057/files/tres-noir-independent-eyewear-co.png?v=1654107686",
-    alt: "Tres Noir Eyewear",
+    url: "https://cdn.shopify.com/s/files/1/0140/0012/8057/files/TN_OpenGraph_Image.jpg?v=1698699695",
+    alt: "Tres Noir Handmade Eyewear",
   }
 
   const titleTemplate = () => {
@@ -60,7 +60,7 @@ const SEO = ({
     }
   }
 
-  const formattedTitle = isIndex ? `${defaultTitle} - ${title}` : title
+  const formattedTitle = isIndex ? `${defaultTitle} | ${title}` : title
 
   return (
     <Helmet
