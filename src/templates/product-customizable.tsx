@@ -758,8 +758,8 @@ const ProductCustomizable = ({
         title={shopifyProduct.title}
         description={seoDescription}
         image={{
-          url: shopifyProduct.featuredImage.originalSrc,
-          alt: shopifyProduct.featuredImage.altText,
+          url: contentfulProduct.variants[0].featuredImage.url,
+          alt: contentfulProduct.variants[0].featuredImage.title,
         }}
       />
       <Page key={lensType}>
@@ -972,6 +972,10 @@ export const query = graphql`
         sku
         colorImage {
           data: gatsbyImageData
+          title
+        }
+        featuredImage {
+          url
           title
         }
         imageSet {
