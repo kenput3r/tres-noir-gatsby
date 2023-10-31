@@ -6,6 +6,7 @@ import { ContentfulCollection, ContentfulProduct } from "../types/contentful"
 import { useHeight } from "../hooks/useHeight"
 import { useFrameColors } from "../hooks/useFrameColors"
 import { getFilters } from "../utils/getContentfulCollectionFilters"
+import { BiPlus as IconPlus, BiMinus as IconMinus } from "react-icons/bi"
 
 const DisplayFilters = styled.div`
   display: flex;
@@ -16,6 +17,9 @@ const DisplayFilters = styled.div`
   margin-top: 20px;
   font-family: var(--heading-font);
   button.filter {
+    display: flex;
+    align-items: center;
+    gap: 4px;
     font-size: 1.25rem;
     @media (max-width: 600px) {
       font-size: 1.2rem;
@@ -284,7 +288,8 @@ const FiltersContentful = ({
     <>
       <DisplayFilters>
         <button className="filter" type="button" onClick={handleShowFilters}>
-          Filter +
+          <span>Filter</span>
+          {showFilters ? <IconMinus size={20} /> : <IconPlus size={20} />}
         </button>
       </DisplayFilters>
 

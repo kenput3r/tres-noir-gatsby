@@ -23,6 +23,7 @@ const ProductImageGrid = (props: { product: any; selectedVariant: any }) => {
     id: string
   }
 
+  // TODO: see why duplicate images are created in the grid
   const createImageSet = () => {
     let imageSet: ImageSet[] = []
     // single Product with images
@@ -70,15 +71,12 @@ const ProductImageGrid = (props: { product: any; selectedVariant: any }) => {
     <Component>
       <div className="featured-image">
         {featuredImage && featuredImage.data ? (
-          <GatsbyImage
-            image={featuredImage.data}
-            alt={featuredImage.title}
-          ></GatsbyImage>
+          <GatsbyImage image={featuredImage.data} alt={featuredImage.title} />
         ) : (
           <StaticImage
             src="../images/no-image-placeholder.jpg"
             alt="No image available"
-          ></StaticImage>
+          />
         )}
       </div>
       <div className="image-grid">

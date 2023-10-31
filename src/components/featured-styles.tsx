@@ -99,7 +99,7 @@ const FeaturedStyles = ({ images }: FeaturedStylesProps) => {
           observer={true}
         >
           {images.map((image, i: number) => (
-            <SwiperSlide key={`thumb-${i}`}>
+            <SwiperSlide key={`featured-styles-slide-${i}`}>
               <GatsbyImage
                 image={image.data}
                 alt={image.title}

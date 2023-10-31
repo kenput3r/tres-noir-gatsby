@@ -71,10 +71,8 @@ export function useQuantityQuery(handle: string, size: number) {
           quantities[element.node.sku] = element.node.quantityAvailable
         })
         return quantities
-      } else {
-        console.log(`Error while calling quantity fetch, error on ${handle}`)
-        return {}
       }
+      return {}
     } catch (err: any) {
       console.log("Error while calling fetch", err)
       renderErrorModal()
@@ -87,7 +85,6 @@ export function useQuantityQuery(handle: string, size: number) {
       createQuantityData().then(result => setProductQuantities(result))
     }
     return () => {
-      //console.log("ABORTING?")
       abortController.abort()
     }
   }, [])

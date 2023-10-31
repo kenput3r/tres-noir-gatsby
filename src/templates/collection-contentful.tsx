@@ -55,7 +55,14 @@ const CollectionContentful = ({
 
   return (
     <Layout>
-      <SEO title={collection.name} />
+      <SEO
+        title={collection.name}
+        description={collection.featuredImage.description}
+        image={{
+          url: collection.featuredImage.url,
+          alt: collection.featuredImage.description,
+        }}
+      />
       <div className="page">
         <FreeShipping />
         {collection.featuredImage && (
@@ -135,6 +142,7 @@ export const query = graphql`
       featuredImage {
         data: gatsbyImageData(width: 2048, formats: [AUTO, WEBP], quality: 50)
         description
+        url
       }
       featuredImage2 {
         data: gatsbyImageData(width: 2048, formats: [AUTO, WEBP], quality: 50)
@@ -171,6 +179,7 @@ export const query = graphql`
     shopifyCollection(handle: { eq: $handle }) {
       products {
         handle
+        createdAt
         variants {
           sku
           metafields {

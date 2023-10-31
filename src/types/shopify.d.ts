@@ -37,4 +37,9 @@ export interface ShopifyCollection {
   id: string
   title: string
   products: ShopifyProduct[]
+  image: {
+    altText: string
+    originalSrc: string
+  }
+  description: string
 }

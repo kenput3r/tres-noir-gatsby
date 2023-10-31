@@ -14,6 +14,7 @@ const Frame = styled("div")`
 
 const Title = styled("span")`
   vertical-align: middle;
+  cursor: pointer;
 `
 
 const Content = styled(animated.div)`

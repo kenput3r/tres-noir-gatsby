@@ -105,9 +105,33 @@ const Collection = ({
     viewedCollectionGTMEvent(collectionInfo)
   }, [])
 
+  const seoDescription = collectionImages
+    ? collectionImages.description
+    : collection.description
+
+  const getCollectionImage = () => {
+    if (collectionImages && collectionImages.collectionImageTop) {
+      return {
+        url: collectionImages.collectionImageTop.url,
+        alt: collectionImages.collectionImageTop.title,
+      }
+    }
+    if (collection.image) {
+      return {
+        url: collection.image.originalSrc,
+        alt: collection.image.originalSrc,
+      }
+    }
+    return undefined
+  }
+
   return (
     <Layout>
-      <SEO title={collection.title} />
+      <SEO
+        title={collection.title}
+        description={seoDescription}
+        image={getCollectionImage()}
+      />
       <FreeShipping />
       <Page>
         <div className="container">
@@ -188,6 +212,11 @@ export const query = graphql`
       handle
       id
       title
+      description
+      image {
+        altText
+        originalSrc
+      }
       products {
         handle
         featuredImage {
@@ -223,6 +252,7 @@ export const query = graphql`
     contentfulShopifyCollectionImages(handle: { eq: $handle }) {
       description
       collectionImageTop {
+        url
         gatsbyImageData
         title
       }

@@ -11,9 +11,7 @@ export default function useUserWayAccessiblity() {
   function initialize() {
     // check if cookie exists and set enabled
     const userWayEnabled = Cookies.get(TN_USERWAY)
-    console.log("userWayEnabled", userWayEnabled)
     if (userWayEnabled) {
-      console.log("userWayEnabled", userWayEnabled)
       setEnabled(true)
     }
   }
