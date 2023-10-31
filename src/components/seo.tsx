@@ -99,6 +99,14 @@ const SEO = ({
           content: `summary`,
         },
         {
+          name: `twitter:image`,
+          content: defaultImage.url,
+        },
+        {
+          name: `twitter:image:alt`,
+          content: defaultImage.alt,
+        },
+        {
           name: `twitter:creator`,
           content: site.siteMetadata?.author || ``,
         },
