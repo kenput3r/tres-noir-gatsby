@@ -67,7 +67,7 @@ const SEO = ({
       htmlAttributes={{
         lang,
       }}
-      title={formattedTitle}
+      title={title}
       titleTemplate={titleTemplate()}
       meta={[
         {
