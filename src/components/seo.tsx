@@ -15,9 +15,22 @@ interface Props {
   meta?: any
   title: string
   isIndex?: boolean
+  image?: ImageMeta
 }
 
-const SEO = ({ description, lang, meta, title, isIndex = false }: Props) => {
+interface ImageMeta {
+  url: string
+  alt: string
+}
+
+const SEO = ({
+  description,
+  lang,
+  meta,
+  title,
+  isIndex = false,
+  image,
+}: Props) => {
   const { site } = useStaticQuery(
     graphql`
       query {
@@ -33,19 +46,21 @@ const SEO = ({ description, lang, meta, title, isIndex = false }: Props) => {
   )
 
   const metaDescription = description || site.siteMetadata.description
-  const defaultTitle = site.siteMetadata?.title
+  const defaultTitle = site.siteMetadata.title
+  const defaultImage = image ?? {
+    url: "https://cdn.shopify.com/s/files/1/0140/0012/8057/files/TN_OpenGraph_Image.jpg?v=1698699695",
+    alt: "Tres Noir Handmade Eyewear",
+  }
 
   const titleTemplate = () => {
-    if (defaultTitle) {
-      if (isIndex) {
-        return `${defaultTitle} | %s`
-      } else {
-        return `%s | ${defaultTitle}`
-      }
+    if (isIndex) {
+      return `${defaultTitle} | %s`
     } else {
-      return undefined
+      return `%s | ${defaultTitle}`
     }
   }
+
+  const formattedTitle = isIndex ? `${defaultTitle} | ${title}` : title
 
   return (
     <Helmet
@@ -61,11 +76,19 @@ const SEO = ({ description, lang, meta, title, isIndex = false }: Props) => {
         },
         {
           property: `og:title`,
-          content: title,
+          content: formattedTitle,
         },
         {
           property: `og:description`,
           content: metaDescription,
+        },
+        {
+          property: "og:image:url",
+          content: defaultImage.url,
+        },
+        {
+          property: "og:image:alt",
+          content: defaultImage.alt,
         },
         {
           property: `og:type`,
@@ -76,12 +99,20 @@ const SEO = ({ description, lang, meta, title, isIndex = false }: Props) => {
           content: `summary`,
         },
         {
+          name: `twitter:image`,
+          content: defaultImage.url,
+        },
+        {
+          name: `twitter:image:alt`,
+          content: defaultImage.alt,
+        },
+        {
           name: `twitter:creator`,
           content: site.siteMetadata?.author || ``,
         },
         {
           name: `twitter:title`,
-          content: title,
+          content: formattedTitle,
         },
         {
           name: `twitter:description`,
