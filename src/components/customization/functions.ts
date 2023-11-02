@@ -19,13 +19,11 @@ export const changeImage = (
   try {
     switch (currentStep) {
       case 1:
-        if (isBifocal) {
-          const property = "bifocal"
-          setCurrentImage({
-            data: variant.contentful.customizations[property].data,
-            altText: variant.contentful.customizations[property].title,
-          })
-        }
+        const property = isBifocal ? "bifocal" : "clear"
+        setCurrentImage({
+          data: variant.contentful.customizations[property].data,
+          altText: variant.contentful.customizations[property].title,
+        })
         break
       case 2:
         const variantTitle = selectedVariants.step2.title
