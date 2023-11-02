@@ -9,13 +9,14 @@ export const changeImage = (
 ) => {
   const { step1, step2 } = selectedVariants
   const defaultImage =
-    variant.contentful.customizations.clear.title ??
+    variant.contentful.customizations.clear.data ??
     variant.contentful.featuredImage.data
   const defaultTitle =
     variant.contentful.customizations.clear.title ??
     variant.contentful.featuredImage.title
 
   const isBifocal = step1.product.title === "Bifocal"
+
   try {
     switch (currentStep) {
       case 1:
@@ -36,6 +37,7 @@ export const changeImage = (
               data: variant.contentful.customizations[property].data,
               altText: variant.contentful.customizations[property].title,
             })
+            break
           // Sunglasses
           case "Sunglasses":
           case "Transitions":
