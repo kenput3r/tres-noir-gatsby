@@ -30,6 +30,14 @@ export const changeImage = (
       case 2:
         const variantTitle = selectedVariants.step2.title
         switch (step2.product.title) {
+          // Clear
+          case "Clear":
+          case "Blue Light Blocking":
+            const property = isBifocal ? "bifocal" : "clear"
+            setCurrentImage({
+              data: variant.contentful.customizations[property].data,
+              altText: variant.contentful.customizations[property].title,
+            })
           // Sunglasses
           case "Sunglasses":
           case "Transitions":
