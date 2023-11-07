@@ -605,6 +605,60 @@ const ProductCustomizable = ({
     // update url
   }
 
+  const generateProductContentfulJsonLD = (
+    shopifyProduct,
+    contentfulProduct
+  ) => {
+    try {
+      const name = shopifyProduct.title
+      const sku = shopifyProduct.variants[0].sku
+      const color = contentfulProduct.variants[0].dominantFrameColor as string
+
+      const price = shopifyProduct.variants[0].price
+
+      const featuredImg = contentfulProduct.variants[0].featuredImage.url
+
+      const description =
+        contentfulProduct.styleDescription.styleDescription ?? ""
+
+      const formattedColor = color.charAt(0).toUpperCase() + color.slice(1) // capitalize color
+
+      const productSchema = {
+        "@context": "https://schema.org/",
+        "@type": "Product",
+        name,
+        sku,
+        color: formattedColor,
+        description,
+        image: [featuredImg],
+        brand: {
+          "@type": "Brand",
+          name: "Tres Noir",
+        },
+        offers: {
+          "@type": "Offer",
+          priceSpecification: {
+            "@type": "PriceSpecification",
+            price,
+            priceCurrency: "USD",
+          },
+          hasMerchantReturnPolicy: {
+            "@type": "MerchantReturnPolicy",
+            applicableCountry: "US",
+            returnPolicyCategory:
+              "https://schema.org/MerchantReturnFiniteReturnWindow",
+            merchantReturnDays: 30,
+            returnMethod: "https://schema.org/ReturnByMail",
+            returnFees: "https://schema.org/FreeReturn",
+          },
+        },
+      }
+      return JSON.stringify(productSchema, null, 2)
+    } catch (error) {
+      return null
+    }
+  }
+
   // use effects
 
   useEffect(() => {
@@ -761,6 +815,10 @@ const ProductCustomizable = ({
           url: contentfulProduct.variants[0].featuredImage.url,
           alt: contentfulProduct.variants[0].featuredImage.title,
         }}
+        jsonLdPayload={generateProductContentfulJsonLD(
+          shopifyProduct,
+          contentfulProduct
+        )}
       />
       <Page key={lensType}>
         <FreeShipping />
@@ -968,6 +1026,7 @@ export const query = graphql`
         title
       }
       variants {
+        dominantFrameColor
         colorName
         sku
         colorImage {
