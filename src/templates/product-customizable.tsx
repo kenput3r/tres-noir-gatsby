@@ -613,7 +613,6 @@ const ProductCustomizable = ({
       const name = shopifyProduct.title
       const sku = shopifyProduct.variants[0].sku
       const color = contentfulProduct.variants[0].dominantFrameColor as string
-
       const price = shopifyProduct.variants[0].price
 
       const featuredImg = contentfulProduct.variants[0].featuredImage.url
