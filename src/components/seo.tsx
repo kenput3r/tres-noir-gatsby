@@ -62,8 +62,6 @@ const SEO = ({
     }
   }
 
-  console.log("ren", jsonLdPayload)
-
   const formattedTitle = isIndex ? `${siteTitle} | ${title}` : title
 
   return (
