@@ -4,7 +4,7 @@ import { Review as ReviewType } from "../../types/yotpo"
 import ReviewItem from "./review-item"
 
 const Component = styled.section`
-  margin-top: 18px;
+  margin-top: 25px;
 `
 
 type Props = { reviews: ReviewType[] }

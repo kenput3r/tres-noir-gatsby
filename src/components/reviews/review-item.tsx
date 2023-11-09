@@ -1,11 +1,16 @@
 import React from "react"
 import styled from "styled-components"
+import { FaUserCircle as UserIcon } from "react-icons/fa"
 import { Review as ReviewType } from "../../types/yotpo"
 import ReviewStars from "./review-stars"
 import ReviewVotes from "./review-votes"
 
 const Component = styled.section`
   margin-bottom: 16px;
+  display: flex;
+  .outer {
+    flex: 1;
+  }
   .review-author {
     font-weight: bold;
   }
@@ -22,6 +27,11 @@ const Component = styled.section`
     font-size: 16px;
     line-height: 19px;
   }
+  .user-icon {
+    font-size: 45px;
+    margin-right: 10px;
+    fill: var(--color-grey-dark);
+  }
 `
 
 type Props = { review: ReviewType }
@@ -33,7 +43,8 @@ const ReviewItem = ({ review }: Props) => {
   const date = new Date(created_at).toLocaleDateString("en-US")
   return (
     <Component>
-      <div>
+      <UserIcon className="user-icon" />
+      <div className="outer">
         <div className="review-name-date">
           <span className="review-author">{user.display_name}</span>
           <span>{date}</span>
@@ -41,10 +52,10 @@ const ReviewItem = ({ review }: Props) => {
         <div>
           <ReviewStars score={score} />
         </div>
+        <p className="review-title">{title}</p>
+        <p className="review-content">{content}</p>
+        <ReviewVotes reviewId={id} votesUp={votes_up} votesDown={votes_down} />
       </div>
-      <p className="review-title">{title}</p>
-      <p className="review-content">{content}</p>
-      <ReviewVotes reviewId={id} votesUp={votes_up} votesDown={votes_down} />
     </Component>
   )
 }

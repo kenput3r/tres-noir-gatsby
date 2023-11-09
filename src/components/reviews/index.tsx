@@ -7,11 +7,15 @@ import ReviewList from "./review-list"
 import ReviewForm from "./review-form"
 import ReviewsEmpty from "./reviews-empty"
 const Component = styled.section`
+  button {
+    padding: 8px 15px;
+  }
   p {
     margin: unset;
   }
   p,
   span,
+  input,
   label {
     font-family: var(--sub-heading-font);
   }
@@ -21,9 +25,7 @@ const Component = styled.section`
     text-transform: uppercase;
   }
 `
-type Props = {
-  context: YotpoRetrieveReviewsResponse
-}
+
 const Reviews = () => {
   const { data, isLoading } = useReviews()
 
