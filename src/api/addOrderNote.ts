@@ -1,5 +1,9 @@
 import fetch from "node-fetch"
-export default async function addOrderNote(req, res) {
+import type { GatsbyFunctionRequest, GatsbyFunctionResponse } from "gatsby"
+export default async function addOrderNote(
+  req: GatsbyFunctionRequest,
+  res: GatsbyFunctionResponse
+) {
   try {
     const parsedBody = JSON.parse(req.body)
     const orderId = parsedBody.id
