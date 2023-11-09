@@ -1,59 +1,51 @@
 import React from "react"
 import styled from "styled-components"
 import { Review as ReviewType } from "../../types/yotpo"
-import { AiFillStar as StarIcon } from "react-icons/ai"
+import ReviewStars from "./review-stars"
+import ReviewVotes from "./review-votes"
 
-const Component = styled.section``
+const Component = styled.section`
+  margin-bottom: 16px;
+  .review-author {
+    font-weight: bold;
+  }
+  .review-name-date {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 5px;
+  }
+  .review-title {
+    margin-bottom: 6px;
+    font-family: var(--heading-font);
+  }
+  .review-content {
+    font-size: 16px;
+    line-height: 19px;
+  }
+`
 
 type Props = { review: ReviewType }
 
 const ReviewItem = ({ review }: Props) => {
-  console.log(" single review", review)
-  const { content, user, score, created_at } = review
+  console.log("single review", review)
+  const { id, content, user, score, created_at, title, votes_up, votes_down } =
+    review
   const date = new Date(created_at).toLocaleDateString("en-US")
   return (
     <Component>
       <div>
-        <div>
-          <span>{user.display_name}</span>
-        </div>
-        <div>
+        <div className="review-name-date">
+          <span className="review-author">{user.display_name}</span>
           <span>{date}</span>
         </div>
         <div>
-          <Stars score={score} />
+          <ReviewStars score={score} />
         </div>
       </div>
-      <p>{content}</p>
+      <p className="review-title">{title}</p>
+      <p className="review-content">{content}</p>
+      <ReviewVotes reviewId={id} votesUp={votes_up} votesDown={votes_down} />
     </Component>
   )
 }
-
-const StarList = styled.div`
-  .fill {
-    fill: #ffd700;
-  }
-  svg {
-    fill: none;
-    stroke: black;
-    stroke-width: 6px;
-    stroke-linejoin: round;
-    paint-order: stroke;
-  }
-`
-const Stars = ({ score }: { score: number }) => {
-  console.log("score", score)
-  const starArr = Array.from(Array(5), (_, x) => x + 1)
-
-  return (
-    <StarList>
-      {starArr.map(star => (
-        <>
-          <StarIcon className={score >= star ? "fill" : ""} />
-        </>
-      ))}
-    </StarList>
-  )
-}
-
 export default ReviewItem

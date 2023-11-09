@@ -25,7 +25,6 @@ export function ReviewsProvider({ productId, children }: Props) {
       try {
         setIsLoading(true)
         const YOTPO_APP_KEY = process.env.GATSBY_YOTPO_APP_KEY as string
-        console.log("yotpo app key", YOTPO_APP_KEY)
         const url = `https://api-cdn.yotpo.com/v1/widget/${YOTPO_APP_KEY}/products/${productId}/reviews.json`
 
         const response = await fetch(url, {
@@ -44,14 +43,29 @@ export function ReviewsProvider({ productId, children }: Props) {
         setIsLoading(false)
         return json
       } catch (error) {
-        console.log("Error fetching reviews for product", error)
+        console.error("Error fetching reviews for product", error)
       }
     }
     getReviewsForProduct(productId)
   }, [])
 
+  const mutateReviewThumbVote = ({
+    vote,
+    reviewId,
+  }: {
+    vote: "up" | "down"
+    reviewId: number
+  }) => {
+    try {
+      const url = `http://api.yotpo.com/reviews/${reviewId}/vote/${vote}`
+      console.log("ENDPOINT IS", url)
+    } catch (error) {
+      console.error("Error")
+    }
+  }
+
   const reviewsContextValue = useMemo(
-    () => ({ data, isLoading }),
+    () => ({ data, isLoading, mutateReviewThumbVote }),
     [data, isLoading]
   )
 

@@ -10,6 +10,7 @@ import YouMayAlsoLike from "../components/you-may-also-like"
 import ProductImageGrid from "../components/product-image-grid"
 import AddToCartButton from "../components/add-to-cart-button"
 import ReviewsProvider from "../contexts/reviews/ReviewsProvider"
+import Reviews from "../components/reviews"
 
 const Page = styled.div`
   .shipping-message {
@@ -43,6 +44,10 @@ const Page = styled.div`
     flex-direction: column;
     flex: 1;
     padding: 1.45rem;
+    @media screen and (max-width: 768px) {
+      padding-left: 0.5rem;
+      padding-right: 0.5rem;
+    }
   }
   .heading {
     align-self: flex-start;
@@ -166,6 +171,12 @@ const Page = styled.div`
   .image-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
+  }
+  .review-row {
+    @media screen and (min-width: 768px) {
+      padding: 0 25px;
+    }
+    padding: 0.5rem;
   }
 `
 const Product = ({ data: { shopifyProduct } }: any) => {
@@ -392,6 +403,9 @@ const Product = ({ data: { shopifyProduct } }: any) => {
             </div>
           </div>
           <YouMayAlsoLike shopifyProduct={shopifyProduct} />
+          <div className="review-row">
+            <Reviews />
+          </div>
         </Page>
       </Layout>
     </ReviewsProvider>

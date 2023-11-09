@@ -5,15 +5,20 @@ import useReviews from "../../contexts/reviews/hooks"
 import { Bottomline } from "../../types/yotpo"
 import ReviewList from "./review-list"
 import ReviewForm from "./review-form"
+import ReviewsEmpty from "./reviews-empty"
 const Component = styled.section`
+  p {
+    margin: unset;
+  }
   p,
   span,
   label {
     font-family: var(--sub-heading-font);
   }
   h4 {
-    font-weight: normal;
-    font-size: 16px;
+    font-weight: normal !important;
+    font-size: 20px;
+    text-transform: uppercase;
   }
 `
 type Props = {
@@ -29,6 +34,7 @@ const Reviews = () => {
       <ReviewForm />
 
       <ReviewList reviews={data.reviews} />
+      {!data.reviews.length && <ReviewsEmpty />}
     </Component>
   )
 }

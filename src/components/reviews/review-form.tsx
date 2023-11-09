@@ -2,7 +2,9 @@ import React, { useState } from "react"
 import styled from "styled-components"
 
 const Component = styled.div`
-  form {
+  .form {
+    margin: unset;
+    padding-top: 20px;
     .input-wrapper {
       display: flex;
       flex-direction: column;
@@ -10,6 +12,7 @@ const Component = styled.div`
     .button-wrapper {
       display: flex;
       justify-content: space-between;
+      margin-top: 15px;
     }
   }
 `
@@ -24,7 +27,7 @@ const ReviewForm = () => {
         </button>
       </div>
       {showForm && (
-        <form action="javascript:void(0);">
+        <div className="form">
           <div className="input-wrapper">
             <label htmlFor="yotpo-input-title">Title: </label>
             <input type="text" name="yotpo-input-title" />
@@ -45,9 +48,11 @@ const ReviewForm = () => {
           </div>
           <div className="button-wrapper">
             <button className="btn">SUBMIT</button>
-            <button className="btn">CLOSE</button>
+            <button className="btn" onClick={() => setShowForm(false)}>
+              CLOSE
+            </button>
           </div>
-        </form>
+        </div>
       )}
     </Component>
   )
