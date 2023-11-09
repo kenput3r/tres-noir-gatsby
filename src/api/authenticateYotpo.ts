@@ -6,8 +6,8 @@ export default async function authenticateYotpo(
   res: GatsbyFunctionResponse
 ) {
   try {
-    const YOTPO_CLIENT_ID = process.env.TZ
-    const YOTPO_CLIENT_SECRET = process.env.TZ
+    const YOTPO_CLIENT_ID = process.env.GATSBY_YOTPO_APP_KEY as string
+    const YOTPO_CLIENT_SECRET = process.env.YOTPO_SECRET as string
 
     const response = await fetch("https://api.yotpo.com/oauth/token", {
       method: "POST",
@@ -21,6 +21,12 @@ export default async function authenticateYotpo(
         grant_type: "client_credentials",
       }),
     })
+    if (response.ok) {
+      const json = await response.json()
+      res.send(json)
+    } else {
+      return res.status(400).json("Error while authenticating yotpo")
+    }
   } catch (error) {
     console.log("Error on fetching order details", error)
   }

@@ -30,6 +30,8 @@ import { useFilterDuplicateFrames } from "../hooks/useFilterDuplicateFrames"
 import { useFilterHiddenCustomizableVariants } from "../hooks/useFilterHiddenCustomizableVariants"
 import FeaturedStyles from "../components/featured-styles"
 import ViewAsType from "../components/view-as-type"
+import Reviews from "../components/reviews"
+import ReviewsProvider from "../contexts/reviews/ReviewsProvider"
 
 const Page = styled.div`
   .shipping-message {
@@ -69,6 +71,10 @@ const Page = styled.div`
     flex-direction: column;
     flex: 1;
     padding: 1.45rem;
+    @media screen and (max-width: 768px) {
+      padding-left: 0.5rem;
+      padding-right: 0.5rem;
+    }
     &.images {
       flex: 1.5;
       max-width: 65%;
@@ -303,6 +309,12 @@ const Page = styled.div`
     p.value {
       font-size: 1.5rem;
     }
+  }
+  .review-row {
+    @media screen and (min-width: 768px) {
+      padding: 0 25px;
+    }
+    padding: 0.5rem;
   }
 `
 
@@ -753,201 +765,209 @@ const ProductCustomizable = ({
   }, [selectedVariant])
 
   return (
-    <Layout>
-      <SEO
-        title={shopifyProduct.title}
-        description={seoDescription}
-        image={{
-          url: contentfulProduct.variants[0].featuredImage.url,
-          alt: contentfulProduct.variants[0].featuredImage.title,
-        }}
-      />
-      <Page key={lensType}>
-        <FreeShipping />
-        <div className="row">
-          <div className="col images">
-            <ProductCarousel
-              key={`${selectedVariant?.contentful.id}-${lensType}`}
-              imageSet={
-                polarizedImage.length !== 0
-                  ? polarizedImage
-                  : selectedVariant?.contentful &&
-                    lensType === LensType.GLASSES &&
-                    selectedVariant.contentful.imageSetClear
-                  ? selectedVariant.contentful.imageSetClear
-                  : selectedVariant.contentful.imageSet
-              }
-            />
-          </div>
-          <div className="col">
-            <div className="heading">
-              <h1>{shopifyProduct.title}</h1>
-              <p className="fit">
-                Size: {contentfulProduct && contentfulProduct.fitDimensions}{" "}
-                <span>
-                  {contentfulProduct && contentfulProduct.frameWidth.length > 1
-                    ? `${contentfulProduct.frameWidth[0]} to ${
-                        contentfulProduct.frameWidth[1]
-                      }${" "}`
-                    : `${contentfulProduct.frameWidth[0]}${" "}`}
-                  fit
-                </span>
-              </p>
-            </div>
-            <form className="options">
-              {selectedVariant.shopify.title !== "Default Title" && (
-                <p className="selected-text-label">
-                  Color:{" "}
-                  <span>
-                    {lensType === LensType.GLASSES
-                      ? selectedVariant.shopify.title.split(" - ")[0]
-                      : selectedVariant.shopify.title}
-                  </span>
-                </p>
-              )}
-
-              <div className="buttons">
-                {contentfulProduct &&
-                  contentfulProduct.variants.map((variant: any) => (
-                    <button
-                      key={variant.id}
-                      type="button"
-                      data-active={variant.id === selectedVariant.contentful.id}
-                      onClick={e => selectVariant(e, variant)}
-                      aria-label={`Color option ${variant.colorImage.title}`}
-                      aria-pressed={
-                        variant.id === selectedVariant.contentful.id
-                          ? "true"
-                          : "false"
-                      }
-                    >
-                      {variant.colorImage ? (
-                        <Img
-                          image={variant.colorImage.data}
-                          alt={variant.colorImage.title}
-                        />
-                      ) : (
-                        <StaticImage
-                          src="../images/empty-color.png"
-                          alt="Tres Noir"
-                          placeholder="tracedSVG"
-                          layout="constrained"
-                        />
-                      )}
-                    </button>
-                  ))}
-              </div>
-              <div className="price">
-                <p className="label">STARTING AT</p>
-                <p className="value">
-                  <span className="left">
-                    ${selectedVariant.shopify.price} USD
-                  </span>
-                  <span className="right">
-                    <Link
-                      to={contentfulProduct && `/${contentfulProduct.handle}`}
-                    >
-                      Learn More {`>`}
-                    </Link>
-                  </span>
-                </p>
-              </div>
-              <div className="actions" ref={actionsRef}>
-                {lensType === LensType.SUNGLASSES && (
-                  <>
-                    <div className="polarized-actions" id="polarized-toggle">
-                      <div className="polarized-switch">
-                        <input
-                          type="checkbox"
-                          id="switch"
-                          onChange={evt => switchToPolarized(evt)}
-                        />
-                        <label htmlFor="switch">Toggle</label>
-                      </div>
-                      <span>Polarized</span>
-                      <PolarizedTooltip
-                        showPolarizedModal={showPolarizedModal}
-                        setShowPolarizedModal={setShowPolarizedModal}
-                      />
-                    </div>
-                  </>
-                )}
-                {quantityLevels &&
-                quantityLevels[selectedVariant.shopify.sku] <= 0 ? (
-                  <div>
-                    <button type="button" className="sold-out">
-                      SOLD OUT
-                    </button>
-                  </div>
-                ) : (
-                  <div>
-                    {lensType !== LensType.GLASSES && (
-                      <>
-                        {" "}
-                        <button
-                          type="button"
-                          onClick={handleAddToCart}
-                          className="add-to-cart btn"
-                          disabled={isAddingToCart}
-                          id="add-to-cart-btn"
-                        >
-                          {isAddingToCart ? <Spinner /> : `ADD TO CART`}
-                        </button>
-                        <p>- OR -</p>
-                      </>
-                    )}
-
-                    <Link
-                      className="btn"
-                      // to={contentfulProduct && customizeUrl}
-                      id="customize-btn"
-                      to={`/products/${
-                        contentfulProduct.handle
-                      }/customize?variant=${selectedVariant.shopify.sku}${
-                        lensType !== LensType.SUNGLASSES
-                          ? `&lens_type=${lensType}`
-                          : ""
-                      }`}
-                    >
-                      CUSTOMIZE
-                    </Link>
-                    <p className="small">
-                      Customize for Polarized, Rx, and more
-                    </p>
-                  </div>
-                )}
-              </div>
-            </form>
-          </div>
-        </div>
-        <div className="row mobile-reverse">
-          <div
-            className={`col ${lensType !== LensType.GLASSES ? "images" : ""}`}
-          >
-            <ProductDetails
-              fitDimensions={contentfulProduct.fitDimensions}
-              lensColor={selectedVariant.contentful.lensColor}
-              lensType={lensType}
-            />
-          </div>
-          {lensType !== LensType.GLASSES && (
-            <div className="col">
-              <CaseGridSunglasses
-                caseCollection={caseCollection}
-                selectedCase={selectedCase}
-                setSelectedCase={setSelectedCase}
-                casesAvailable={contentfulProduct.casesAvailable}
+    <ReviewsProvider productId={shopifyProduct.legacyResourceId}>
+      <Layout>
+        <SEO
+          title={shopifyProduct.title}
+          description={seoDescription}
+          image={{
+            url: contentfulProduct.variants[0].featuredImage.url,
+            alt: contentfulProduct.variants[0].featuredImage.title,
+          }}
+        />
+        <Page key={lensType}>
+          <FreeShipping />
+          <div className="row">
+            <div className="col images">
+              <ProductCarousel
+                key={`${selectedVariant?.contentful.id}-${lensType}`}
+                imageSet={
+                  polarizedImage.length !== 0
+                    ? polarizedImage
+                    : selectedVariant?.contentful &&
+                      lensType === LensType.GLASSES &&
+                      selectedVariant.contentful.imageSetClear
+                    ? selectedVariant.contentful.imageSetClear
+                    : selectedVariant.contentful.imageSet
+                }
               />
             </div>
-          )}
-        </div>
-        {contentfulProduct.featuredStyles && (
-          <div className="row-no-flex">
-            <FeaturedStyles images={contentfulProduct.featuredStyles} />
+            <div className="col">
+              <div className="heading">
+                <h1>{shopifyProduct.title}</h1>
+                <p className="fit">
+                  Size: {contentfulProduct && contentfulProduct.fitDimensions}{" "}
+                  <span>
+                    {contentfulProduct &&
+                    contentfulProduct.frameWidth.length > 1
+                      ? `${contentfulProduct.frameWidth[0]} to ${
+                          contentfulProduct.frameWidth[1]
+                        }${" "}`
+                      : `${contentfulProduct.frameWidth[0]}${" "}`}
+                    fit
+                  </span>
+                </p>
+              </div>
+              <form className="options">
+                {selectedVariant.shopify.title !== "Default Title" && (
+                  <p className="selected-text-label">
+                    Color:{" "}
+                    <span>
+                      {lensType === LensType.GLASSES
+                        ? selectedVariant.shopify.title.split(" - ")[0]
+                        : selectedVariant.shopify.title}
+                    </span>
+                  </p>
+                )}
+
+                <div className="buttons">
+                  {contentfulProduct &&
+                    contentfulProduct.variants.map((variant: any) => (
+                      <button
+                        key={variant.id}
+                        type="button"
+                        data-active={
+                          variant.id === selectedVariant.contentful.id
+                        }
+                        onClick={e => selectVariant(e, variant)}
+                        aria-label={`Color option ${variant.colorImage.title}`}
+                        aria-pressed={
+                          variant.id === selectedVariant.contentful.id
+                            ? "true"
+                            : "false"
+                        }
+                      >
+                        {variant.colorImage ? (
+                          <Img
+                            image={variant.colorImage.data}
+                            alt={variant.colorImage.title}
+                          />
+                        ) : (
+                          <StaticImage
+                            src="../images/empty-color.png"
+                            alt="Tres Noir"
+                            placeholder="tracedSVG"
+                            layout="constrained"
+                          />
+                        )}
+                      </button>
+                    ))}
+                </div>
+                <div className="price">
+                  <p className="label">STARTING AT</p>
+                  <p className="value">
+                    <span className="left">
+                      ${selectedVariant.shopify.price} USD
+                    </span>
+                    <span className="right">
+                      <Link
+                        to={contentfulProduct && `/${contentfulProduct.handle}`}
+                      >
+                        Learn More {`>`}
+                      </Link>
+                    </span>
+                  </p>
+                </div>
+                <div className="actions" ref={actionsRef}>
+                  {lensType === LensType.SUNGLASSES && (
+                    <>
+                      <div className="polarized-actions" id="polarized-toggle">
+                        <div className="polarized-switch">
+                          <input
+                            type="checkbox"
+                            id="switch"
+                            onChange={evt => switchToPolarized(evt)}
+                          />
+                          <label htmlFor="switch">Toggle</label>
+                        </div>
+                        <span>Polarized</span>
+                        <PolarizedTooltip
+                          showPolarizedModal={showPolarizedModal}
+                          setShowPolarizedModal={setShowPolarizedModal}
+                        />
+                      </div>
+                    </>
+                  )}
+                  {quantityLevels &&
+                  quantityLevels[selectedVariant.shopify.sku] <= 0 ? (
+                    <div>
+                      <button type="button" className="sold-out">
+                        SOLD OUT
+                      </button>
+                    </div>
+                  ) : (
+                    <div>
+                      {lensType !== LensType.GLASSES && (
+                        <>
+                          {" "}
+                          <button
+                            type="button"
+                            onClick={handleAddToCart}
+                            className="add-to-cart btn"
+                            disabled={isAddingToCart}
+                            id="add-to-cart-btn"
+                          >
+                            {isAddingToCart ? <Spinner /> : `ADD TO CART`}
+                          </button>
+                          <p>- OR -</p>
+                        </>
+                      )}
+
+                      <Link
+                        className="btn"
+                        // to={contentfulProduct && customizeUrl}
+                        id="customize-btn"
+                        to={`/products/${
+                          contentfulProduct.handle
+                        }/customize?variant=${selectedVariant.shopify.sku}${
+                          lensType !== LensType.SUNGLASSES
+                            ? `&lens_type=${lensType}`
+                            : ""
+                        }`}
+                      >
+                        CUSTOMIZE
+                      </Link>
+                      <p className="small">
+                        Customize for Polarized, Rx, and more
+                      </p>
+                    </div>
+                  )}
+                </div>
+              </form>
+            </div>
           </div>
-        )}
-      </Page>
-    </Layout>
+          <div className="row mobile-reverse">
+            <div
+              className={`col ${lensType !== LensType.GLASSES ? "images" : ""}`}
+            >
+              <ProductDetails
+                fitDimensions={contentfulProduct.fitDimensions}
+                lensColor={selectedVariant.contentful.lensColor}
+                lensType={lensType}
+              />
+            </div>
+            {lensType !== LensType.GLASSES && (
+              <div className="col">
+                <CaseGridSunglasses
+                  caseCollection={caseCollection}
+                  selectedCase={selectedCase}
+                  setSelectedCase={setSelectedCase}
+                  casesAvailable={contentfulProduct.casesAvailable}
+                />
+              </div>
+            )}
+          </div>
+          {contentfulProduct.featuredStyles && (
+            <div className="row-no-flex">
+              <FeaturedStyles images={contentfulProduct.featuredStyles} />
+            </div>
+          )}
+          <div className="row-no-flex review-row">
+            <Reviews />
+          </div>
+        </Page>
+      </Layout>
+    </ReviewsProvider>
   )
 }
 

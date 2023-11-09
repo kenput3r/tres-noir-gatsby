@@ -9,6 +9,7 @@ import { addedToCartGTMEvent, viewedProductGTMEvent } from "../helpers/gtm"
 import YouMayAlsoLike from "../components/you-may-also-like"
 import ProductImageGrid from "../components/product-image-grid"
 import AddToCartButton from "../components/add-to-cart-button"
+import ReviewsProvider from "../contexts/reviews/ReviewsProvider"
 
 const Page = styled.div`
   .shipping-message {
@@ -298,102 +299,102 @@ const Product = ({ data: { shopifyProduct } }: any) => {
   }
 
   return (
-    <Layout>
-      <SEO
-        title={shopifyProduct.title}
-        description={shopifyProduct.description}
-        image={{
-          url: shopifyProduct.featuredImage.originalSrc,
-          alt: shopifyProduct.featuredImage.altText,
-        }}
-      />
-      <Page>
-        <div className="row">
-          <div className="col images">
-            <ProductImageGrid
-              product={shopifyProduct}
-              selectedVariant={selectedVariant}
-            ></ProductImageGrid>
-          </div>
-          <div className="col">
-            <div className="heading">
-              <h1>{shopifyProduct.title}</h1>
-              <form>
-                <div className="product-dropdown">
-                  {!shopifyProduct.hasOnlyDefaultVariant ? (
-                    <div>
-                      <p>{selectedVariant.selectedOptions[0].name}</p>
-                      <div className="select-dropdown">
-                        <select
-                          value={selectedVariant.sku}
-                          id="product-variants"
-                          onChange={evt => handleVariant(evt)}
-                        >
-                          {sortVariants(shopifyProduct.variants).map(
-                            element => {
-                              return (
-                                <option key={element.sku} value={element.sku}>
-                                  {element.title}
-                                </option>
-                              )
-                            }
-                          )}
-                        </select>
+    <ReviewsProvider productId={shopifyProduct.legacyResourceId}>
+      <Layout>
+        <SEO
+          title={shopifyProduct.title}
+          description={shopifyProduct.description}
+          image={{
+            url: shopifyProduct.featuredImage.originalSrc,
+            alt: shopifyProduct.featuredImage.altText,
+          }}
+        />
+        <Page>
+          <div className="row">
+            <div className="col images">
+              <ProductImageGrid
+                product={shopifyProduct}
+                selectedVariant={selectedVariant}
+              />
+            </div>
+            <div className="col">
+              <div className="heading">
+                <h1>{shopifyProduct.title}</h1>
+                <form>
+                  <div className="product-dropdown">
+                    {!shopifyProduct.hasOnlyDefaultVariant && (
+                      <div>
+                        <p>{selectedVariant.selectedOptions[0].name}</p>
+                        <div className="select-dropdown">
+                          <select
+                            value={selectedVariant.sku}
+                            id="product-variants"
+                            onChange={evt => handleVariant(evt)}
+                          >
+                            {sortVariants(shopifyProduct.variants).map(
+                              element => {
+                                return (
+                                  <option key={element.sku} value={element.sku}>
+                                    {element.title}
+                                  </option>
+                                )
+                              }
+                            )}
+                          </select>
+                        </div>
                       </div>
-                    </div>
-                  ) : (
-                    <div></div>
-                  )}
-                </div>
-                <div className="price">
-                  <p className="value">${selectedVariant.price} USD</p>
-                </div>
-              </form>
-              {selectedVariant.price > "0.00" && (
-                <div className="actions">
-                  <div className="select-wrapper">
-                    <select
-                      name="quantity"
-                      id="quantity"
-                      disabled={
-                        quantityLevels &&
-                        quantityLevels[selectedVariant.sku] <= 0
-                          ? true
-                          : false
-                      }
-                      onChange={evt =>
-                        setSelectedVariantQuantity(evt.target.value)
-                      }
-                    >
-                      {quantityRange().map(el => {
-                        return <option key={`quantity-${el}`}>{el}</option>
-                      })}
-                    </select>
-                  </div>
-                  <div>
-                    {quantityLevels &&
-                    quantityLevels[selectedVariant.sku] > 0 ? (
-                      <AddToCartButton
-                        handler={e => handleAddToCart(e)}
-                        loading={isAddingToCart}
-                        soldOut={false}
-                      />
-                    ) : (
-                      <AddToCartButton soldOut={true} />
                     )}
                   </div>
-                </div>
-              )}
+                  <div className="price">
+                    <p className="value">${selectedVariant.price} USD</p>
+                  </div>
+                </form>
+                {selectedVariant.price > "0.00" && (
+                  <div className="actions">
+                    <div className="select-wrapper">
+                      <select
+                        name="quantity"
+                        id="quantity"
+                        disabled={
+                          quantityLevels &&
+                          quantityLevels[selectedVariant.sku] <= 0
+                            ? true
+                            : false
+                        }
+                        onChange={evt =>
+                          setSelectedVariantQuantity(evt.target.value)
+                        }
+                      >
+                        {quantityRange().map(el => {
+                          return <option key={`quantity-${el}`}>{el}</option>
+                        })}
+                      </select>
+                    </div>
+                    <div>
+                      {quantityLevels &&
+                      quantityLevels[selectedVariant.sku] > 0 ? (
+                        <AddToCartButton
+                          handler={e => handleAddToCart(e)}
+                          loading={isAddingToCart}
+                          soldOut={false}
+                        />
+                      ) : (
+                        <AddToCartButton soldOut={true} />
+                      )}
+                    </div>
+                  </div>
+                )}
 
-              <p className="product-description">
-                {shopifyProduct.description}
-              </p>
+                <p className="product-description">
+                  {shopifyProduct.description}
+                </p>
+              </div>
             </div>
           </div>
-        </div>
-        <YouMayAlsoLike shopifyProduct={shopifyProduct}></YouMayAlsoLike>
-      </Page>
-    </Layout>
+          <YouMayAlsoLike shopifyProduct={shopifyProduct} />
+        </Page>
+      </Layout>
+    </ReviewsProvider>
   )
 }
 

@@ -1,12 +1,34 @@
 import React from "react"
 import styled from "styled-components"
-
-const Component = styled.section``
-
+import { YotpoRetrieveReviewsResponse } from "../../types/yotpo"
+import useReviews from "../../contexts/reviews/hooks"
+import { Bottomline } from "../../types/yotpo"
+import ReviewList from "./review-list"
+import ReviewForm from "./review-form"
+const Component = styled.section`
+  p,
+  span,
+  label {
+    font-family: var(--sub-heading-font);
+  }
+  h4 {
+    font-weight: normal;
+    font-size: 16px;
+  }
+`
+type Props = {
+  context: YotpoRetrieveReviewsResponse
+}
 const Reviews = () => {
-  return (
+  const { data, isLoading } = useReviews()
+
+  return isLoading || !data ? (
+    <></>
+  ) : (
     <Component>
-      <p>Reviews</p>
+      <ReviewForm />
+
+      <ReviewList reviews={data.reviews} />
     </Component>
   )
 }
