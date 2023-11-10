@@ -27,13 +27,13 @@ const Component = styled.section`
   .review-content {
     font-size: 16px;
     line-height: 19px;
+    margin-bottom: 20px;
   }
 `
 
 type Props = { review: ReviewType }
 
 const ReviewItem = ({ review }: Props) => {
-  console.log("single review", review)
   const {
     id,
     content,

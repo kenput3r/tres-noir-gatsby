@@ -23,6 +23,7 @@ export default async function authenticateYotpo(
     })
     if (response.ok) {
       const json = await response.json()
+      console.log("JSON", JSON)
       res.send(json)
     } else {
       return res.status(400).json("Error while authenticating yotpo")

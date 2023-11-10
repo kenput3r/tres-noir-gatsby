@@ -55,11 +55,13 @@ const ReviewVotes = ({
   )
   const handleClick = (vote: "up" | "down") => {
     if (thumbState === vote) {
+      console.log("CANCEL", vote)
       setThumbState(undefined)
+      mutateReviewThumbVote({ vote, reviewId, undo: true })
       // cancel request
       return
     }
-    console.log("thumbs", vote)
+    console.log("VOTE", vote)
     setThumbState(vote)
     mutateReviewThumbVote({ vote, reviewId })
   }

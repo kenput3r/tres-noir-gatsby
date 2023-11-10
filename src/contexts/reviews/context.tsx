@@ -4,11 +4,14 @@ import { YotpoRetrieveReviewsData } from "../../types/yotpo"
 
 const defaultContext: ReviewContextType = {
   isLoading: true,
+  isRefetching: false,
   data: null,
   mutateReviewThumbVote: (props: {
     vote: "up" | "down"
     reviewId: number
+    undo?: boolean
   }) => {},
+  refreshToPage: (pageNumber: number) => {},
 }
 
 export const ReviewsContext = createContext(defaultContext)

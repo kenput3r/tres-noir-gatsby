@@ -2,6 +2,7 @@ import React, { useState } from "react"
 import { useSpring, animated, config } from "react-spring"
 import styled from "styled-components"
 import { IoCreateOutline as CreateIcon } from "react-icons/io5"
+import { AiFillStar as StarIcon } from "react-icons/ai"
 
 const Component = styled.div`
   h4 {
@@ -72,6 +73,10 @@ const ReviewForm = () => {
         {showForm && (
           <form onSubmit={evt => evt.preventDefault()}>
             <div className="input-wrapper">
+              <label htmlFor="yotpo-input-score">Score: </label>
+              {/* <input type="text" name="yotpo-input-score" /> */}
+            </div>
+            <div className="input-wrapper">
               <label htmlFor="yotpo-input-title">Title: </label>
               <input type="text" name="yotpo-input-title" />
             </div>
@@ -99,6 +104,31 @@ const ReviewForm = () => {
         )}
       </animated.div>
     </Component>
+  )
+}
+
+const StarList = styled.div`
+  .fill {
+    fill: #ffd700;
+  }
+  svg {
+    fill: none;
+    stroke: black;
+    stroke-width: 10px;
+    stroke-linejoin: round;
+    paint-order: stroke;
+  }
+`
+
+export const ReviewStarsInput = () => {
+  const starArr = Array.from(Array(5), (_, x) => x + 1)
+
+  return (
+    <StarList>
+      {starArr.map(star => (
+        <StarIcon key={`star-${star}`} />
+      ))}
+    </StarList>
   )
 }
 

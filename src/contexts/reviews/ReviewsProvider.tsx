@@ -12,21 +12,21 @@ import {
 } from "../../types/yotpo"
 
 type Props = {
-  productId: string
+  productId: number
   children: ReactNode | ReactNode[]
 }
 
 export function ReviewsProvider({ productId, children }: Props) {
   const [data, setData] = useState<YotpoRetrieveReviewsResponse | null>(null)
   const [isLoading, setIsLoading] = useState(true)
+  const [isRefetching, setIsRefetching] = useState(false)
 
   useEffect(() => {
-    const getReviewsForProduct = async (productId: string) => {
+    const getReviewsForProduct = async () => {
       try {
         setIsLoading(true)
         const YOTPO_APP_KEY = process.env.GATSBY_YOTPO_APP_KEY as string
-        const url = `https://api-cdn.yotpo.com/v1/widget/${YOTPO_APP_KEY}/products/${productId}/reviews.json`
-
+        const url = `https://api-cdn.yotpo.com/v1/widget/${YOTPO_APP_KEY}/products/${productId}/reviews.json?per_page=1`
         const response = await fetch(url, {
           method: "GET",
           headers: {
@@ -46,27 +46,74 @@ export function ReviewsProvider({ productId, children }: Props) {
         console.error("Error fetching reviews for product", error)
       }
     }
-    getReviewsForProduct(productId)
+    getReviewsForProduct()
   }, [])
 
-  const mutateReviewThumbVote = ({
+  const refreshToPage = async (pageNumber: number) => {
+    try {
+      setIsRefetching(true)
+      const YOTPO_APP_KEY = process.env.GATSBY_YOTPO_APP_KEY as string
+      const url = `https://api-cdn.yotpo.com/v1/widget/${YOTPO_APP_KEY}/products/${productId}/reviews.json?per_page=1&page=${pageNumber}`
+      const response = await fetch(url, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+      })
+      const json = (await response.json()) as YotpoRetrieveReviewsData
+      if (json.status.code !== 200) {
+        throw Error(JSON.stringify(json.status))
+      }
+      setData(json.response)
+      setIsRefetching(false)
+      return json
+    } catch (error) {
+      console.error("Error fetching reviews for product", error)
+    }
+  }
+
+  const mutateReviewThumbVote = async ({
     vote,
     reviewId,
+    undo = false,
   }: {
     vote: "up" | "down"
     reviewId: number
+    undo?: boolean
   }) => {
     try {
-      const url = `http://api.yotpo.com/reviews/${reviewId}/vote/${vote}`
+      const url = !undo
+        ? `https://api.yotpo.com/reviews/${reviewId}/vote/${vote}`
+        : `https://api.yotpo.com/reviews/${reviewId}/vote/${vote}/true`
       console.log("ENDPOINT IS", url)
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({
+          review_id: reviewId,
+          vote_type: vote,
+        }),
+      })
+      const json = await response.json()
+      console.log("RESOINSE", json)
     } catch (error) {
-      console.error("Error")
+      console.error("Error", error)
     }
   }
 
   const reviewsContextValue = useMemo(
-    () => ({ data, isLoading, mutateReviewThumbVote }),
-    [data, isLoading]
+    () => ({
+      data,
+      isLoading,
+      mutateReviewThumbVote,
+      refreshToPage,
+      isRefetching,
+    }),
+    [data, isLoading, isRefetching]
   )
 
   return (
