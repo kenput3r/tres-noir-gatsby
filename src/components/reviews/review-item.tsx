@@ -4,6 +4,7 @@ import { FaUserCircle as UserIcon } from "react-icons/fa"
 import { Review as ReviewType } from "../../types/yotpo"
 import ReviewStars from "./review-stars"
 import ReviewVotes from "./review-votes"
+import ReviewAuthor from "./review-author"
 
 const Component = styled.section`
   margin-bottom: 16px;
@@ -27,23 +28,29 @@ const Component = styled.section`
     font-size: 16px;
     line-height: 19px;
   }
-  .user-icon {
-    font-size: 45px;
-    margin-right: 10px;
-    fill: var(--color-grey-dark);
-  }
 `
 
 type Props = { review: ReviewType }
 
 const ReviewItem = ({ review }: Props) => {
   console.log("single review", review)
-  const { id, content, user, score, created_at, title, votes_up, votes_down } =
-    review
+  const {
+    id,
+    content,
+    user,
+    score,
+    created_at,
+    title,
+    votes_up,
+    votes_down,
+    verified_buyer,
+  } = review
   const date = new Date(created_at).toLocaleDateString("en-US")
   return (
     <Component>
-      <UserIcon className="user-icon" />
+      <div>
+        <ReviewAuthor isVerified={verified_buyer} />
+      </div>
       <div className="outer">
         <div className="review-name-date">
           <span className="review-author">{user.display_name}</span>
@@ -59,4 +66,5 @@ const ReviewItem = ({ review }: Props) => {
     </Component>
   )
 }
+
 export default ReviewItem

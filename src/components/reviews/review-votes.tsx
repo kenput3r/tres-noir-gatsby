@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useState } from "react"
 import styled from "styled-components"
 import useReviews from "../../contexts/reviews/hooks"
 import {
@@ -34,6 +34,10 @@ const VotesContainer = styled.div`
       cursor: pointer;
     }
   }
+  .active-thumb-vote {
+    fill: #000000 !important;
+    color: black !important;
+  }
 `
 const ReviewVotes = ({
   reviewId,
@@ -45,9 +49,33 @@ const ReviewVotes = ({
   votesDown: number
 }) => {
   const { mutateReviewThumbVote } = useReviews()
+
+  const [thumbState, setThumbState] = useState<"up" | "down" | undefined>(
+    undefined
+  )
   const handleClick = (vote: "up" | "down") => {
+    if (thumbState === vote) {
+      setThumbState(undefined)
+      // cancel request
+      return
+    }
     console.log("thumbs", vote)
+    setThumbState(vote)
     mutateReviewThumbVote({ vote, reviewId })
+  }
+
+  const getVotes = (action: "up" | "down") => {
+    if (action === "up") {
+      if (thumbState && thumbState === "up") {
+        return votesUp + 1
+      }
+      return votesUp
+    }
+    // action is down
+    if (thumbState && thumbState === "down") {
+      return votesDown + 1
+    }
+    return votesDown
   }
 
   return (
@@ -55,12 +83,24 @@ const ReviewVotes = ({
       <span>Was this review helpful?</span>
       <div className="thumbs-wrapper">
         <div className="thumbs">
-          <span>{votesUp}</span>
-          <ThumbsUpIcon role="button" onClick={() => handleClick("up")} />
+          <span className={thumbState === "up" ? "active-thumb-vote" : ""}>
+            {getVotes("up")}
+          </span>
+          <ThumbsUpIcon
+            role="button"
+            onClick={() => handleClick("up")}
+            className={thumbState === "up" ? "active-thumb-vote" : ""}
+          />
         </div>
         <div className="thumbs">
-          <ThumbsDownIcon role="button" onClick={() => handleClick("down")} />
-          <span>{votesDown}</span>
+          <ThumbsDownIcon
+            role="button"
+            onClick={() => handleClick("down")}
+            className={thumbState === "down" ? "active-thumb-vote" : ""}
+          />
+          <span className={thumbState === "down" ? "active-thumb-vote" : ""}>
+            {getVotes("down")}
+          </span>
         </div>
       </div>
     </VotesContainer>

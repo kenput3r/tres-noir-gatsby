@@ -18,7 +18,7 @@ const Component = styled.div`
         align-items: center;
       }
       svg {
-        font-size: 18px;
+        font-size: 20px;
       }
     }
   }

@@ -9,7 +9,7 @@ const StarList = styled.div`
   svg {
     fill: none;
     stroke: black;
-    stroke-width: 6px;
+    stroke-width: 10px;
     stroke-linejoin: round;
     paint-order: stroke;
   }
@@ -20,9 +20,10 @@ export const ReviewStars = ({ score }: { score: number }) => {
   return (
     <StarList>
       {starArr.map(star => (
-        <>
-          <StarIcon className={score >= star ? "fill" : ""} />
-        </>
+        <StarIcon
+          className={score >= star ? "fill" : ""}
+          key={`star-${star}`}
+        />
       ))}
     </StarList>
   )
