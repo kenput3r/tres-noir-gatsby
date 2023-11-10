@@ -6,6 +6,7 @@ import { Bottomline } from "../../types/yotpo"
 import ReviewList from "./review-list"
 import ReviewForm from "./review-form"
 import ReviewsEmpty from "./reviews-empty"
+import ReviewPagination from "./review-pagination"
 const Component = styled.section`
   button {
     padding: 8px 15px;
@@ -37,6 +38,7 @@ const Reviews = () => {
 
       <ReviewList reviews={data.reviews} />
       {!data.reviews.length && <ReviewsEmpty />}
+      <ReviewPagination pagination={data.pagination} />
     </Component>
   )
 }
