@@ -309,6 +309,52 @@ const Product = ({ data: { shopifyProduct } }: any) => {
     return variants.sort((a, b) => a.position - b.position)
   }
 
+  const generateProductJsonLD = () => {
+    try {
+      const name = shopifyProduct.title
+      const sku = shopifyProduct.variants[0].sku
+
+      const price = shopifyProduct.variants[0].price
+
+      const featuredImg = shopifyProduct.featuredImage.originalSrc
+
+      const description = shopifyProduct.description ?? ""
+
+      const productSchema = {
+        "@context": "https://schema.org/",
+        "@type": "Product",
+        name,
+        sku,
+        description,
+        image: [featuredImg],
+        brand: {
+          "@type": "Brand",
+          name: "Tres Noir",
+        },
+        offers: {
+          "@type": "Offer",
+          priceSpecification: {
+            "@type": "PriceSpecification",
+            price,
+            priceCurrency: "USD",
+          },
+          hasMerchantReturnPolicy: {
+            "@type": "MerchantReturnPolicy",
+            applicableCountry: "US",
+            returnPolicyCategory:
+              "https://schema.org/MerchantReturnFiniteReturnWindow",
+            merchantReturnDays: 30,
+            returnMethod: "https://schema.org/ReturnByMail",
+            returnFees: "https://schema.org/FreeReturn",
+          },
+        },
+      }
+      return JSON.stringify(productSchema, null, 2)
+    } catch (error) {
+      return null
+    }
+  }
+
   return (
     <ReviewsProvider productId={shopifyProduct.legacyResourceId}>
       <Layout>

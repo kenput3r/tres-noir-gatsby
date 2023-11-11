@@ -16,6 +16,7 @@ interface Props {
   title: string
   isIndex?: boolean
   image?: ImageMeta
+  jsonLdPayload?: string | null
 }
 
 interface ImageMeta {
@@ -30,6 +31,7 @@ const SEO = ({
   title,
   isIndex = false,
   image,
+  jsonLdPayload,
 }: Props) => {
   const { site } = useStaticQuery(
     graphql`
@@ -46,7 +48,7 @@ const SEO = ({
   )
 
   const metaDescription = description || site.siteMetadata.description
-  const defaultTitle = site.siteMetadata.title
+  const siteTitle = site.siteMetadata.title
   const defaultImage = image ?? {
     url: "https://cdn.shopify.com/s/files/1/0140/0012/8057/files/TN_OpenGraph_Image.jpg?v=1698699695",
     alt: "Tres Noir Handmade Eyewear",
@@ -54,13 +56,13 @@ const SEO = ({
 
   const titleTemplate = () => {
     if (isIndex) {
-      return `${defaultTitle} | %s`
+      return `${siteTitle} | %s`
     } else {
-      return `%s | ${defaultTitle}`
+      return `%s | ${siteTitle}`
     }
   }
 
-  const formattedTitle = isIndex ? `${defaultTitle} | ${title}` : title
+  const formattedTitle = isIndex ? `${siteTitle} | ${title}` : title
 
   return (
     <Helmet
@@ -95,6 +97,10 @@ const SEO = ({
           content: `website`,
         },
         {
+          property: "og:site_name",
+          content: siteTitle,
+        },
+        {
           name: `twitter:card`,
           content: `summary`,
         },
@@ -127,7 +133,11 @@ const SEO = ({
               : ``,
         },
       ].concat(meta)}
-    ></Helmet>
+    >
+      {jsonLdPayload && (
+        <script type="application/ld+json">{jsonLdPayload}</script>
+      )}
+    </Helmet>
   )
 }
 
