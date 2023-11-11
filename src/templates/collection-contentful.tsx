@@ -53,8 +53,6 @@ const CollectionContentful = ({
     return shopifyProduct
   }
 
-  console.log("this temp")
-
   return (
     <Layout>
       <SEO

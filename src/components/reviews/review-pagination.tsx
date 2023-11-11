@@ -45,7 +45,7 @@ type Props = {
 const ReviewPagination = ({ pagination }: Props) => {
   const { refreshToPage } = useReviews()
   const { page, total } = pagination
-
+  const showPagination = total > 0
   const range = total <= 5 ? total : 5
   const pages = Array.from(Array(range), (_, x) => x + 1)
   const disableBack = page === pages[0]
@@ -55,31 +55,34 @@ const ReviewPagination = ({ pagination }: Props) => {
   }
   return (
     <Component>
-      <button
-        className="no-styles"
-        disabled={disableBack}
-        onClick={() => goToPage(page - 1)}
-      >
-        <LeftIcon className="icon" role="button" />
-      </button>
-
-      {pages.map(pageNumber => (
-        <div
-          className={`page-number ${page === pageNumber ? "active" : ""}`}
-          key={`review-pagination-page-number-${pageNumber}`}
-          role="button"
-          onClick={() => goToPage(pageNumber)}
-        >
-          <span>{pageNumber}</span>
-        </div>
-      ))}
-      <button
-        className="no-styles"
-        disabled={disableForward}
-        onClick={() => goToPage(page + 1)}
-      >
-        <RightIcon className="icon" role="button" />
-      </button>
+      {showPagination && (
+        <>
+          <button
+            className="no-styles"
+            disabled={disableBack}
+            onClick={() => goToPage(page - 1)}
+          >
+            <LeftIcon className="icon" role="button" />
+          </button>
+          {pages.map(pageNumber => (
+            <div
+              className={`page-number ${page === pageNumber ? "active" : ""}`}
+              key={`review-pagination-page-number-${pageNumber}`}
+              role="button"
+              onClick={() => goToPage(pageNumber)}
+            >
+              <span>{pageNumber}</span>
+            </div>
+          ))}
+          <button
+            className="no-styles"
+            disabled={disableForward}
+            onClick={() => goToPage(page + 1)}
+          >
+            <RightIcon className="icon" role="button" />
+          </button>
+        </>
+      )}
     </Component>
   )
 }

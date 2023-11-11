@@ -75,6 +75,7 @@ const ReviewForm = () => {
             <div className="input-wrapper">
               <label htmlFor="yotpo-input-score">Score: </label>
               {/* <input type="text" name="yotpo-input-score" /> */}
+              <ReviewStarsInput />
             </div>
             <div className="input-wrapper">
               <label htmlFor="yotpo-input-title">Title: </label>
@@ -108,25 +109,41 @@ const ReviewForm = () => {
 }
 
 const StarList = styled.div`
+  margin-top: 8px;
   .fill {
     fill: #ffd700;
   }
   svg {
+    margin: 0 1px;
     fill: none;
     stroke: black;
     stroke-width: 10px;
     stroke-linejoin: round;
+    font-size: 22px;
     paint-order: stroke;
+    /* :hover {
+      fill: red;
+    } */
+    cursor: pointer;
+    :hover ~ svg {
+      fill: #ffd700;
+    }
   }
 `
 
 export const ReviewStarsInput = () => {
   const starArr = Array.from(Array(5), (_, x) => x + 1)
+  const [rating, setRating] = useState(0)
 
   return (
     <StarList>
       {starArr.map(star => (
-        <StarIcon key={`star-${star}`} />
+        <StarIcon
+          key={`star-${star}`}
+          role="button"
+          onClick={() => setRating(star)}
+          className={star <= rating ? "fill" : ""}
+        />
       ))}
     </StarList>
   )
