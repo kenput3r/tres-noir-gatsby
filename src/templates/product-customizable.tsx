@@ -674,12 +674,6 @@ const ProductCustomizable = ({
           ratingValue: score,
           reviewCount: totalReviews,
         }
-      } else {
-        productSchema["aggregateRating"] = {
-          "@type": "AggregateRating",
-          ratingValue: 0,
-          reviewCount: 0,
-        }
       }
       return JSON.stringify(productSchema, null, 2)
     } catch (error) {

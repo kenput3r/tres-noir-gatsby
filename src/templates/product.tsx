@@ -11,6 +11,7 @@ import ProductImageGrid from "../components/product-image-grid"
 import AddToCartButton from "../components/add-to-cart-button"
 import ReviewsProvider from "../contexts/reviews/ReviewsProvider"
 import Reviews from "../components/reviews"
+import type { YotpoSourceProductBottomLine } from "../types/yotpo"
 
 const Page = styled.div`
   .shipping-message {
@@ -179,7 +180,15 @@ const Page = styled.div`
     padding: 0.5rem;
   }
 `
-const Product = ({ data: { shopifyProduct } }: any) => {
+type Props = {
+  data: {
+    shopifyProduct: any
+    yotpoProductBottomline: YotpoSourceProductBottomLine
+  }
+}
+const Product = ({
+  data: { shopifyProduct, yotpoProductBottomline },
+}: Props) => {
   const [selectedVariant, setSelectedVariant] = useState(
     shopifyProduct.variants[0]
   )
@@ -320,7 +329,7 @@ const Product = ({ data: { shopifyProduct } }: any) => {
 
       const description = shopifyProduct.description ?? ""
 
-      const productSchema = {
+      let productSchema = {
         "@context": "https://schema.org/",
         "@type": "Product",
         name,
@@ -348,6 +357,14 @@ const Product = ({ data: { shopifyProduct } }: any) => {
             returnFees: "https://schema.org/FreeReturn",
           },
         },
+      }
+      if (yotpoProductBottomline) {
+        const { totalReviews, score } = yotpoProductBottomline
+        productSchema["aggregateRating"] = {
+          "@type": "AggregateRating",
+          ratingValue: score,
+          reviewCount: totalReviews,
+        }
       }
       return JSON.stringify(productSchema, null, 2)
     } catch (error) {
@@ -462,7 +479,12 @@ const Product = ({ data: { shopifyProduct } }: any) => {
 export default Product
 
 export const query = graphql`
-  query ProductQueryShopify($handle: String) {
+  query ProductQueryShopify($handle: String, $legacyResourceId: String) {
+    yotpoProductBottomline(productIdentifier: { eq: $legacyResourceId }) {
+      totalReviews
+      score
+      yotpoId
+    }
     shopifyProduct(handle: { eq: $handle }) {
       collections {
         handle

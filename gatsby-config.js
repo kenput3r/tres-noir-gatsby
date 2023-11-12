@@ -51,6 +51,7 @@ module.exports = {
     title: `Tres Noir`,
     description: `Tres Noir is an independent eyewear company located in Santa Ana, Calif.`,
     author: `@SuavecitoInc`,
+    siteUrl: `https://www.tresnoir.com`,
   },
   plugins: [
     {
@@ -160,6 +161,7 @@ module.exports = {
         appSecret: process.env.YOTPO_SECRET,
       },
     },
+    `gatsby-plugin-sitemap`,
     // this (optional) plugin enables Progressive Web App + Offline functionality
     // To learn more, visit: https://gatsby.dev/offline
     // `gatsby-plugin-offline`,
