@@ -1,6 +1,5 @@
 import React from "react"
 import styled from "styled-components"
-import { FaUserCircle as UserIcon } from "react-icons/fa"
 import { Review as ReviewType } from "../../types/yotpo"
 import ReviewStars from "./review-stars"
 import ReviewVotes from "./review-votes"

@@ -9,7 +9,7 @@ import { addedToCartGTMEvent, viewedProductGTMEvent } from "../helpers/gtm"
 import YouMayAlsoLike from "../components/you-may-also-like"
 import ProductImageGrid from "../components/product-image-grid"
 import AddToCartButton from "../components/add-to-cart-button"
-import ReviewsProvider from "../contexts/reviews/ReviewsProvider"
+import { ReviewsProvider } from "../contexts/reviews"
 import Reviews from "../components/reviews"
 import type { YotpoSourceProductBottomLine } from "../types/yotpo"
 
@@ -373,7 +373,10 @@ const Product = ({
   }
 
   return (
-    <ReviewsProvider productId={shopifyProduct.legacyResourceId}>
+    <ReviewsProvider
+      productId={shopifyProduct.legacyResourceId}
+      productHandle={shopifyProduct.handle}
+    >
       <Layout>
         <SEO
           title={shopifyProduct.title}

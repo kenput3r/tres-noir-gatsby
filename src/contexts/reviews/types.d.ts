@@ -1,4 +1,7 @@
-import { YotpoRetrieveReviewsResponse } from "../../types/yotpo"
+import {
+  YotpoCreateFormData,
+  YotpoRetrieveReviewsResponse,
+} from "../../types/yotpo"
 
 export type ReviewContextType = {
   isLoading: boolean
@@ -10,4 +13,5 @@ export type ReviewContextType = {
     undo?: boolean
   }) => void
   refreshToPage: (pageNumber: number) => void
+  createReview: (_data: YotpoCreateFormData) => Promise<void>
 }

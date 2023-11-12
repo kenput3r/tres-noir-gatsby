@@ -1,8 +1,6 @@
 import React from "react"
 import styled from "styled-components"
-import { YotpoRetrieveReviewsResponse } from "../../types/yotpo"
-import useReviews from "../../contexts/reviews/hooks"
-import { Bottomline } from "../../types/yotpo"
+import { useReviews } from "../../contexts/reviews"
 import ReviewList from "./review-list"
 import ReviewForm from "./review-form"
 import ReviewsEmpty from "./reviews-empty"
@@ -17,7 +15,8 @@ const Component = styled.section`
   p,
   span,
   input,
-  label {
+  label,
+  textarea {
     font-family: var(--sub-heading-font);
   }
   h4 {

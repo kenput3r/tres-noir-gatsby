@@ -1,6 +1,9 @@
 import { createContext } from "react"
 import { ReviewContextType } from "./types"
-import { YotpoRetrieveReviewsData } from "../../types/yotpo"
+import {
+  YotpoCreateFormData,
+  YotpoRetrieveReviewsData,
+} from "../../types/yotpo"
 
 const defaultContext: ReviewContextType = {
   isLoading: true,
@@ -12,6 +15,7 @@ const defaultContext: ReviewContextType = {
     undo?: boolean
   }) => {},
   refreshToPage: (pageNumber: number) => {},
+  createReview: async (_data: YotpoCreateFormData) => {},
 }
 
 export const ReviewsContext = createContext(defaultContext)

@@ -1,8 +1,12 @@
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import { useSpring, animated, config } from "react-spring"
 import styled from "styled-components"
 import { IoCreateOutline as CreateIcon } from "react-icons/io5"
-import { AiFillStar as StarIcon } from "react-icons/ai"
+import { useForm } from "react-hook-form"
+import ReviewFormStarInput from "./review-form-star-input"
+import ReviewFormError from "./review-form-error"
+import type { YotpoCreateFormData } from "../../types/yotpo"
+import { useReviews } from "../../contexts/reviews"
 
 const Component = styled.div`
   h4 {
@@ -45,7 +49,22 @@ const Component = styled.div`
   }
 `
 const ReviewForm = () => {
+  const {
+    watch,
+    register,
+    handleSubmit,
+    setValue,
+    clearErrors,
+    formState: { errors },
+  } = useForm<YotpoCreateFormData>()
+  register("reviewScore", { required: true })
+  const onSubmit = (data: YotpoCreateFormData) => {
+    createReview(data)
+  }
+  const starScore = watch("reviewScore")
+  const setStarScore = (_score: number) => setValue("reviewScore", _score)
   const [showForm, setShowForm] = useState(false)
+  const { createReview } = useReviews()
   // React Spring
   const isBrowser = typeof window !== "undefined"
   if (!isBrowser) return null
@@ -71,29 +90,56 @@ const ReviewForm = () => {
       </div>
       <animated.div style={{ ...slideInStyles }}>
         {showForm && (
-          <form onSubmit={evt => evt.preventDefault()}>
+          <form onSubmit={handleSubmit(onSubmit)}>
             <div className="input-wrapper">
-              <label htmlFor="yotpo-input-score">Score: </label>
-              {/* <input type="text" name="yotpo-input-score" /> */}
-              <ReviewStarsInput />
+              <label htmlFor="reviewScore">Score: </label>
+              <ReviewFormStarInput
+                rating={starScore}
+                setRating={setStarScore}
+                clearError={() => clearErrors("reviewScore")}
+              />
+              {errors.reviewScore && (
+                <ReviewFormError error="Please add your review score" />
+              )}
             </div>
             <div className="input-wrapper">
-              <label htmlFor="yotpo-input-title">Title: </label>
-              <input type="text" name="yotpo-input-title" />
+              <label htmlFor="reviewTitle">Title: </label>
+              <input
+                type="text"
+                {...register("reviewTitle", { required: true })}
+              />
+              {errors.reviewTitle && (
+                <ReviewFormError error="Please add your review title" />
+              )}
             </div>
             <div>
               <div className="input-wrapper">
-                <label htmlFor="yotpo-input-review">Review: </label>
-                <textarea name="yotpo-input-review" />
+                <label htmlFor="reviewContent">Review: </label>
+                <textarea {...register("reviewContent", { required: true })} />
+                {errors.reviewContent && (
+                  <ReviewFormError error="Please add your review" />
+                )}
               </div>
             </div>
             <div className="input-wrapper">
-              <label htmlFor="yotpo-input-name">Name: </label>
-              <input type="text" name="yotpo-input-name" />
+              <label htmlFor="reviewerName">Name: </label>
+              <input
+                type="text"
+                {...register("reviewerName", { required: true })}
+              />
+              {errors.reviewerName && (
+                <ReviewFormError error="Please add your name" />
+              )}
             </div>
             <div className="input-wrapper">
-              <label htmlFor="yotpo-input-email">Email: </label>
-              <input type="text" name="yotpo-input-email" />
+              <label htmlFor="reviewerEmail">Email: </label>
+              <input
+                type="email"
+                {...register("reviewerEmail", { required: true })}
+              />
+              {errors.reviewerEmail && (
+                <ReviewFormError error="Please add your email" />
+              )}
             </div>
             <div className="button-wrapper">
               <button className="btn">SUBMIT</button>
@@ -105,47 +151,6 @@ const ReviewForm = () => {
         )}
       </animated.div>
     </Component>
-  )
-}
-
-const StarList = styled.div`
-  margin-top: 8px;
-  .fill {
-    fill: #ffd700;
-  }
-  svg {
-    margin: 0 1px;
-    fill: none;
-    stroke: black;
-    stroke-width: 10px;
-    stroke-linejoin: round;
-    font-size: 22px;
-    paint-order: stroke;
-    /* :hover {
-      fill: red;
-    } */
-    cursor: pointer;
-    :hover ~ svg {
-      fill: #ffd700;
-    }
-  }
-`
-
-export const ReviewStarsInput = () => {
-  const starArr = Array.from(Array(5), (_, x) => x + 1)
-  const [rating, setRating] = useState(0)
-
-  return (
-    <StarList>
-      {starArr.map(star => (
-        <StarIcon
-          key={`star-${star}`}
-          role="button"
-          onClick={() => setRating(star)}
-          className={star <= rating ? "fill" : ""}
-        />
-      ))}
-    </StarList>
   )
 }
 

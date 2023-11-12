@@ -5,7 +5,7 @@ import {
   BsChevronRight as RightIcon,
 } from "react-icons/bs"
 import type { Pagination } from "../../types/yotpo"
-import useReviews from "../../contexts/reviews/hooks"
+import { useReviews } from "../../contexts/reviews"
 
 const Component = styled.div`
   display: flex;

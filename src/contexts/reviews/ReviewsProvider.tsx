@@ -9,14 +9,16 @@ import { ReviewsContext } from "./context"
 import {
   YotpoRetrieveReviewsData,
   YotpoRetrieveReviewsResponse,
+  YotpoCreateFormData,
 } from "../../types/yotpo"
 
 type Props = {
   productId: number
+  productHandle: string
   children: ReactNode | ReactNode[]
 }
 
-export function ReviewsProvider({ productId, children }: Props) {
+export function ReviewsProvider({ productId, productHandle, children }: Props) {
   const [data, setData] = useState<YotpoRetrieveReviewsResponse | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [isRefetching, setIsRefetching] = useState(false)
@@ -104,6 +106,9 @@ export function ReviewsProvider({ productId, children }: Props) {
       console.error("Error", error)
     }
   }
+  const createReview = async (data: YotpoCreateFormData) => {
+    console.log("YOTPO FORM DATA", data)
+  }
 
   const reviewsContextValue = useMemo(
     () => ({
@@ -112,6 +117,7 @@ export function ReviewsProvider({ productId, children }: Props) {
       mutateReviewThumbVote,
       refreshToPage,
       isRefetching,
+      createReview,
     }),
     [data, isLoading, isRefetching]
   )

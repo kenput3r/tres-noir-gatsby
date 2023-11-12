@@ -32,7 +32,7 @@ import { useFilterHiddenCustomizableVariants } from "../hooks/useFilterHiddenCus
 import FeaturedStyles from "../components/featured-styles"
 import ViewAsType from "../components/view-as-type"
 import Reviews from "../components/reviews"
-import ReviewsProvider from "../contexts/reviews/ReviewsProvider"
+import { ReviewsProvider } from "../contexts/reviews"
 import type { YotpoSourceProductBottomLine } from "../types/yotpo"
 
 const Page = styled.div`
@@ -829,7 +829,10 @@ const ProductCustomizable = ({
   }, [selectedVariant])
 
   return (
-    <ReviewsProvider productId={shopifyProduct.legacyResourceId}>
+    <ReviewsProvider
+      productId={shopifyProduct.legacyResourceId}
+      productHandle={shopifyProduct.handle}
+    >
       <Layout>
         <SEO
           title={shopifyProduct.title}

@@ -1,6 +1,6 @@
 import React, { useState } from "react"
 import styled from "styled-components"
-import useReviews from "../../contexts/reviews/hooks"
+import { useReviews } from "../../contexts/reviews"
 import {
   IoMdThumbsDown as ThumbsDownIcon,
   IoMdThumbsUp as ThumbsUpIcon,
