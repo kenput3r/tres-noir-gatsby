@@ -6,7 +6,6 @@ const defaultContext: ReviewContextType = {
   isLoading: true,
   isRefetching: false,
   data: null,
-  productHandle: "",
   mutateReviewThumbVote: (props: {
     vote: "up" | "down"
     reviewId: number

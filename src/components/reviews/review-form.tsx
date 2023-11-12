@@ -1,10 +1,8 @@
-import React, { useEffect, useState } from "react"
-import { useSpring, animated, config, useTransition } from "react-spring"
+import React, { useState } from "react"
+import { useSpring, animated, config } from "react-spring"
 import styled from "styled-components"
 import { IoCreateOutline as CreateIcon } from "react-icons/io5"
-import { useForm, SubmitHandler } from "react-hook-form"
-import { ReviewFormStarInput } from "./review-form-star-input"
-import { siteMetadata } from "../../../gatsby-config"
+import { AiFillStar as StarIcon } from "react-icons/ai"
 
 const Component = styled.div`
   h4 {
@@ -46,39 +44,8 @@ const Component = styled.div`
     resize: vertical;
   }
 `
-type Inputs = {
-  reviewTitle: string
-  reviewContent: string
-  reviewerName: string
-  reviewerEmail: string
-  reviewScore: number
-}
 const ReviewForm = () => {
-  const {
-    register,
-    handleSubmit,
-    watch,
-    setValue,
-    formState: { errors },
-    clearErrors,
-  } = useForm<Inputs>()
-  register("reviewScore", { required: true })
-  const starRating = watch("reviewScore")
-  const setRating = (input: number) => setValue("reviewScore", input)
-  const submitForm: SubmitHandler<Inputs> = data => {
-    console.log(data)
-    const payload = {
-      productUrl: `${siteMetadata.siteUrl}/products/`,
-    }
-  }
   const [showForm, setShowForm] = useState(false)
-
-  useEffect(() => {
-    if (starRating) {
-      clearErrors("reviewScore")
-    }
-  }, [starRating])
-
   // React Spring
   const isBrowser = typeof window !== "undefined"
   if (!isBrowser) return null
@@ -91,7 +58,6 @@ const ReviewForm = () => {
       opacity: showForm ? 1 : 0,
     },
   })
-
   return (
     <Component>
       <div className="title-row">
@@ -105,47 +71,29 @@ const ReviewForm = () => {
       </div>
       <animated.div style={{ ...slideInStyles }}>
         {showForm && (
-          <form onSubmit={handleSubmit(submitForm)}>
+          <form onSubmit={evt => evt.preventDefault()}>
             <div className="input-wrapper">
-              <label htmlFor="reviewScore">Score: </label>
+              <label htmlFor="yotpo-input-score">Score: </label>
               {/* <input type="text" name="yotpo-input-score" /> */}
-              <ReviewFormStarInput
-                setRating={setRating}
-                rating={starRating}
-                hasError={errors.reviewScore ? true : false}
-              />
+              <ReviewStarsInput />
             </div>
             <div className="input-wrapper">
-              <label htmlFor="reviewTitle">Title: </label>
-              <input
-                type="text"
-                {...register("reviewTitle", { required: true })}
-              />
-              {errors.reviewTitle && (
-                <div>
-                  <span>Please add a title.</span>
-                </div>
-              )}
+              <label htmlFor="yotpo-input-title">Title: </label>
+              <input type="text" name="yotpo-input-title" />
             </div>
             <div>
               <div className="input-wrapper">
-                <label htmlFor="reviewContent">Review: </label>
-                <textarea {...register("reviewContent", { required: true })} />
+                <label htmlFor="yotpo-input-review">Review: </label>
+                <textarea name="yotpo-input-review" />
               </div>
             </div>
             <div className="input-wrapper">
-              <label htmlFor="reviewerName">Name: </label>
-              <input
-                type="text"
-                {...register("reviewerName", { required: true })}
-              />
+              <label htmlFor="yotpo-input-name">Name: </label>
+              <input type="text" name="yotpo-input-name" />
             </div>
             <div className="input-wrapper">
-              <label htmlFor="reviewerEmail">Email: </label>
-              <input
-                type="email"
-                {...register("reviewerEmail", { required: true })}
-              />
+              <label htmlFor="yotpo-input-email">Email: </label>
+              <input type="text" name="yotpo-input-email" />
             </div>
             <div className="button-wrapper">
               <button className="btn">SUBMIT</button>
@@ -157,6 +105,47 @@ const ReviewForm = () => {
         )}
       </animated.div>
     </Component>
+  )
+}
+
+const StarList = styled.div`
+  margin-top: 8px;
+  .fill {
+    fill: #ffd700;
+  }
+  svg {
+    margin: 0 1px;
+    fill: none;
+    stroke: black;
+    stroke-width: 10px;
+    stroke-linejoin: round;
+    font-size: 22px;
+    paint-order: stroke;
+    /* :hover {
+      fill: red;
+    } */
+    cursor: pointer;
+    :hover ~ svg {
+      fill: #ffd700;
+    }
+  }
+`
+
+export const ReviewStarsInput = () => {
+  const starArr = Array.from(Array(5), (_, x) => x + 1)
+  const [rating, setRating] = useState(0)
+
+  return (
+    <StarList>
+      {starArr.map(star => (
+        <StarIcon
+          key={`star-${star}`}
+          role="button"
+          onClick={() => setRating(star)}
+          className={star <= rating ? "fill" : ""}
+        />
+      ))}
+    </StarList>
   )
 }
 
