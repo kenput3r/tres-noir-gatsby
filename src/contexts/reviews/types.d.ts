@@ -4,6 +4,7 @@ export type ReviewContextType = {
   isLoading: boolean
   isRefetching: boolean
   data: YotpoRetrieveReviewsResponse | null
+  productHandle: string
   mutateReviewThumbVote: (props: {
     vote: "up" | "down"
     reviewId: number

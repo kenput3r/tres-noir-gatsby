@@ -373,7 +373,10 @@ const Product = ({
   }
 
   return (
-    <ReviewsProvider productId={shopifyProduct.legacyResourceId}>
+    <ReviewsProvider
+      productHandle={shopifyProduct.handle}
+      productId={shopifyProduct.legacyResourceId}
+    >
       <Layout>
         <SEO
           title={shopifyProduct.title}
