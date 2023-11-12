@@ -637,20 +637,6 @@ const ProductCustomizable = ({
 
       const formattedColor = color.charAt(0).toUpperCase() + color.slice(1) // capitalize color
 
-      // const formatColor = (c: string) => {
-      //   c.charAt(0).toUpperCase() + c.slice(1)
-      // }
-
-      // const models = shopifyProduct.variants.map(v => {
-      //   return v
-      //   // return {
-      //   //   name: v.colorName,
-      //   //   color: formatColor(v.dominantFrameColor),
-      //   //   image: v.featuredImage.url,
-      //   // }
-      // })
-      // console.log("models", models)
-
       let productSchema = {
         "@context": "https://schema.org/",
         "@type": "Product",
@@ -843,10 +829,7 @@ const ProductCustomizable = ({
   }, [selectedVariant])
 
   return (
-    <ReviewsProvider
-      productHandle={shopifyProduct.handle}
-      productId={shopifyProduct.legacyResourceId}
-    >
+    <ReviewsProvider productId={shopifyProduct.legacyResourceId}>
       <Layout>
         <SEO
           title={shopifyProduct.title}
