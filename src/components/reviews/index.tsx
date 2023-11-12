@@ -17,7 +17,8 @@ const Component = styled.section`
   p,
   span,
   input,
-  label {
+  label,
+  textarea {
     font-family: var(--sub-heading-font);
   }
   h4 {

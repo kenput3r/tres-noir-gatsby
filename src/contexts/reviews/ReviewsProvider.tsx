@@ -13,10 +13,11 @@ import {
 
 type Props = {
   productId: number
+  productHandle: string
   children: ReactNode | ReactNode[]
 }
 
-export function ReviewsProvider({ productId, children }: Props) {
+export function ReviewsProvider({ productId, productHandle, children }: Props) {
   const [data, setData] = useState<YotpoRetrieveReviewsResponse | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [isRefetching, setIsRefetching] = useState(false)
@@ -108,6 +109,7 @@ export function ReviewsProvider({ productId, children }: Props) {
   const reviewsContextValue = useMemo(
     () => ({
       data,
+      productHandle,
       isLoading,
       mutateReviewThumbVote,
       refreshToPage,
