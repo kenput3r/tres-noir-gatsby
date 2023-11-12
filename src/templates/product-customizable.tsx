@@ -4,6 +4,7 @@ import React, {
   useContext,
   useRef,
   ChangeEvent,
+  useCallback,
 } from "react"
 import { Link, graphql } from "gatsby"
 import { StaticImage, GatsbyImage as Img } from "gatsby-plugin-image"
@@ -32,6 +33,7 @@ import FeaturedStyles from "../components/featured-styles"
 import ViewAsType from "../components/view-as-type"
 import Reviews from "../components/reviews"
 import ReviewsProvider from "../contexts/reviews/ReviewsProvider"
+import type { YotpoSourceProductBottomLine } from "../types/yotpo"
 
 const Page = styled.div`
   .shipping-message {
@@ -317,15 +319,18 @@ const Page = styled.div`
     padding: 0.5rem;
   }
 `
-
-const ProductCustomizable = ({
-  data: { contentfulProduct, shopifyProduct },
-  location: any,
-}: any) => {
-  if (!contentfulProduct) {
-    return Product({ data: { shopifyProduct } })
+type Props = {
+  data: {
+    contentfulProduct: any
+    shopifyProduct: any
+    yotpoProductBottomline: YotpoSourceProductBottomLine
   }
-
+  location: any
+}
+const ProductCustomizable = ({
+  data: { contentfulProduct, shopifyProduct, yotpoProductBottomline },
+  location: any,
+}: Props) => {
   // cart
   const { addProductToCart, isAddingToCart, addSunglassesToCart } =
     useContext(CartContext)
@@ -617,14 +622,12 @@ const ProductCustomizable = ({
     // update url
   }
 
-  const generateProductContentfulJsonLD = (
-    shopifyProduct,
-    contentfulProduct
-  ) => {
+  const generateProductContentfulJsonLD = () => {
     try {
       const name = shopifyProduct.title
       const sku = shopifyProduct.variants[0].sku
-      const color = contentfulProduct.variants[0].dominantFrameColor as string
+      const color =
+        (contentfulProduct.variants[0].dominantFrameColor as string) ?? ""
       const price = shopifyProduct.variants[0].price
 
       const featuredImg = contentfulProduct.variants[0].featuredImage.url
@@ -634,7 +637,7 @@ const ProductCustomizable = ({
 
       const formattedColor = color.charAt(0).toUpperCase() + color.slice(1) // capitalize color
 
-      const productSchema = {
+      let productSchema = {
         "@context": "https://schema.org/",
         "@type": "Product",
         name,
@@ -663,6 +666,20 @@ const ProductCustomizable = ({
             returnFees: "https://schema.org/FreeReturn",
           },
         },
+      }
+      if (yotpoProductBottomline) {
+        const { totalReviews, score } = yotpoProductBottomline
+        productSchema["aggregateRating"] = {
+          "@type": "AggregateRating",
+          ratingValue: score,
+          reviewCount: totalReviews,
+        }
+      } else {
+        productSchema["aggregateRating"] = {
+          "@type": "AggregateRating",
+          ratingValue: 0,
+          reviewCount: 0,
+        }
       }
       return JSON.stringify(productSchema, null, 2)
     } catch (error) {
@@ -827,6 +844,7 @@ const ProductCustomizable = ({
             url: contentfulProduct.variants[0].featuredImage.url,
             alt: contentfulProduct.variants[0].featuredImage.title,
           }}
+          jsonLdPayload={generateProductContentfulJsonLD()}
         />
         <Page key={lensType}>
           <FreeShipping />
@@ -1027,7 +1045,12 @@ const ProductCustomizable = ({
 export default ProductCustomizable
 
 export const query = graphql`
-  query ProductQuery($handle: String) {
+  query ProductQuery($handle: String, $legacyResourceId: String) {
+    yotpoProductBottomline(productIdentifier: { eq: $legacyResourceId }) {
+      totalReviews
+      score
+      yotpoId
+    }
     contentfulProduct(handle: { eq: $handle }) {
       handle
       styleDescription {
@@ -1061,46 +1084,6 @@ export const query = graphql`
           title
         }
         customizations {
-          bifocal {
-            data: gatsbyImageData(
-              placeholder: TRACED_SVG
-              quality: 60
-              width: 800
-            )
-            title
-          }
-          bifocalGradientTintSmokeLenses {
-            data: gatsbyImageData(
-              placeholder: TRACED_SVG
-              quality: 60
-              width: 800
-            )
-            title
-          }
-          bifocalGradientTintBrownLenses {
-            data: gatsbyImageData(
-              placeholder: TRACED_SVG
-              quality: 60
-              width: 800
-            )
-            title
-          }
-          bifocalGradientTintG15Lenses {
-            data: gatsbyImageData(
-              placeholder: TRACED_SVG
-              quality: 60
-              width: 800
-            )
-            title
-          }
-          clear {
-            data: gatsbyImageData(
-              placeholder: TRACED_SVG
-              quality: 60
-              width: 800
-            )
-            title
-          }
           gradientTintSmokeLenses {
             data: gatsbyImageData(
               placeholder: TRACED_SVG
@@ -1181,62 +1164,6 @@ export const query = graphql`
             )
             title
           }
-          sunGlassesSmokeLensesBifocal {
-            data: gatsbyImageData(
-              placeholder: TRACED_SVG
-              quality: 60
-              width: 800
-            )
-            title
-          }
-          sunGlassesBrownLensesBifocal {
-            data: gatsbyImageData(
-              placeholder: TRACED_SVG
-              quality: 60
-              width: 800
-            )
-            title
-          }
-          sunGlassesGreenLensesBifocal {
-            data: gatsbyImageData(
-              placeholder: TRACED_SVG
-              quality: 60
-              width: 800
-            )
-            title
-          }
-          sunGlassesOrangeLensesBifocal {
-            data: gatsbyImageData(
-              placeholder: TRACED_SVG
-              quality: 60
-              width: 800
-            )
-            title
-          }
-          sunGlassesYellowLensesBifocal {
-            data: gatsbyImageData(
-              placeholder: TRACED_SVG
-              quality: 60
-              width: 800
-            )
-            title
-          }
-          sunGlassesBlueLensesBifocal {
-            data: gatsbyImageData(
-              placeholder: TRACED_SVG
-              quality: 60
-              width: 800
-            )
-            title
-          }
-          sunGlassesG15LensesBifocal {
-            data: gatsbyImageData(
-              placeholder: TRACED_SVG
-              quality: 60
-              width: 800
-            )
-            title
-          }
         }
         id
         lensColor
@@ -1250,44 +1177,19 @@ export const query = graphql`
       featuredImage {
         originalSrc
         altText
-        localFile {
-          childImageSharp {
-            gatsbyImageData
-          }
-        }
       }
       id
       handle
       legacyResourceId
       onlineStoreUrl
-      priceRangeV2 {
-        minVariantPrice {
-          amount
-        }
-        maxVariantPrice {
-          amount
-        }
-      }
       productType
       title
       vendor
       variants {
         availableForSale
-        compareAtPrice
         id
-        image {
-          originalSrc
-          altText
-          localFile {
-            childImageSharp {
-              gatsbyImageData
-            }
-          }
-        }
-        legacyResourceId
         price
         sku
-        storefrontId
         title
         selectedOptions {
           name

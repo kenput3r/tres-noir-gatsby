@@ -365,6 +365,7 @@ const Product = ({ data: { shopifyProduct } }: any) => {
             url: shopifyProduct.featuredImage.originalSrc,
             alt: shopifyProduct.featuredImage.altText,
           }}
+          jsonLdPayload={generateProductJsonLD()}
         />
         <Page>
           <div className="row">

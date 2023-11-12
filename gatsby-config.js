@@ -153,6 +153,13 @@ module.exports = {
         queries: require("./src/utils/algolia-queries"),
       },
     },
+    {
+      resolve: `gatsby-source-yotpo`,
+      options: {
+        appKey: process.env.GATSBY_YOTPO_APP_KEY,
+        appSecret: process.env.YOTPO_SECRET,
+      },
+    },
     // this (optional) plugin enables Progressive Web App + Offline functionality
     // To learn more, visit: https://gatsby.dev/offline
     // `gatsby-plugin-offline`,

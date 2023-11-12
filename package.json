@@ -28,6 +28,7 @@
     "gatsby-source-contentful": "^7.7.1",
     "gatsby-source-filesystem": "^4.9.0",
     "gatsby-source-shopify": "^6.9.0",
+    "gatsby-source-yotpo": "^3.0.5",
     "gatsby-transformer-sharp": "^4.9.0",
     "graphql": "^15.5.1",
     "instantsearch.css": "^7.4.5",

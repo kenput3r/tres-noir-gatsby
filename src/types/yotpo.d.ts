@@ -84,3 +84,9 @@ export interface Comment {
   content: string
   created_at: string
 }
+
+export type YotpoSourceProductBottomLine = {
+  totalReviews: number
+  score: number
+  yotpoId: string
+} | null
