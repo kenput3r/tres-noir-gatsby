@@ -15,37 +15,7 @@ const StarList = styled.div`
     stroke-linejoin: round;
     font-size: 22px;
     paint-order: stroke;
-    /* :hover {
-      fill: red;
-    } */
     cursor: pointer;
-    /* :hover ~ svg {
-      fill: #ffd700;
-    } */
-    :hover {
-      fill: #ffd700;
-      & ~ svg {
-        fill: none;
-      }
-      :not(& ~ svg) {
-        fill: #ffd700;
-      }
-      & svg {
-        fill: red !important;
-      }
-      /* :not(& + svg) {
-        fill: blue;
-      } */
-      /* & {
-        fill: blue;
-        padding: 10px;
-        border: 1px solid black;
-        width: 100px;
-      } */
-      /* & + svg {
-        fill: red;
-      } */
-    }
   }
 `
 type Props = {
@@ -73,9 +43,6 @@ export const ReviewFormStarInput = ({
           role="button"
           onClick={() => handleChange(star)}
           className={star <= rating ? "fill" : ""}
-          onMouseEnter={() => {
-            console.log("aaply hover")
-          }}
         />
       ))}
     </StarList>
