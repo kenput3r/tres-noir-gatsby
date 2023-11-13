@@ -34,6 +34,7 @@ import ViewAsType from "../components/view-as-type"
 import Reviews from "../components/reviews"
 import { ReviewsProvider } from "../contexts/reviews"
 import type { YotpoSourceProductBottomLine } from "../types/yotpo"
+import { isDiscounted } from "../helpers/shopify"
 
 const Page = styled.div`
   .shipping-message {
@@ -146,7 +147,8 @@ const Page = styled.div`
     margin-bottom: 0;
     line-height: 1.5;
   }
-  p.value {
+  div.value {
+    padding-bottom: 20px;
     font-size: 2rem;
     display: flex;
     flex-direction: row;
@@ -318,19 +320,33 @@ const Page = styled.div`
     }
     padding: 0.5rem;
   }
+  .compare-at-price {
+    margin-top: 8px;
+    span {
+      color: var(--color-grey-dark);
+      text-decoration: line-through;
+    }
+  }
 `
 type Props = {
   data: {
     contentfulProduct: any
     shopifyProduct: any
     yotpoProductBottomline: YotpoSourceProductBottomLine
+    site: {
+      siteMetadata: {
+        siteUrl: string
+      }
+    }
   }
   location: any
 }
 const ProductCustomizable = ({
-  data: { contentfulProduct, shopifyProduct, yotpoProductBottomline },
+  data: { contentfulProduct, shopifyProduct, yotpoProductBottomline, site },
   location: any,
 }: Props) => {
+  const { siteUrl } = site.siteMetadata
+
   // cart
   const { addProductToCart, isAddingToCart, addSunglassesToCart } =
     useContext(CartContext)
@@ -830,8 +846,10 @@ const ProductCustomizable = ({
 
   return (
     <ReviewsProvider
+      productTitle={shopifyProduct.title}
       productId={shopifyProduct.legacyResourceId}
       productHandle={shopifyProduct.handle}
+      siteUrl={siteUrl}
     >
       <Layout>
         <SEO
@@ -923,10 +941,21 @@ const ProductCustomizable = ({
                 </div>
                 <div className="price">
                   <p className="label">STARTING AT</p>
-                  <p className="value">
-                    <span className="left">
-                      ${selectedVariant.shopify.price} USD
-                    </span>
+                  <div className="value">
+                    <div className="left">
+                      <span>${selectedVariant.shopify.price} USD</span>
+                      {selectedVariant.shopify.compareAtPrice &&
+                        isDiscounted(
+                          selectedVariant.shopify.price,
+                          selectedVariant.shopify.compareAtPrice
+                        ) && (
+                          <div className="compare-at-price">
+                            <span>
+                              ${selectedVariant.shopify.compareAtPrice} USD
+                            </span>
+                          </div>
+                        )}
+                    </div>
                     <span className="right">
                       <Link
                         to={contentfulProduct && `/${contentfulProduct.handle}`}
@@ -934,7 +963,7 @@ const ProductCustomizable = ({
                         Learn More {`>`}
                       </Link>
                     </span>
-                  </p>
+                  </div>
                 </div>
                 <div className="actions" ref={actionsRef}>
                   {lensType === LensType.SUNGLASSES && (
@@ -1043,6 +1072,11 @@ export default ProductCustomizable
 
 export const query = graphql`
   query ProductQuery($handle: String, $legacyResourceId: String) {
+    site {
+      siteMetadata {
+        siteUrl
+      }
+    }
     yotpoProductBottomline(productIdentifier: { eq: $legacyResourceId }) {
       totalReviews
       score
@@ -1178,6 +1212,7 @@ export const query = graphql`
       id
       handle
       legacyResourceId
+      storefrontId
       onlineStoreUrl
       productType
       title
@@ -1186,8 +1221,10 @@ export const query = graphql`
         availableForSale
         id
         price
+        compareAtPrice
         sku
         title
+        storefrontId
         selectedOptions {
           name
         }

@@ -14,11 +14,19 @@ import {
 
 type Props = {
   productId: number
+  productTitle: string
   productHandle: string
+  siteUrl: string
   children: ReactNode | ReactNode[]
 }
 
-export function ReviewsProvider({ productId, productHandle, children }: Props) {
+export function ReviewsProvider({
+  productId,
+  productTitle,
+  productHandle,
+  siteUrl,
+  children,
+}: Props) {
   const [data, setData] = useState<YotpoRetrieveReviewsResponse | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [isRefetching, setIsRefetching] = useState(false)
@@ -101,13 +109,33 @@ export function ReviewsProvider({ productId, productHandle, children }: Props) {
         }),
       })
       const json = await response.json()
-      console.log("RESOINSE", json)
     } catch (error) {
-      console.error("Error", error)
+      console.error("Error on mutateReviewThumbVote", error)
     }
   }
   const createReview = async (data: YotpoCreateFormData) => {
-    console.log("YOTPO FORM DATA", data)
+    try {
+      console.log("YOTPO FORM DATA", data)
+      let payload = data
+      payload["productId"] = productId
+      payload["productTitle"] = productTitle
+      payload["submissionTimeStamp"] = new Date()
+      payload["productUrl"] = `${siteUrl}/products/${productHandle}`
+      const response = await fetch("/api/createReview", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({
+          ...payload,
+        }),
+      })
+      const json = await response.json()
+      console.log("API ENDPOINT RESPNSE", json)
+    } catch (error) {
+      console.error("Error on createReview in context provider", error)
+    }
   }
 
   const reviewsContextValue = useMemo(

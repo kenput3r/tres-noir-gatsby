@@ -184,11 +184,17 @@ type Props = {
   data: {
     shopifyProduct: any
     yotpoProductBottomline: YotpoSourceProductBottomLine
+    site: {
+      siteMetadata: {
+        siteUrl: string
+      }
+    }
   }
 }
 const Product = ({
-  data: { shopifyProduct, yotpoProductBottomline },
+  data: { shopifyProduct, yotpoProductBottomline, site },
 }: Props) => {
+  const { siteUrl } = site.siteMetadata
   const [selectedVariant, setSelectedVariant] = useState(
     shopifyProduct.variants[0]
   )
@@ -374,6 +380,7 @@ const Product = ({
 
   return (
     <ReviewsProvider
+      productTitle={shopifyProduct.title}
       productId={shopifyProduct.legacyResourceId}
       productHandle={shopifyProduct.handle}
     >
@@ -483,6 +490,11 @@ export default Product
 
 export const query = graphql`
   query ProductQueryShopify($handle: String, $legacyResourceId: String) {
+    site {
+      siteMetadata {
+        siteUrl
+      }
+    }
     yotpoProductBottomline(productIdentifier: { eq: $legacyResourceId }) {
       totalReviews
       score
