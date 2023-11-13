@@ -54,7 +54,11 @@ export interface LineItem {
   }
   variant: {
     available: boolean
-    compareAtPrice: null | string
+    compareAtPrice: null | {
+      amount: string
+      currencyCode: string
+      type: any
+    }
     id: string
     image: {
       altText: string

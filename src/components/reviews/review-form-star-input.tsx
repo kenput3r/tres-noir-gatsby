@@ -19,8 +19,32 @@ const StarList = styled.div`
       fill: red;
     } */
     cursor: pointer;
-    :hover ~ svg {
+    /* :hover ~ svg {
       fill: #ffd700;
+    } */
+    :hover {
+      fill: #ffd700;
+      & ~ svg {
+        fill: none;
+      }
+      :not(& ~ svg) {
+        fill: #ffd700;
+      }
+      & svg {
+        fill: red !important;
+      }
+      /* :not(& + svg) {
+        fill: blue;
+      } */
+      /* & {
+        fill: blue;
+        padding: 10px;
+        border: 1px solid black;
+        width: 100px;
+      } */
+      /* & + svg {
+        fill: red;
+      } */
     }
   }
 `
@@ -49,6 +73,9 @@ export const ReviewFormStarInput = ({
           role="button"
           onClick={() => handleChange(star)}
           className={star <= rating ? "fill" : ""}
+          onMouseEnter={() => {
+            console.log("aaply hover")
+          }}
         />
       ))}
     </StarList>

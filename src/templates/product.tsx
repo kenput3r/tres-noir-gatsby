@@ -12,6 +12,7 @@ import AddToCartButton from "../components/add-to-cart-button"
 import { ReviewsProvider } from "../contexts/reviews"
 import Reviews from "../components/reviews"
 import type { YotpoSourceProductBottomLine } from "../types/yotpo"
+import { isDiscounted } from "../helpers/shopify"
 
 const Page = styled.div`
   .shipping-message {
@@ -95,7 +96,7 @@ const Page = styled.div`
   }
   .price {
     font-family: var(--heading-font);
-    p.value {
+    div.value {
       font-size: 1.5rem;
     }
 
@@ -155,7 +156,7 @@ const Page = styled.div`
     }
   }
   @media (max-width: 375px) {
-    p.value {
+    div.value {
       font-size: 1.75rem;
     }
   }
@@ -179,6 +180,13 @@ const Page = styled.div`
     }
     padding: 0.5rem;
   }
+  .compare-at-price {
+    margin-top: 8px;
+    span {
+      color: var(--color-grey-dark);
+      text-decoration: line-through;
+    }
+  }
 `
 type Props = {
   data: {
@@ -194,6 +202,8 @@ type Props = {
 const Product = ({
   data: { shopifyProduct, yotpoProductBottomline, site },
 }: Props) => {
+  // console.log("site", site)
+  // const siteUrl = ""
   const { siteUrl } = site.siteMetadata
   const [selectedVariant, setSelectedVariant] = useState(
     shopifyProduct.variants[0]
@@ -383,6 +393,7 @@ const Product = ({
       productTitle={shopifyProduct.title}
       productId={shopifyProduct.legacyResourceId}
       productHandle={shopifyProduct.handle}
+      siteUrl={siteUrl}
     >
       <Layout>
         <SEO
@@ -431,7 +442,18 @@ const Product = ({
                     )}
                   </div>
                   <div className="price">
-                    <p className="value">${selectedVariant.price} USD</p>
+                    <div className="value">
+                      <span>${selectedVariant.price} USD</span>
+                      {selectedVariant.compareAtPrice &&
+                        isDiscounted(
+                          selectedVariant.price,
+                          selectedVariant.compareAtPrice
+                        ) && (
+                          <div className="compare-at-price">
+                            <span>${selectedVariant.compareAtPrice} USD</span>
+                          </div>
+                        )}
+                    </div>
                   </div>
                 </form>
                 {selectedVariant.price > "0.00" && (

@@ -1,10 +1,10 @@
 import React from "react"
 import styled from "styled-components"
+const Component = styled.div`
+  margin-bottom: 30px;
+`
 
 const ReviewsEmpty = () => {
-  const Component = styled.div`
-    margin-bottom: 30px;
-  `
   return (
     <Component>
       <span>Be the first to write a review!</span>
