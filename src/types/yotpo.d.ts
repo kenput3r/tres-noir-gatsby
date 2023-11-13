@@ -90,3 +90,11 @@ export type YotpoSourceProductBottomLine = {
   score: number
   yotpoId: string
 } | null
+
+export type YotpoCreateFormData = {
+  reviewTitle: string
+  reviewContent: string
+  reviewScore: number
+  reviewerName: string
+  reviewerEmail: string
+}
