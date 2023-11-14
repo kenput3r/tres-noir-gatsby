@@ -13,5 +13,5 @@ export type ReviewContextType = {
     undo?: boolean
   }) => void
   refreshToPage: (pageNumber: number) => void
-  createReview: (_data: YotpoCreateFormData) => Promise<void>
+  createReview: (_data: YotpoCreateFormData) => Promise<boolean>
 }

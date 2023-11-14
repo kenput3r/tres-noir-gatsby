@@ -58,8 +58,13 @@ const ReviewForm = () => {
     formState: { errors },
   } = useForm<YotpoCreateFormData>()
   register("reviewScore", { required: true })
-  const onSubmit = (data: YotpoCreateFormData) => {
-    createReview(data)
+  const onSubmit = async (data: YotpoCreateFormData) => {
+    const res = await createReview(data)
+    if (res) {
+      console.log("suc")
+    } else {
+      console.log("error")
+    }
   }
   const starScore = watch("reviewScore")
   const setStarScore = (_score: number) => setValue("reviewScore", _score)

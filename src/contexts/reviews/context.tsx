@@ -15,7 +15,7 @@ const defaultContext: ReviewContextType = {
     undo?: boolean
   }) => {},
   refreshToPage: (pageNumber: number) => {},
-  createReview: async (_data: YotpoCreateFormData) => {},
+  createReview: async (_data: YotpoCreateFormData) => false,
 }
 
 export const ReviewsContext = createContext(defaultContext)

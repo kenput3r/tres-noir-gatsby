@@ -96,7 +96,6 @@ export function ReviewsProvider({
       const url = !undo
         ? `https://api.yotpo.com/reviews/${reviewId}/vote/${vote}`
         : `https://api.yotpo.com/reviews/${reviewId}/vote/${vote}/true`
-      console.log("ENDPOINT IS", url)
       const response = await fetch(url, {
         method: "POST",
         headers: {
@@ -115,7 +114,6 @@ export function ReviewsProvider({
   }
   const createReview = async (data: YotpoCreateFormData) => {
     try {
-      console.log("YOTPO FORM DATA", data)
       let payload = data
       payload["productId"] = productId
       payload["productTitle"] = productTitle
@@ -133,8 +131,10 @@ export function ReviewsProvider({
       })
       const json = await response.json()
       console.log("API ENDPOINT RESPNSE", json)
+      return true
     } catch (error) {
       console.error("Error on createReview in context provider", error)
+      return false
     }
   }
 

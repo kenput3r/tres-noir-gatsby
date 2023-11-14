@@ -16,8 +16,6 @@ export default async function createReview(
 ) {
   try {
     const body = req.body as PayloadType
-    console.log("payload", req.body)
-    console.log("here")
     // const token = await authenticateYotpo()
     const YOTPO_CLIENT_ID = process.env.GATSBY_YOTPO_APP_KEY as string
     const YOTPO_SECRET = process.env.YOTPO_SECRET as string
@@ -42,23 +40,23 @@ export default async function createReview(
       submission_time_stamp: body.submissionTimeStamp,
       reviewer_type: reviewerType,
     }
-    console.log("payload", payload)
-    const response = await fetch("https://api.yotpo.com/v1/widget/reviews", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-      },
-      body: JSON.stringify({ ...payload }),
-    })
-    const resJson = await response.json()
-    console.log("resJson", resJson)
-    if (resJson.code === 200) {
-      return res.status(200).json("Success")
-    } else {
-      console.log("error")
-      return res.status(400).json("error")
-    }
+    // const response = await fetch("https://api.yotpo.com/v1/widget/reviews", {
+    //   method: "POST",
+    //   headers: {
+    //     "Content-Type": "application/json",
+    //     Accept: "application/json",
+    //   },
+    //   body: JSON.stringify({ ...payload }),
+    // })
+    // const resJson = await response.json()
+    // console.log("resJson", resJson)
+    // if (resJson.code === 200) {
+    //   return res.status(200).json("Success")
+    // } else {
+    //   console.log("error")
+    //   return res.status(400).json("error")
+    // }
+    res.status(200).json("success")
   } catch (error) {
     console.log("Error on fetching order details", error)
   }
