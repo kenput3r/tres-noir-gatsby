@@ -48,6 +48,7 @@ const Component = styled.div`
     resize: vertical;
   }
 `
+
 const ReviewForm = () => {
   const {
     watch,
@@ -58,6 +59,11 @@ const ReviewForm = () => {
     formState: { errors },
   } = useForm<YotpoCreateFormData>()
   register("reviewScore", { required: true })
+  const starScore = watch("reviewScore")
+  const setStarScore = (_score: number) => setValue("reviewScore", _score)
+  const [isVisible, setisVisible] = useState(false)
+  const [isExiting, setisExiting] = useState(false)
+  const { createReview } = useReviews()
   const onSubmit = async (data: YotpoCreateFormData) => {
     const res = await createReview(data)
     if (res) {
@@ -66,35 +72,40 @@ const ReviewForm = () => {
       console.log("error")
     }
   }
-  const starScore = watch("reviewScore")
-  const setStarScore = (_score: number) => setValue("reviewScore", _score)
-  const [showForm, setShowForm] = useState(false)
-  const { createReview } = useReviews()
-  // React Spring
-  const isBrowser = typeof window !== "undefined"
-  if (!isBrowser) return null
-  const slideInStyles = useSpring({
-    config: { ...config.default },
-    from: {
-      opacity: 0,
-    },
-    to: {
-      opacity: showForm ? 1 : 0,
-    },
-  })
+
+  const openDrawer = () => {
+    setisVisible(true)
+    setisExiting(false)
+  }
+
+  const closeDrawer = () => {
+    setisVisible(false)
+    setisExiting(false)
+  }
+
+  const onClose = () => {
+    console.log("close")
+    console.log("prevent erorrs")
+  }
+
   return (
     <Component>
       <div className="title-row">
         <h4>Reviews</h4>
-        <button className="btn" onClick={() => setShowForm(true)}>
+        <button className="btn" onClick={() => openDrawer()}>
           <div>
             <span>WRITE A REVIEW</span>
             <CreateIcon />
           </div>
         </button>
       </div>
-      <animated.div style={{ ...slideInStyles }}>
-        {showForm && (
+      <ReviewDrawer
+        isVisible={isVisible}
+        isExiting={isExiting}
+        setIsExiting={setisExiting}
+        setIsVisible={setisVisible}
+      >
+        {isExiting ? null : (
           <form onSubmit={handleSubmit(onSubmit)}>
             <div className="input-wrapper">
               <label htmlFor="reviewScore">Score: </label>
@@ -148,15 +159,43 @@ const ReviewForm = () => {
             </div>
             <div className="button-wrapper">
               <button className="btn">SUBMIT</button>
-              <button className="btn" onClick={() => setShowForm(false)}>
+              <button className="btn" onClick={() => closeDrawer()}>
                 CLOSE
               </button>
             </div>
           </form>
         )}
-      </animated.div>
+      </ReviewDrawer>
     </Component>
   )
 }
 
 export default ReviewForm
+
+type ReviewDrawerProps = {
+  isVisible: boolean
+  isExiting: boolean
+  setIsVisible: (_state: boolean) => void
+  setIsExiting: (_state: boolean) => void
+  children: React.ReactNode
+}
+const ReviewDrawer = ({
+  children,
+  isVisible,
+  isExiting,
+  setIsVisible,
+  setIsExiting,
+}: ReviewDrawerProps) => {
+  const animationProps = useSpring({
+    opacity: isVisible ? 1 : 0,
+    height: isVisible ? "auto" : 0,
+    // config: { duration: 300 }, // Adjust the animation duration
+    onRest: () => {
+      // If the component is not visible, set the exit state
+      if (!isVisible) {
+        setIsExiting(true)
+      }
+    },
+  })
+  return <animated.div style={animationProps}>{children}</animated.div>
+}
