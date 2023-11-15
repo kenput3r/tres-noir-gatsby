@@ -35,6 +35,7 @@ import Reviews from "../components/reviews"
 import { ReviewsProvider } from "../contexts/reviews"
 import type { YotpoSourceProductBottomLine } from "../types/yotpo"
 import { isDiscounted } from "../helpers/shopify"
+import Divider from "../components/divider"
 
 const Page = styled.div`
   .shipping-message {
@@ -1055,10 +1056,14 @@ const ProductCustomizable = ({
             )}
           </div>
           {contentfulProduct.featuredStyles && (
-            <div className="row-no-flex">
-              <FeaturedStyles images={contentfulProduct.featuredStyles} />
-            </div>
+            <>
+              <Divider />
+              <div className="row-no-flex">
+                <FeaturedStyles images={contentfulProduct.featuredStyles} />
+              </div>
+            </>
           )}
+          <Divider />
           <div className="row-no-flex review-row">
             <Reviews />
           </div>

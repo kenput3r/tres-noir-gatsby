@@ -35,10 +35,10 @@ export default async function createReview(
       review_content: body.reviewContent,
       review_title: body.reviewTitle,
       review_score: body.reviewScore,
-      signature,
-      time_stamp: timeStamp,
-      submission_time_stamp: body.submissionTimeStamp,
-      reviewer_type: reviewerType,
+      // signature,
+      // time_stamp: timeStamp,
+      // submission_time_stamp: body.submissionTimeStamp,
+      // reviewer_type: reviewerType,
     }
     // const response = await fetch("https://api.yotpo.com/v1/widget/reviews", {
     //   method: "POST",
@@ -56,8 +56,9 @@ export default async function createReview(
     //   console.log("error")
     //   return res.status(400).json("error")
     // }
-    res.status(200).json("success")
+    res.status(200)
   } catch (error) {
-    console.log("Error on fetching order details", error)
+    console.log("Error in /createReview api route", error)
+    res.status(400)
   }
 }

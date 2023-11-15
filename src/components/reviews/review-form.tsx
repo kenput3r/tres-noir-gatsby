@@ -7,6 +7,8 @@ import ReviewFormStarInput from "./review-form-star-input"
 import ReviewFormError from "./review-form-error"
 import type { YotpoCreateFormData } from "../../types/yotpo"
 import { useReviews } from "../../contexts/reviews"
+import Spinner from "../spinner"
+import { IoCheckmarkCircle as CheckmarkIcon } from "react-icons/io5"
 
 const Component = styled.div`
   h4 {
@@ -56,36 +58,35 @@ const ReviewForm = () => {
     handleSubmit,
     setValue,
     clearErrors,
-    formState: { errors },
+    setError,
+    formState: { errors, isSubmitting },
   } = useForm<YotpoCreateFormData>()
   register("reviewScore", { required: true })
   const starScore = watch("reviewScore")
   const setStarScore = (_score: number) => setValue("reviewScore", _score)
   const [isVisible, setisVisible] = useState(false)
-  const [isExiting, setisExiting] = useState(false)
+  const [isSuccess, setIsSuccess] = useState(false)
+
   const { createReview } = useReviews()
   const onSubmit = async (data: YotpoCreateFormData) => {
-    const res = await createReview(data)
-    if (res) {
-      console.log("suc")
-    } else {
-      console.log("error")
+    try {
+      if (errors.root) clearErrors("root")
+      const res = await createReview(data)
+      if (!res) throw Error("Error in hook call")
+      // show success
+      setIsSuccess(true)
+    } catch (error) {
+      setError("root", { type: "custom", message: "Custom message" })
+      console.log("Error while submitting react-hook-form", error)
     }
   }
 
   const openDrawer = () => {
     setisVisible(true)
-    setisExiting(false)
   }
 
   const closeDrawer = () => {
     setisVisible(false)
-    setisExiting(false)
-  }
-
-  const onClose = () => {
-    console.log("close")
-    console.log("prevent erorrs")
   }
 
   return (
@@ -99,73 +100,79 @@ const ReviewForm = () => {
           </div>
         </button>
       </div>
-      <ReviewDrawer
-        isVisible={isVisible}
-        isExiting={isExiting}
-        setIsExiting={setisExiting}
-        setIsVisible={setisVisible}
-      >
-        {isExiting ? null : (
-          <form onSubmit={handleSubmit(onSubmit)}>
-            <div className="input-wrapper">
-              <label htmlFor="reviewScore">Score: </label>
-              <ReviewFormStarInput
-                rating={starScore}
-                setRating={setStarScore}
-                clearError={() => clearErrors("reviewScore")}
-              />
-              {errors.reviewScore && (
-                <ReviewFormError error="Please add your review score" />
-              )}
-            </div>
-            <div className="input-wrapper">
-              <label htmlFor="reviewTitle">Title: </label>
-              <input
-                type="text"
-                {...register("reviewTitle", { required: true })}
-              />
-              {errors.reviewTitle && (
-                <ReviewFormError error="Please add your review title" />
-              )}
-            </div>
-            <div>
+      {isSuccess ? (
+        <SuccessMessage />
+      ) : (
+        <>
+          {isVisible && (
+            <form onSubmit={handleSubmit(onSubmit)}>
               <div className="input-wrapper">
-                <label htmlFor="reviewContent">Review: </label>
-                <textarea {...register("reviewContent", { required: true })} />
-                {errors.reviewContent && (
-                  <ReviewFormError error="Please add your review" />
+                <label htmlFor="reviewScore">Score: </label>
+                <ReviewFormStarInput
+                  rating={starScore}
+                  setRating={setStarScore}
+                  clearError={() => clearErrors("reviewScore")}
+                />
+                {errors.reviewScore && (
+                  <ReviewFormError error="Please add your review score" />
                 )}
               </div>
-            </div>
-            <div className="input-wrapper">
-              <label htmlFor="reviewerName">Name: </label>
-              <input
-                type="text"
-                {...register("reviewerName", { required: true })}
-              />
-              {errors.reviewerName && (
-                <ReviewFormError error="Please add your name" />
+              <div className="input-wrapper">
+                <label htmlFor="reviewTitle">Title: </label>
+                <input
+                  type="text"
+                  {...register("reviewTitle", { required: true })}
+                />
+                {errors.reviewTitle && (
+                  <ReviewFormError error="Please add your review title" />
+                )}
+              </div>
+              <div>
+                <div className="input-wrapper">
+                  <label htmlFor="reviewContent">Review: </label>
+                  <textarea
+                    {...register("reviewContent", { required: true })}
+                  />
+                  {errors.reviewContent && (
+                    <ReviewFormError error="Please add your review" />
+                  )}
+                </div>
+              </div>
+              <div className="input-wrapper">
+                <label htmlFor="reviewerName">Name: </label>
+                <input
+                  type="text"
+                  {...register("reviewerName", { required: true })}
+                />
+                {errors.reviewerName && (
+                  <ReviewFormError error="Please add your name" />
+                )}
+              </div>
+              <div className="input-wrapper">
+                <label htmlFor="reviewerEmail">Email: </label>
+                <input
+                  type="email"
+                  {...register("reviewerEmail", { required: true })}
+                />
+                {errors.reviewerEmail && (
+                  <ReviewFormError error="Please add your email" />
+                )}
+              </div>
+              {errors.root && (
+                <ReviewFormError error="There was a problem subitting your review. Please try again." />
               )}
-            </div>
-            <div className="input-wrapper">
-              <label htmlFor="reviewerEmail">Email: </label>
-              <input
-                type="email"
-                {...register("reviewerEmail", { required: true })}
-              />
-              {errors.reviewerEmail && (
-                <ReviewFormError error="Please add your email" />
-              )}
-            </div>
-            <div className="button-wrapper">
-              <button className="btn">SUBMIT</button>
-              <button className="btn" onClick={() => closeDrawer()}>
-                CLOSE
-              </button>
-            </div>
-          </form>
-        )}
-      </ReviewDrawer>
+              <div className="button-wrapper">
+                <button className="btn">
+                  {isSubmitting ? <Spinner /> : <span>SUBMIT</span>}
+                </button>
+                <button className="btn" onClick={() => closeDrawer()}>
+                  CLOSE
+                </button>
+              </div>
+            </form>
+          )}
+        </>
+      )}
     </Component>
   )
 }
@@ -198,4 +205,46 @@ const ReviewDrawer = ({
     },
   })
   return <animated.div style={animationProps}>{children}</animated.div>
+}
+
+// Success Message
+type SuccessMessageProps = {}
+
+const SuccessMessageStyled = styled.div`
+  margin: 30px 5px;
+  .first {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+  }
+  .green {
+    color: green;
+    fill: green;
+  }
+  span {
+    display: block;
+    padding: 5px 0px;
+    text-align: center;
+  }
+  svg {
+    font-size: 80px;
+  }
+  .bold {
+    font-family: var(--heading-font);
+    color: black;
+    font-size: 20px;
+  }
+`
+const SuccessMessage = () => {
+  return (
+    <SuccessMessageStyled>
+      <div className="first">
+        <CheckmarkIcon className="green" />
+        <span className="bold">Thank you</span>
+        <span>Your review has been sent!</span>
+        <span>Please check your email to verify your review.</span>
+      </div>
+    </SuccessMessageStyled>
+  )
 }

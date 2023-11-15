@@ -8,10 +8,11 @@ import type { Pagination } from "../../types/yotpo"
 import { useReviews } from "../../contexts/reviews"
 
 const Component = styled.div`
+  padding-top: 30px;
+  padding-bottom: 30px;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 20px;
   .page-number {
     display: flex;
     align-items: center;
@@ -54,36 +55,37 @@ const ReviewPagination = ({ pagination }: Props) => {
     refreshToPage(pageNumber)
   }
   return (
-    <Component>
-      {showPagination && (
-        <>
-          <button
-            className="no-styles"
-            disabled={disableBack}
-            onClick={() => goToPage(page - 1)}
-          >
-            <LeftIcon className="icon" role="button" />
-          </button>
-          {pages.map(pageNumber => (
-            <div
-              className={`page-number ${page === pageNumber ? "active" : ""}`}
-              key={`review-pagination-page-number-${pageNumber}`}
-              role="button"
-              onClick={() => goToPage(pageNumber)}
-            >
-              <span>{pageNumber}</span>
-            </div>
-          ))}
-          <button
-            className="no-styles"
-            disabled={disableForward}
-            onClick={() => goToPage(page + 1)}
-          >
-            <RightIcon className="icon" role="button" />
-          </button>
-        </>
-      )}
-    </Component>
+    // <Component>
+    //   {showPagination && (
+    //     <>
+    //       <button
+    //         className="no-styles"
+    //         disabled={disableBack}
+    //         onClick={() => goToPage(page - 1)}
+    //       >
+    //         <LeftIcon className="icon" role="button" />
+    //       </button>
+    //       {pages.map(pageNumber => (
+    //         <div
+    //           className={`page-number ${page === pageNumber ? "active" : ""}`}
+    //           key={`review-pagination-page-number-${pageNumber}`}
+    //           role="button"
+    //           onClick={() => goToPage(pageNumber)}
+    //         >
+    //           <span>{pageNumber}</span>
+    //         </div>
+    //       ))}
+    //       <button
+    //         className="no-styles"
+    //         disabled={disableForward}
+    //         onClick={() => goToPage(page + 1)}
+    //       >
+    //         <RightIcon className="icon" role="button" />
+    //       </button>
+    //     </>
+    //   )}
+    // </Component>
+    <></>
   )
 }
 

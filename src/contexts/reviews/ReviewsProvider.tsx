@@ -36,7 +36,7 @@ export function ReviewsProvider({
       try {
         setIsLoading(true)
         const YOTPO_APP_KEY = process.env.GATSBY_YOTPO_APP_KEY as string
-        const url = `https://api-cdn.yotpo.com/v1/widget/${YOTPO_APP_KEY}/products/${productId}/reviews.json?per_page=1`
+        const url = `https://api-cdn.yotpo.com/v1/widget/${YOTPO_APP_KEY}/products/${productId}/reviews.json`
         const response = await fetch(url, {
           method: "GET",
           headers: {
@@ -129,9 +129,7 @@ export function ReviewsProvider({
           ...payload,
         }),
       })
-      const json = await response.json()
-      console.log("API ENDPOINT RESPNSE", json)
-      return true
+      return response.ok
     } catch (error) {
       console.error("Error on createReview in context provider", error)
       return false

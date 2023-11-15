@@ -175,6 +175,14 @@ const Page = styled.div`
     grid-template-columns: repeat(3, 1fr);
   }
   .review-row {
+    width: 1280px;
+    max-width: 100%;
+    margin: 0 auto;
+    @media (max-width: 768px) {
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
     @media screen and (min-width: 768px) {
       padding: 0 25px;
     }
