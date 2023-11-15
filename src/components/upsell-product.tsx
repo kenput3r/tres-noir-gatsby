@@ -16,7 +16,7 @@ const Component = styled.article`
   margin: 15px;
   text-align: center;
   @media (max-width: 600px) {
-    margin: 20px 11px 20px 11px;
+    margin: 15px 10px;
   }
   a {
     color: black;

@@ -8,6 +8,7 @@ exports.createPages = async ({ graphql, actions: { createPage } }) => {
           node {
             handle
             id
+            legacyResourceId
             metafields {
               key
               value
@@ -20,6 +21,7 @@ exports.createPages = async ({ graphql, actions: { createPage } }) => {
         edges {
           node {
             handle
+            legacyResourceId
             id
             title
           }
@@ -41,9 +43,14 @@ exports.createPages = async ({ graphql, actions: { createPage } }) => {
       }
     }
   `)
+  const contentfulHandles = pageable.data.allContentfulProduct.edges.map(
+    i => i.node.handle
+  )
 
   pageable.data.allShopifyProduct.edges.forEach(
-    async ({ node: { handle, id, metafields, productType } }) => {
+    async ({
+      node: { handle, id, metafields, productType, legacyResourceId },
+    }) => {
       let template = "product"
       if (metafields.length) {
         metafields.forEach(node => {
@@ -53,8 +60,9 @@ exports.createPages = async ({ graphql, actions: { createPage } }) => {
         })
       }
 
-      if (productType === "Glasses") {
+      if (productType === "Glasses" && contentfulHandles.includes(handle)) {
         template = "product-customizable"
+        // TODO: if it exists in contentful its forsure customizable, add this case to optimize data in product-customizable.tsx
       } else if (productType === "Gift Card" || productType === "Gift Cards") {
         template = "gift-card"
       }
@@ -72,20 +80,26 @@ exports.createPages = async ({ graphql, actions: { createPage } }) => {
           context: {
             id,
             handle,
+            legacyResourceId: legacyResourceId
+              ? legacyResourceId.toString()
+              : "",
           },
         })
       }
     }
   )
   pageable.data.allShopifyProduct.edges.forEach(
-    async ({ node: { handle, id, productType } }) => {
-      if (productType === "Glasses") {
+    async ({ node: { handle, id, productType, legacyResourceId } }) => {
+      if (productType === "Glasses" && contentfulHandles.includes(handle)) {
         createPage({
           path: `/products/${handle}/customize`,
           component: path.resolve(`./src/templates/customize.tsx`),
           context: {
             id,
             handle,
+            legacyResourceId: legacyResourceId
+              ? legacyResourceId.toString()
+              : "",
           },
         })
       }

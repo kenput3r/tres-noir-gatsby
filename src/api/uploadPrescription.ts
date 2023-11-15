@@ -1,6 +1,7 @@
 import fetch from "node-fetch"
 import FormData from "form-data"
 import crypto from "crypto"
+import type { GatsbyFunctionRequest, GatsbyFunctionResponse } from "gatsby"
 
 export const config = {
   bodyParser: {
@@ -24,7 +25,10 @@ export const config = {
   },
 }
 
-export default async function uploadPrescription(req, res) {
+export default async function uploadPrescription(
+  req: GatsbyFunctionRequest,
+  res: GatsbyFunctionResponse
+) {
   try {
     const publicId = req.body.name
     const imageToUpload = req.body.file

@@ -1,4 +1,6 @@
 import fetch from "node-fetch"
+import type { GatsbyFunctionRequest, GatsbyFunctionResponse } from "gatsby"
+
 export default async function getOrderDetails(req, res) {
   try {
     const orderId = req.body.id
