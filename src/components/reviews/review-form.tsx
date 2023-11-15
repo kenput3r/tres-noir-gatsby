@@ -11,6 +11,7 @@ import Spinner from "../spinner"
 import { IoCheckmarkCircle as CheckmarkIcon } from "react-icons/io5"
 
 const Component = styled.div`
+  padding-bottom: 30px;
   h4 {
     margin: 0;
   }
@@ -64,7 +65,44 @@ const ReviewForm = () => {
   register("reviewScore", { required: true })
   const starScore = watch("reviewScore")
   const setStarScore = (_score: number) => setValue("reviewScore", _score)
-  const [isVisible, setisVisible] = useState(false)
+  const [isVisible, setIsVisible] = useState(false)
+
+  // reverse the animation on exit to hide the component, slowly
+  const [isExiting, setIsExiting] = useState(false)
+  useEffect(() => {
+    if (isExiting) {
+      const timeout = setTimeout(() => {
+        setIsExiting(false)
+      }, 1000)
+      return () => clearTimeout(timeout)
+    }
+  }, [isExiting])
+
+  const animationProps = useSpring({
+    opacity: isVisible ? 1 : 0,
+    // maxHeight: isVisible ? "auto" : 0,
+    display: isVisible ? "block" : "none",
+    // height: isVisible ? "auto" : 0,
+    transform: isVisible ? "translateY(0)" : "translateY(-100%)",
+    config: config.default,
+    onRest: () => {
+      // If the component is not visible, set the exit state
+      if (!isVisible) {
+        setIsExiting(true)
+      }
+    },
+  })
+
+  // const animationProps = useSpring({
+  //   opacity: isVisible ? 1 : 0,
+  //   height: isVisible ? "auto" : 0,
+
+  //   transform: isVisible ? "translateY(0)" : "translateY(-100%)",
+  //   config: config.default,
+  // })
+
+  // modify the animationProps to work on exit
+
   const [isSuccess, setIsSuccess] = useState(false)
 
   const { createReview } = useReviews()
@@ -82,11 +120,14 @@ const ReviewForm = () => {
   }
 
   const openDrawer = () => {
-    setisVisible(true)
+    setIsVisible(true)
   }
 
-  const closeDrawer = () => {
-    setisVisible(false)
+  const closeDrawer = (
+    evt: React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ) => {
+    evt.preventDefault()
+    setIsVisible(false)
   }
 
   return (
@@ -103,75 +144,71 @@ const ReviewForm = () => {
       {isSuccess ? (
         <SuccessMessage />
       ) : (
-        <>
-          {isVisible && (
-            <form onSubmit={handleSubmit(onSubmit)}>
-              <div className="input-wrapper">
-                <label htmlFor="reviewScore">Score: </label>
-                <ReviewFormStarInput
-                  rating={starScore}
-                  setRating={setStarScore}
-                  clearError={() => clearErrors("reviewScore")}
-                />
-                {errors.reviewScore && (
-                  <ReviewFormError error="Please add your review score" />
-                )}
-              </div>
-              <div className="input-wrapper">
-                <label htmlFor="reviewTitle">Title: </label>
-                <input
-                  type="text"
-                  {...register("reviewTitle", { required: true })}
-                />
-                {errors.reviewTitle && (
-                  <ReviewFormError error="Please add your review title" />
-                )}
-              </div>
-              <div>
-                <div className="input-wrapper">
-                  <label htmlFor="reviewContent">Review: </label>
-                  <textarea
-                    {...register("reviewContent", { required: true })}
-                  />
-                  {errors.reviewContent && (
-                    <ReviewFormError error="Please add your review" />
-                  )}
-                </div>
-              </div>
-              <div className="input-wrapper">
-                <label htmlFor="reviewerName">Name: </label>
-                <input
-                  type="text"
-                  {...register("reviewerName", { required: true })}
-                />
-                {errors.reviewerName && (
-                  <ReviewFormError error="Please add your name" />
-                )}
-              </div>
-              <div className="input-wrapper">
-                <label htmlFor="reviewerEmail">Email: </label>
-                <input
-                  type="email"
-                  {...register("reviewerEmail", { required: true })}
-                />
-                {errors.reviewerEmail && (
-                  <ReviewFormError error="Please add your email" />
-                )}
-              </div>
-              {errors.root && (
-                <ReviewFormError error="There was a problem subitting your review. Please try again." />
+        <animated.div style={animationProps}>
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <div className="input-wrapper">
+              <label htmlFor="reviewScore">Score: </label>
+              <ReviewFormStarInput
+                rating={starScore}
+                setRating={setStarScore}
+                clearError={() => clearErrors("reviewScore")}
+              />
+              {errors.reviewScore && (
+                <ReviewFormError error="Please add your review score" />
               )}
-              <div className="button-wrapper">
-                <button className="btn">
-                  {isSubmitting ? <Spinner /> : <span>SUBMIT</span>}
-                </button>
-                <button className="btn" onClick={() => closeDrawer()}>
-                  CLOSE
-                </button>
+            </div>
+            <div className="input-wrapper">
+              <label htmlFor="reviewTitle">Title: </label>
+              <input
+                type="text"
+                {...register("reviewTitle", { required: true })}
+              />
+              {errors.reviewTitle && (
+                <ReviewFormError error="Please add your review title" />
+              )}
+            </div>
+            <div>
+              <div className="input-wrapper">
+                <label htmlFor="reviewContent">Review: </label>
+                <textarea {...register("reviewContent", { required: true })} />
+                {errors.reviewContent && (
+                  <ReviewFormError error="Please add your review" />
+                )}
               </div>
-            </form>
-          )}
-        </>
+            </div>
+            <div className="input-wrapper">
+              <label htmlFor="reviewerName">Name: </label>
+              <input
+                type="text"
+                {...register("reviewerName", { required: true })}
+              />
+              {errors.reviewerName && (
+                <ReviewFormError error="Please add your name" />
+              )}
+            </div>
+            <div className="input-wrapper">
+              <label htmlFor="reviewerEmail">Email: </label>
+              <input
+                type="email"
+                {...register("reviewerEmail", { required: true })}
+              />
+              {errors.reviewerEmail && (
+                <ReviewFormError error="Please add your email" />
+              )}
+            </div>
+            {errors.root && (
+              <ReviewFormError error="There was a problem subitting your review. Please try again." />
+            )}
+            <div className="button-wrapper">
+              <button className="btn">
+                {isSubmitting ? <Spinner /> : <span>SUBMIT</span>}
+              </button>
+              <button className="btn" onClick={evt => closeDrawer(evt)}>
+                CLOSE
+              </button>
+            </div>
+          </form>
+        </animated.div>
       )}
     </Component>
   )

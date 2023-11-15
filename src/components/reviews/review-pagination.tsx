@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useCallback, useEffect, useState } from "react"
 import styled from "styled-components"
 import {
   BsChevronLeft as LeftIcon,
@@ -6,6 +6,8 @@ import {
 } from "react-icons/bs"
 import type { Pagination } from "../../types/yotpo"
 import { useReviews } from "../../contexts/reviews"
+import { YOTPO_REVIEWS_PER_PAGE } from "../../contexts/reviews/ReviewsProvider"
+import { set } from "js-cookie"
 
 const Component = styled.div`
   padding-top: 30px;
@@ -43,49 +45,113 @@ const Component = styled.div`
 type Props = {
   pagination: Pagination
 }
+
 const ReviewPagination = ({ pagination }: Props) => {
   const { refreshToPage } = useReviews()
-  const { page, total } = pagination
-  const showPagination = total > 0
-  const range = total <= 5 ? total : 5
-  const pages = Array.from(Array(range), (_, x) => x + 1)
-  const disableBack = page === pages[0]
-  const disableForward = page === pages[pages.length - 1]
-  const goToPage = (pageNumber: number) => {
-    refreshToPage(pageNumber)
+  const { page } = pagination
+  const totalProducts = pagination.total
+  const totalPages = Math.ceil(totalProducts / YOTPO_REVIEWS_PER_PAGE)
+  const [currentPage, setCurrentPage] = useState(page)
+  const maxPagesToShow = 5
+  const initialLimit = Math.min(maxPagesToShow, totalPages)
+
+  const range = (start: number, end: number) => {
+    return Array.from({ length: end - start + 1 }, (_, i) => i + start)
   }
+
+  const [pages, setPages] = useState<number[]>(range(1, initialLimit))
+
+  // create a list of pages to display
+
+  const [disableLeft, setDisableLeft] = useState(currentPage === 1)
+  const [disableRight, setDisableRight] = useState(currentPage === totalPages)
+
+  // updates the left and right arrows
+  useEffect(() => {
+    if (currentPage === 1) {
+      setDisableLeft(true)
+    } else {
+      setDisableLeft(false)
+    }
+    if (currentPage === totalPages) {
+      setDisableRight(true)
+    } else {
+      setDisableRight(false)
+    }
+  }, [currentPage])
+
+  //
+  useEffect(() => {
+    if (currentPage === 1) {
+      setPages(range(1, initialLimit))
+      return
+    }
+    if (currentPage === totalPages) {
+      setPages(range(totalPages - initialLimit + 1, totalPages))
+      return
+    }
+    const lowerLimit = Math.min(1, currentPage - 1)
+    const upperLimit = Math.max(totalPages, currentPage + 1)
+    setPages(range(lowerLimit, upperLimit))
+  }, [currentPage])
+
+  const goToPreviousPage = useCallback(() => {
+    if (currentPage === 1) {
+      return
+    }
+    const newPage = currentPage - 1
+    refreshToPage(page)
+    setCurrentPage(newPage)
+  }, [currentPage])
+
+  const goToNextPage = useCallback(() => {
+    if (currentPage === totalPages) {
+      return
+    }
+    const newPage = currentPage + 1
+    setCurrentPage(newPage)
+    refreshToPage(newPage)
+  }, [currentPage])
+
+  const goToPage = useCallback(
+    (newPage: number) => {
+      if (newPage === currentPage) {
+        return
+      }
+      setCurrentPage(newPage)
+      refreshToPage(newPage)
+    },
+    [currentPage]
+  )
+
   return (
-    // <Component>
-    //   {showPagination && (
-    //     <>
-    //       <button
-    //         className="no-styles"
-    //         disabled={disableBack}
-    //         onClick={() => goToPage(page - 1)}
-    //       >
-    //         <LeftIcon className="icon" role="button" />
-    //       </button>
-    //       {pages.map(pageNumber => (
-    //         <div
-    //           className={`page-number ${page === pageNumber ? "active" : ""}`}
-    //           key={`review-pagination-page-number-${pageNumber}`}
-    //           role="button"
-    //           onClick={() => goToPage(pageNumber)}
-    //         >
-    //           <span>{pageNumber}</span>
-    //         </div>
-    //       ))}
-    //       <button
-    //         className="no-styles"
-    //         disabled={disableForward}
-    //         onClick={() => goToPage(page + 1)}
-    //       >
-    //         <RightIcon className="icon" role="button" />
-    //       </button>
-    //     </>
-    //   )}
-    // </Component>
-    <></>
+    <Component>
+      <button
+        onClick={() => goToPreviousPage()}
+        className="no-styles"
+        disabled={disableLeft}
+      >
+        <LeftIcon className="icon" />
+      </button>
+      {pages.map(page => {
+        return (
+          <button
+            key={page}
+            onClick={() => goToPage(page)}
+            className={`page-number ${page === currentPage ? "active" : ""}`}
+          >
+            {page}
+          </button>
+        )
+      })}
+      <button
+        onClick={() => goToNextPage()}
+        className="no-styles"
+        disabled={disableRight}
+      >
+        <RightIcon className="icon" />
+      </button>
+    </Component>
   )
 }
 

@@ -16,6 +16,7 @@ const StarList = styled.div`
     font-size: 22px;
     paint-order: stroke;
     cursor: pointer;
+    // on hover, fill in the svgs and siblings before it with gold
   }
 `
 type Props = {
@@ -34,6 +35,38 @@ export const ReviewFormStarInput = ({
     if (!rating) clearError()
     setRating(star)
   }
+  const handleHoverIn = (
+    evt: React.MouseEvent<SVGElement, MouseEvent>,
+    star: number
+  ) => {
+    const target = evt.target as SVGElement
+    const siblings = target.parentNode?.childNodes as NodeListOf<SVGElement>
+    if (siblings) {
+      const starsToFill = Array.from(siblings).slice(0, star)
+      starsToFill.forEach((sibling: SVGElement) => {
+        if (sibling.nodeName === "svg") {
+          sibling.classList.add("fill")
+        }
+      })
+    }
+  }
+
+  const handleHoverOut = (
+    evt: React.MouseEvent<SVGElement, MouseEvent>,
+    star: number
+  ) => {
+    const target = evt.target as SVGElement
+    const siblings = target.parentNode?.childNodes as NodeListOf<SVGElement>
+    if (siblings) {
+      const starsToFill = Array.from(siblings).slice(0, star)
+      starsToFill.forEach((sibling: SVGElement) => {
+        if (sibling.nodeName === "svg") {
+          if (sibling.classList.contains("active")) return
+          sibling.classList.remove("fill")
+        }
+      })
+    }
+  }
 
   return (
     <StarList>
@@ -42,7 +75,9 @@ export const ReviewFormStarInput = ({
           key={`star-${star}`}
           role="button"
           onClick={() => handleChange(star)}
-          className={star <= rating ? "fill" : ""}
+          className={star <= rating ? "fill active" : ""}
+          onMouseEnter={evt => handleHoverIn(evt, star)}
+          onMouseLeave={evt => handleHoverOut(evt, star)}
         />
       ))}
     </StarList>

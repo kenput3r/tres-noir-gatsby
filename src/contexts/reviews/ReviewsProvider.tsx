@@ -20,6 +20,8 @@ type Props = {
   children: ReactNode | ReactNode[]
 }
 
+export const YOTPO_REVIEWS_PER_PAGE = 5
+
 export function ReviewsProvider({
   productId,
   productTitle,
@@ -36,7 +38,8 @@ export function ReviewsProvider({
       try {
         setIsLoading(true)
         const YOTPO_APP_KEY = process.env.GATSBY_YOTPO_APP_KEY as string
-        const url = `https://api-cdn.yotpo.com/v1/widget/${YOTPO_APP_KEY}/products/${productId}/reviews.json`
+        const perPage = YOTPO_REVIEWS_PER_PAGE
+        const url = `https://api-cdn.yotpo.com/v1/widget/${YOTPO_APP_KEY}/products/${productId}/reviews.json?per_page=${perPage}`
         const response = await fetch(url, {
           method: "GET",
           headers: {
@@ -63,7 +66,8 @@ export function ReviewsProvider({
     try {
       setIsRefetching(true)
       const YOTPO_APP_KEY = process.env.GATSBY_YOTPO_APP_KEY as string
-      const url = `https://api-cdn.yotpo.com/v1/widget/${YOTPO_APP_KEY}/products/${productId}/reviews.json?per_page=1&page=${pageNumber}`
+      const perPage = YOTPO_REVIEWS_PER_PAGE
+      const url = `https://api-cdn.yotpo.com/v1/widget/${YOTPO_APP_KEY}/products/${productId}/reviews.json?per_page=${perPage}&page=${pageNumber}`
       const response = await fetch(url, {
         method: "GET",
         headers: {
