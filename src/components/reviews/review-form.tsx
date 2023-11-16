@@ -84,7 +84,7 @@ const ReviewForm = () => {
     display: isVisible ? "block" : "none",
     // height: isVisible ? "auto" : 0,
     transform: isVisible ? "translateY(0)" : "translateY(-100%)",
-    config: config.default,
+    config: config.stiff,
     onRest: () => {
       // If the component is not visible, set the exit state
       if (!isVisible) {

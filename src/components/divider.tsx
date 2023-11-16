@@ -13,9 +13,9 @@ const Component = styled.div`
   }
 `
 
-const Divider = () => {
+const Divider = ({ className = "" }: { className?: string }) => {
   return (
-    <Component>
+    <Component className={className}>
       <hr />
     </Component>
   )

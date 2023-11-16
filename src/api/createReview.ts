@@ -40,23 +40,22 @@ export default async function createReview(
       // submission_time_stamp: body.submissionTimeStamp,
       // reviewer_type: reviewerType,
     }
-    // const response = await fetch("https://api.yotpo.com/v1/widget/reviews", {
-    //   method: "POST",
-    //   headers: {
-    //     "Content-Type": "application/json",
-    //     Accept: "application/json",
-    //   },
-    //   body: JSON.stringify({ ...payload }),
-    // })
-    // const resJson = await response.json()
-    // console.log("resJson", resJson)
-    // if (resJson.code === 200) {
-    //   return res.status(200).json("Success")
-    // } else {
-    //   console.log("error")
-    //   return res.status(400).json("error")
-    // }
-    res.status(200)
+    const response = await fetch("https://api.yotpo.com/v1/widget/reviews", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      body: JSON.stringify({ ...payload }),
+    })
+    const resJson = await response.json()
+    console.log("resJson", resJson)
+    if (resJson.code === 200) {
+      return res.status(200).json("Success")
+    } else {
+      console.log("error")
+      return res.status(400).json("error")
+    }
   } catch (error) {
     console.log("Error in /createReview api route", error)
     res.status(400)

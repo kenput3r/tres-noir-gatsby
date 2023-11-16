@@ -96,11 +96,11 @@ const Page = styled.div`
   }
   h1 {
     font-weight: normal;
-    font-size: 3rem;
+    font-size: 2.75rem;
     text-transform: uppercase;
     margin-bottom: 0;
-    @media screen and (max-width: 480px) {
-      font-size: 2.25rem;
+    @media screen and (max-width: 600px) {
+      font-size: 2.1rem;
     }
   }
   .fit {
@@ -143,16 +143,25 @@ const Page = styled.div`
     font-family: var(--sub-heading-font);
     margin-top: 1.45rem;
   }
-  p.label {
+  .starting-at {
     color: var(--color-grey-dark);
     margin-bottom: 0;
     line-height: 1.5;
+    font-size: 1rem;
   }
   div.value {
-    padding-bottom: 20px;
+    padding-bottom: 25px;
     font-size: 2rem;
     display: flex;
     flex-direction: row;
+    flex-wrap: wrap;
+    .current-price-container {
+      display: flex;
+      flex-direction: column;
+    }
+    .compare-at-price {
+      align-self: flex-end;
+    }
     span {
       font-weight: normal;
       flex: 1;
@@ -163,18 +172,26 @@ const Page = styled.div`
         }
       }
       &.right {
+        font-size: 1.8rem;
+        @media screen and (max-width: 600px) {
+          font-size: 1.8rem;
+        }
         align-self: end;
         text-align: right;
-        a {
-          @media screen and (max-width: 480px) {
-            font-size: 1.5rem;
-          }
-        }
       }
       a {
         color: var(--color-grey-dark);
         text-decoration: none;
+        :hover {
+          text-decoration: underline;
+        }
       }
+    }
+    .left {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
     }
   }
   .actions {
@@ -322,11 +339,18 @@ const Page = styled.div`
     padding: 0.5rem;
   }
   .compare-at-price {
-    margin-top: 8px;
     span {
       color: var(--color-grey-dark);
       text-decoration: line-through;
     }
+  }
+  .desktop-only {
+    @media screen and (max-width: 768px) {
+      display: none;
+    }
+    display: block;
+  }
+  .learn-more {
   }
 `
 type Props = {
@@ -406,6 +430,8 @@ const ProductCustomizable = ({
     }[]
   >([])
 
+  const [isPolarized, setIsPolarized] = useState<boolean>(false)
+
   // return default Product Page if contentful values do not exist
   const quantityLevels = useQuantityQuery(
     shopifyProduct.handle,
@@ -465,6 +491,7 @@ const ProductCustomizable = ({
         }
         // disable customize
         customizeBtn?.classList.add("disable")
+        setIsPolarized(true)
         // set polarized variant to non polarized version
         setPolarizedVariant({
           contentful: selectedVariant.contentful,
@@ -494,6 +521,7 @@ const ProductCustomizable = ({
         })
       }
       // polarized switch has been set to off, reinitialize state and show old images
+      setIsPolarized(false)
       setPolarizedImage([])
     }
   }
@@ -506,6 +534,7 @@ const ProductCustomizable = ({
     if (shopify) {
       // clear polarized image on change
       setPolarizedImage([])
+      setIsPolarized(false)
       //
       setSelectedVariant({
         contentful: variant,
@@ -627,16 +656,24 @@ const ProductCustomizable = ({
   // state handler for toggling between glasses vs sunglasses
   const swapGlassesType = (type: "glasses" | "sunglasses") => {
     setLensType(type)
-    // update url
-    // setProductUrl(
-    //   `/products/${contentfulProduct.handle}/?variant=${contentfulProduct.sku}&lens_type=${type}`
-    // )
-    // const isBrowser = typeof window !== "undefined"
-    // if (isBrowser) {
-    //   const params = new URLSearchParams(location.search)
-    //   params.set("lens_type", type)
-    // }
-    // update url
+    const isBrowser = typeof window !== "undefined"
+    if (isBrowser) {
+      const params = new URLSearchParams(location.search)
+      params.set("lens_type", type)
+      const { protocol, pathname, host } = window.location
+      const newUrl = `${protocol}//${host}${pathname}?${params.toString()}`
+      window.history.replaceState({}, "", newUrl)
+    }
+    // edge case for when current state is polarized
+    if (type === "glasses") {
+      if (isPolarized) {
+        switchToPolarized({
+          target: { checked: false },
+        } as ChangeEvent<HTMLInputElement>)
+      }
+      const customizeBtn = actionsRef.current?.querySelector("#customize-btn")
+      customizeBtn?.classList.remove("disable")
+    }
   }
 
   const generateProductContentfulJsonLD = () => {
@@ -862,7 +899,7 @@ const ProductCustomizable = ({
           }}
           jsonLdPayload={generateProductContentfulJsonLD()}
         />
-        <Page key={lensType}>
+        <Page>
           <FreeShipping />
           <div className="row">
             <div className="col images">
@@ -880,6 +917,10 @@ const ProductCustomizable = ({
               />
             </div>
             <div className="col">
+              <ViewAsType
+                lensType={lensType}
+                swapGlassesType={swapGlassesType}
+              />
               <div className="heading">
                 <h1>{shopifyProduct.title}</h1>
                 <p className="fit">
@@ -941,10 +982,12 @@ const ProductCustomizable = ({
                     ))}
                 </div>
                 <div className="price">
-                  <p className="label">STARTING AT</p>
                   <div className="value">
                     <div className="left">
-                      <span>${selectedVariant.shopify.price} USD</span>
+                      <div className="current-price-container">
+                        <span className="starting-at">STARTING AT</span>
+                        <span>${selectedVariant.shopify.price} USD</span>
+                      </div>
                       {selectedVariant.shopify.compareAtPrice &&
                         isDiscounted(
                           selectedVariant.shopify.price,
@@ -960,8 +1003,9 @@ const ProductCustomizable = ({
                     <span className="right">
                       <Link
                         to={contentfulProduct && `/${contentfulProduct.handle}`}
+                        className="learn-more"
                       >
-                        Learn More {`>`}
+                        Learn More &gt;
                       </Link>
                     </span>
                   </div>
@@ -974,6 +1018,7 @@ const ProductCustomizable = ({
                           <input
                             type="checkbox"
                             id="switch"
+                            checked={isPolarized}
                             onChange={evt => switchToPolarized(evt)}
                           />
                           <label htmlFor="switch">Toggle</label>
@@ -1012,7 +1057,7 @@ const ProductCustomizable = ({
                       )}
 
                       <Link
-                        className="btn"
+                        className={`btn ${isPolarized ? "disable" : ""}`}
                         // to={contentfulProduct && customizeUrl}
                         id="customize-btn"
                         to={`/products/${
@@ -1057,16 +1102,19 @@ const ProductCustomizable = ({
           </div>
           {contentfulProduct.featuredStyles && (
             <>
-              <Divider />
+              {lensType === LensType.SUNGLASSES && (
+                <Divider className="desktop-only" />
+              )}
+
               <div className="row-no-flex">
                 <FeaturedStyles images={contentfulProduct.featuredStyles} />
               </div>
             </>
           )}
-          <Divider />
+          {/* <Divider />
           <div className="row-no-flex review-row">
             <Reviews />
-          </div>
+          </div> */}
         </Page>
       </Layout>
     </ReviewsProvider>

@@ -21,7 +21,7 @@ const Component = styled.nav<StyledProps>`
   transform: ${({ isDrawerOpen }) =>
     isDrawerOpen ? "translateX(0)" : "translateX(-100%)"};
   width: 400px;
-  z-index: 10;
+  z-index: 10000;
   a {
     display: block;
   }

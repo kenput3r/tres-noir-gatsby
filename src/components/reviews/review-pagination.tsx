@@ -80,7 +80,7 @@ const ReviewPagination = ({ pagination }: Props) => {
     }
   }, [currentPage])
 
-  //
+  // updates pages array
   useEffect(() => {
     if (currentPage === 1) {
       setPages(range(1, initialLimit))
@@ -125,33 +125,35 @@ const ReviewPagination = ({ pagination }: Props) => {
   )
 
   return (
-    <Component>
-      <button
-        onClick={() => goToPreviousPage()}
-        className="no-styles"
-        disabled={disableLeft}
-      >
-        <LeftIcon className="icon" />
-      </button>
-      {pages.map(page => {
-        return (
-          <button
-            key={page}
-            onClick={() => goToPage(page)}
-            className={`page-number ${page === currentPage ? "active" : ""}`}
-          >
-            {page}
-          </button>
-        )
-      })}
-      <button
-        onClick={() => goToNextPage()}
-        className="no-styles"
-        disabled={disableRight}
-      >
-        <RightIcon className="icon" />
-      </button>
-    </Component>
+    totalProducts > 0 && (
+      <Component>
+        <button
+          onClick={() => goToPreviousPage()}
+          className="no-styles"
+          disabled={disableLeft}
+        >
+          <LeftIcon className="icon" />
+        </button>
+        {pages.map(page => {
+          return (
+            <button
+              key={page}
+              onClick={() => goToPage(page)}
+              className={`page-number ${page === currentPage ? "active" : ""}`}
+            >
+              {page}
+            </button>
+          )
+        })}
+        <button
+          onClick={() => goToNextPage()}
+          className="no-styles"
+          disabled={disableRight}
+        >
+          <RightIcon className="icon" />
+        </button>
+      </Component>
+    )
   )
 }
 

@@ -110,10 +110,7 @@ const UpsellCart = () => {
         <div className="upsell-cards">
           {upsellItems &&
             upsellItems.products.map((item: UpsellItem) => (
-              <UpsellProduct
-                key={item.handle}
-                upsellProduct={item}
-              ></UpsellProduct>
+              <UpsellProduct key={item.handle} upsellProduct={item} />
             ))}
         </div>
       </div>
