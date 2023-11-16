@@ -7,6 +7,7 @@ import styled from "styled-components"
 import { addedToCartGTMEvent } from "../helpers/gtm"
 import { UpsellItem, UpsellItemVariant } from "../types/upsell"
 import AddToCartButton from "./add-to-cart-button"
+import { isDiscounted } from "../helpers/shopify"
 
 const Component = styled.article`
   flex: 1;
@@ -214,11 +215,15 @@ const UpsellProduct = (props: { upsellProduct: UpsellItem }) => {
             <span className="current">
               <span>${selectedVariant.price}</span>
             </span>
-            {selectedVariant.compareAtPrice && (
-              <span className="compare-at">
-                ${selectedVariant.compareAtPrice}
-              </span>
-            )}
+            {selectedVariant.compareAtPrice &&
+              isDiscounted(
+                selectedVariant.price,
+                selectedVariant.compareAtPrice ?? "0.00"
+              ) && (
+                <span className="compare-at">
+                  ${selectedVariant.compareAtPrice}
+                </span>
+              )}
           </div>
         </div>
         <div>
