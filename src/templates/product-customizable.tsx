@@ -1059,7 +1059,8 @@ const ProductCustomizable = ({
           </div>
           {contentfulProduct.featuredStyles && (
             <>
-              <Divider />
+              {lensType === LensType.SUNGLASSES && <Divider />}
+
               <div className="row-no-flex">
                 <FeaturedStyles images={contentfulProduct.featuredStyles} />
               </div>

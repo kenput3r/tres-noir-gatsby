@@ -1,5 +1,4 @@
-import React, { useContext, useEffect, useRef } from "react"
-import { Link } from "gatsby"
+import React, { useContext, useRef } from "react"
 import styled from "styled-components"
 import { CartContext } from "../../contexts/cart"
 import { tnItem } from "../../types/checkout"
@@ -284,13 +283,12 @@ const CartDrawer = () => {
             </p>
 
             <div className="button-flex">
-              <Link
+              <button
                 className="btn"
-                to={"/"}
                 onClick={evt => setIsCartDrawerOpen(false)}
               >
                 CONTINUE SHOPPING
-              </Link>
+              </button>
               <a
                 className="btn"
                 href={checkout.webUrl}
