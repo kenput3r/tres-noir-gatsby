@@ -291,36 +291,25 @@ const Step5 = (props: {
     }
     stepItems.unshift(frameVariant)
     if (resumedItem) {
-      await removeCustomProductWithId(resumedItem)
-      await addProductCustomToCart(
-        stepItems,
-        matchingKey,
-        productImage,
-        selectedVariants,
-        variant.sku,
-        variant.product.handle,
-        false
-      )
-      //
-    } else {
-      await addProductCustomToCart(
-        stepItems,
-        matchingKey,
-        productImage,
-        selectedVariants,
-        variant.sku,
-        variant.product.handle,
-        true
-      )
+      removeCustomProductWithId(resumedItem)
     }
+    addProductCustomToCart(
+      stepItems,
+      matchingKey,
+      productImage,
+      selectedVariants,
+      variant.sku,
+      variant.product.handle,
+      false
+    )
+
     // boolean to determine whether a frame has been added to cart
     // if true, then the selectedVariant context will reset and currentStep will be 1
     setAddedToCart(true)
 
-    if (resumedItem) {
-      setIsAddingToCart(false)
-      navigate("/cart")
-    }
+    setIsAddingToCart(false)
+    // TODO: navigate to cart page without activating drawer
+    navigate("/cart")
 
     // GTM Event
     const productData = {
