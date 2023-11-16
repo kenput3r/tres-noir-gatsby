@@ -20,8 +20,7 @@ import { ErrorModalContext } from "../contexts/error"
 const client = Client.buildClient({
   domain: process.env.GATSBY_STORE_MY_SHOPIFY as string,
   storefrontAccessToken: process.env.GATSBY_STORE_STOREFRONT_TOKEN as string,
-  apiVersion: "2023-10",
-})
+} as any)
 
 import Cookies from "js-cookie"
 

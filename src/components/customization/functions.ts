@@ -74,10 +74,7 @@ export const changeImage = (
       case 5:
         break
       default:
-        setCurrentImage({
-          data: defaultImage,
-          altText: defaultTitle,
-        })
+        break
     }
   } catch (error) {
     setCurrentImage({
