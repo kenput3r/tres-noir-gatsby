@@ -1111,10 +1111,10 @@ const ProductCustomizable = ({
               </div>
             </>
           )}
-          <Divider />
+          {/* <Divider />
           <div className="row-no-flex review-row">
             <Reviews />
-          </div>
+          </div> */}
         </Page>
       </Layout>
     </ReviewsProvider>

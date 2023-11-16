@@ -521,10 +521,10 @@ const Product = ({
             </div>
           </div>
           <YouMayAlsoLike shopifyProduct={shopifyProduct} />
-          <Divider className="r-divider" />
+          {/* <Divider className="r-divider" />
           <div className="review-row">
             <Reviews />
-          </div>
+          </div> */}
         </Page>
       </Layout>
     </ReviewsProvider>
