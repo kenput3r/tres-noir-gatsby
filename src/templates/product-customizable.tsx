@@ -627,16 +627,14 @@ const ProductCustomizable = ({
   // state handler for toggling between glasses vs sunglasses
   const swapGlassesType = (type: "glasses" | "sunglasses") => {
     setLensType(type)
-    // update url
-    // setProductUrl(
-    //   `/products/${contentfulProduct.handle}/?variant=${contentfulProduct.sku}&lens_type=${type}`
-    // )
-    // const isBrowser = typeof window !== "undefined"
-    // if (isBrowser) {
-    //   const params = new URLSearchParams(location.search)
-    //   params.set("lens_type", type)
-    // }
-    // update url
+    const isBrowser = typeof window !== "undefined"
+    if (isBrowser) {
+      const params = new URLSearchParams(location.search)
+      params.set("lens_type", type)
+      const { protocol, pathname, host } = window.location
+      const newUrl = `${protocol}//${host}${pathname}?${params.toString()}`
+      window.history.replaceState({}, "", newUrl)
+    }
   }
 
   const generateProductContentfulJsonLD = () => {
@@ -862,7 +860,7 @@ const ProductCustomizable = ({
           }}
           jsonLdPayload={generateProductContentfulJsonLD()}
         />
-        <Page key={lensType}>
+        <Page>
           <FreeShipping />
           <div className="row">
             <div className="col images">
@@ -880,6 +878,10 @@ const ProductCustomizable = ({
               />
             </div>
             <div className="col">
+              <ViewAsType
+                lensType={lensType}
+                swapGlassesType={swapGlassesType}
+              />
               <div className="heading">
                 <h1>{shopifyProduct.title}</h1>
                 <p className="fit">
