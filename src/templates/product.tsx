@@ -13,6 +13,7 @@ import { ReviewsProvider } from "../contexts/reviews"
 import Reviews from "../components/reviews"
 import type { YotpoSourceProductBottomLine } from "../types/yotpo"
 import { isDiscounted } from "../helpers/shopify"
+import Divider from "../components/divider"
 
 const Page = styled.div`
   .shipping-message {
@@ -97,7 +98,11 @@ const Page = styled.div`
   .price {
     font-family: var(--heading-font);
     div.value {
-      font-size: 1.5rem;
+      font-size: 1.4rem;
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 6px 9px;
     }
 
     margin-top: 1.45rem;
@@ -155,14 +160,14 @@ const Page = styled.div`
       }
     }
   }
-  @media (max-width: 375px) {
+  @media (max-width: 500px) {
     div.value {
       font-size: 1.75rem;
     }
   }
-  @media (max-width: 320px) {
+  @media (max-width: 500px) {
     h1 {
-      font-size: 2.25rem;
+      font-size: 1.8rem;
     }
     .options {
       button {
@@ -189,11 +194,16 @@ const Page = styled.div`
     padding: 0.5rem;
   }
   .compare-at-price {
-    margin-top: 8px;
     span {
       color: var(--color-grey-dark);
       text-decoration: line-through;
     }
+  }
+  .r-divider {
+    @media screen and (max-width: 768px) {
+      margin-bottom: 10px;
+    }
+    margin-bottom: 40px;
   }
 `
 type Props = {
@@ -451,14 +461,18 @@ const Product = ({
                   </div>
                   <div className="price">
                     <div className="value">
-                      <span>${selectedVariant.price} USD</span>
+                      <div>
+                        <span>${selectedVariant.price} USD</span>
+                      </div>
                       {selectedVariant.compareAtPrice &&
                         isDiscounted(
                           selectedVariant.price,
                           selectedVariant.compareAtPrice
                         ) && (
                           <div className="compare-at-price">
-                            <span>${selectedVariant.compareAtPrice} USD</span>
+                            <span className="compare-at-price">
+                              ${selectedVariant.compareAtPrice} USD
+                            </span>
                           </div>
                         )}
                     </div>
@@ -507,6 +521,7 @@ const Product = ({
             </div>
           </div>
           <YouMayAlsoLike shopifyProduct={shopifyProduct} />
+          <Divider className="r-divider" />
           <div className="review-row">
             <Reviews />
           </div>

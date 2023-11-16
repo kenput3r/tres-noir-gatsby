@@ -22,7 +22,7 @@ const client = Client.buildClient({
   storefrontAccessToken: process.env.GATSBY_STORE_STOREFRONT_TOKEN as string,
 } as any)
 
-import Cookies from "js-cookie"
+import Cookies, { set } from "js-cookie"
 
 const isBrowser = typeof window !== "undefined"
 
@@ -70,7 +70,8 @@ const DefaultContext = {
     variantId: string,
     quantity: number,
     sku: string,
-    image: IGatsbyImageData
+    image: IGatsbyImageData,
+    shouldOpenDrawer?: boolean
   ) => {},
   addProductsToCart: (
     lineItems: { variantId: string; quantity: number }[]
@@ -473,7 +474,8 @@ export const CartProvider = ({ children }) => {
       variantId: string,
       quantity: number,
       sku: string,
-      image: IGatsbyImageData
+      image: IGatsbyImageData,
+      shouldOpenDrawer: boolean = true
     ) => {
       try {
         setIsAddingToCart(true)
@@ -491,7 +493,7 @@ export const CartProvider = ({ children }) => {
         rebuildBundles(updatedCheckout)
         setCheckout(updatedCheckout)
         setIsAddingToCart(false)
-        setIsCartDrawerOpen(true)
+        if (shouldOpenDrawer) setIsCartDrawerOpen(true)
       } catch (err: any) {
         console.error(err)
         setIsAddingToCart(false)

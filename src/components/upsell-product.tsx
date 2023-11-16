@@ -42,11 +42,9 @@ const Component = styled.article`
   }
   .select-price {
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
-    @media screen and (max-width: 600px) {
-      flex-direction: column;
-    }
     select {
       margin-right: 18px;
       @media screen and (max-width: 600px) {
@@ -65,6 +63,23 @@ const Component = styled.article`
   .product-title {
     :hover {
       text-decoration: underline;
+    }
+  }
+  .price-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    span {
+      font-family: var(--heading-font);
+      text-transform: uppercase;
+    }
+    .current {
+      margin-right: 10px;
+    }
+    .compare-at {
+      color: var(--color-grey-dark);
+      text-decoration: line-through;
     }
   }
 `
@@ -108,7 +123,7 @@ const UpsellProduct = (props: { upsellProduct: UpsellItem }) => {
       ? selectedVariant.image.localFile.childImageSharp.gatsbyImageData
       : upsellProduct.featuredImage.localFile.childImageSharp.gatsbyImageData
 
-    addProductToCart(id, 1, sku, image)
+    addProductToCart(id, 1, sku, image, false)
     // gtm event
     const productData = {
       title: selectedVariant.product.title,
@@ -159,15 +174,12 @@ const UpsellProduct = (props: { upsellProduct: UpsellItem }) => {
         <div className="upsell-image">
           <Link to={`/products/${upsellProduct.handle}`}>
             {upsellProduct.featuredImage?.localFile ? (
-              <GatsbyImage
-                image={featuredImage}
-                alt={upsellProduct.title}
-              ></GatsbyImage>
+              <GatsbyImage image={featuredImage} alt={upsellProduct.title} />
             ) : (
               <StaticImage
                 src="../images/product-no-image.jpg"
                 alt={upsellProduct.title}
-              ></StaticImage>
+              />
             )}
           </Link>
         </div>
@@ -198,7 +210,16 @@ const UpsellProduct = (props: { upsellProduct: UpsellItem }) => {
               </div>
             )}
           </div>
-          <p>${selectedVariant.price}</p>
+          <div className="price-container">
+            <span className="current">
+              <span>${selectedVariant.price}</span>
+            </span>
+            {selectedVariant.compareAtPrice && (
+              <span className="compare-at">
+                ${selectedVariant.compareAtPrice}
+              </span>
+            )}
+          </div>
         </div>
         <div>
           {quantityLevels && quantityLevels[selectedVariant.sku] > 0 ? (

@@ -8,9 +8,14 @@ import React, {
 } from "react"
 import { StaticImage } from "gatsby-plugin-image"
 import styled from "styled-components"
-import { FaSearch, FaFacebookF, FaBars } from "react-icons/fa"
+import {
+  FaSearch,
+  FaFacebookF as FacebookIcon,
+  FaInstagram as InstagramIcon,
+  FaBars,
+} from "react-icons/fa"
 import { useClickAway } from "react-use"
-import { TiSocialInstagram } from "react-icons/ti"
+
 import DesktopNavigation from "./desktopNavigation"
 import BannerMessage from "./banner-message"
 import CartIcon from "./cart-drawer/cart-icon"
@@ -133,6 +138,15 @@ const Component = styled.header`
       }
     }
   }
+  .bars {
+    font-size: 22px;
+  }
+  .no-style {
+    border: none;
+    background: none;
+    display: block;
+    padding: 0px 10px;
+  }
 `
 
 interface HeaderProps {
@@ -203,14 +217,14 @@ const Header = ({
               target="_blank"
               rel="noreferrer"
             >
-              <TiSocialInstagram className="instagram text-btn" />
+              <InstagramIcon className="instagram text-btn" />
             </a>
             <a
               href="https://www.facebook.com/tresnoir"
               target="_blank"
               rel="noreferrer"
             >
-              <FaFacebookF className="text-btn" />
+              <FacebookIcon className="text-btn" />
             </a>
           </div>
           <div className="search">
@@ -247,14 +261,12 @@ const Header = ({
             </a>
 
             <CartIcon></CartIcon>
-            <a
-              href="#"
-              className="hide-large"
-              role="button"
+            <button
+              className="hide-large bars no-style"
               onClick={() => setIsDrawerOpen(!isDrawerOpen)}
             >
               <FaBars />
-            </a>
+            </button>
           </div>
         </div>
       </div>

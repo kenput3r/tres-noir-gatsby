@@ -56,7 +56,15 @@ export default async function createReview(
     //   console.log("error")
     //   return res.status(400).json("error")
     // }
-    res.status(200)
+    // write a promise that resolves after 5 seconds
+    const promise = new Promise(resolve => {
+      setTimeout(() => {
+        resolve("resolved")
+      }, 5000)
+    })
+    await promise
+    console.log("promise resolved")
+    return res.status(200).json("Success")
   } catch (error) {
     console.log("Error in /createReview api route", error)
     res.status(400)

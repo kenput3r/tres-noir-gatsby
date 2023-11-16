@@ -51,7 +51,6 @@ export function ReviewsProvider({
         if (json.status.code !== 200) {
           throw Error(JSON.stringify(json.status))
         }
-        console.log("json", json)
         setData(json.response)
         setIsLoading(false)
         return json
