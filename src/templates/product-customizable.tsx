@@ -328,6 +328,12 @@ const Page = styled.div`
       text-decoration: line-through;
     }
   }
+  .desktop-only {
+    @media screen and (max-width: 768px) {
+      display: none;
+    }
+    display: block;
+  }
 `
 type Props = {
   data: {
@@ -1059,7 +1065,9 @@ const ProductCustomizable = ({
           </div>
           {contentfulProduct.featuredStyles && (
             <>
-              {lensType === LensType.SUNGLASSES && <Divider />}
+              {lensType === LensType.SUNGLASSES && (
+                <Divider className="desktop-only" />
+              )}
 
               <div className="row-no-flex">
                 <FeaturedStyles images={contentfulProduct.featuredStyles} />
