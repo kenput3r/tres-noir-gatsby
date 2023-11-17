@@ -95,6 +95,20 @@ const Component = styled.div`
       }
     }
   }
+  .ps-btn {
+    cursor: pointer;
+    :hover,
+    :focus {
+      opacity: 0.7;
+    }
+  }
+  .ps-text {
+    cursor: pointer;
+    :hover,
+    :focus {
+      text-decoration: underline;
+    }
+  }
 `
 
 interface Product {
@@ -165,7 +179,11 @@ const CaseGridCustomize: React.FC<Props> = ({ casesAvailable }) => {
             if (casesAvailable.includes(formatTitle(product.title))) {
               return (
                 <div key={product.id} className="product-flex">
-                  <div className="case-image">
+                  <div
+                    className="case-image ps-btn"
+                    role="button"
+                    onClick={() => handleChange(product.variants[0], true)}
+                  >
                     {product.featuredImage?.localFile ? (
                       <GatsbyImage
                         image={
@@ -173,15 +191,19 @@ const CaseGridCustomize: React.FC<Props> = ({ casesAvailable }) => {
                             .gatsbyImageData
                         }
                         alt={product.title}
-                      ></GatsbyImage>
+                      />
                     ) : (
                       <StaticImage
                         src="../images/product-no-image.jpg"
                         alt={product.title}
-                      ></StaticImage>
+                      />
                     )}
                   </div>
-                  <div>
+                  <div
+                    className="ps-text"
+                    role="button"
+                    onClick={() => handleChange(product.variants[0], true)}
+                  >
                     <p className="title">{formatTitle(product.title)}</p>
                   </div>
                   <div>

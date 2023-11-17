@@ -310,17 +310,17 @@ const Step5 = (props: {
         selectedVariants,
         variant.sku,
         variant.product.handle,
-        true
+        false
       )
     }
     // boolean to determine whether a frame has been added to cart
     // if true, then the selectedVariant context will reset and currentStep will be 1
     setAddedToCart(true)
 
-    if (resumedItem) {
-      setIsAddingToCart(false)
-      navigate("/cart")
-    }
+    // if (resumedItem) {
+    //   setIsAddingToCart(false)
+    //   navigate("/cart")
+    // }
 
     // GTM Event
     const productData = {
@@ -402,6 +402,8 @@ const Step5 = (props: {
       compareAtPrice: "",
     })
     addedCustomizedToCartGTMEvent(productData)
+    setIsAddingToCart(false)
+    navigate("/cart")
   }
 
   return (

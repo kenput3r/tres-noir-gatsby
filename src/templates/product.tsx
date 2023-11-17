@@ -9,6 +9,11 @@ import { addedToCartGTMEvent, viewedProductGTMEvent } from "../helpers/gtm"
 import YouMayAlsoLike from "../components/you-may-also-like"
 import ProductImageGrid from "../components/product-image-grid"
 import AddToCartButton from "../components/add-to-cart-button"
+import { ReviewsProvider } from "../contexts/reviews"
+import Reviews from "../components/reviews"
+import type { YotpoSourceProductBottomLine } from "../types/yotpo"
+import { isDiscounted } from "../helpers/shopify"
+import Divider from "../components/divider"
 
 const Page = styled.div`
   .shipping-message {
@@ -42,6 +47,10 @@ const Page = styled.div`
     flex-direction: column;
     flex: 1;
     padding: 1.45rem;
+    @media screen and (max-width: 768px) {
+      padding-left: 0.5rem;
+      padding-right: 0.5rem;
+    }
   }
   .heading {
     align-self: flex-start;
@@ -88,8 +97,12 @@ const Page = styled.div`
   }
   .price {
     font-family: var(--heading-font);
-    p.value {
-      font-size: 1.5rem;
+    div.value {
+      font-size: 1.4rem;
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 6px 9px;
     }
 
     margin-top: 1.45rem;
@@ -147,14 +160,14 @@ const Page = styled.div`
       }
     }
   }
-  @media (max-width: 375px) {
-    p.value {
+  @media (max-width: 500px) {
+    div.value {
       font-size: 1.75rem;
     }
   }
-  @media (max-width: 320px) {
+  @media (max-width: 500px) {
     h1 {
-      font-size: 2.25rem;
+      font-size: 1.8rem;
     }
     .options {
       button {
@@ -166,8 +179,50 @@ const Page = styled.div`
     display: grid;
     grid-template-columns: repeat(3, 1fr);
   }
+  .review-row {
+    width: 1280px;
+    max-width: 100%;
+    margin: 0 auto;
+    @media (max-width: 768px) {
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+    @media screen and (min-width: 768px) {
+      padding: 0 25px;
+    }
+    padding: 0.5rem;
+  }
+  .compare-at-price {
+    span {
+      color: var(--color-grey-dark);
+      text-decoration: line-through;
+    }
+  }
+  .r-divider {
+    @media screen and (max-width: 768px) {
+      margin-bottom: 10px;
+    }
+    margin-bottom: 40px;
+  }
 `
-const Product = ({ data: { shopifyProduct } }: any) => {
+type Props = {
+  data: {
+    shopifyProduct: any
+    yotpoProductBottomline: YotpoSourceProductBottomLine
+    site: {
+      siteMetadata: {
+        siteUrl: string
+      }
+    }
+  }
+}
+const Product = ({
+  data: { shopifyProduct, yotpoProductBottomline, site },
+}: Props) => {
+  // console.log("site", site)
+  // const siteUrl = ""
+  const { siteUrl } = site.siteMetadata
   const [selectedVariant, setSelectedVariant] = useState(
     shopifyProduct.variants[0]
   )
@@ -297,110 +352,199 @@ const Product = ({ data: { shopifyProduct } }: any) => {
     return variants.sort((a, b) => a.position - b.position)
   }
 
+  const generateProductJsonLD = () => {
+    try {
+      const name = shopifyProduct.title
+      const sku = shopifyProduct.variants[0].sku
+
+      const price = shopifyProduct.variants[0].price
+
+      const featuredImg = shopifyProduct.featuredImage.originalSrc
+
+      const description = shopifyProduct.description ?? ""
+
+      let productSchema = {
+        "@context": "https://schema.org/",
+        "@type": "Product",
+        name,
+        sku,
+        description,
+        image: [featuredImg],
+        brand: {
+          "@type": "Brand",
+          name: "Tres Noir",
+        },
+        offers: {
+          "@type": "Offer",
+          priceSpecification: {
+            "@type": "PriceSpecification",
+            price,
+            priceCurrency: "USD",
+          },
+          hasMerchantReturnPolicy: {
+            "@type": "MerchantReturnPolicy",
+            applicableCountry: "US",
+            returnPolicyCategory:
+              "https://schema.org/MerchantReturnFiniteReturnWindow",
+            merchantReturnDays: 30,
+            returnMethod: "https://schema.org/ReturnByMail",
+            returnFees: "https://schema.org/FreeReturn",
+          },
+        },
+      }
+      if (yotpoProductBottomline) {
+        const { totalReviews, score } = yotpoProductBottomline
+        productSchema["aggregateRating"] = {
+          "@type": "AggregateRating",
+          ratingValue: score,
+          reviewCount: totalReviews,
+        }
+      }
+      return JSON.stringify(productSchema, null, 2)
+    } catch (error) {
+      return null
+    }
+  }
+
   return (
-    <Layout>
-      <SEO
-        title={shopifyProduct.title}
-        description={shopifyProduct.description}
-        image={{
-          url: shopifyProduct.featuredImage.originalSrc,
-          alt: shopifyProduct.featuredImage.altText,
-        }}
-      />
-      <Page>
-        <div className="row">
-          <div className="col images">
-            <ProductImageGrid
-              product={shopifyProduct}
-              selectedVariant={selectedVariant}
-            ></ProductImageGrid>
-          </div>
-          <div className="col">
-            <div className="heading">
-              <h1>{shopifyProduct.title}</h1>
-              <form>
-                <div className="product-dropdown">
-                  {!shopifyProduct.hasOnlyDefaultVariant ? (
-                    <div>
-                      <p>{selectedVariant.selectedOptions[0].name}</p>
-                      <div className="select-dropdown">
-                        <select
-                          value={selectedVariant.sku}
-                          id="product-variants"
-                          onChange={evt => handleVariant(evt)}
-                        >
-                          {sortVariants(shopifyProduct.variants).map(
-                            element => {
-                              return (
-                                <option key={element.sku} value={element.sku}>
-                                  {element.title}
-                                </option>
-                              )
-                            }
-                          )}
-                        </select>
+    <ReviewsProvider
+      productTitle={shopifyProduct.title}
+      productId={shopifyProduct.legacyResourceId}
+      productHandle={shopifyProduct.handle}
+      siteUrl={siteUrl}
+    >
+      <Layout>
+        <SEO
+          title={shopifyProduct.title}
+          description={shopifyProduct.description}
+          image={{
+            url: shopifyProduct.featuredImage.originalSrc,
+            alt: shopifyProduct.featuredImage.altText,
+          }}
+          jsonLdPayload={generateProductJsonLD()}
+        />
+        <Page>
+          <div className="row">
+            <div className="col images">
+              <ProductImageGrid
+                product={shopifyProduct}
+                selectedVariant={selectedVariant}
+              />
+            </div>
+            <div className="col">
+              <div className="heading">
+                <h1>{shopifyProduct.title}</h1>
+                <form>
+                  <div className="product-dropdown">
+                    {!shopifyProduct.hasOnlyDefaultVariant && (
+                      <div>
+                        <p>{selectedVariant.selectedOptions[0].name}</p>
+                        <div className="select-dropdown">
+                          <select
+                            value={selectedVariant.sku}
+                            id="product-variants"
+                            onChange={evt => handleVariant(evt)}
+                          >
+                            {sortVariants(shopifyProduct.variants).map(
+                              element => {
+                                return (
+                                  <option key={element.sku} value={element.sku}>
+                                    {element.title}
+                                  </option>
+                                )
+                              }
+                            )}
+                          </select>
+                        </div>
                       </div>
-                    </div>
-                  ) : (
-                    <div></div>
-                  )}
-                </div>
-                <div className="price">
-                  <p className="value">${selectedVariant.price} USD</p>
-                </div>
-              </form>
-              {selectedVariant.price > "0.00" && (
-                <div className="actions">
-                  <div className="select-wrapper">
-                    <select
-                      name="quantity"
-                      id="quantity"
-                      disabled={
-                        quantityLevels &&
-                        quantityLevels[selectedVariant.sku] <= 0
-                          ? true
-                          : false
-                      }
-                      onChange={evt =>
-                        setSelectedVariantQuantity(evt.target.value)
-                      }
-                    >
-                      {quantityRange().map(el => {
-                        return <option key={`quantity-${el}`}>{el}</option>
-                      })}
-                    </select>
-                  </div>
-                  <div>
-                    {quantityLevels &&
-                    quantityLevels[selectedVariant.sku] > 0 ? (
-                      <AddToCartButton
-                        handler={e => handleAddToCart(e)}
-                        loading={isAddingToCart}
-                        soldOut={false}
-                      />
-                    ) : (
-                      <AddToCartButton soldOut={true} />
                     )}
                   </div>
-                </div>
-              )}
+                  <div className="price">
+                    <div className="value">
+                      <div>
+                        <span>${selectedVariant.price} USD</span>
+                      </div>
+                      {selectedVariant.compareAtPrice &&
+                        isDiscounted(
+                          selectedVariant.price,
+                          selectedVariant.compareAtPrice
+                        ) && (
+                          <div className="compare-at-price">
+                            <span className="compare-at-price">
+                              ${selectedVariant.compareAtPrice} USD
+                            </span>
+                          </div>
+                        )}
+                    </div>
+                  </div>
+                </form>
+                {selectedVariant.price > "0.00" && (
+                  <div className="actions">
+                    <div className="select-wrapper">
+                      <select
+                        name="quantity"
+                        id="quantity"
+                        disabled={
+                          quantityLevels &&
+                          quantityLevels[selectedVariant.sku] <= 0
+                            ? true
+                            : false
+                        }
+                        onChange={evt =>
+                          setSelectedVariantQuantity(evt.target.value)
+                        }
+                      >
+                        {quantityRange().map(el => {
+                          return <option key={`quantity-${el}`}>{el}</option>
+                        })}
+                      </select>
+                    </div>
+                    <div>
+                      {quantityLevels &&
+                      quantityLevels[selectedVariant.sku] > 0 ? (
+                        <AddToCartButton
+                          handler={e => handleAddToCart(e)}
+                          loading={isAddingToCart}
+                          soldOut={false}
+                        />
+                      ) : (
+                        <AddToCartButton soldOut={true} />
+                      )}
+                    </div>
+                  </div>
+                )}
 
-              <p className="product-description">
-                {shopifyProduct.description}
-              </p>
+                <p className="product-description">
+                  {shopifyProduct.description}
+                </p>
+              </div>
             </div>
           </div>
-        </div>
-        <YouMayAlsoLike shopifyProduct={shopifyProduct}></YouMayAlsoLike>
-      </Page>
-    </Layout>
+          <YouMayAlsoLike shopifyProduct={shopifyProduct} />
+          {/* <Divider className="r-divider" />
+          <div className="review-row">
+            <Reviews />
+          </div> */}
+        </Page>
+      </Layout>
+    </ReviewsProvider>
   )
 }
 
 export default Product
 
 export const query = graphql`
-  query ProductQueryShopify($handle: String) {
+  query ProductQueryShopify($handle: String, $legacyResourceId: String) {
+    site {
+      siteMetadata {
+        siteUrl
+      }
+    }
+    yotpoProductBottomline(productIdentifier: { eq: $legacyResourceId }) {
+      totalReviews
+      score
+      yotpoId
+    }
     shopifyProduct(handle: { eq: $handle }) {
       collections {
         handle

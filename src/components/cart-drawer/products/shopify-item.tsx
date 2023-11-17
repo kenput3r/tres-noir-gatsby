@@ -6,6 +6,7 @@ import { CartContext } from "../../../contexts/cart"
 import styled from "styled-components"
 import { VscClose } from "react-icons/vsc"
 import { Link } from "gatsby"
+import { isDiscounted } from "../../../helpers/shopify"
 
 const Component = styled.div`
   .original-price {
@@ -104,7 +105,7 @@ const ShopifyItem = (props: { item: tnItem }) => {
                   item.lineItems[0].shopifyItem.quantity
                 )}
               </p>
-              {hasDiscount && (
+              {hasDiscount ? (
                 <p className="original-price">
                   $
                   {priceTimesQuantityOriginal(
@@ -112,6 +113,21 @@ const ShopifyItem = (props: { item: tnItem }) => {
                     item.lineItems[0].shopifyItem.quantity
                   )}
                 </p>
+              ) : (
+                item.lineItems[0].shopifyItem.variant.compareAtPrice &&
+                isDiscounted(
+                  item.lineItems[0].shopifyItem.variant.price.amount,
+                  item.lineItems[0].shopifyItem.variant.compareAtPrice.amount
+                ) && (
+                  <p className="original-price">
+                    $
+                    {priceTimesQuantityOriginal(
+                      item.lineItems[0].shopifyItem.variant.compareAtPrice
+                        .amount,
+                      item.lineItems[0].shopifyItem.quantity
+                    )}
+                  </p>
+                )
               )}
             </div>
           </div>

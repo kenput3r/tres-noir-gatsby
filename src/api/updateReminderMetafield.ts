@@ -1,5 +1,9 @@
 import fetch from "node-fetch"
-export default async function updateReminderMetafield(req, res) {
+import type { GatsbyFunctionRequest, GatsbyFunctionResponse } from "gatsby"
+export default async function updateReminderMetafield(
+  req: GatsbyFunctionRequest,
+  res: GatsbyFunctionResponse
+) {
   try {
     const parsedBody = JSON.parse(req.body)
     const orderId = parsedBody.id
@@ -50,7 +54,6 @@ export default async function updateReminderMetafield(req, res) {
       }),
     })
     const responseJson = await response.json()
-    console.log("backend json response", responseJson)
     if (response.ok) {
       return res.status(200).json(responseJson)
     }

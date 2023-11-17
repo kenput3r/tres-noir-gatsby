@@ -6,6 +6,7 @@ import { CartContext } from "../../../contexts/cart"
 import styled from "styled-components"
 import { VscClose } from "react-icons/vsc"
 import { Link } from "gatsby"
+import { isDiscounted } from "../../../helpers/shopify"
 
 const Component = styled.div`
   .small {
@@ -45,6 +46,17 @@ const SunglassesItem = (props: { item: tnItem }) => {
     loadingContainer?.classList.add("no-events")
     await removeProductsFromCart(lineIds, item.id, hasDiscount)
     loadingContainer?.classList.remove("no-events")
+  }
+
+  const totalCompareAt = lineItems => {
+    let sum = 0
+    lineItems.forEach(item => {
+      let price = item.shopifyItem.variant.compareAtPrice
+        ? item.shopifyItem.variant.compareAtPrice.amount
+        : "0.00"
+      sum += parseFloat(price)
+    })
+    return sum.toFixed(2)
   }
 
   const totalSum = lineItems => {
@@ -129,10 +141,19 @@ const SunglassesItem = (props: { item: tnItem }) => {
           </div>
           <div className="price-quantity">
             <p>${totalSum(item.lineItems)}</p>
-            {hasDiscount && (
+            {hasDiscount ? (
               <p className="original-price">
                 ${totalOriginalSum(item.lineItems)}
               </p>
+            ) : (
+              isDiscounted(
+                totalSum(item.lineItems),
+                totalCompareAt(item.lineItems)
+              ) && (
+                <p className="original-price">
+                  ${totalCompareAt(item.lineItems)}
+                </p>
+              )
             )}
           </div>
         </div>

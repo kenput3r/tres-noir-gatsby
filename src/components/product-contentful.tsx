@@ -102,10 +102,10 @@ const ProductContentful = ({
   collectionHandle,
   shopifyProduct,
 }: Props) => {
-  const isSunglasses = collectionHandle.includes("sunglasses")
-  const lensType = collectionHandle.includes("sunglasses")
-    ? "sunglasses"
-    : "glasses"
+  const isSunglasses =
+    collectionHandle.includes("sunglasses") || collectionHandle.includes("new")
+  const lensType = isSunglasses ? "sunglasses" : "glasses"
+  const hasNewStyles = data.collection.some(col => col.handle === "new")
 
   // remove variants marked as 'hidden' in shopify
   if (shopifyProduct) {
@@ -123,10 +123,6 @@ const ProductContentful = ({
   const selectVariant = (variant: ContentfulProductVariant) => {
     setSelectedVariant(variant)
   }
-
-  let hasNewStyles: boolean = false
-  if (data.collection && data.collection.length > 0)
-    hasNewStyles = data.collection.some(col => col.handle === "new")
 
   return (
     <Component>
