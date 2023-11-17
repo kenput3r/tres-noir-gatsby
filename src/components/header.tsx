@@ -75,7 +75,7 @@ const Component = styled.header`
     a {
       color: #000;
       display: flex;
-      padding: 0 10px;
+      padding: 0 7px;
     }
   }
   .border-left {
@@ -145,7 +145,11 @@ const Component = styled.header`
     border: none;
     background: none;
     display: block;
-    padding: 0px 10px;
+    padding: 0px 7px;
+    color: black;
+    svg {
+      fill: black;
+    }
   }
 `
 
