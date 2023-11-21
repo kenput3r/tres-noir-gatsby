@@ -120,15 +120,19 @@ const Product = ({
   }
 
   const getBadge = (): { label: string; color: string } | null => {
-    const price = data.variants[0].price
-    const compareAtPrice = data.variants[0].compareAtPrice
-    if (compareAtPrice && isDiscounted(price, compareAtPrice)) {
-      return {
-        label: "Sale",
-        color: "red",
+    try {
+      const price = data.variants[0].price
+      const compareAtPrice = data.variants[0].compareAtPrice
+      if (compareAtPrice && isDiscounted(price, compareAtPrice)) {
+        return {
+          label: "Sale",
+          color: "red",
+        }
       }
+      return null
+    } catch (error) {
+      return null
     }
-    return null
   }
 
   const badge = getBadge()

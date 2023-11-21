@@ -12,7 +12,7 @@ import Badge from "./badge"
 import { isDiscounted } from "../helpers/shopify"
 import { useFilterHiddenCustomizableVariants } from "../hooks/useFilterHiddenCustomizableVariants"
 import { useFilterDuplicateFrames } from "../hooks/useFilterDuplicateFrames"
-import { get } from "js-cookie"
+import { badgeConfig } from "../utils/consts"
 
 const Component = styled.article`
   margin-bottom: 1.45rem;
@@ -77,6 +77,7 @@ interface Props {
   color: null | string
   collectionHandle: string
   shopifyProduct: {
+    title: string
     handle: string
     variants: {
       compareAtPrice: string
@@ -117,20 +118,35 @@ const ProductContentful = ({
     setSelectedVariant(variant)
   }
   const getBadge = (): { label: string; color: string } | null => {
-    const price = shopifyProduct.variants[0].price
-    const compareAtPrice = shopifyProduct.variants[0].compareAtPrice
-    if (compareAtPrice && isDiscounted(price, compareAtPrice)) {
-      return {
-        label: "Sale",
-        color: "red",
+    try {
+      // bogo is enabled and product is not a mooneyes product
+      if (
+        badgeConfig &&
+        badgeConfig.bogo &&
+        !shopifyProduct.title.includes("Mooneyes")
+      ) {
+        return {
+          label: "BOGO",
+          color: "#0ee2e2",
+        }
       }
-    } else if (data.collection.some(col => col.handle === "new")) {
-      return {
-        label: "New",
-        color: "#DAA520",
+      const price = shopifyProduct.variants[0].price
+      const compareAtPrice = shopifyProduct.variants[0].compareAtPrice
+      if (compareAtPrice && isDiscounted(price, compareAtPrice)) {
+        return {
+          label: "Sale",
+          color: "red",
+        }
+      } else if (data.collection.some(col => col.handle === "new")) {
+        return {
+          label: "New",
+          color: "#DAA520",
+        }
       }
+      return null
+    } catch (error) {
+      return null
     }
-    return null
   }
 
   const badge = getBadge()

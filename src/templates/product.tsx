@@ -14,6 +14,7 @@ import Reviews from "../components/reviews"
 import type { YotpoSourceProductBottomLine } from "../types/yotpo"
 import { isDiscounted } from "../helpers/shopify"
 import Divider from "../components/divider"
+import Badge from "../components/badge"
 
 const Page = styled.div`
   .shipping-message {
@@ -105,7 +106,7 @@ const Page = styled.div`
       gap: 6px 9px;
     }
 
-    margin-top: 1.45rem;
+    margin-top: 1rem;
   }
   p.label {
     color: var(--color-grey-dark);
@@ -204,6 +205,10 @@ const Page = styled.div`
       margin-bottom: 10px;
     }
     margin-bottom: 40px;
+  }
+  .badge-container {
+    display: flex;
+    padding-bottom: 8px;
   }
 `
 type Props = {
@@ -314,6 +319,27 @@ const Product = ({
       return [0]
     }
   }
+
+  // badge logic
+
+  const getBadge = (): { label: string; color: string } | null => {
+    try {
+      const price = selectedVariant.price
+      const compareAtPrice = selectedVariant.compareAtPrice
+      if (compareAtPrice && isDiscounted(price, compareAtPrice)) {
+        return {
+          label: "Sale",
+          color: "red",
+        }
+      }
+      console.log("selected", selectedVariant)
+      return null
+    } catch (error) {
+      return null
+    }
+  }
+
+  const badge = getBadge()
 
   const handleAddToCart = (e: { preventDefault: () => void }) => {
     e.preventDefault()
@@ -459,7 +485,20 @@ const Product = ({
                       </div>
                     )}
                   </div>
+
                   <div className="price">
+                    {badge && (
+                      <div className="badge-container">
+                        <Badge
+                          label={badge.label}
+                          color={badge.color}
+                          position="static"
+                          top={0}
+                          left={0}
+                        />
+                      </div>
+                    )}
+
                     <div className="value">
                       <div>
                         <span>${selectedVariant.price} USD</span>
