@@ -54,7 +54,13 @@ const YouMayAlsoLike = (props: { shopifyProduct: ShopifyProduct }) => {
       <div className="row">
         <div className="upsell-cards">
           {collectionItems.map(product => {
-            return <UpsellProduct key={product.id} upsellProduct={product} />
+            return (
+              <UpsellProduct
+                key={product.id}
+                upsellProduct={product}
+                showDrawer={true}
+              />
+            )
           })}
         </div>
       </div>
