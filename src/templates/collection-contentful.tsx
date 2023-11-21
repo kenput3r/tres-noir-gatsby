@@ -162,10 +162,20 @@ export const query = graphql`
           id
           sku
           featuredImage {
-            data: gatsbyImageData(width: 600, quality: 40)
+            data: gatsbyImageData(
+              width: 600
+              quality: 40
+              aspectRatio: 1.5
+              cropFocus: CENTER
+            )
           }
           featuredImageClear {
-            data: gatsbyImageData(width: 600, quality: 40)
+            data: gatsbyImageData(
+              width: 600
+              quality: 40
+              aspectRatio: 1.5
+              cropFocus: CENTER
+            )
           }
           colorName
           colorImage {

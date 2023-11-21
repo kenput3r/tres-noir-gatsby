@@ -186,11 +186,15 @@ const Product = ({
         </h3>
         <div className="price-container">
           <span className="product-price">${price} USD</span>
-          {data.variants[0].compareAtPrice && (
-            <span className="product-compare-at-price">
-              ${data.variants[0].compareAtPrice} USD
-            </span>
-          )}
+          {data.variants[0].compareAtPrice &&
+            isDiscounted(
+              data.variants[0].price,
+              data.variants[0].compareAtPrice
+            ) && (
+              <span className="product-compare-at-price">
+                ${data.variants[0].compareAtPrice} USD
+              </span>
+            )}
         </div>
       </div>
     </Component>
