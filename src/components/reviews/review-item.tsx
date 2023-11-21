@@ -6,7 +6,7 @@ import ReviewVotes from "./review-votes"
 import ReviewAuthor from "./review-author"
 
 const Component = styled.section`
-  margin-bottom: 16px;
+  padding-bottom: 25px;
   display: flex;
   .outer {
     flex: 1;

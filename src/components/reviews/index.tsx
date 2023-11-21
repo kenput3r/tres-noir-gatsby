@@ -5,6 +5,7 @@ import ReviewList from "./review-list"
 import ReviewForm from "./review-form"
 import ReviewsEmpty from "./reviews-empty"
 import ReviewPagination from "./review-pagination"
+import Spinner from "../spinner"
 const Component = styled.section`
   button {
     padding: 8px 15px;
@@ -25,12 +26,21 @@ const Component = styled.section`
     text-transform: uppercase;
   }
 `
+const SpinContainer = styled.div`
+  padding-bottom: 50px;
+  padding-top: 20px;
+  .icon-spinner {
+    height: 50px;
+  }
+`
 
 const Reviews = () => {
   const { data, isLoading } = useReviews()
 
   return isLoading || !data ? (
-    <></>
+    <SpinContainer>
+      <Spinner fill="#000000" />
+    </SpinContainer>
   ) : (
     <Component>
       <ReviewForm />

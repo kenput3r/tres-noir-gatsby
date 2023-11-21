@@ -66,7 +66,7 @@ const Component = styled.div`
 
 const Spinner = ({ fill = "#FFFFFF" }: { fill?: "#FFFFFF" | "#000000" }) => {
   return (
-    <Component>
+    <Component className="tn-spinner">
       <svg
         aria-hidden="true"
         focusable="false"
