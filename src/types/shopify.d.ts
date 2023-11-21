@@ -28,6 +28,8 @@ export interface ShopifyProduct {
     title: string
     sku: string
     storefrontId: string
+    compareAtPrice: string
+    price: string
   }[]
   vendor: string
 }

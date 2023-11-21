@@ -181,6 +181,8 @@ export const query = graphql`
         handle
         createdAt
         variants {
+          price
+          compareAtPrice
           sku
           metafields {
             key

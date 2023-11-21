@@ -8,8 +8,11 @@ import {
 } from "../types/contentful"
 import ProductOptionsCarousel from "../components/product-options-carousel"
 import ProductAction from "./collection-product-action"
+import Badge from "./badge"
+import { isDiscounted } from "../helpers/shopify"
 import { useFilterHiddenCustomizableVariants } from "../hooks/useFilterHiddenCustomizableVariants"
 import { useFilterDuplicateFrames } from "../hooks/useFilterDuplicateFrames"
+import { get } from "js-cookie"
 
 const Component = styled.article`
   margin-bottom: 1.45rem;
@@ -66,17 +69,6 @@ const Component = styled.article`
         max-height: 50px;
       }
     }
-    .new-styles {
-      position: absolute;
-      top: 13px;
-      left: 0;
-      font-size: 1.15rem;
-      background: #ff051d;
-      color: white;
-      padding: 0 10px;
-      border-radius: 6px;
-      font-family: var(--sub-heading-font);
-    }
   }
 `
 
@@ -87,6 +79,8 @@ interface Props {
   shopifyProduct: {
     handle: string
     variants: {
+      compareAtPrice: string
+      price: string
       sku: string
       metafields: {
         key: string
@@ -105,7 +99,6 @@ const ProductContentful = ({
   const isSunglasses =
     collectionHandle.includes("sunglasses") || collectionHandle.includes("new")
   const lensType = isSunglasses ? "sunglasses" : "glasses"
-  const hasNewStyles = data.collection.some(col => col.handle === "new")
 
   // remove variants marked as 'hidden' in shopify
   if (shopifyProduct) {
@@ -123,6 +116,24 @@ const ProductContentful = ({
   const selectVariant = (variant: ContentfulProductVariant) => {
     setSelectedVariant(variant)
   }
+  const getBadge = (): { label: string; color: string } | null => {
+    const price = shopifyProduct.variants[0].price
+    const compareAtPrice = shopifyProduct.variants[0].compareAtPrice
+    if (compareAtPrice && isDiscounted(price, compareAtPrice)) {
+      return {
+        label: "Sale",
+        color: "red",
+      }
+    } else if (data.collection.some(col => col.handle === "new")) {
+      return {
+        label: "New",
+        color: "#DAA520",
+      }
+    }
+    return null
+  }
+
+  const badge = getBadge()
 
   return (
     <Component>
@@ -136,7 +147,7 @@ const ProductContentful = ({
             }
             alt={data.title}
           />
-          {hasNewStyles && <div className="new-styles">New!</div>}
+          {badge && <Badge label={badge.label} color={badge.color} />}
         </Link>
         <ProductAction>
           <Link to={`${productLink}&variant=${selectedVariant.sku}`}>
