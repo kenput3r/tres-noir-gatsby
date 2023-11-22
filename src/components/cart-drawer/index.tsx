@@ -26,10 +26,12 @@ const Component = styled.div`
   border-top: none;
   font-family: var(--sub-heading-font);
   .cart-message {
+    font-size: 15px !important;
+    line-height: 18px !important;
     border: 1px solid;
     background: white;
     text-decoration: underline;
-    padding: 6px;
+    padding: 3px;
     text-align: center;
   }
   .header {

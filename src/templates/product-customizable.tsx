@@ -36,6 +36,8 @@ import { ReviewsProvider } from "../contexts/reviews"
 import type { YotpoSourceProductBottomLine } from "../types/yotpo"
 import { isDiscounted } from "../helpers/shopify"
 import Divider from "../components/divider"
+import Badge from "../components/badge"
+import { badgeConfig } from "../utils/consts"
 
 const Page = styled.div`
   .shipping-message {
@@ -74,7 +76,7 @@ const Page = styled.div`
     display: flex;
     flex-direction: column;
     flex: 1;
-    padding: 1.45rem;
+    padding: 1.3rem;
     @media screen and (max-width: 768px) {
       padding-left: 0.5rem;
       padding-right: 0.5rem;
@@ -443,6 +445,36 @@ const ProductCustomizable = ({
 
   const seoDescription = contentfulProduct.styleDescription.styleDescription
 
+  // badge logic
+
+  const getBadge = (): { label: string; color: string } | null => {
+    try {
+      // bogo is enabled and product is not a mooneyes product
+      if (
+        badgeConfig &&
+        badgeConfig.bogo &&
+        !shopifyProduct.title.includes("Mooneyes")
+      ) {
+        return {
+          label: "BOGO",
+          color: "#0ee2e2",
+        }
+      }
+      const price = selectedVariant.shopify.price
+      const compareAtPrice = selectedVariant.shopify.compareAtPrice
+      if (compareAtPrice && isDiscounted(price, compareAtPrice)) {
+        return {
+          label: "Sale",
+          color: "red",
+        }
+      }
+      return null
+    } catch (error) {
+      return null
+    }
+  }
+
+  const badge = getBadge()
   // switch selected variant to its polarized counterpart, toggled from switch
   // grey out customize option
   const switchToPolarized = (evt: ChangeEvent<HTMLInputElement>) => {
@@ -984,6 +1016,15 @@ const ProductCustomizable = ({
                 <div className="price">
                   <div className="value">
                     <div className="left">
+                      {badge && (
+                        <Badge
+                          label={badge.label}
+                          color={badge.color}
+                          position="static"
+                          top={0}
+                          left={0}
+                        />
+                      )}
                       <div className="current-price-container">
                         <span className="starting-at">STARTING AT</span>
                         <span>${selectedVariant.shopify.price} USD</span>
@@ -1111,10 +1152,10 @@ const ProductCustomizable = ({
               </div>
             </>
           )}
-          {/* <Divider />
+          <Divider />
           <div className="row-no-flex review-row">
             <Reviews />
-          </div> */}
+          </div>
         </Page>
       </Layout>
     </ReviewsProvider>

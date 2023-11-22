@@ -241,6 +241,8 @@ export const query = graphql`
         storefrontId
         title
         variants {
+          price
+          compareAtPrice
           legacyResourceId
           title
           sku
