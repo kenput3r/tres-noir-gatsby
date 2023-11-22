@@ -109,11 +109,9 @@ const UpsellProduct = ({
 
   const getBadge = (): { label: string; color: string } | null => {
     try {
-      console.log("upsellProduct", upsellProduct)
       const price = upsellProduct.variants[0].price
       const compareAtPrice = upsellProduct.variants[0].compareAtPrice
-      console.log("price", price)
-      console.log("compareAtPrice", compareAtPrice)
+
       if (compareAtPrice && isDiscounted(price, compareAtPrice)) {
         return {
           label: "Sale",

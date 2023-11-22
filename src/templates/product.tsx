@@ -225,8 +225,6 @@ type Props = {
 const Product = ({
   data: { shopifyProduct, yotpoProductBottomline, site },
 }: Props) => {
-  // console.log("site", site)
-  // const siteUrl = ""
   const { siteUrl } = site.siteMetadata
   const [selectedVariant, setSelectedVariant] = useState(
     shopifyProduct.variants[0]
@@ -332,7 +330,6 @@ const Product = ({
           color: "red",
         }
       }
-      console.log("selected", selectedVariant)
       return null
     } catch (error) {
       return null
