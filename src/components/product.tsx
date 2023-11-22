@@ -8,13 +8,16 @@ import ProductAction from "./collection-product-action"
 import Spinner from "../components/spinner"
 import { useQuantityQuery } from "../hooks/useQuantityQuery"
 import { addedToCartGTMEvent } from "../helpers/gtm"
+import { isDiscounted } from "../helpers/shopify"
+import Badge from "./badge"
 
 const Component = styled.article`
   h3,
-  p {
+  p,
+  span {
     font-family: var(--heading-font);
     text-transform: uppercase;
-    font-size: 1.09rem;
+    font-size: 1.1rem;
     @media screen and (max-width: 600px) {
       font-size: 0.98rem;
     }
@@ -33,8 +36,22 @@ const Component = styled.article`
       }
     }
   }
+  .price-container {
+    span {
+      font-size: 1rem;
+    }
+    padding-top: 5px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0 4px;
+  }
   .product-price {
+    color: black;
+  }
+  .product-compare-at-price {
     color: var(--color-grey-dark);
+    text-decoration: line-through;
   }
   .product-card {
     display: flex;
@@ -44,6 +61,7 @@ const Component = styled.article`
   .product-image {
     margin-bottom: 15px;
     text-align: center;
+    position: relative;
   }
   .product-container {
     position: relative;
@@ -101,33 +119,54 @@ const Product = ({
     addedToCartGTMEvent(productData)
   }
 
+  const getBadge = (): { label: string; color: string } | null => {
+    try {
+      const price = data.variants[0].price
+      const compareAtPrice = data.variants[0].compareAtPrice
+      if (compareAtPrice && isDiscounted(price, compareAtPrice)) {
+        return {
+          label: "Sale",
+          color: "red",
+        }
+      }
+      return null
+    } catch (error) {
+      return null
+    }
+  }
+
+  const badge = getBadge()
+
   return (
     <Component>
       <div className="product-card">
         <div className="product-container">
           <Link to={`/products/${data.handle}`}>
-            {data.featuredImage ? (
-              <GatsbyImage
-                className="product-image"
-                image={
-                  data.featuredImage.localFile.childImageSharp.gatsbyImageData
-                }
-                alt={
-                  data.featuredImage.altText
-                    ? data.featuredImage.altText
-                    : data.title
-                }
-              />
-            ) : (
-              <StaticImage
-                src="../images/no-image-placeholder.jpg"
-                alt="Empty product image"
-                className="product-image"
-                layout="constrained"
-                width={275}
-                height={183}
-              />
-            )}
+            <>
+              {data.featuredImage ? (
+                <GatsbyImage
+                  className="product-image"
+                  image={
+                    data.featuredImage.localFile.childImageSharp.gatsbyImageData
+                  }
+                  alt={
+                    data.featuredImage.altText
+                      ? data.featuredImage.altText
+                      : data.title
+                  }
+                />
+              ) : (
+                <StaticImage
+                  src="../images/no-image-placeholder.jpg"
+                  alt="Empty product image"
+                  className="product-image"
+                  layout="constrained"
+                  width={275}
+                  height={183}
+                />
+              )}
+              {badge && <Badge label={badge.label} color={badge.color} />}
+            </>
           </Link>
           {data.variants.length > 1 ? (
             <ProductAction>
@@ -149,7 +188,18 @@ const Product = ({
           {" "}
           <Link to={`/products/${data.handle}`}>{data.title}</Link>
         </h3>
-        <p className="product-price">${price} USD</p>
+        <div className="price-container">
+          <span className="product-price">${price} USD</span>
+          {data.variants[0].compareAtPrice &&
+            isDiscounted(
+              data.variants[0].price,
+              data.variants[0].compareAtPrice
+            ) && (
+              <span className="product-compare-at-price">
+                ${data.variants[0].compareAtPrice} USD
+              </span>
+            )}
+        </div>
       </div>
     </Component>
   )

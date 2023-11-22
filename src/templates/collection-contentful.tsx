@@ -47,9 +47,13 @@ const CollectionContentful = ({
 
   const getShopifyProduct = product => {
     if (!shopifyCollection?.products) return null
+
     const shopifyProduct = shopifyCollection.products.find(
-      shopifyProduct => (shopifyProduct.handle = product.handle)
+      shopifyProduct =>
+        shopifyProduct.handle === product.handle ||
+        shopifyProduct.title === product.title
     )
+
     return shopifyProduct
   }
 
@@ -162,10 +166,20 @@ export const query = graphql`
           id
           sku
           featuredImage {
-            data: gatsbyImageData(width: 600, quality: 40)
+            data: gatsbyImageData(
+              width: 600
+              quality: 40
+              aspectRatio: 1.5
+              cropFocus: CENTER
+            )
           }
           featuredImageClear {
-            data: gatsbyImageData(width: 600, quality: 40)
+            data: gatsbyImageData(
+              width: 600
+              quality: 40
+              aspectRatio: 1.5
+              cropFocus: CENTER
+            )
           }
           colorName
           colorImage {
@@ -178,9 +192,12 @@ export const query = graphql`
     }
     shopifyCollection(handle: { eq: $handle }) {
       products {
+        title
         handle
         createdAt
         variants {
+          price
+          compareAtPrice
           sku
           metafields {
             key

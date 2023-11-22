@@ -6,7 +6,7 @@ import ReviewVotes from "./review-votes"
 import ReviewAuthor from "./review-author"
 
 const Component = styled.section`
-  margin-bottom: 16px;
+  padding-bottom: 25px;
   display: flex;
   .outer {
     flex: 1;
@@ -45,10 +45,11 @@ const ReviewItem = ({ review }: Props) => {
     verified_buyer,
   } = review
   const date = new Date(created_at).toLocaleDateString("en-US")
+  const isVerified = verified_buyer || user.user_type === "User" ? true : false
   return (
     <Component>
       <div>
-        <ReviewAuthor isVerified={verified_buyer} />
+        <ReviewAuthor isVerified={isVerified} />
       </div>
       <div className="outer">
         <div className="review-name-date">
@@ -58,8 +59,14 @@ const ReviewItem = ({ review }: Props) => {
         <div>
           <ReviewStars score={score} />
         </div>
-        <p className="review-title">{title}</p>
-        <p className="review-content">{content}</p>
+        <p
+          className="review-title"
+          dangerouslySetInnerHTML={{ __html: title }}
+        />
+        <p
+          className="review-content"
+          dangerouslySetInnerHTML={{ __html: content }}
+        />
         <ReviewVotes reviewId={id} votesUp={votes_up} votesDown={votes_down} />
       </div>
     </Component>
