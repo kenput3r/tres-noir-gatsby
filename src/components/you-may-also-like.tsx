@@ -3,6 +3,7 @@ import styled from "styled-components"
 import UpsellProduct from "./upsell-product"
 import { useRandomizeCollection } from "../hooks/useRandomizeCollection"
 import { ShopifyProduct } from "../types/shopify"
+import Divider from "./divider"
 
 const Component = styled.section`
   margin-bottom: 40px;
@@ -22,7 +23,8 @@ const Component = styled.section`
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     grid-template-rows: 1fr;
-    @media (max-width: 600px) {
+
+    @media (max-width: 768px) {
       grid-auto-flow: column;
       grid-template-columns: repeat(2, 1fr);
       grid-template-rows: repeat(2, 1fr);
@@ -47,14 +49,18 @@ const YouMayAlsoLike = (props: { shopifyProduct: ShopifyProduct }) => {
 
   return (
     <Component>
-      <div className="hr-wrapper">
-        <hr />
-      </div>
+      <Divider />
       <h6>You May Also Like</h6>
       <div className="row">
         <div className="upsell-cards">
           {collectionItems.map(product => {
-            return <UpsellProduct key={product.id} upsellProduct={product} />
+            return (
+              <UpsellProduct
+                key={product.id}
+                upsellProduct={product}
+                showDrawer={true}
+              />
+            )
           })}
         </div>
       </div>

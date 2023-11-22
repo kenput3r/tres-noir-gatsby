@@ -7,6 +7,8 @@ import styled from "styled-components"
 import { addedToCartGTMEvent } from "../helpers/gtm"
 import { UpsellItem, UpsellItemVariant } from "../types/upsell"
 import AddToCartButton from "./add-to-cart-button"
+import { isDiscounted } from "../helpers/shopify"
+import Badge from "./badge"
 
 const Component = styled.article`
   flex: 1;
@@ -16,7 +18,7 @@ const Component = styled.article`
   margin: 15px;
   text-align: center;
   @media (max-width: 600px) {
-    margin: 20px 11px 20px 11px;
+    margin: 15px 10px;
   }
   a {
     color: black;
@@ -42,11 +44,9 @@ const Component = styled.article`
   }
   .select-price {
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
-    @media screen and (max-width: 600px) {
-      flex-direction: column;
-    }
     select {
       margin-right: 18px;
       @media screen and (max-width: 600px) {
@@ -57,6 +57,7 @@ const Component = styled.article`
     margin-bottom: 8px;
   }
   .upsell-image {
+    position: relative;
     max-width: 280px;
     :hover {
       opacity: 0.7;
@@ -67,11 +68,32 @@ const Component = styled.article`
       text-decoration: underline;
     }
   }
+  .price-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    span {
+      font-family: var(--heading-font);
+      text-transform: uppercase;
+    }
+    .current {
+      margin-right: 10px;
+    }
+    .compare-at {
+      color: var(--color-grey-dark);
+      text-decoration: line-through;
+    }
+  }
 `
 
-const UpsellProduct = (props: { upsellProduct: UpsellItem }) => {
-  const { upsellProduct } = props
-
+const UpsellProduct = ({
+  upsellProduct,
+  showDrawer = false,
+}: {
+  upsellProduct: UpsellItem
+  showDrawer?: boolean
+}) => {
   const quantityLevels = useQuantityQuery(
     upsellProduct.handle,
     upsellProduct.variants.length
@@ -84,6 +106,25 @@ const UpsellProduct = (props: { upsellProduct: UpsellItem }) => {
   const [featuredImage, setFeaturedImage] = useState(
     upsellProduct.featuredImage.localFile.childImageSharp.gatsbyImageData
   )
+
+  const getBadge = (): { label: string; color: string } | null => {
+    try {
+      const price = upsellProduct.variants[0].price
+      const compareAtPrice = upsellProduct.variants[0].compareAtPrice
+
+      if (compareAtPrice && isDiscounted(price, compareAtPrice)) {
+        return {
+          label: "Sale",
+          color: "red",
+        }
+      }
+      return null
+    } catch (error) {
+      return null
+    }
+  }
+
+  const badge = getBadge()
 
   useEffect(() => {
     let firstVariant: UpsellItemVariant = upsellProduct.variants[0]
@@ -108,7 +149,7 @@ const UpsellProduct = (props: { upsellProduct: UpsellItem }) => {
       ? selectedVariant.image.localFile.childImageSharp.gatsbyImageData
       : upsellProduct.featuredImage.localFile.childImageSharp.gatsbyImageData
 
-    addProductToCart(id, 1, sku, image)
+    addProductToCart(id, 1, sku, image, showDrawer)
     // gtm event
     const productData = {
       title: selectedVariant.product.title,
@@ -158,17 +199,17 @@ const UpsellProduct = (props: { upsellProduct: UpsellItem }) => {
       <div className="upsell-product">
         <div className="upsell-image">
           <Link to={`/products/${upsellProduct.handle}`}>
-            {upsellProduct.featuredImage?.localFile ? (
-              <GatsbyImage
-                image={featuredImage}
-                alt={upsellProduct.title}
-              ></GatsbyImage>
-            ) : (
-              <StaticImage
-                src="../images/product-no-image.jpg"
-                alt={upsellProduct.title}
-              ></StaticImage>
-            )}
+            <>
+              {upsellProduct.featuredImage?.localFile ? (
+                <GatsbyImage image={featuredImage} alt={upsellProduct.title} />
+              ) : (
+                <StaticImage
+                  src="../images/product-no-image.jpg"
+                  alt={upsellProduct.title}
+                />
+              )}
+              {badge && <Badge label={badge.label} color={badge.color} />}
+            </>
           </Link>
         </div>
         <div className="product-title">
@@ -198,7 +239,20 @@ const UpsellProduct = (props: { upsellProduct: UpsellItem }) => {
               </div>
             )}
           </div>
-          <p>${selectedVariant.price}</p>
+          <div className="price-container">
+            <span className="current">
+              <span>${selectedVariant.price}</span>
+            </span>
+            {selectedVariant.compareAtPrice &&
+              isDiscounted(
+                selectedVariant.price,
+                selectedVariant.compareAtPrice ?? "0.00"
+              ) && (
+                <span className="compare-at">
+                  ${selectedVariant.compareAtPrice}
+                </span>
+              )}
+          </div>
         </div>
         <div>
           {quantityLevels && quantityLevels[selectedVariant.sku] > 0 ? (

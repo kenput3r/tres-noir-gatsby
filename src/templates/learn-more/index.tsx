@@ -338,9 +338,21 @@ const LearnMore = ({ data: { contentfulProduct } }: any) => {
     }
   })
 
+  const seoDescription = [
+    `Learn more about our ${productTitle} frame`,
+    contentfulProduct.styleDescription.text,
+  ].join(". ")
+
   return (
     <Layout>
-      <SEO title={productTitle} />
+      <SEO
+        title={`${productTitle} - Learn More`}
+        description={seoDescription}
+        image={{
+          url: contentfulProduct.variantsImage.url,
+          alt: contentfulProduct.variantsImage.description,
+        }}
+      />
       <Page>
         <h1
           id="StickyHeading"
@@ -536,6 +548,7 @@ export const query = graphql`
       variantsImage {
         data: gatsbyImageData
         description
+        url
       }
     }
   }

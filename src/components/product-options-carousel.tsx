@@ -28,6 +28,11 @@ const Component = styled.div`
   .options-swiper {
     flex: 1 70%;
   }
+  .swiper-button-disabled {
+    svg {
+      color: var(--color-grey-light);
+    }
+  }
 `
 
 const OptionImage = styled.div`

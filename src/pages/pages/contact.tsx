@@ -3,6 +3,7 @@ import styled from "styled-components"
 import Layout from "../../components/layout"
 import SEO from "../../components/seo"
 import { FiPhone, FiMail } from "react-icons/fi"
+import { TiSortNumerically } from "react-icons/ti"
 
 const Page = styled.div`
   h1 {
@@ -196,25 +197,6 @@ const Page = styled.div`
 `
 
 const Contact = () => {
-  // const encode = data => {
-  //   return Object.keys(data)
-  //     .map(key => encodeURIComponent(key) + "=" + encodeURIComponent(data[key]))
-  //     .join("&")
-  // }
-  // const submitForm = event => {
-  //   event.preventDefault()
-  //   console.log("button clicked")
-  //   fetch("/", {
-  //     method: "POST",
-  //     headers: { "Content-Type": "application/x-www-form-urlencoded" },
-  //     body: encode({
-  //       "form-name": event.target.getAttribute("name"),
-  //       ...name,
-  //     }),
-  //   })
-  //     .then(() => navigate("/thank-you/"))
-  //     .catch(error => alert(error))
-  // }
   return (
     <Layout>
       <Page className="wrapper">
@@ -245,7 +227,6 @@ const Contact = () => {
             data-netlify="true"
             netlify-honeypot="bot-field"
             name="contact"
-            // onSubmit={submitForm}
           >
             <input type="hidden" name="bot-field" />
             <input type="hidden" name="form-name" value="contact" />

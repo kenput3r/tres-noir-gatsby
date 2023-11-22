@@ -36,6 +36,7 @@ export interface ContentfulCollection {
   featuredImage: {
     data: IGatsbyImageData
     description: string
+    url: string
   }
   featuredImage2: {
     data: IGatsbyImageData

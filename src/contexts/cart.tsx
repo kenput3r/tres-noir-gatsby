@@ -20,9 +20,9 @@ import { ErrorModalContext } from "../contexts/error"
 const client = Client.buildClient({
   domain: process.env.GATSBY_STORE_MY_SHOPIFY as string,
   storefrontAccessToken: process.env.GATSBY_STORE_STOREFRONT_TOKEN as string,
-})
+} as any)
 
-import Cookies from "js-cookie"
+import Cookies, { set } from "js-cookie"
 
 const isBrowser = typeof window !== "undefined"
 
@@ -70,7 +70,8 @@ const DefaultContext = {
     variantId: string,
     quantity: number,
     sku: string,
-    image: IGatsbyImageData
+    image: IGatsbyImageData,
+    shouldOpenDrawer?: boolean
   ) => {},
   addProductsToCart: (
     lineItems: { variantId: string; quantity: number }[]
@@ -432,7 +433,7 @@ export const CartProvider = ({ children }) => {
           // fetch cart and check if completedAt
           const tempCheckout = await client.checkout.fetch(checkoutId)
           if (tempCheckout && tempCheckout.completedAt) {
-            checkout = await getNewCheckout()
+            checkout = (await getNewCheckout()) as unknown as Checkout
             setCheckout(checkout)
             return
           }
@@ -441,17 +442,19 @@ export const CartProvider = ({ children }) => {
             localStorage.getItem("checkout")
           if (localCheckout) {
             localCheckout = JSON.parse(localCheckout as string) as LocalCheckout
-            checkout = await validateLocalCheckout(localCheckout)
+            checkout = (await validateLocalCheckout(
+              localCheckout
+            )) as unknown as Checkout
           } else {
             // create new checkout
-            checkout = await getNewCheckout()
+            checkout = (await getNewCheckout()) as unknown as Checkout
           }
           if (checkout.completedAt) {
-            checkout = await getNewCheckout()
+            checkout = (await getNewCheckout()) as unknown as Checkout
           }
           // if no Checkout exists, create a new one
         } else {
-          checkout = await getNewCheckout()
+          checkout = (await getNewCheckout()) as unknown as Checkout
         }
         setCheckout(checkout)
       } catch (err: any) {
@@ -471,7 +474,8 @@ export const CartProvider = ({ children }) => {
       variantId: string,
       quantity: number,
       sku: string,
-      image: IGatsbyImageData
+      image: IGatsbyImageData,
+      shouldOpenDrawer: boolean = true
     ) => {
       try {
         setIsAddingToCart(true)
@@ -489,7 +493,7 @@ export const CartProvider = ({ children }) => {
         rebuildBundles(updatedCheckout)
         setCheckout(updatedCheckout)
         setIsAddingToCart(false)
-        setIsCartDrawerOpen(true)
+        if (shouldOpenDrawer) setIsCartDrawerOpen(true)
       } catch (err: any) {
         console.error(err)
         setIsAddingToCart(false)

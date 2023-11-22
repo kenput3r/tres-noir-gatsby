@@ -15,9 +15,24 @@ interface Props {
   meta?: any
   title: string
   isIndex?: boolean
+  image?: ImageMeta
+  jsonLdPayload?: string | null
 }
 
-const SEO = ({ description, lang, meta, title, isIndex = false }: Props) => {
+interface ImageMeta {
+  url: string
+  alt: string
+}
+
+const SEO = ({
+  description,
+  lang,
+  meta,
+  title,
+  isIndex = false,
+  image,
+  jsonLdPayload,
+}: Props) => {
   const { site } = useStaticQuery(
     graphql`
       query {
@@ -33,19 +48,21 @@ const SEO = ({ description, lang, meta, title, isIndex = false }: Props) => {
   )
 
   const metaDescription = description || site.siteMetadata.description
-  const defaultTitle = site.siteMetadata?.title
+  const siteTitle = site.siteMetadata.title
+  const defaultImage = image ?? {
+    url: "https://cdn.shopify.com/s/files/1/0140/0012/8057/files/TN_OpenGraph_Image.jpg?v=1698699695",
+    alt: "Tres Noir Handmade Eyewear",
+  }
 
   const titleTemplate = () => {
-    if (defaultTitle) {
-      if (isIndex) {
-        return `${defaultTitle} | %s`
-      } else {
-        return `%s | ${defaultTitle}`
-      }
+    if (isIndex) {
+      return `${siteTitle} | %s`
     } else {
-      return undefined
+      return `%s | ${siteTitle}`
     }
   }
+
+  const formattedTitle = isIndex ? `${siteTitle} | ${title}` : title
 
   return (
     <Helmet
@@ -61,19 +78,39 @@ const SEO = ({ description, lang, meta, title, isIndex = false }: Props) => {
         },
         {
           property: `og:title`,
-          content: title,
+          content: formattedTitle,
         },
         {
           property: `og:description`,
           content: metaDescription,
         },
         {
+          property: "og:image:url",
+          content: defaultImage.url,
+        },
+        {
+          property: "og:image:alt",
+          content: defaultImage.alt,
+        },
+        {
           property: `og:type`,
           content: `website`,
         },
         {
+          property: "og:site_name",
+          content: siteTitle,
+        },
+        {
           name: `twitter:card`,
           content: `summary`,
+        },
+        {
+          name: `twitter:image`,
+          content: defaultImage.url,
+        },
+        {
+          name: `twitter:image:alt`,
+          content: defaultImage.alt,
         },
         {
           name: `twitter:creator`,
@@ -81,7 +118,7 @@ const SEO = ({ description, lang, meta, title, isIndex = false }: Props) => {
         },
         {
           name: `twitter:title`,
-          content: title,
+          content: formattedTitle,
         },
         {
           name: `twitter:description`,
@@ -96,7 +133,11 @@ const SEO = ({ description, lang, meta, title, isIndex = false }: Props) => {
               : ``,
         },
       ].concat(meta)}
-    ></Helmet>
+    >
+      {jsonLdPayload && (
+        <script type="application/ld+json">{jsonLdPayload}</script>
+      )}
+    </Helmet>
   )
 }
 

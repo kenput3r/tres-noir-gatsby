@@ -47,15 +47,26 @@ const CollectionContentful = ({
 
   const getShopifyProduct = product => {
     if (!shopifyCollection?.products) return null
+
     const shopifyProduct = shopifyCollection.products.find(
-      shopifyProduct => (shopifyProduct.handle = product.handle)
+      shopifyProduct =>
+        shopifyProduct.handle === product.handle ||
+        shopifyProduct.title === product.title
     )
+
     return shopifyProduct
   }
 
   return (
     <Layout>
-      <SEO title={collection.name} />
+      <SEO
+        title={collection.name}
+        description={collection.featuredImage.description}
+        image={{
+          url: collection.featuredImage.url,
+          alt: collection.featuredImage.description,
+        }}
+      />
       <div className="page">
         <FreeShipping />
         {collection.featuredImage && (
@@ -135,6 +146,7 @@ export const query = graphql`
       featuredImage {
         data: gatsbyImageData(width: 2048, formats: [AUTO, WEBP], quality: 50)
         description
+        url
       }
       featuredImage2 {
         data: gatsbyImageData(width: 2048, formats: [AUTO, WEBP], quality: 50)
@@ -154,10 +166,20 @@ export const query = graphql`
           id
           sku
           featuredImage {
-            data: gatsbyImageData(width: 600, quality: 40)
+            data: gatsbyImageData(
+              width: 600
+              quality: 40
+              aspectRatio: 1.5
+              cropFocus: CENTER
+            )
           }
           featuredImageClear {
-            data: gatsbyImageData(width: 600, quality: 40)
+            data: gatsbyImageData(
+              width: 600
+              quality: 40
+              aspectRatio: 1.5
+              cropFocus: CENTER
+            )
           }
           colorName
           colorImage {
@@ -170,8 +192,12 @@ export const query = graphql`
     }
     shopifyCollection(handle: { eq: $handle }) {
       products {
+        title
         handle
+        createdAt
         variants {
+          price
+          compareAtPrice
           sku
           metafields {
             key

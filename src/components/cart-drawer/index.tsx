@@ -1,5 +1,4 @@
-import React, { useContext, useEffect, useRef } from "react"
-import { Link } from "gatsby"
+import React, { useContext, useRef } from "react"
 import styled from "styled-components"
 import { CartContext } from "../../contexts/cart"
 import { tnItem } from "../../types/checkout"
@@ -27,10 +26,12 @@ const Component = styled.div`
   border-top: none;
   font-family: var(--sub-heading-font);
   .cart-message {
+    font-size: 15px !important;
+    line-height: 18px !important;
     border: 1px solid;
     background: white;
     text-decoration: underline;
-    padding: 6px;
+    padding: 3px;
     text-align: center;
   }
   .header {
@@ -284,13 +285,12 @@ const CartDrawer = () => {
             </p>
 
             <div className="button-flex">
-              <Link
+              <button
                 className="btn"
-                to={"/"}
                 onClick={evt => setIsCartDrawerOpen(false)}
               >
                 CONTINUE SHOPPING
-              </Link>
+              </button>
               <a
                 className="btn"
                 href={checkout.webUrl}

@@ -61,7 +61,7 @@ const ProductCarousel = ({ imageSet }: { imageSet: ImageSet[] }) => {
         grabCursor
       >
         {imageSet.map((image: ImageSet, i: number) => (
-          <SwiperSlide key={`slide-${i}`}>
+          <SwiperSlide key={`product-carousel-slide-${i}`}>
             <GatsbyImage image={image.data} alt={image.title} loading="eager" />
           </SwiperSlide>
         ))}
@@ -79,7 +79,7 @@ const ProductCarousel = ({ imageSet }: { imageSet: ImageSet[] }) => {
             threshold={15}
           >
             {imageSet.map((image: ImageSet, i: number) => (
-              <SwiperSlide key={`thumb-${i}`}>
+              <SwiperSlide key={`product-carousel-thumb-${i}`}>
                 <GatsbyImage
                   image={image.data}
                   alt={image.title}

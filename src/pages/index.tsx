@@ -152,74 +152,93 @@ const IndexPage = ({
   data: { contentfulHomepage },
 }: {
   data: HomePageQuery
-}) => (
-  <Layout>
-    <SEO title="Handmade Eyewear" isIndex={true} />
-    <Page>
-      <FreeShipping />
-      <div className="hero container">
-        <div className="featured">
-          <GatsbyImage
-            image={contentfulHomepage.hero.gatsbyImageData}
-            alt="Hero"
-          />
-          <div className="featured-actions">
-            <Link className="button" to="/collections/sunglasses-for-men">
-              SHOP MEN'S
-            </Link>
+}) => {
+  const generateJsonLd = () => {
+    try {
+      const schema = {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        url: "https://www.tresnoir.com",
+        logo: "https://cdn.shopify.com/s/files/1/0140/0012/8057/files/tres-noir-icon-large_copy.png?v=1699387986",
+      }
+      return JSON.stringify(schema, null, 2)
+    } catch (error) {
+      return null
+    }
+  }
+  return (
+    <Layout>
+      <SEO
+        title="Handmade Eyewear"
+        isIndex={true}
+        jsonLdPayload={generateJsonLd()}
+      />
+      <Page>
+        <FreeShipping />
+        <div className="hero container">
+          <div className="featured">
+            <GatsbyImage
+              image={contentfulHomepage.hero.gatsbyImageData}
+              alt="Hero"
+            />
+            <div className="featured-actions">
+              <Link className="button" to="/collections/sunglasses-for-men">
+                SHOP MEN'S
+              </Link>
+            </div>
+          </div>
+          <div className="featured">
+            <GatsbyImage
+              image={contentfulHomepage.hero2.gatsbyImageData}
+              alt="Hero"
+            />
+            <div className="featured-actions">
+              <Link className="button" to="/collections/sunglasses-for-women">
+                SHOP WOMEN'S
+              </Link>
+            </div>
           </div>
         </div>
-        <div className="featured">
-          <GatsbyImage
-            image={contentfulHomepage.hero2.gatsbyImageData}
-            alt="Hero"
-          />
-          <div className="featured-actions">
-            <Link className="button" to="/collections/sunglasses-for-women">
-              SHOP WOMEN'S
-            </Link>
-          </div>
-        </div>
-      </div>
 
-      <h2 className="sub-title home-text">
-        {contentfulHomepage.tagline.tagline}
-      </h2>
-      <div className="diamond-divider">
-        <StaticImage
-          src="../images/double-diamonds.png"
-          alt="double diamonds"
-          width={40}
-        />
-      </div>
-      <div className="featured-styles container">
-        <h3 className="home-text featured-products">FEATURED PRODUCTS</h3>
-        <Carousel
-          imageSet={contentfulHomepage && contentfulHomepage.featuredStyles}
-          imageLinks={
-            contentfulHomepage && contentfulHomepage.featuredStylesLinks
-          }
-        />
-      </div>
-      <div className="about no-padding">
-        <div className="about-content container">
-          <Link to="/pages/rx-faq" className="about-image">
-            <GatsbyImage
-              image={contentfulHomepage.aboutTresNoir1.gatsbyImageData}
-              alt="About Tres Noir 1"
-            />
-          </Link>
-          <Link to="/collections/new" className="about-image">
-            <GatsbyImage
-              image={contentfulHomepage.aboutTresNoir2.gatsbyImageData}
-              alt="About Tres Noir 2"
-            />
-          </Link>
+        <h2 className="sub-title home-text">
+          {contentfulHomepage.tagline.tagline}
+        </h2>
+        <div className="diamond-divider">
+          <StaticImage
+            src="../images/double-diamonds.png"
+            alt="double diamonds"
+            width={40}
+          />
         </div>
-      </div>
-    </Page>
-  </Layout>
-)
+        <div className="featured-styles container">
+          <h3 className="home-text featured-products">FEATURED PRODUCTS</h3>
+          <Carousel
+            imageSet={contentfulHomepage && contentfulHomepage.featuredStyles}
+            imageLinks={
+              contentfulHomepage && contentfulHomepage.featuredStylesLinks
+            }
+          />
+        </div>
+        <div className="about no-padding">
+          <div className="about-content container">
+            <Link to="/pages/rx-faq" className="about-image">
+              <GatsbyImage
+                image={contentfulHomepage.aboutTresNoir1.gatsbyImageData}
+                alt="About Tres Noir 1"
+              />
+            </Link>
+            <Link to="/collections/new" className="about-image">
+              <GatsbyImage
+                image={contentfulHomepage.aboutTresNoir2.gatsbyImageData}
+                alt="About Tres Noir 2"
+              />
+            </Link>
+          </div>
+        </div>
+      </Page>
+    </Layout>
+  )
+}
 
 export default IndexPage
 
