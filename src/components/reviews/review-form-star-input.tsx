@@ -16,7 +16,6 @@ const StarList = styled.div`
     font-size: 22px;
     paint-order: stroke;
     cursor: pointer;
-    // on hover, fill in the svgs and siblings before it with gold
   }
 `
 type Props = {
