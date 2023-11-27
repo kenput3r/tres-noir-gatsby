@@ -7,7 +7,9 @@ const Component = styled.section`
   margin-top: 25px;
 `
 
-type Props = { reviews: ReviewType[] }
+type Props = {
+  reviews: ReviewType[]
+}
 
 const ReviewList = ({ reviews }: Props) => {
   return (

@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useRef } from "react"
 import styled from "styled-components"
 import { useReviews } from "../../contexts/reviews"
 import ReviewList from "./review-list"
@@ -37,19 +37,61 @@ const SpinContainer = styled.div`
 const Reviews = () => {
   const { data, isLoading } = useReviews()
 
-  return isLoading || !data ? (
-    <SpinContainer>
-      <Spinner fill="#000000" />
-    </SpinContainer>
-  ) : (
-    <Component>
-      <ReviewForm />
+  const reviewListRef = useRef<HTMLDivElement>(null)
 
-      <ReviewList reviews={data.reviews} />
-      {!data.reviews.length && <ReviewsEmpty />}
-      <ReviewPagination pagination={data.pagination} />
-    </Component>
+  const scrollToTop = () => {
+    if (reviewListRef.current) {
+      reviewListRef.current.scrollIntoView({
+        block: "start",
+      })
+    }
+  }
+
+  return (
+    <div ref={reviewListRef}>
+      {isLoading || !data ? (
+        <SpinContainer>
+          <Spinner fill="#000000" />
+        </SpinContainer>
+      ) : (
+        <Component>
+          <ReviewForm />
+          {!data.reviews.length ? (
+            <ReviewsEmpty />
+          ) : (
+            <>
+              <ReviewList reviews={data.reviews} />
+              <ReviewPagination
+                pagination={data.pagination}
+                scrollToTop={scrollToTop}
+              />
+            </>
+          )}
+        </Component>
+      )}
+    </div>
   )
+
+  // return isLoading || !data ? (
+  //   <SpinContainer>
+  //     <Spinner fill="#000000" />
+  //   </SpinContainer>
+  // ) : (
+  //   <Component ref={reviewListRef}>
+  //     <ReviewForm />
+  //     {!data.reviews.length ? (
+  //       <ReviewsEmpty />
+  //     ) : (
+  //       <>
+  //         <ReviewList reviews={data.reviews} />
+  //         <ReviewPagination
+  //           pagination={data.pagination}
+  //           reviewListRef={reviewListRef}
+  //         />
+  //       </>
+  //     )}
+  //   </Component>
+  // )
 }
 
 export default Reviews

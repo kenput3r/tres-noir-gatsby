@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react"
+import React, { useCallback, useEffect, useRef, useState } from "react"
 import styled from "styled-components"
 import {
   BsChevronLeft as LeftIcon,
@@ -7,7 +7,6 @@ import {
 import type { Pagination } from "../../types/yotpo"
 import { useReviews } from "../../contexts/reviews"
 import { YOTPO_REVIEWS_PER_PAGE } from "../../contexts/reviews/ReviewsProvider"
-import { set } from "js-cookie"
 
 const Component = styled.div`
   padding-top: 30px;
@@ -28,6 +27,8 @@ const Component = styled.div`
   }
   .icon {
     margin: 15px;
+    color: black;
+    fill: black;
   }
   .no-styles {
     background: unset;
@@ -39,14 +40,26 @@ const Component = styled.div`
     cursor: pointer;
     :disabled {
       cursor: default;
+      svg {
+        fill: var(--color-grey-light) !important;
+      }
+      span {
+        color: var(--color-grey-light) !important;
+      }
+    }
+  }
+  button {
+    span {
+      color: black;
     }
   }
 `
 type Props = {
   pagination: Pagination
+  scrollToTop: () => void
 }
 
-const ReviewPagination = ({ pagination }: Props) => {
+const ReviewPagination = ({ pagination, scrollToTop }: Props) => {
   const { refreshToPage } = useReviews()
   const { page } = pagination
   const totalProducts = pagination.total
@@ -95,40 +108,24 @@ const ReviewPagination = ({ pagination }: Props) => {
     setPages(range(lowerLimit, upperLimit))
   }, [currentPage])
 
-  const goToPreviousPage = useCallback(() => {
-    if (currentPage === 1) {
+  const goToPageV2 = (oldPage: number, newPage: number) => {
+    if (oldPage === newPage) {
       return
     }
-    const newPage = currentPage - 1
-    refreshToPage(page)
-    setCurrentPage(newPage)
-  }, [currentPage])
+    if (newPage < 1 || newPage > totalPages) {
+      return
+    }
 
-  const goToNextPage = useCallback(() => {
-    if (currentPage === totalPages) {
-      return
-    }
-    const newPage = currentPage + 1
     setCurrentPage(newPage)
     refreshToPage(newPage)
-  }, [currentPage])
-
-  const goToPage = useCallback(
-    (newPage: number) => {
-      if (newPage === currentPage) {
-        return
-      }
-      setCurrentPage(newPage)
-      refreshToPage(newPage)
-    },
-    [currentPage]
-  )
+    scrollToTop()
+  }
 
   return (
     totalProducts > 0 && (
       <Component>
         <button
-          onClick={() => goToPreviousPage()}
+          onClick={() => goToPageV2(currentPage, currentPage - 1)}
           className="no-styles"
           disabled={disableLeft}
         >
@@ -138,15 +135,15 @@ const ReviewPagination = ({ pagination }: Props) => {
           return (
             <button
               key={page}
-              onClick={() => goToPage(page)}
+              onClick={() => goToPageV2(currentPage, page)}
               className={`page-number ${page === currentPage ? "active" : ""}`}
             >
-              {page}
+              <span>{page}</span>
             </button>
           )
         })}
         <button
-          onClick={() => goToNextPage()}
+          onClick={() => goToPageV2(currentPage, currentPage + 1)}
           className="no-styles"
           disabled={disableRight}
         >
