@@ -57,7 +57,7 @@ const CartIcon = () => {
               className="img-btn"
               src="../../images/cart.png"
               alt="Shopping Cart"
-              placeholder="tracedSVG"
+              placeholder="dominantColor"
               style={{ marginBottom: 0, maxWidth: 26 }}
             />
           </div>
