@@ -42,6 +42,7 @@ const Reviews = () => {
   const scrollToTop = () => {
     if (reviewListRef.current) {
       reviewListRef.current.scrollIntoView({
+        behavior: "smooth",
         block: "start",
       })
     }
