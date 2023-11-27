@@ -93,16 +93,6 @@ const ReviewForm = () => {
     },
   })
 
-  // const animationProps = useSpring({
-  //   opacity: isVisible ? 1 : 0,
-  //   height: isVisible ? "auto" : 0,
-
-  //   transform: isVisible ? "translateY(0)" : "translateY(-100%)",
-  //   config: config.default,
-  // })
-
-  // modify the animationProps to work on exit
-
   const [isSuccess, setIsSuccess] = useState(false)
 
   const { createReview } = useReviews()
