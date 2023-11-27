@@ -115,10 +115,9 @@ const ReviewPagination = ({ pagination, scrollToTop }: Props) => {
     if (newPage < 1 || newPage > totalPages) {
       return
     }
-
+    scrollToTop()
     setCurrentPage(newPage)
     refreshToPage(newPage)
-    scrollToTop()
   }
 
   return (

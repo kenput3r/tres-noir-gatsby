@@ -40,11 +40,11 @@ const Reviews = () => {
   const reviewListRef = useRef<HTMLDivElement>(null)
 
   const scrollToTop = () => {
-    if (reviewListRef.current) {
-      reviewListRef.current.scrollIntoView({
-        behavior: "smooth",
-        block: "start",
-      })
+    const isBrowser = typeof window !== "undefined"
+    if (isBrowser && reviewListRef.current) {
+      setTimeout(() => {
+        reviewListRef.current?.scrollIntoView({ behavior: "smooth" })
+      }, 500)
     }
   }
 
@@ -72,27 +72,6 @@ const Reviews = () => {
       )}
     </div>
   )
-
-  // return isLoading || !data ? (
-  //   <SpinContainer>
-  //     <Spinner fill="#000000" />
-  //   </SpinContainer>
-  // ) : (
-  //   <Component ref={reviewListRef}>
-  //     <ReviewForm />
-  //     {!data.reviews.length ? (
-  //       <ReviewsEmpty />
-  //     ) : (
-  //       <>
-  //         <ReviewList reviews={data.reviews} />
-  //         <ReviewPagination
-  //           pagination={data.pagination}
-  //           reviewListRef={reviewListRef}
-  //         />
-  //       </>
-  //     )}
-  //   </Component>
-  // )
 }
 
 export default Reviews
