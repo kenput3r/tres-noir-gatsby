@@ -53,7 +53,6 @@ const Component = styled.article`
 `
 
 const Hit = ({ hit }: { hit: Props }) => {
-  console.log("hit", hit)
   const pricing =
     hit.price !== ""
       ? `$${Number(hit.price).toFixed(2)}`

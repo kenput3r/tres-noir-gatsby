@@ -1,15 +1,19 @@
 import React from "react"
 import styled from "styled-components"
-import { AiFillStar as StarIcon } from "react-icons/ai"
+import { BsStarFill as StarIcon } from "react-icons/bs"
 
 const StarList = styled.div`
+  display: flex;
+  padding-bottom: 6px;
+  gap: 2.5px;
   .fill {
     fill: #ffd700;
   }
   svg {
+    font-size: 15px;
     fill: none;
     stroke: black;
-    stroke-width: 10px;
+    stroke-width: 0.4px;
     stroke-linejoin: round;
     paint-order: stroke;
   }
