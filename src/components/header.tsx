@@ -197,7 +197,7 @@ const Header = ({
               <StaticImage
                 src="../images/tres-noir-independent-eyewear-co-24.png"
                 alt={siteTitle}
-                placeholder="tracedSVG"
+                placeholder="dominantColor"
                 style={{ marginBottom: 0 }}
               />
             </Link>
@@ -208,7 +208,7 @@ const Header = ({
               <StaticImage
                 src="../images/tres-noir-independent-eyewear-co-24.png"
                 alt={siteTitle}
-                placeholder="tracedSVG"
+                placeholder="dominantColor"
                 style={{ marginBottom: 0 }}
               />
             </Link>
@@ -246,7 +246,7 @@ const Header = ({
                 className="img-btn"
                 src="../images/icon-accessibility.png"
                 alt="User"
-                placeholder="tracedSVG"
+                placeholder="dominantColor"
                 style={{ marginBottom: 0, maxWidth: 26 }}
               />
             </Link>
@@ -259,7 +259,7 @@ const Header = ({
                 className="img-btn"
                 src="../images/icon-user.png"
                 alt="User"
-                placeholder="tracedSVG"
+                placeholder="dominantColor"
                 style={{ marginBottom: 0, maxWidth: 26 }}
               />
             </a>

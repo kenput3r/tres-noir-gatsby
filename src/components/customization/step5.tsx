@@ -439,7 +439,7 @@ const Step5 = (props: {
             <StaticImage
               src="../../images/edit.png"
               alt="Edit Line Item"
-              placeholder="tracedSVG"
+              placeholder="dominantColor"
               style={{ marginBottom: 0, maxWidth: 26 }}
             />
           </button>
@@ -470,7 +470,7 @@ const Step5 = (props: {
             <StaticImage
               src="../../images/edit.png"
               alt="Edit Line Item"
-              placeholder="tracedSVG"
+              placeholder="dominantColor"
               style={{ marginBottom: 0, maxWidth: 26 }}
             />
           </button>
