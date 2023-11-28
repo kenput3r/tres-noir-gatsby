@@ -1006,7 +1006,7 @@ const ProductCustomizable = ({
                           <StaticImage
                             src="../images/empty-color.png"
                             alt="Tres Noir"
-                            placeholder="tracedSVG"
+                            placeholder="dominantColor"
                             layout="constrained"
                           />
                         )}
@@ -1185,7 +1185,11 @@ export const query = graphql`
       fitDimensions
       casesAvailable
       featuredStyles {
-        data: gatsbyImageData(placeholder: TRACED_SVG, quality: 60, width: 800)
+        data: gatsbyImageData(
+          placeholder: DOMINANT_COLOR
+          quality: 60
+          width: 800
+        )
         title
       }
       variants {
@@ -1211,7 +1215,7 @@ export const query = graphql`
         customizations {
           gradientTintSmokeLenses {
             data: gatsbyImageData(
-              placeholder: TRACED_SVG
+              placeholder: DOMINANT_COLOR
               quality: 60
               width: 800
             )
@@ -1219,7 +1223,7 @@ export const query = graphql`
           }
           gradientTintBrownLenses {
             data: gatsbyImageData(
-              placeholder: TRACED_SVG
+              placeholder: DOMINANT_COLOR
               quality: 60
               width: 800
             )
@@ -1227,7 +1231,7 @@ export const query = graphql`
           }
           gradientTintG15Lenses {
             data: gatsbyImageData(
-              placeholder: TRACED_SVG
+              placeholder: DOMINANT_COLOR
               quality: 60
               width: 800
             )
@@ -1235,7 +1239,7 @@ export const query = graphql`
           }
           sunGlassesSmokeLenses {
             data: gatsbyImageData(
-              placeholder: TRACED_SVG
+              placeholder: DOMINANT_COLOR
               quality: 60
               width: 800
             )
@@ -1243,7 +1247,7 @@ export const query = graphql`
           }
           sunGlassesBrownLenses {
             data: gatsbyImageData(
-              placeholder: TRACED_SVG
+              placeholder: DOMINANT_COLOR
               quality: 60
               width: 800
             )
@@ -1251,7 +1255,7 @@ export const query = graphql`
           }
           sunGlassesGreenLenses {
             data: gatsbyImageData(
-              placeholder: TRACED_SVG
+              placeholder: DOMINANT_COLOR
               quality: 60
               width: 800
             )
@@ -1259,7 +1263,7 @@ export const query = graphql`
           }
           sunGlassesOrangeLenses {
             data: gatsbyImageData(
-              placeholder: TRACED_SVG
+              placeholder: DOMINANT_COLOR
               quality: 60
               width: 800
             )
@@ -1267,7 +1271,7 @@ export const query = graphql`
           }
           sunGlassesYellowLenses {
             data: gatsbyImageData(
-              placeholder: TRACED_SVG
+              placeholder: DOMINANT_COLOR
               quality: 60
               width: 800
             )
@@ -1275,7 +1279,7 @@ export const query = graphql`
           }
           sunGlassesBlueLenses {
             data: gatsbyImageData(
-              placeholder: TRACED_SVG
+              placeholder: DOMINANT_COLOR
               quality: 60
               width: 800
             )
@@ -1283,7 +1287,7 @@ export const query = graphql`
           }
           sunGlassesG15Lenses {
             data: gatsbyImageData(
-              placeholder: TRACED_SVG
+              placeholder: DOMINANT_COLOR
               quality: 60
               width: 800
             )

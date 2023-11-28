@@ -364,7 +364,7 @@ const LearnMore = ({ data: { contentfulProduct } }: any) => {
               <StaticImage
                 src="../../images/double-diamonds.png"
                 alt="Double Diamonds"
-                placeholder="tracedSVG"
+                placeholder="dominantColor"
                 layout="constrained"
                 height={25}
                 className="diamonds"
@@ -373,7 +373,7 @@ const LearnMore = ({ data: { contentfulProduct } }: any) => {
               <StaticImage
                 src="../../images/double-diamonds.png"
                 alt="Double Diamonds"
-                placeholder="tracedSVG"
+                placeholder="dominantColor"
                 layout="constrained"
                 height={25}
                 className="diamonds"
@@ -462,7 +462,7 @@ const LearnMore = ({ data: { contentfulProduct } }: any) => {
                             <StaticImage
                               src="../../images/grey-diamond.png"
                               alt="Diamond"
-                              placeholder="tracedSVG"
+                              placeholder="dominantColor"
                               layout="constrained"
                               height={15}
                             />
@@ -502,7 +502,7 @@ const LearnMore = ({ data: { contentfulProduct } }: any) => {
             <StaticImage
               src="../../images/double-diamonds.png"
               alt="Double Diamonds"
-              placeholder="tracedSVG"
+              placeholder="dominantColor"
               layout="constrained"
               height={25}
             />

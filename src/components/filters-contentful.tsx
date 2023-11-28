@@ -349,7 +349,7 @@ const FiltersContentful = ({
                       <StaticImage
                         src="../images/glasses-icon.png"
                         alt={frameWidth}
-                        placeholder="tracedSVG"
+                        placeholder="dominantColor"
                         style={{ marginBottom: 0 }}
                         width={150}
                       />

@@ -32,15 +32,20 @@ interface Location {
 const hitsPerPage = 18
 
 const Page = styled.div`
+  margin: 0 auto;
+  max-width: 1280px;
+  input {
+    font-family: var(--sub-heading-font);
+  }
   @media only screen and (max-width: 468px) {
     min-height: calc(100vh - 152px - 250px);
     &.no-query {
       display: flex;
       flex-direction: column;
-      h1,
+      /* h1,
       div {
         flex: 1 0 auto;
-      }
+      } */
     }
   }
 `
