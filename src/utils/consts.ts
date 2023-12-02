@@ -1,5 +1,5 @@
 export const BANNER_MESSAGE: string | null =
-  "40% off - Excludes RX, Lens Customizations, collaborations and sale items"
+  "40% OFF ALL CLOTHING & ACCESSORIES"
 
 export const CART_MESSAGE: string | null =
   "We typically ship same or next business day, however please allow up to 5-7 business days before Holiday orders ship. Tracking information will be sent to your email once a label is created."
