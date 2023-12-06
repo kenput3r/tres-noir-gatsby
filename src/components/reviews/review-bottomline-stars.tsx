@@ -8,6 +8,7 @@ const StarList = styled.div`
   gap: 2.5px;
   .fill {
     fill: #ffd700;
+    stroke: #ffd700;
   }
   svg {
     font-size: 16px;

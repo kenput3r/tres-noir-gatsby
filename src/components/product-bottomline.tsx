@@ -4,6 +4,7 @@ import { useReviews } from "../contexts/reviews"
 import ReviewBottomline from "./reviews/review-bottomline"
 
 const Component = styled.section`
+  min-height: 22px;
   margin-top: 1px;
   margin-bottom: 8px;
   span {
@@ -14,11 +15,11 @@ const Component = styled.section`
 const ProductBottomline = () => {
   const { data, isLoading } = useReviews()
 
-  return data && !isLoading ? (
+  return (
     <Component>
-      <ReviewBottomline bottomline={data.bottomline} />
+      {data && !isLoading && <ReviewBottomline bottomline={data.bottomline} />}
     </Component>
-  ) : null
+  )
 }
 
 export default ProductBottomline

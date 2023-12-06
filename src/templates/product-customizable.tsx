@@ -380,8 +380,6 @@ const ProductCustomizable = ({ data, location: any }: Props) => {
     contentfulHomepage: { enableBogo },
   } = data
 
-  const reviewData = useReviews()
-
   const { siteUrl } = site.siteMetadata
 
   // cart
