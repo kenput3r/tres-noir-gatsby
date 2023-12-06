@@ -28,6 +28,7 @@ import PolarizedTooltip from "../components/polarize/polarized-tooltip"
 import { useCaseCollection } from "../hooks/useCaseCollection"
 import { useFilterDuplicateFrames } from "../hooks/useFilterDuplicateFrames"
 import { useFilterHiddenCustomizableVariants } from "../hooks/useFilterHiddenCustomizableVariants"
+import { useReviews } from "../contexts/reviews"
 import FeaturedStyles from "../components/featured-styles"
 import ViewAsType from "../components/view-as-type"
 import Reviews from "../components/reviews"
@@ -36,6 +37,7 @@ import type { YotpoSourceProductBottomLine } from "../types/yotpo"
 import { isDiscounted } from "../helpers/shopify"
 import Divider from "../components/divider"
 import Badge from "../components/badge"
+import ProductBottomline from "../components/product-bottomline"
 
 const Page = styled.div`
   .shipping-message {
@@ -377,6 +379,8 @@ const ProductCustomizable = ({ data, location: any }: Props) => {
     site,
     contentfulHomepage: { enableBogo },
   } = data
+
+  const reviewData = useReviews()
 
   const { siteUrl } = site.siteMetadata
 
@@ -959,6 +963,7 @@ const ProductCustomizable = ({ data, location: any }: Props) => {
               />
               <div className="heading">
                 <h1>{shopifyProduct.title}</h1>
+                <ProductBottomline />
                 <p className="fit">
                   Size: {contentfulProduct && contentfulProduct.fitDimensions}{" "}
                   <span>

@@ -12,7 +12,7 @@ const StarList = styled.div`
   svg {
     font-size: 15px;
     fill: none;
-    stroke: black;
+    stroke: var(--color-grey-dark);
     stroke-width: 0.4px;
     stroke-linejoin: round;
     paint-order: stroke;

@@ -48,9 +48,13 @@ const ReviewBottomlineStars = ({ score }: Props) => {
     <StarList>
       {starArr.map(star => {
         const isFill = formattedScore >= star
-        const isHalf = formattedScore - star === 0.5
+        const isHalf = formattedScore - star + 1 === 0.5
+
         return isHalf ? (
-          <StarHalfIcon key={`review-bottomline-half-star-${star}-${score}`} />
+          <StarHalfIcon
+            key={`review-bottomline-half-star-${star}-${score}`}
+            className="fill"
+          />
         ) : (
           <StarIcon
             className={isFill ? "fill" : ""}

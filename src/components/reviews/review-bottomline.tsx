@@ -13,6 +13,7 @@ const Component = styled.section`
   gap: 5px;
   span {
     color: var(--color-grey-dark);
+    font-family: var(--sub-heading-font);
   }
 `
 

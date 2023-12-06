@@ -16,7 +16,7 @@ const Component = styled.div`
   padding-bottom: 30px;
   h4 {
     margin: 0;
-    margin-bottom: 2px;
+    padding-bottom: 3px;
   }
   .title-row {
     display: flex;
