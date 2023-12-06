@@ -12,8 +12,10 @@ const Component = styled.section`
   align-items: center;
   gap: 5px;
   span {
+    padding-top: 2px;
     color: var(--color-grey-dark);
     font-family: var(--sub-heading-font);
+    font-size: 15px;
   }
 `
 

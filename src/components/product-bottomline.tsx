@@ -4,7 +4,7 @@ import { useReviews } from "../contexts/reviews"
 import ReviewBottomline from "./reviews/review-bottomline"
 
 const Component = styled.section`
-  min-height: 22px;
+  min-height: 24px;
   margin-top: 1px;
   margin-bottom: 8px;
   span {

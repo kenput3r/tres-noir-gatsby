@@ -11,7 +11,7 @@ const StarList = styled.div`
     stroke: #ffd700;
   }
   svg {
-    font-size: 16px;
+    font-size: 18px;
     fill: none;
     stroke: var(--color-grey-dark);
     stroke-width: 0.4px;
