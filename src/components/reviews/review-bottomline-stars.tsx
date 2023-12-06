@@ -5,7 +5,6 @@ import { BsStarHalf as StarHalfIcon } from "react-icons/bs"
 
 const StarList = styled.div`
   display: flex;
-  padding-bottom: 6px;
   gap: 2.5px;
   .fill {
     fill: #ffd700;
@@ -13,7 +12,7 @@ const StarList = styled.div`
   svg {
     font-size: 16px;
     fill: none;
-    stroke: black;
+    stroke: var(--color-grey-dark);
     stroke-width: 0.4px;
     stroke-linejoin: round;
     paint-order: stroke;

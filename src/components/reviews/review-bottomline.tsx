@@ -7,20 +7,22 @@ type Props = {
   bottomline: Bottomline
 }
 
-const Component = styled.section``
+const Component = styled.section`
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  span {
+    color: var(--color-grey-dark);
+  }
+`
 
 const ReviewBottomline = ({ bottomline }: Props) => {
   const { total_review, average_score } = bottomline
 
   return (
     <Component>
-      <div>
-        <ReviewBottomlineStars score={average_score} />
-        <span>{average_score.toFixed(2)}</span>
-      </div>
-      <div>
-        <span>{total_review} reviews</span>
-      </div>
+      <ReviewBottomlineStars score={average_score} />
+      <span>{`(${total_review})`}</span>
     </Component>
   )
 }

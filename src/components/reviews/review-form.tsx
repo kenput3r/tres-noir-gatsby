@@ -9,11 +9,14 @@ import type { YotpoCreateFormData } from "../../types/yotpo"
 import { useReviews } from "../../contexts/reviews"
 import Spinner from "../spinner"
 import { IoCheckmarkCircle as CheckmarkIcon } from "react-icons/io5"
+import ReviewBottomline from "./review-bottomline"
+import { Bottomline } from "../../types/yotpo"
 
 const Component = styled.div`
   padding-bottom: 30px;
   h4 {
     margin: 0;
+    margin-bottom: 2px;
   }
   .title-row {
     display: flex;
@@ -51,8 +54,10 @@ const Component = styled.div`
     resize: vertical;
   }
 `
-
-const ReviewForm = () => {
+type Props = {
+  bottomline: Bottomline
+}
+const ReviewForm = ({ bottomline }: Props) => {
   const {
     watch,
     register,
@@ -123,7 +128,11 @@ const ReviewForm = () => {
   return (
     <Component>
       <div className="title-row">
-        <h4>Reviews</h4>
+        <div>
+          <h4>Reviews</h4>
+
+          <ReviewBottomline bottomline={bottomline} />
+        </div>
         <button className="btn" onClick={() => openDrawer()}>
           <div>
             <span>WRITE A REVIEW</span>

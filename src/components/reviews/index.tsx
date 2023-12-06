@@ -5,7 +5,6 @@ import ReviewList from "./review-list"
 import ReviewForm from "./review-form"
 import ReviewsEmpty from "./reviews-empty"
 import ReviewPagination from "./review-pagination"
-import ReviewBottomLine from "./review-bottomline"
 import Spinner from "../spinner"
 
 const Component = styled.section`
@@ -58,8 +57,7 @@ const Reviews = () => {
         </SpinContainer>
       ) : (
         <Component>
-          <ReviewBottomLine bottomline={data.bottomline} />
-          <ReviewForm />
+          <ReviewForm bottomline={data.bottomline} />
           {!data.reviews.length ? (
             <ReviewsEmpty />
           ) : (
