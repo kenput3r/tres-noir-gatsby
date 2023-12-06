@@ -6,7 +6,7 @@ import React, {
   ChangeEvent,
   useCallback,
 } from "react"
-import { Link, graphql } from "gatsby"
+import { Link, graphql, useStaticQuery } from "gatsby"
 import { StaticImage, GatsbyImage as Img } from "gatsby-plugin-image"
 import styled from "styled-components"
 import { useQuantityQuery } from "../hooks/useQuantityQuery"
@@ -19,7 +19,6 @@ import {
   addedCustomizedToCartGTMEvent,
   viewedProductGTMEvent,
 } from "../helpers/gtm"
-import Product from "./product"
 import { CustomizeContext } from "../contexts/customize"
 import FreeShipping from "../components/free-shipping"
 import Spinner from "../components/spinner"
@@ -37,7 +36,6 @@ import type { YotpoSourceProductBottomLine } from "../types/yotpo"
 import { isDiscounted } from "../helpers/shopify"
 import Divider from "../components/divider"
 import Badge from "../components/badge"
-import { badgeConfig } from "../utils/consts"
 
 const Page = styled.div`
   .shipping-message {
@@ -365,13 +363,21 @@ type Props = {
         siteUrl: string
       }
     }
+    contentfulHomepage: {
+      enableBogo: boolean
+    }
   }
   location: any
 }
-const ProductCustomizable = ({
-  data: { contentfulProduct, shopifyProduct, yotpoProductBottomline, site },
-  location: any,
-}: Props) => {
+const ProductCustomizable = ({ data, location: any }: Props) => {
+  const {
+    contentfulProduct,
+    shopifyProduct,
+    yotpoProductBottomline,
+    site,
+    contentfulHomepage: { enableBogo },
+  } = data
+
   const { siteUrl } = site.siteMetadata
 
   // cart
@@ -445,16 +451,14 @@ const ProductCustomizable = ({
 
   const seoDescription = contentfulProduct.styleDescription.styleDescription
 
+  const isExcludedFromDeals = shopifyProduct.title.includes("Mooneyes")
+
   // badge logic
 
   const getBadge = (): { label: string; color: string } | null => {
     try {
       // bogo is enabled and product is not a mooneyes product
-      if (
-        badgeConfig &&
-        badgeConfig.bogo &&
-        !shopifyProduct.title.includes("Mooneyes")
-      ) {
+      if (enableBogo && !isExcludedFromDeals) {
         return {
           label: "BOGO",
           color: "#0ee2e2",
@@ -1170,6 +1174,9 @@ export const query = graphql`
       siteMetadata {
         siteUrl
       }
+    }
+    contentfulHomepage {
+      enableBogo
     }
     yotpoProductBottomline(productIdentifier: { eq: $legacyResourceId }) {
       totalReviews

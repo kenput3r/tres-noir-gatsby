@@ -1,5 +1,5 @@
 import React, { useState } from "react"
-import { Link } from "gatsby"
+import { Link, useStaticQuery, graphql } from "gatsby"
 import styled from "styled-components"
 import { GatsbyImage as Img } from "gatsby-plugin-image"
 import {
@@ -12,7 +12,6 @@ import Badge from "./badge"
 import { isDiscounted } from "../helpers/shopify"
 import { useFilterHiddenCustomizableVariants } from "../hooks/useFilterHiddenCustomizableVariants"
 import { useFilterDuplicateFrames } from "../hooks/useFilterDuplicateFrames"
-import { badgeConfig } from "../utils/consts"
 
 const Component = styled.article`
   margin-bottom: 1.45rem;
@@ -97,8 +96,19 @@ const ProductContentful = ({
   collectionHandle,
   shopifyProduct,
 }: Props) => {
+  const {
+    contentfulHomepage: { enableBogo },
+  } = useStaticQuery(graphql`
+    query getBOGOBadgeForCollection {
+      contentfulHomepage {
+        enableBogo
+      }
+    }
+  `)
+
   const isSunglasses =
     collectionHandle.includes("sunglasses") || collectionHandle.includes("new")
+  const isExcludedFromDeals = shopifyProduct.title.includes("Mooneyes")
   const lensType = isSunglasses ? "sunglasses" : "glasses"
 
   // remove variants marked as 'hidden' in shopify
@@ -119,12 +129,8 @@ const ProductContentful = ({
   }
   const getBadge = (): { label: string; color: string } | null => {
     try {
-      // bogo is enabled and product is not a mooneyes product
-      if (
-        badgeConfig &&
-        badgeConfig.bogo &&
-        !shopifyProduct.title.includes("Mooneyes")
-      ) {
+      // bogo is enabled and product is not an exclusion (e.g. Mooneyes products)
+      if (enableBogo && !isExcludedFromDeals) {
         return {
           label: "BOGO",
           color: "#0ee2e2",

@@ -1,5 +1,6 @@
 import React, { useContext, useRef } from "react"
 import styled from "styled-components"
+import { useStaticQuery, graphql } from "gatsby"
 import { CartContext } from "../../contexts/cart"
 import { tnItem } from "../../types/checkout"
 import CartIcon from "./cart-icon"
@@ -10,7 +11,6 @@ import ShopifyItem from "./products/shopify-item"
 import SunglassesItem from "./products/sunglasses-item"
 import CustomItem from "./products/custom-item"
 import Loader from "../loader"
-import { CART_MESSAGE } from "../../utils/consts"
 
 const Component = styled.div`
   display: flex;
@@ -215,6 +215,18 @@ const CartDrawer = () => {
     setIsCartDrawerOpen,
     isRemovingFromCart,
   } = useContext(CartContext)
+
+  const {
+    contentfulHomepage: { cartMessage, cartMessageToggle },
+  } = useStaticQuery(graphql`
+    query getCartMessageForDrawer {
+      contentfulHomepage {
+        cartMessage
+        cartMessageToggle
+      }
+    }
+  `)
+
   const clickRef = useRef(null)
 
   useClickAway(clickRef, () => {
@@ -300,9 +312,7 @@ const CartDrawer = () => {
               </a>
             </div>
             <p>TAXES AND SHIPPING WILL BE CALCULATED AT CHECKOUT</p>
-            {CART_MESSAGE && CART_MESSAGE !== "" && (
-              <p className="cart-message">{CART_MESSAGE}</p>
-            )}
+            {cartMessageToggle && <p className="cart-message">{cartMessage}</p>}
           </div>
         </Component>
       )}
