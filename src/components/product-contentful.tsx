@@ -108,7 +108,8 @@ const ProductContentful = ({
 
   const isSunglasses =
     collectionHandle.includes("sunglasses") || collectionHandle.includes("new")
-  const isExcludedFromDeals = shopifyProduct.title.includes("Mooneyes")
+  const isExcludedFromDeals =
+    shopifyProduct && shopifyProduct.handle.includes("mooneyes")
   const lensType = isSunglasses ? "sunglasses" : "glasses"
 
   // remove variants marked as 'hidden' in shopify
