@@ -50,7 +50,7 @@ const CollectionContentful = ({
 
     const shopifyProduct = shopifyCollection.products.find(
       shopifyProduct =>
-        shopifyProduct.handle === product.handle ||
+        shopifyProduct.handle.toLowerCase() === product.handle.toLowerCase() ||
         shopifyProduct.title === product.title
     )
 
@@ -93,6 +93,7 @@ const CollectionContentful = ({
             Array.from(products.slice(0, 6)).map(
               (product: ContentfulProduct) => {
                 const shopifyProduct = getShopifyProduct(product)
+
                 return (
                   <Product
                     key={product.id}
@@ -120,6 +121,7 @@ const CollectionContentful = ({
           {products.length > 6 &&
             Array.from(products.slice(6)).map((product: ContentfulProduct) => {
               const shopifyProduct = getShopifyProduct(product)
+
               return (
                 <Product
                   key={product.id}
@@ -195,6 +197,7 @@ export const query = graphql`
         title
         handle
         createdAt
+        tags
         variants {
           price
           compareAtPrice
@@ -202,6 +205,10 @@ export const query = graphql`
           metafields {
             key
             namespace
+            value
+          }
+          selectedOptions {
+            name
             value
           }
         }

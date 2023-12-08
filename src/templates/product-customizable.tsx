@@ -354,6 +354,23 @@ const Page = styled.div`
   }
   .learn-more {
   }
+  .new-color-badge {
+    position: absolute;
+    font-size: 13px;
+    border-radius: 4px;
+    padding: 8px 4px;
+    background-color: red;
+    top: -10px;
+    right: -10px;
+    span {
+      text-transform: uppercase;
+      color: white;
+      font-family: var(--sub-heading-font);
+    }
+  }
+  .option-color-image-container {
+    position: relative;
+  }
 `
 type Props = {
   data: {
@@ -455,7 +472,27 @@ const ProductCustomizable = ({ data, location: any }: Props) => {
 
   const isExcludedFromDeals = shopifyProduct.title.includes("Mooneyes")
 
-  // badge logic
+  const getSelectedVariantOptionName = (variant: any) => {
+    try {
+      const optionName = variant.selectedOptions.find(c => c.name === "Color")
+      const optionValue = optionName ? optionName.value : ""
+      const colorName = optionValue.split("-")[0].trim()
+      return colorName
+    } catch (e) {
+      return ""
+    }
+  }
+
+  // if color option is new
+  const isNewVariant = (variant: any): boolean => {
+    const colorName = getSelectedVariantOptionName(variant)
+    const tags = shopifyProduct.tags
+    if (tags.includes(`new_color:${colorName}` || `new_color: ${colorName}`)) {
+      return true
+    }
+
+    return false
+  }
 
   const getBadge = (): { label: string; color: string } | null => {
     try {
@@ -466,6 +503,7 @@ const ProductCustomizable = ({ data, location: any }: Props) => {
           color: "#0ee2e2",
         }
       }
+      // check if product is on sale
       const price = selectedVariant.shopify.price
       const compareAtPrice = selectedVariant.shopify.compareAtPrice
       if (compareAtPrice && isDiscounted(price, compareAtPrice)) {
@@ -989,36 +1027,49 @@ const ProductCustomizable = ({ data, location: any }: Props) => {
 
                 <div className="buttons">
                   {contentfulProduct &&
-                    contentfulProduct.variants.map((variant: any) => (
-                      <button
-                        key={variant.id}
-                        type="button"
-                        data-active={
-                          variant.id === selectedVariant.contentful.id
-                        }
-                        onClick={e => selectVariant(e, variant)}
-                        aria-label={`Color option ${variant.colorImage.title}`}
-                        aria-pressed={
-                          variant.id === selectedVariant.contentful.id
-                            ? "true"
-                            : "false"
-                        }
-                      >
-                        {variant.colorImage ? (
-                          <Img
-                            image={variant.colorImage.data}
-                            alt={variant.colorImage.title}
-                          />
-                        ) : (
-                          <StaticImage
-                            src="../images/empty-color.png"
-                            alt="Tres Noir"
-                            placeholder="dominantColor"
-                            layout="constrained"
-                          />
-                        )}
-                      </button>
-                    ))}
+                    contentfulProduct.variants.map((variant: any) => {
+                      const shopifyVariant = shopifyProduct.variants.find(
+                        v => v.sku === variant.sku
+                      )
+                      return (
+                        <button
+                          key={variant.id}
+                          type="button"
+                          data-active={
+                            variant.id === selectedVariant.contentful.id
+                          }
+                          onClick={e => selectVariant(e, variant)}
+                          aria-label={`Color option ${variant.colorImage.title}`}
+                          aria-pressed={
+                            variant.id === selectedVariant.contentful.id
+                              ? "true"
+                              : "false"
+                          }
+                        >
+                          {variant.colorImage ? (
+                            <div className="option-color-image-container">
+                              <Img
+                                image={variant.colorImage.data}
+                                alt={variant.colorImage.title}
+                              />
+                              {shopifyVariant &&
+                                isNewVariant(shopifyVariant) && (
+                                  <div className="new-color-badge">
+                                    <span>New</span>
+                                  </div>
+                                )}
+                            </div>
+                          ) : (
+                            <StaticImage
+                              src="../images/empty-color.png"
+                              alt="Tres Noir"
+                              placeholder="dominantColor"
+                              layout="constrained"
+                            />
+                          )}
+                        </button>
+                      )
+                    })}
                 </div>
                 <div className="price">
                   <div className="value">
@@ -1325,6 +1376,7 @@ export const query = graphql`
       productType
       title
       vendor
+      tags
       variants {
         availableForSale
         id
@@ -1335,6 +1387,7 @@ export const query = graphql`
         storefrontId
         selectedOptions {
           name
+          value
         }
         metafields {
           key

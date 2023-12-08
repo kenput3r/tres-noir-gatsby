@@ -12,6 +12,7 @@ import Badge from "./badge"
 import { isDiscounted } from "../helpers/shopify"
 import { useFilterHiddenCustomizableVariants } from "../hooks/useFilterHiddenCustomizableVariants"
 import { useFilterDuplicateFrames } from "../hooks/useFilterDuplicateFrames"
+import { get } from "js-cookie"
 
 const Component = styled.article`
   margin-bottom: 1.45rem;
@@ -78,7 +79,12 @@ interface Props {
   shopifyProduct: {
     title: string
     handle: string
+    tags: string[]
     variants: {
+      selectedOptions: {
+        name: string
+        value: string
+      }[]
       compareAtPrice: string
       price: string
       sku: string
@@ -128,8 +134,76 @@ const ProductContentful = ({
   const selectVariant = (variant: ContentfulProductVariant) => {
     setSelectedVariant(variant)
   }
+
+  const getTags = () => {
+    try {
+      return shopifyProduct.tags ?? []
+    } catch (error) {
+      return []
+    }
+  }
+  const productTags = getTags()
+
+  const getSelectedVariantOptionName = (variant: any) => {
+    try {
+      const optionName = variant.selectedOptions.find(c => c.name === "Color")
+      const optionValue = optionName ? optionName.value : ""
+      const colorName = optionValue.split("-")[0].trim()
+      return colorName
+    } catch (e) {
+      return ""
+    }
+  }
+
+  const productVariants = data.variants.map(variant => {
+    try {
+      const shopifyVersion = shopifyProduct.variants.find(
+        v => v.sku === variant.sku
+      )
+      const optionName = getSelectedVariantOptionName(shopifyVersion)
+      return {
+        ...variant,
+        optionName: optionName ?? "",
+      }
+    } catch (error) {
+      return { ...variant, optionName: "" }
+    }
+  })
+
+  const variantHasNewColor = (): boolean => {
+    try {
+      return productVariants.some(v => {
+        const colorName = v.optionName
+
+        if (colorName === "") return false
+        if (
+          productTags.some(
+            tag =>
+              tag === `new_color:${colorName}` ||
+              tag === `new_color: ${colorName}`
+          )
+        ) {
+          return true
+        }
+        return false
+      })
+    } catch (e) {
+      return false
+    }
+  }
+
   const getBadge = (): { label: string; color: string } | null => {
     try {
+      // new variant color badge
+      const hasNewColor = variantHasNewColor()
+
+      if (hasNewColor) {
+        return {
+          label: "New Color",
+          color: "#FF00FF",
+        }
+      }
+
       // bogo is enabled and product is not an exclusion (e.g. Mooneyes products)
       if (enableBogo && !isExcludedFromDeals) {
         return {
@@ -186,9 +260,10 @@ const ProductContentful = ({
 
       <ProductOptionsCarousel
         uniqueId={`product-${data.id}`}
-        variants={data.variants}
+        variants={productVariants}
         clickHandler={selectVariant}
         color={color}
+        tags={productTags}
       />
     </Component>
   )
