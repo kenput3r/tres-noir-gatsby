@@ -439,7 +439,7 @@ const Step5 = (props: {
                     <span>
                       {" "}
                       <span className="strikethrough-grey">
-                        {selectedVariants[`step${i + 1}`].compareAtPrice}
+                        ${selectedVariants[`step${i + 1}`].compareAtPrice}
                       </span>
                     </span>
                   )}
@@ -482,7 +482,7 @@ const Step5 = (props: {
                     <span>
                       {" "}
                       <span className="strikethrough-grey">
-                        {el.compareAtPrice}
+                        ${el.compareAtPrice}
                       </span>
                     </span>
                   )}

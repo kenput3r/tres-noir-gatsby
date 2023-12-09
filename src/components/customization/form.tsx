@@ -598,7 +598,7 @@ const Form = ({
                           <span>
                             {" "}
                             <span className="strikethrough-grey">
-                              {product.variants[0].compareAtPrice}
+                              ${product.variants[0].compareAtPrice}
                             </span>
                           </span>
                         )}
@@ -681,7 +681,7 @@ const Form = ({
                                 <span>
                                   {" "}
                                   <span className="strikethrough-grey">
-                                    {product.variants[0].compareAtPrice}
+                                    ${product.variants[0].compareAtPrice}
                                   </span>
                                 </span>
                               )}
