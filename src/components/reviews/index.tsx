@@ -6,6 +6,7 @@ import ReviewForm from "./review-form"
 import ReviewsEmpty from "./reviews-empty"
 import ReviewPagination from "./review-pagination"
 import Spinner from "../spinner"
+
 const Component = styled.section`
   button {
     padding: 8px 15px;
@@ -56,7 +57,7 @@ const Reviews = () => {
         </SpinContainer>
       ) : (
         <Component>
-          <ReviewForm />
+          <ReviewForm bottomline={data.bottomline} />
           {!data.reviews.length ? (
             <ReviewsEmpty />
           ) : (

@@ -9,6 +9,7 @@ import { ShopifyProductVariant } from "../../types/customize"
 import CaseGridCustomize from "../case-grid-customize"
 import Spinner from "../spinner"
 import { navigate } from "gatsby"
+import { isDiscounted } from "../../helpers/shopify"
 
 const Component = styled.div`
   padding: 10px;
@@ -101,6 +102,10 @@ const Component = styled.div`
     background-color: transparent;
     color: #000;
     border: none;
+  }
+  .strikethrough-grey {
+    color: var(--color-grey-dark);
+    text-decoration: line-through;
   }
 `
 
@@ -426,6 +431,18 @@ const Step5 = (props: {
               {selectedVariants[`step${i + 1}`].product.title}{" "}
               <span className="price">
                 + ${selectedVariants[`step${i + 1}`].price}
+                {selectedVariants[`step${i + 1}`].compareAtPrice &&
+                  isDiscounted(
+                    selectedVariants[`step${i + 1}`].price,
+                    selectedVariants[`step${i + 1}`].compareAtPrice
+                  ) && (
+                    <span>
+                      {" "}
+                      <span className="strikethrough-grey">
+                        ${selectedVariants[`step${i + 1}`].compareAtPrice}
+                      </span>
+                    </span>
+                  )}
               </span>
             </h4>
             <p>{selectedVariants[`step${i + 1}`].product.description}</p>
@@ -457,7 +474,19 @@ const Step5 = (props: {
           />
           <div className="product-description">
             <h4>
-              {el.product.title} <span className="price">+ ${el.price}</span>
+              {el.product.title}{" "}
+              <span className="price">
+                + ${el.price}
+                {el.compareAtPrice &&
+                  isDiscounted(el.price, el.compareAtPrice) && (
+                    <span>
+                      {" "}
+                      <span className="strikethrough-grey">
+                        ${el.compareAtPrice}
+                      </span>
+                    </span>
+                  )}
+              </span>
             </h4>
             <p>{el.product.description}</p>
           </div>

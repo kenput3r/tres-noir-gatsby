@@ -15,6 +15,7 @@ import type { YotpoSourceProductBottomLine } from "../types/yotpo"
 import { isDiscounted } from "../helpers/shopify"
 import Divider from "../components/divider"
 import Badge from "../components/badge"
+import ProductBottomline from "../components/product-bottomline"
 
 const Page = styled.div`
   .shipping-message {
@@ -457,6 +458,7 @@ const Product = ({
             <div className="col">
               <div className="heading">
                 <h1>{shopifyProduct.title}</h1>
+                <ProductBottomline />
                 <form>
                   <div className="product-dropdown">
                     {!shopifyProduct.hasOnlyDefaultVariant && (

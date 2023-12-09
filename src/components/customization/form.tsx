@@ -19,6 +19,7 @@ import { RxInfoContext } from "../../contexts/rxInfo"
 import { FaQuestionCircle } from "react-icons/fa"
 import { LocalCheckout } from "../../types/checkout"
 import { rxType } from "../../types/checkout"
+import { isDiscounted } from "../../helpers/shopify"
 
 const Form = ({
   shopifyCollection,
@@ -589,6 +590,18 @@ const Form = ({
                     {product.title}{" "}
                     <span className="price">
                       {` + $${product.variants[0].price}`}
+                      {product.variants[0].compareAtPrice &&
+                        isDiscounted(
+                          product.variants[0].price,
+                          product.variants[0].compareAtPrice
+                        ) && (
+                          <span>
+                            {" "}
+                            <span className="strikethrough-grey">
+                              ${product.variants[0].compareAtPrice}
+                            </span>
+                          </span>
+                        )}
                     </span>
                   </h4>
                   <p>{product.description}</p>
@@ -660,6 +673,18 @@ const Form = ({
                           {variant.title}
                           <span className="price">
                             {` + $${product.variants[0].price}`}
+                            {product.variants[0].compareAtPrice &&
+                              isDiscounted(
+                                product.variants[0].price,
+                                product.variants[0].compareAtPrice
+                              ) && (
+                                <span>
+                                  {" "}
+                                  <span className="strikethrough-grey">
+                                    ${product.variants[0].compareAtPrice}
+                                  </span>
+                                </span>
+                              )}
                           </span>
                         </h6>
                       </div>

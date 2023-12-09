@@ -33,6 +33,26 @@ const Component = styled.div`
       color: var(--color-grey-light);
     }
   }
+  .new-color-badge {
+    position: absolute;
+    font-size: 10px;
+    border-radius: 4px;
+    padding: 0px 3px;
+    background-color: red;
+    top: 0px;
+    right: 4px;
+    line-height: 15px;
+    span {
+      text-transform: uppercase;
+      color: white;
+      font-family: var(--sub-heading-font);
+      margin: 0;
+      padding: 0;
+    }
+  }
+  .relative {
+    position: relative;
+  }
 `
 
 const OptionImage = styled.div`
@@ -62,11 +82,16 @@ const StyledSwiper = styled(Swiper)`
   }
 `
 
+type ExtendedContentfulProductVariant = ContentfulProductVariant & {
+  optionName: string
+}
+
 interface Props {
   uniqueId: string
-  variants: ContentfulProductVariant[]
+  variants: ExtendedContentfulProductVariant[]
   clickHandler: (variant) => void
   color: null | string
+  tags: string[]
 }
 
 const ProductOptionsCarousel = ({
@@ -74,6 +99,7 @@ const ProductOptionsCarousel = ({
   variants,
   clickHandler,
   color,
+  tags,
 }: Props) => {
   const sliderRef = useRef(null)
   const mounted = useRef(false)
@@ -186,27 +212,53 @@ const ProductOptionsCarousel = ({
           threshold={15}
           watchSlidesProgress
         >
-          {variants.map((variant: ContentfulProductVariant, i: number) => (
-            <SwiperSlide
-              key={`${uniqueId}-${i}`}
-              onClick={() => {
-                clickHandler(variant)
-                setActiveIndex(i)
-              }}
-              className={`option ${i === activeIndex ? "active-option" : ""}`}
-              data-frame-colors={variant.frameColor}
-              data-dominant-color={variant.dominantFrameColor}
-              data-index={i}
-            >
-              <OptionImage className="option-image">
-                <GatsbyImage
-                  image={variant.colorImage.data}
-                  alt={variant.colorName}
-                  loading="eager"
-                />
-              </OptionImage>
-            </SwiperSlide>
-          ))}
+          {variants.map(
+            (variant: ExtendedContentfulProductVariant, i: number) => {
+              const triggerNew = () => {
+                if (variant.optionName === "") return false
+                if (
+                  tags.includes(`new_color:${variant.optionName}`) ||
+                  tags.includes(`new_color :${variant.optionName}`)
+                ) {
+                  return true
+                }
+                return false
+              }
+
+              const isNew = triggerNew()
+
+              return (
+                <SwiperSlide
+                  key={`${uniqueId}-${i}`}
+                  onClick={() => {
+                    clickHandler(variant)
+                    setActiveIndex(i)
+                  }}
+                  className={`option ${
+                    i === activeIndex ? "active-option" : ""
+                  }`}
+                  data-frame-colors={variant.frameColor}
+                  data-dominant-color={variant.dominantFrameColor}
+                  data-index={i}
+                >
+                  <div className="relative">
+                    <OptionImage className="option-image">
+                      <GatsbyImage
+                        image={variant.colorImage.data}
+                        alt={variant.colorName}
+                        loading="eager"
+                      />
+                    </OptionImage>
+                  </div>
+                  {isNew && (
+                    <div className="new-color-badge">
+                      <span>New</span>
+                    </div>
+                  )}
+                </SwiperSlide>
+              )
+            }
+          )}
         </StyledSwiper>
 
         {variants.length > 6 ? (

@@ -57,6 +57,16 @@ const productsQuery = `{
       }
     }
   }
+  Yotpo: allYotpoProductBottomline {
+    edges {
+      node {
+        id
+        productIdentifier
+        score
+        totalReviews
+      }
+    }
+  }
 }
 `
 
@@ -64,9 +74,13 @@ function products(data) {
   const arr = []
   data.Shopify.edges.forEach(({ node }) => {
     const handle = node.handle
+    const legacyResourceId = node.legacyResourceId
     const contentful = data.Contentful.edges.find(({ node }) => {
       return node.handle === handle
     })
+    const yotpo = data.Yotpo.edges.find(
+      ({ node }) => node.productIdentifier === legacyResourceId
+    )
     if (!excludedProductTypes.includes(node.productType)) {
       arr.push({
         node: {
@@ -92,6 +106,12 @@ function products(data) {
             node.priceRangeV2.maxVariantPrice.amount
               ? node.priceRangeV2.minVariantPrice.amount
               : "",
+          yotpo: yotpo
+            ? {
+                score: yotpo.node.score,
+                reviews: yotpo.node.totalReviews,
+              }
+            : null,
         },
       })
     }
@@ -113,6 +133,7 @@ function productToAlgoliaRecord({
     tags,
     product_image,
     handle,
+    yotpo,
   },
 }) {
   return {
@@ -128,6 +149,7 @@ function productToAlgoliaRecord({
     tags: tags,
     image: product_image,
     handle: handle,
+    yotpo: yotpo,
   }
 }
 
