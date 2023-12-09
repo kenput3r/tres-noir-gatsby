@@ -1,8 +1,7 @@
 import React from "react"
 import styled from "styled-components"
+import { useStaticQuery, graphql } from "gatsby"
 import { StaticImage } from "gatsby-plugin-image"
-
-import { CUSTOM_SHIPPING_MESSAGE } from "../utils/consts"
 
 const Component = styled.div`
   text-align: center;
@@ -30,6 +29,18 @@ const Component = styled.div`
 const DEFAULT_MESSAGE = "ALL ORDERS SHIP SAME OR NEXT BUSINESS DAY"
 
 const FreeShipping = () => {
+  const data = useStaticQuery(graphql`
+    query getShippingMessage {
+      contentfulHomepage {
+        shippingMessage
+        shippingMessageToggle
+      }
+    }
+  `)
+  const { shippingMessage, shippingMessageToggle } = data.contentfulHomepage
+
+  const message = shippingMessageToggle ? shippingMessage : DEFAULT_MESSAGE
+
   return (
     <Component>
       <div className="shipping-message">
@@ -39,11 +50,7 @@ const FreeShipping = () => {
           width={38}
         />
         <p className="top-msg">FREE SHIPPING IN USA</p>
-        <p className="bottom-msg">
-          {CUSTOM_SHIPPING_MESSAGE && CUSTOM_SHIPPING_MESSAGE !== ""
-            ? CUSTOM_SHIPPING_MESSAGE
-            : DEFAULT_MESSAGE}
-        </p>
+        <p className="bottom-msg">{message}</p>
       </div>
     </Component>
   )

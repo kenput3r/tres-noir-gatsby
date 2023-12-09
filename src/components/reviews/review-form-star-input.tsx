@@ -1,6 +1,6 @@
 import React from "react"
 import styled from "styled-components"
-import { AiFillStar as StarIcon } from "react-icons/ai"
+import { BsStarFill as StarIcon } from "react-icons/bs"
 
 const StarList = styled.div`
   margin-top: 8px;
@@ -8,12 +8,12 @@ const StarList = styled.div`
     fill: #ffd700;
   }
   svg {
-    margin: 0 1px;
+    margin: 0 2px;
     fill: none;
+    font-size: 18px;
     stroke: black;
-    stroke-width: 10px;
+    stroke-width: 0.4px;
     stroke-linejoin: round;
-    font-size: 22px;
     paint-order: stroke;
     cursor: pointer;
   }
@@ -75,7 +75,7 @@ export const ReviewFormStarInput = ({
           role="button"
           onClick={() => handleChange(star)}
           className={star <= rating ? "fill active" : ""}
-          onMouseEnter={evt => handleHoverIn(evt, star)}
+          onMouseOver={evt => handleHoverIn(evt, star)}
           onMouseLeave={evt => handleHoverOut(evt, star)}
         />
       ))}

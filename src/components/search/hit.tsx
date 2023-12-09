@@ -45,6 +45,11 @@ const Component = styled.article`
       line-height: 20px;
     }
   }
+  .aspect-tn {
+    object-fit: cover;
+    object-position: center;
+    aspect-ratio: 3/2;
+  }
 `
 
 const Hit = ({ hit }: { hit: Props }) => {
@@ -56,7 +61,7 @@ const Hit = ({ hit }: { hit: Props }) => {
   return (
     <Component>
       <Link to={`/products/${hit.handle}`}>
-        <img src={hit.image} alt={hit.title} />
+        <img src={hit.image} alt={hit.title} className="aspect-tn" />
       </Link>
       <h3 className="product-title">
         <Link to={`/products/${hit.handle}`}>
