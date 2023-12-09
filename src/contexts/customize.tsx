@@ -25,6 +25,7 @@ const defaultSelectedVariants = {
     },
     legacyResourceId: "",
     price: "0.00",
+    compareAtPrice: null,
     product: {
       title: "",
       description: "",
@@ -58,6 +59,7 @@ const defaultSelectedVariants = {
     },
     legacyResourceId: "",
     price: "0.00",
+    compareAtPrice: null,
     product: {
       title: "",
       description: "",
@@ -91,6 +93,7 @@ const defaultSelectedVariants = {
     },
     legacyResourceId: "",
     price: "0.00",
+    compareAtPrice: null,
     product: {
       title: "",
       description: "",
@@ -125,6 +128,7 @@ const defaultSelectedVariants = {
       },
       legacyResourceId: "",
       price: "0.00",
+      compareAtPrice: null,
       product: {
         title: "",
         description: "",
@@ -158,6 +162,7 @@ const defaultSelectedVariants = {
       },
     },
     legacyResourceId: "",
+    compareAtPrice: null,
     price: "0.00",
     product: {
       title: "",

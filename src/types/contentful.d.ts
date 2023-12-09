@@ -33,6 +33,8 @@ export interface ContentfulProduct {
 export interface ContentfulCollection {
   handle: string
   name: string
+  description: string
+  showOverlay: boolean
   featuredImage: {
     data: IGatsbyImageData
     description: string

@@ -200,7 +200,7 @@ const ProductContentful = ({
       if (hasNewColor) {
         return {
           label: "New Color",
-          color: "#FF00FF",
+          color: "red",
         }
       }
 

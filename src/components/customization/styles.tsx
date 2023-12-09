@@ -303,4 +303,8 @@ export const Component = styled.form`
     pointer-events: none;
     opacity: 0.5;
   }
+  .strikethrough-grey {
+    color: var(--color-grey-dark);
+    text-decoration: line-through;
+  }
 `

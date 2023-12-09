@@ -73,9 +73,10 @@ const CollectionContentful = ({
           <CollectionImage
             collectionImage={collection.featuredImage.data}
             collectionName={collection.name}
-            collectionDescription={collection.featuredImage.description}
+            collectionDescription={collection.description}
             textColor={collection.featuredImageTextColor}
             position={collection.featuredImageTextPosition}
+            showOverlay={collection.showOverlay}
           />
         )}
 
@@ -111,10 +112,7 @@ const CollectionContentful = ({
         </Grid>
 
         {collection.featuredImage2 && products.length > 6 && (
-          <CollectionImage
-            collectionImage={collection.featuredImage2.data}
-            collectionName={collection.name}
-          />
+          <CollectionImage collectionImage={collection.featuredImage2.data} />
         )}
 
         <Grid>
@@ -145,6 +143,8 @@ export const query = graphql`
     contentfulCollection(handle: { eq: $handle }) {
       handle
       name
+      description
+      showOverlay
       featuredImage {
         data: gatsbyImageData(width: 2048, formats: [AUTO, WEBP], quality: 50)
         description
