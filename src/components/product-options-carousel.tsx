@@ -9,6 +9,11 @@ import { ContentfulProductVariant } from "../types/contentful"
 import "swiper/css"
 
 const Component = styled.div`
+  .six-variants {
+    @media screen and (min-width: 1200px) {
+      display: none;
+    }
+  }
   .navigation {
     display: flex;
     flex-direction: row;
@@ -107,6 +112,12 @@ const ProductOptionsCarousel = ({
 
   const [activeIndex, setActiveIndex] = useState<number>(0)
 
+  const minVariantLength = 4
+
+  const showNavigation = variants.length > minVariantLength
+
+  const hasMaxSix = variants.length <= 6
+
   useEffect(() => {
     mounted.current = true
     return () => {
@@ -158,9 +169,14 @@ const ProductOptionsCarousel = ({
   return (
     <Component ref={sliderRef}>
       <div className="navigation">
-        {variants.length > 6 ? (
+        {showNavigation ? (
           <div className="nav-prev">
-            <a className={`prev ${uniqueId}-prev`} role="button">
+            <a
+              className={`prev ${uniqueId}-prev ${
+                hasMaxSix ? "six-variants" : ""
+              }`}
+              role="button"
+            >
               <Left />
             </a>
           </div>
@@ -195,7 +211,7 @@ const ProductOptionsCarousel = ({
           initialSlide={0}
           modules={[Navigation]}
           navigation={
-            variants.length > 6
+            showNavigation
               ? {
                   nextEl: `.${uniqueId}-next`,
                   prevEl: `.${uniqueId}-prev`,
@@ -261,9 +277,14 @@ const ProductOptionsCarousel = ({
           )}
         </StyledSwiper>
 
-        {variants.length > 6 ? (
+        {showNavigation ? (
           <div className="nav-next">
-            <a className={`next ${uniqueId}-next`} role="button">
+            <a
+              className={`next ${uniqueId}-next ${
+                hasMaxSix ? "six-variants" : ""
+              }`}
+              role="button"
+            >
               <Right />
             </a>
           </div>
