@@ -12,12 +12,21 @@ const Component = styled.section`
   }
 `
 
-const ProductBottomline = () => {
+type Props = {
+  reviewListRef: React.RefObject<HTMLDivElement>
+}
+
+const ProductBottomline = ({ reviewListRef }: Props) => {
   const { data, isLoading } = useReviews()
 
   return (
     <Component>
-      {data && !isLoading && <ReviewBottomline bottomline={data.bottomline} />}
+      {data && !isLoading && (
+        <ReviewBottomline
+          bottomline={data.bottomline}
+          reviewListRef={reviewListRef}
+        />
+      )}
     </Component>
   )
 }
