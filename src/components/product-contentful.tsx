@@ -194,16 +194,6 @@ const ProductContentful = ({
 
   const getBadge = (): { label: string; color: string } | null => {
     try {
-      // new variant color badge
-      const hasNewColor = variantHasNewColor()
-
-      if (hasNewColor) {
-        return {
-          label: "New Color",
-          color: "red",
-        }
-      }
-
       // bogo is enabled and product is not an exclusion (e.g. Mooneyes products)
       if (enableBogo && !isExcludedFromDeals) {
         return {
@@ -218,7 +208,16 @@ const ProductContentful = ({
           label: "Sale",
           color: "red",
         }
-      } else if (data.collection.some(col => col.handle === "new")) {
+      }
+
+      // new variant color badge
+      if (variantHasNewColor()) {
+        return {
+          label: "New Color",
+          color: "red",
+        }
+      }
+      if (data.collection.some(col => col.handle === "new")) {
         return {
           label: "New",
           color: "#DAA520",

@@ -1,4 +1,10 @@
-import React, { useState, useContext, ChangeEvent, useEffect } from "react"
+import React, {
+  useState,
+  useContext,
+  ChangeEvent,
+  useEffect,
+  useRef,
+} from "react"
 import { graphql } from "gatsby"
 import { CartContext } from "../contexts/cart"
 import styled from "styled-components"
@@ -236,6 +242,8 @@ const Product = ({
     shopifyProduct.variants.length
   )
 
+  const reviewListRef = useRef<HTMLDivElement>(null)
+
   // fire viewed product event
   useEffect(() => {
     const productData = {
@@ -458,7 +466,7 @@ const Product = ({
             <div className="col">
               <div className="heading">
                 <h1>{shopifyProduct.title}</h1>
-                <ProductBottomline />
+                <ProductBottomline reviewListRef={reviewListRef} />
                 <form>
                   <div className="product-dropdown">
                     {!shopifyProduct.hasOnlyDefaultVariant && (
@@ -561,7 +569,7 @@ const Product = ({
           <YouMayAlsoLike shopifyProduct={shopifyProduct} />
           <Divider className="r-divider" />
           <div className="review-row">
-            <Reviews />
+            <Reviews reviewListRef={reviewListRef} />
           </div>
         </Page>
       </Layout>

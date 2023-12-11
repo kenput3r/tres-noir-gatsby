@@ -81,6 +81,45 @@ const Page = styled.section`
 
     margin: 0 -15px;
   }
+  .overlay-less {
+    h1 {
+      font-weight: normal;
+      text-transform: uppercase;
+      font-size: 2rem;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+    }
+    p {
+      font-family: var(--sub-heading-font);
+      margin-bottom: 0;
+    }
+    position: static;
+    padding: 10px 5px;
+    margin-bottom: 0;
+    color: black !important;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    .collection-description {
+      max-width: 490px;
+    }
+    @media screen and (min-width: 601px) {
+      margin-top: 5px;
+      margin-bottom: 5px;
+    }
+    @media (max-width: 600px) {
+      align-items: center;
+      max-width: unset;
+      justify-content: center;
+      flex-direction: column;
+      position: static;
+      max-width: unset;
+      text-align: center;
+      top: unset;
+      left: unset;
+      right: unset;
+    }
+  }
 `
 
 const Collection = ({
@@ -96,6 +135,8 @@ const Collection = ({
     contentfulShopifyCollectionImages: collectionImages,
   } = data
   const collectionSize = collection.products.length
+
+  const showOverlay = collectionImages ? collectionImages.showOverlay : false
 
   useEffect(() => {
     const collectionInfo = {
@@ -135,26 +176,46 @@ const Collection = ({
       <FreeShipping />
       <Page>
         <div className="container">
-          {collectionImages && (
-            <div className="image-container">
-              <div>
-                <GatsbyImage
-                  className="collection-image"
-                  image={collectionImages.collectionImageTop?.gatsbyImageData}
-                  alt={
-                    collectionImages.collectionImageTop?.title
-                      ? collectionImages.collectionImageTop?.title
-                      : collection.title
-                  }
-                />
-                <div className="overlay"></div>
+          {collectionImages ? (
+            showOverlay ? (
+              <div className="image-container">
+                <div>
+                  <GatsbyImage
+                    className="collection-image"
+                    image={collectionImages.collectionImageTop?.gatsbyImageData}
+                    alt={
+                      collectionImages.collectionImageTop?.title
+                        ? collectionImages.collectionImageTop?.title
+                        : collection.title
+                    }
+                  />
+                  <div className="overlay"></div>
+                </div>
+                <div className="top-right">
+                  <h1>{collection.title}</h1>
+                  <p>{collectionImages.description}</p>
+                </div>
               </div>
-              <div className="top-right">
-                <h1>{collection.title}</h1>
-                <p>{collectionImages.description}</p>
+            ) : (
+              <div className="image-container">
+                <div>
+                  <GatsbyImage
+                    className="collection-image"
+                    image={collectionImages.collectionImageTop?.gatsbyImageData}
+                    alt={
+                      collectionImages.collectionImageTop?.title
+                        ? collectionImages.collectionImageTop?.title
+                        : collection.title
+                    }
+                  />
+                </div>
+                <div className="overlay-less">
+                  <h1>{collection.title}</h1>
+                  <p>{collectionImages.description}</p>
+                </div>
               </div>
-            </div>
-          )}
+            )
+          ) : null}
 
           <div className="grid">
             {collection.products.slice(0, 8).map((product: ShopifyProduct) => (
@@ -181,7 +242,6 @@ const Collection = ({
                         : collection.title
                     }
                   />
-                  <div className="overlay"></div>
                 </div>
               </div>
             )}
@@ -252,6 +312,7 @@ export const query = graphql`
       }
     }
     contentfulShopifyCollectionImages(handle: { eq: $handle }) {
+      showOverlay
       description
       collectionImageTop {
         url

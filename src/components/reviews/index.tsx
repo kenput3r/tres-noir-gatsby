@@ -35,10 +35,14 @@ const SpinContainer = styled.div`
   }
 `
 
-const Reviews = () => {
+type Props = {
+  reviewListRef: React.RefObject<HTMLDivElement>
+}
+
+const Reviews = ({ reviewListRef }: Props) => {
   const { data, isLoading } = useReviews()
 
-  const reviewListRef = useRef<HTMLDivElement>(null)
+  // const reviewListRef = useRef<HTMLDivElement>(null)
 
   const scrollToTop = () => {
     const isBrowser = typeof window !== "undefined"

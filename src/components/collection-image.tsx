@@ -32,7 +32,13 @@ const Component = styled.section`
       margin-bottom: 0;
       max-width: 490px;
       @media (max-width: 600px) {
+        position: static;
+        max-width: unset;
         text-align: center;
+        top: unset;
+        left: unset;
+        right: unset;
+        color: black !important;
       }
     }
     .overlay-less-inner-text {

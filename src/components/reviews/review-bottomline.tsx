@@ -3,10 +3,6 @@ import styled from "styled-components"
 import ReviewBottomlineStars from "./review-bottomline-stars"
 import { Bottomline } from "../../types/yotpo"
 
-type Props = {
-  bottomline: Bottomline
-}
-
 const Component = styled.section`
   display: flex;
   align-items: center;
@@ -18,12 +14,29 @@ const Component = styled.section`
     font-size: 15px;
   }
 `
+type Props = {
+  bottomline: Bottomline
+  reviewListRef?: React.RefObject<HTMLDivElement>
+}
 
-const ReviewBottomline = ({ bottomline }: Props) => {
+const ReviewBottomline = ({ bottomline, reviewListRef }: Props) => {
   const { total_review, average_score } = bottomline
 
+  const handleClick = () => {
+    const isBrowser = typeof window !== "undefined"
+    if (isBrowser && reviewListRef && reviewListRef?.current) {
+      setTimeout(() => {
+        reviewListRef?.current?.scrollIntoView({ behavior: "smooth" })
+      }, 500)
+    }
+  }
+
   return (
-    <Component>
+    <Component
+      className={reviewListRef ? "clickable" : ""}
+      onClick={() => handleClick()}
+      style={{ cursor: reviewListRef ? "pointer" : "default" }}
+    >
       <ReviewBottomlineStars score={average_score} />
       <span>{`(${total_review})`}</span>
     </Component>
