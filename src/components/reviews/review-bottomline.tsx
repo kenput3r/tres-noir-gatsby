@@ -24,7 +24,7 @@ const ReviewBottomline = ({ bottomline, reviewListRef }: Props) => {
 
   const handleClick = () => {
     const isBrowser = typeof window !== "undefined"
-    if (isBrowser && reviewListRef?.current) {
+    if (isBrowser && reviewListRef && reviewListRef?.current) {
       setTimeout(() => {
         reviewListRef?.current?.scrollIntoView({ behavior: "smooth" })
       }, 500)
