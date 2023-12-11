@@ -194,14 +194,6 @@ const ProductOptionsCarousel = ({
               slidesPerView: 4,
               spaceBetween: 1,
             },
-            "768": {
-              slidesPerView: 4,
-              spaceBetween: 1,
-            },
-            "1024": {
-              slidesPerView: 5,
-              spaceBetween: 1,
-            },
             "1200": {
               slidesPerView: 6,
               spaceBetween: 1,
