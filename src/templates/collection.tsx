@@ -135,7 +135,8 @@ const Collection = ({
     contentfulShopifyCollectionImages: collectionImages,
   } = data
   const collectionSize = collection.products.length
-  const { showOverlay } = collectionImages
+
+  const showOverlay = collectionImages ? collectionImages.showOverlay : false
 
   useEffect(() => {
     const collectionInfo = {
@@ -175,44 +176,46 @@ const Collection = ({
       <FreeShipping />
       <Page>
         <div className="container">
-          {collectionImages && showOverlay ? (
-            <div className="image-container">
-              <div>
-                <GatsbyImage
-                  className="collection-image"
-                  image={collectionImages.collectionImageTop?.gatsbyImageData}
-                  alt={
-                    collectionImages.collectionImageTop?.title
-                      ? collectionImages.collectionImageTop?.title
-                      : collection.title
-                  }
-                />
-                <div className="overlay"></div>
+          {collectionImages ? (
+            showOverlay ? (
+              <div className="image-container">
+                <div>
+                  <GatsbyImage
+                    className="collection-image"
+                    image={collectionImages.collectionImageTop?.gatsbyImageData}
+                    alt={
+                      collectionImages.collectionImageTop?.title
+                        ? collectionImages.collectionImageTop?.title
+                        : collection.title
+                    }
+                  />
+                  <div className="overlay"></div>
+                </div>
+                <div className="top-right">
+                  <h1>{collection.title}</h1>
+                  <p>{collectionImages.description}</p>
+                </div>
               </div>
-              <div className="top-right">
-                <h1>{collection.title}</h1>
-                <p>{collectionImages.description}</p>
+            ) : (
+              <div className="image-container">
+                <div>
+                  <GatsbyImage
+                    className="collection-image"
+                    image={collectionImages.collectionImageTop?.gatsbyImageData}
+                    alt={
+                      collectionImages.collectionImageTop?.title
+                        ? collectionImages.collectionImageTop?.title
+                        : collection.title
+                    }
+                  />
+                </div>
+                <div className="overlay-less">
+                  <h1>{collection.title}</h1>
+                  <p>{collectionImages.description}</p>
+                </div>
               </div>
-            </div>
-          ) : (
-            <div className="image-container">
-              <div>
-                <GatsbyImage
-                  className="collection-image"
-                  image={collectionImages.collectionImageTop?.gatsbyImageData}
-                  alt={
-                    collectionImages.collectionImageTop?.title
-                      ? collectionImages.collectionImageTop?.title
-                      : collection.title
-                  }
-                />
-              </div>
-              <div className="overlay-less">
-                <h1>{collection.title}</h1>
-                <p>{collectionImages.description}</p>
-              </div>
-            </div>
-          )}
+            )
+          ) : null}
 
           <div className="grid">
             {collection.products.slice(0, 8).map((product: ShopifyProduct) => (
