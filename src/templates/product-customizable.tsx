@@ -465,6 +465,8 @@ const ProductCustomizable = ({ data, location: any }: Props) => {
     shopifyProduct.variants.length
   )
 
+  const reviewListRef = useRef<HTMLDivElement>(null)
+
   // ref to toggle disable classes on buttons
   const actionsRef = useRef<HTMLDivElement>(null)
 
@@ -999,7 +1001,7 @@ const ProductCustomizable = ({ data, location: any }: Props) => {
               />
               <div className="heading">
                 <h1>{shopifyProduct.title}</h1>
-                <ProductBottomline />
+                <ProductBottomline reviewListRef={reviewListRef} />
                 <p className="fit">
                   Size: {contentfulProduct && contentfulProduct.fitDimensions}{" "}
                   <span>
@@ -1212,7 +1214,7 @@ const ProductCustomizable = ({ data, location: any }: Props) => {
           )}
           <Divider />
           <div className="row-no-flex review-row">
-            <Reviews />
+            <Reviews reviewListRef={reviewListRef} />
           </div>
         </Page>
       </Layout>
