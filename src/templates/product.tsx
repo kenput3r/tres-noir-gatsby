@@ -449,10 +449,14 @@ const Product = ({
         <SEO
           title={shopifyProduct.title}
           description={shopifyProduct.description}
-          image={{
-            url: shopifyProduct.featuredImage.originalSrc,
-            alt: shopifyProduct.featuredImage.altText,
-          }}
+          image={
+            shopifyProduct.featuredImage
+              ? {
+                  url: shopifyProduct.featuredImage.originalSrc,
+                  alt: shopifyProduct.featuredImage.altText,
+                }
+              : undefined
+          }
           jsonLdPayload={generateProductJsonLD()}
         />
         <Page>
