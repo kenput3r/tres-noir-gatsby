@@ -10,6 +10,30 @@ import { ContentfulCollection, ContentfulProduct } from "../types/contentful"
 import FreeShipping from "../components/free-shipping"
 import CollectionImage from "../components/collection-image"
 import { viewedCollectionGTMEvent } from "../helpers/gtm"
+import { ContentfulProductVariant } from "../types/contentful"
+
+const Page = styled.div`
+  .desc-container {
+    margin-top: 15px;
+    margin-bottom: 0;
+    display: flex;
+    justify-content: center;
+    font-family: var(--sub-heading-font);
+    .collection-description {
+      p {
+        margin: 0;
+      }
+      text-align: center;
+      margin: 0 auto;
+      max-width: 800px;
+    }
+  }
+  @media only screen and (max-width: 600px) {
+    .desc-container {
+      margin-top: 0;
+    }
+  }
+`
 
 const Grid = styled.div`
   display: flex;
@@ -35,7 +59,7 @@ const VariantCollection = ({
     frameWidth: string
     colorName: string
   }>(defaultFilters)
-  const [variants, setVariants] = useState<ContentfulProduct[]>(
+  const [variants, setVariants] = useState<ContentfulProductVariant[]>(
     collection.variants
   )
 
@@ -47,39 +71,81 @@ const VariantCollection = ({
     viewedCollectionGTMEvent(collectionInfo)
   }, [])
 
-  const getShopifyVariant = product => {
-    if (!shopifyCollection?.products) return null
+  const getShopifyPrice = (
+    variant
+  ): {
+    price: string
+    compareAtPrice: string
+  } => {
+    try {
+      const handle = variant.product[0].handle
 
-    const shopifyProduct = shopifyCollection.products.find(
-      shopifyProduct =>
-        shopifyProduct.handle.toLowerCase() === product.handle.toLowerCase() ||
-        shopifyProduct.title === product.title
-    )
+      const shopifyProduct = shopifyCollection.products.find(
+        shopifyProduct =>
+          shopifyProduct.handle.toLowerCase() === handle.toLowerCase()
+      )
 
-    return shopifyProduct
+      const shopifyVariant = shopifyProduct.variants.find(
+        shopifyVariant => shopifyVariant.sku === variant.sku
+      )
+
+      return {
+        price: shopifyVariant.price,
+        compareAtPrice: shopifyVariant.compareAtPrice ?? "0.00",
+      }
+    } catch (error) {
+      return {
+        price: "",
+        compareAtPrice: "",
+      }
+    }
   }
 
-  console.log("VariantCollection", collection)
+  const geColorOptionName = variant => {
+    try {
+      const handle = variant.product[0].handle
+
+      if (!shopifyCollection?.products) return null
+
+      const shopifyProduct = shopifyCollection.products.find(
+        shopifyProduct =>
+          shopifyProduct.handle.toLowerCase() === handle.toLowerCase()
+      )
+
+      const shopifyVariant = shopifyProduct.variants.find(
+        shopifyVariant => shopifyVariant.sku === variant.sku
+      )
+
+      const optionName = shopifyVariant.selectedOptions.find(
+        option => option.name === "Color"
+      ).value
+
+      const formattedOptionName = optionName.split("-")[0]
+
+      return formattedOptionName.trim()
+    } catch (error) {
+      return variant.colorName
+    }
+  }
 
   return (
     <Layout>
       <SEO
-        title={collection.name}
+        title={collection.title}
         description={collection.description}
         image={{
           url: collection.image.url,
-          alt: collection.image.description,
+          alt: collection.title,
         }}
       />
-      <div className="page">
+      <Page className="page">
         <FreeShipping />
         {collection.image && (
-          <CollectionImage
-            collectionImage={collection.image.data}
-            collectionName={collection.title}
-            collectionDescription={collection.description}
-          />
+          <CollectionImage collectionImage={collection.image.data} />
         )}
+        <div className="desc-container">
+          <p className="collection-description">{collection.description}</p>
+        </div>
 
         {/* <div className="filters-container">
           <Filters
@@ -93,13 +159,18 @@ const VariantCollection = ({
         <Grid>
           {variants.length ? (
             variants.map(variant => {
-              const shopifyVariant = getShopifyVariant(variant)
-
+              const { price, compareAtPrice } = getShopifyPrice(variant)
+              const productTitle = variant.product[0].title
+              const colorName = geColorOptionName(variant)
+              const formattedTitle = [productTitle, colorName].join(" - ")
               return (
                 <Variant
                   key={variant.id}
                   contentfulData={variant}
-                  shopifyData={shopifyVariant}
+                  productHandle={variant.product[0].handle}
+                  price={price}
+                  name={formattedTitle}
+                  compareAtPrice={compareAtPrice}
                 />
               )
             })
@@ -107,7 +178,7 @@ const VariantCollection = ({
             <p>No Products found please remove filters and try again.</p>
           )}
         </Grid>
-      </div>
+      </Page>
     </Layout>
   )
 }
@@ -119,6 +190,8 @@ export const query = graphql`
     contentfulVariantCollection(handle: { eq: $handle }) {
       id
       handle
+      title
+      description
       image {
         data: gatsbyImageData(width: 2048, formats: [AUTO, WEBP], quality: 50)
         description
@@ -149,6 +222,10 @@ export const query = graphql`
         }
         frameColor
         dominantFrameColor
+        product {
+          handle
+          title
+        }
       }
     }
     shopifyCollection(handle: { eq: $handle }) {

@@ -12,7 +12,6 @@ import Badge from "./badge"
 import { isDiscounted } from "../helpers/shopify"
 import { useFilterHiddenCustomizableVariants } from "../hooks/useFilterHiddenCustomizableVariants"
 import { useFilterDuplicateFrames } from "../hooks/useFilterDuplicateFrames"
-import { get } from "js-cookie"
 
 const Component = styled.article`
   margin-bottom: 1.45rem;

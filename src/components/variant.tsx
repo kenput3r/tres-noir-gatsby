@@ -3,30 +3,37 @@ import styled from "styled-components"
 import { Link } from "gatsby"
 import { GatsbyImage } from "gatsby-plugin-image"
 import ProductAction from "./collection-product-action"
+import type { ContentfulProductVariant } from "../types/contentful"
+import { isDiscounted } from "../helpers/shopify"
 
 const Component = styled.div`
   margin-bottom: 1.45rem;
-  width: 33.33%;
+  width: 25%;
   @media screen and (min-width: 601px) and (max-width: 1023px) {
-    width: 50%;
+    width: 33%;
   }
   padding: 0 15px;
   text-align: center;
   font-family: var(--heading-font);
   text-transform: uppercase;
   @media only screen and (max-width: 600px) {
-    width: 100%;
+    width: 50%;
   }
-  h3 a {
-    color: #000;
-    text-decoration: none;
-    text-align: center;
-    font-weight: 400;
-    &:visited {
+  h3 {
+    margin-bottom: 0;
+    padding-bottom: 8px;
+    a {
       color: #000;
-    }
-    &:hover {
-      text-decoration: underline;
+      text-decoration: none;
+      text-align: center;
+      font-weight: 400;
+      font-size: 1.2rem;
+      &:visited {
+        color: #000;
+      }
+      &:hover {
+        text-decoration: underline;
+      }
     }
   }
   .options {
@@ -60,21 +67,72 @@ const Component = styled.div`
       }
     }
   }
+  .price-container {
+    font-family: var(--sub-heading-font);
+    font-size: 1.3rem;
+    display: flex;
+    flex-direction: column;
+    .strikethrough {
+      text-decoration: line-through;
+      color: var(--color-grey-dark);
+    }
+  }
+  @media only screen and (max-width: 600px) {
+    .price-container {
+      font-size: 1.1rem;
+    }
+    h3 {
+      line-height: 16px;
+      a {
+        font-size: 1rem;
+        /* line-height: 1 !important; */
+      }
+    }
+  }
 `
 
-type Props = { contentfulData: any; shopifyData: any }
+type Props = {
+  contentfulData: ContentfulProductVariant
+  price: string
+  compareAtPrice: string
+  productHandle: string
+  name: string
+}
 
-const Variant = ({ contentfulData, shopifyData }: Props) => {
+const Variant = ({
+  contentfulData,
+  price,
+  productHandle,
+  name,
+  compareAtPrice,
+}: Props) => {
+  const { sku } = contentfulData
+  const link = `/products/${productHandle}?variant=${sku}`
+
   return (
     <Component>
       <article className="variant-container">
-        <Link>
+        <Link to={link}>
           <GatsbyImage
             image={contentfulData.featuredImage.data}
-            alt={contentfulData.title}
+            alt={"contentfulData.title"}
           />
         </Link>
+        <ProductAction>
+          <Link to={link}>View Product</Link>
+        </ProductAction>
       </article>
+      <h3>
+        <Link to={link}>{name}</Link>
+      </h3>
+      {price !== "0.00" && price !== "" && (
+        <div className="price-container">
+          <span>${price} USD</span>
+          {compareAtPrice && !isDiscounted(price, compareAtPrice) && (
+            <span className="strikethrough">${compareAtPrice} USD</span>
+          )}
+        </div>
+      )}
     </Component>
   )
 }
