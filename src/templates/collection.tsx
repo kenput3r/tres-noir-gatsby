@@ -166,6 +166,8 @@ const Collection = ({
     return undefined
   }
 
+  const isEmpty = collection.products.length === 0
+
   return (
     <Layout>
       <SEO
@@ -175,81 +177,60 @@ const Collection = ({
       />
       <FreeShipping />
       <Page>
-        <div className="container">
-          {collectionImages ? (
-            showOverlay ? (
-              <div className="image-container">
-                <div>
-                  <GatsbyImage
-                    className="collection-image"
-                    image={collectionImages.collectionImageTop?.gatsbyImageData}
-                    alt={
-                      collectionImages.collectionImageTop?.title
-                        ? collectionImages.collectionImageTop?.title
-                        : collection.title
-                    }
-                  />
-                  <div className="overlay"></div>
-                </div>
-                <div className="top-right">
-                  <h1>{collection.title}</h1>
-                  <p>{collectionImages.description}</p>
-                </div>
-              </div>
-            ) : (
-              <div className="image-container">
-                <div>
-                  <GatsbyImage
-                    className="collection-image"
-                    image={collectionImages.collectionImageTop?.gatsbyImageData}
-                    alt={
-                      collectionImages.collectionImageTop?.title
-                        ? collectionImages.collectionImageTop?.title
-                        : collection.title
-                    }
-                  />
-                </div>
-                <div className="overlay-less">
-                  <h1>{collection.title}</h1>
-                  <p>{collectionImages.description}</p>
-                </div>
-              </div>
-            )
-          ) : null}
-
-          <div className="grid">
-            {collection.products.slice(0, 8).map((product: ShopifyProduct) => (
-              <Product
-                key={product.handle}
-                data={product}
-                collection={collection.title}
-              />
-            ))}
+        {isEmpty ? (
+          <div className="container">
+            <p>There are no products in this collection</p>
           </div>
-          {collectionImages &&
-            collectionSize >= 8 &&
-            collectionImages.collectionImageMiddle?.gatsbyImageData && (
-              <div className="image-container">
-                <div>
-                  <GatsbyImage
-                    className="collection-image"
-                    image={
-                      collectionImages.collectionImageMiddle?.gatsbyImageData
-                    }
-                    alt={
-                      collectionImages.collectionImageMiddle?.title
-                        ? collectionImages.collectionImageMiddle?.title
-                        : collection.title
-                    }
-                  />
+        ) : (
+          <div className="container">
+            {collectionImages ? (
+              showOverlay ? (
+                <div className="image-container">
+                  <div>
+                    <GatsbyImage
+                      className="collection-image"
+                      image={
+                        collectionImages.collectionImageTop?.gatsbyImageData
+                      }
+                      alt={
+                        collectionImages.collectionImageTop?.title
+                          ? collectionImages.collectionImageTop?.title
+                          : collection.title
+                      }
+                    />
+                    <div className="overlay"></div>
+                  </div>
+                  <div className="top-right">
+                    <h1>{collection.title}</h1>
+                    <p>{collectionImages.description}</p>
+                  </div>
                 </div>
-              </div>
-            )}
+              ) : (
+                <div className="image-container">
+                  <div>
+                    <GatsbyImage
+                      className="collection-image"
+                      image={
+                        collectionImages.collectionImageTop?.gatsbyImageData
+                      }
+                      alt={
+                        collectionImages.collectionImageTop?.title
+                          ? collectionImages.collectionImageTop?.title
+                          : collection.title
+                      }
+                    />
+                  </div>
+                  <div className="overlay-less">
+                    <h1>{collection.title}</h1>
+                    <p>{collectionImages.description}</p>
+                  </div>
+                </div>
+              )
+            ) : null}
 
-          <div className="grid">
-            {collectionSize >= 8 &&
-              collection.products
-                .slice(8, collectionSize)
+            <div className="grid">
+              {collection.products
+                .slice(0, 8)
                 .map((product: ShopifyProduct) => (
                   <Product
                     key={product.handle}
@@ -257,8 +238,41 @@ const Collection = ({
                     collection={collection.title}
                   />
                 ))}
+            </div>
+            {collectionImages &&
+              collectionSize >= 8 &&
+              collectionImages.collectionImageMiddle?.gatsbyImageData && (
+                <div className="image-container">
+                  <div>
+                    <GatsbyImage
+                      className="collection-image"
+                      image={
+                        collectionImages.collectionImageMiddle?.gatsbyImageData
+                      }
+                      alt={
+                        collectionImages.collectionImageMiddle?.title
+                          ? collectionImages.collectionImageMiddle?.title
+                          : collection.title
+                      }
+                    />
+                  </div>
+                </div>
+              )}
+
+            <div className="grid">
+              {collectionSize >= 8 &&
+                collection.products
+                  .slice(8, collectionSize)
+                  .map((product: ShopifyProduct) => (
+                    <Product
+                      key={product.handle}
+                      data={product}
+                      collection={collection.title}
+                    />
+                  ))}
+            </div>
           </div>
-        </div>
+        )}
       </Page>
     </Layout>
   )
