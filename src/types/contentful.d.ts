@@ -16,6 +16,10 @@ export interface ContentfulProductVariant {
   frameColor: string[]
   dominantFrameColor: string
   lensColor: string
+  product: {
+    handle: string
+    title: string
+  }[]
 }
 
 export interface ContentfulProduct {
