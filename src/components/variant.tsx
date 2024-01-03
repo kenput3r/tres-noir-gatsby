@@ -85,7 +85,6 @@ const Component = styled.div`
       line-height: 16px;
       a {
         font-size: 1rem;
-        /* line-height: 1 !important; */
       }
     }
   }
@@ -128,7 +127,7 @@ const Variant = ({
       {price !== "0.00" && price !== "" && (
         <div className="price-container">
           <span>${price} USD</span>
-          {compareAtPrice && !isDiscounted(price, compareAtPrice) && (
+          {compareAtPrice && isDiscounted(price, compareAtPrice) && (
             <span className="strikethrough">${compareAtPrice} USD</span>
           )}
         </div>
