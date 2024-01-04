@@ -38,7 +38,11 @@ const Component = styled.article`
   }
   .price-container {
     span {
-      font-size: 1rem;
+      font-family: var(--sub-heading-font);
+      @media screen and (max-width: 600px) {
+        font-size: 1.1rem;
+      }
+      font-size: 1.15rem;
     }
     padding-top: 5px;
     display: flex;

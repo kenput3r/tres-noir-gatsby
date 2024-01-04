@@ -16,6 +16,7 @@ import { SelectedVariants, SelectedVariantStorage } from "../types/global"
 import { CustomizeContext } from "../contexts/customize"
 import { RxInfoContext } from "../contexts/rxInfo"
 import { isDiscounted } from "../helpers/shopify"
+import { clearanceProductHandles } from "../utils/const"
 
 const LoaderContainer = styled.div`
   position: fixed;
@@ -30,6 +31,11 @@ const LoaderContainer = styled.div`
 `
 
 const Page = styled.div`
+  .final-sale-disclaimer {
+    font-family: var(--sub-heading-font);
+    text-align: right;
+    text-transform: none;
+  }
   .cart-message {
     border: 1px solid;
     background: white;
@@ -562,6 +568,16 @@ const Cart = () => {
     const sunglassesStepMap = new Map()
     sunglassesStepMap.set(1, "CASE")
     const hasDiscount = checkForDiscountInBundle(item.lineItems)
+    // if a sunglasses's product handle is in const variable and isDiscounted, then it is a clearance sale, and we should show the final sale disclaimer
+    const isClearanceSale =
+      clearanceProductHandles.includes(
+        item.lineItems[0].shopifyItem.variant.product.handle
+      ) &&
+      item.lineItems[0].shopifyItem.variant.compareAtPrice &&
+      isDiscounted(
+        item.lineItems[0].shopifyItem.variant.price.amount,
+        item.lineItems[0].shopifyItem.variant.compareAtPrice.amount
+      )
 
     return (
       <li key={item.id} className="customized">
@@ -677,6 +693,11 @@ const Cart = () => {
                     ${totalSum(item.lineItems)}
                   </span>
                 </div>
+                {isClearanceSale && (
+                  <span className="final-sale-disclaimer">
+                    Final sale. No returns or exchanges.
+                  </span>
+                )}
               </div>
             </div>
           </div>

@@ -12,7 +12,6 @@ import Badge from "./badge"
 import { isDiscounted } from "../helpers/shopify"
 import { useFilterHiddenCustomizableVariants } from "../hooks/useFilterHiddenCustomizableVariants"
 import { useFilterDuplicateFrames } from "../hooks/useFilterDuplicateFrames"
-import { get } from "js-cookie"
 
 const Component = styled.article`
   margin-bottom: 1.45rem;
@@ -201,9 +200,11 @@ const ProductContentful = ({
           color: "#0ee2e2",
         }
       }
-      const price = shopifyProduct.variants[0].price
-      const compareAtPrice = shopifyProduct.variants[0].compareAtPrice
-      if (compareAtPrice && isDiscounted(price, compareAtPrice)) {
+      // only show sale badge if all variants are on sale
+      const allVariantsOnSale = shopifyProduct.variants.every(
+        v => v.compareAtPrice && isDiscounted(v.price, v.compareAtPrice)
+      )
+      if (allVariantsOnSale) {
         return {
           label: "Sale",
           color: "red",
@@ -214,7 +215,7 @@ const ProductContentful = ({
       if (variantHasNewColor()) {
         return {
           label: "New Color",
-          color: "red",
+          color: "green",
         }
       }
       if (data.collection.some(col => col.handle === "new")) {
