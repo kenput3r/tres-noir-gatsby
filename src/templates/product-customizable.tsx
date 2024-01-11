@@ -371,6 +371,11 @@ const Page = styled.div`
   .option-color-image-container {
     position: relative;
   }
+  .disabled-polarize-action {
+    pointer-events: none;
+    cursor: not-allowed;
+    opacity: 0.2;
+  }
 `
 type Props = {
   data: {
@@ -473,6 +478,14 @@ const ProductCustomizable = ({ data, location: any }: Props) => {
   const seoDescription = contentfulProduct.styleDescription.styleDescription
 
   const isExcludedFromDeals = shopifyProduct.title.includes("Mooneyes")
+
+  const isClearanceVariant =
+    selectedVariant.shopify.product.tags.includes("Clearance") &&
+    selectedVariant.shopify.compareAtPrice &&
+    isDiscounted(
+      selectedVariant.shopify.price,
+      selectedVariant.shopify.compareAtPrice
+    )
 
   const getSelectedVariantOptionName = (variant: any) => {
     try {
@@ -1114,9 +1127,15 @@ const ProductCustomizable = ({ data, location: any }: Props) => {
                 <div className="actions" ref={actionsRef}>
                   {lensType === LensType.SUNGLASSES && (
                     <>
-                      <div className="polarized-actions" id="polarized-toggle">
+                      <div
+                        className={`polarized-actions ${
+                          isClearanceVariant ? "disabled-polarize-action" : ""
+                        }`}
+                        id="polarized-toggle"
+                      >
                         <div className="polarized-switch">
                           <input
+                            disabled={isClearanceVariant}
                             type="checkbox"
                             id="switch"
                             checked={isPolarized}
@@ -1390,6 +1409,9 @@ export const query = graphql`
         selectedOptions {
           name
           value
+        }
+        product {
+          tags
         }
         metafields {
           key
