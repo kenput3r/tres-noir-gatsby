@@ -41,6 +41,13 @@ exports.createPages = async ({ graphql, actions: { createPage } }) => {
           }
         }
       }
+      allContentfulVariantCollection {
+        edges {
+          node {
+            handle
+          }
+        }
+      }
     }
   `)
   const contentfulHandles = pageable.data.allContentfulProduct.edges.map(
@@ -121,6 +128,7 @@ exports.createPages = async ({ graphql, actions: { createPage } }) => {
         "Case Add-ons",
         "Mens",
         "Womens",
+        "Sale",
       ]
 
       if (!excludedCollections.includes(title)) {
@@ -133,6 +141,18 @@ exports.createPages = async ({ graphql, actions: { createPage } }) => {
           },
         })
       }
+    }
+  )
+  pageable.data.allContentfulVariantCollection.edges.forEach(
+    ({ node: { handle } }) => {
+      const template = "variant-collection"
+      createPage({
+        path: `/collections/${handle}`,
+        component: path.resolve(`./src/templates/${template}.tsx`),
+        context: {
+          handle,
+        },
+      })
     }
   )
   pageable.data.allContentfulProduct.edges.forEach(({ node: { handle } }) => {

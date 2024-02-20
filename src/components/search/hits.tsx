@@ -28,7 +28,8 @@ const Component = styled.ul`
     gap: 2rem;
   }
   @media only screen and (max-width: 468px) {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 2rem;
   }
   li {
     list-style: none;

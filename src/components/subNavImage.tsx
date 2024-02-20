@@ -105,7 +105,7 @@ const SubNavImage = ({ subListItems }) => {
                   <StaticImage
                     src="../images/example-menu-item-mens.jpg"
                     alt="Tres Noir"
-                    placeholder="tracedSVG"
+                    placeholder="dominantColor"
                     layout="constrained"
                   />
                 )}

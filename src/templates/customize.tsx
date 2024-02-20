@@ -308,7 +308,7 @@ export const query = graphql`
         customizations {
           bifocal {
             data: gatsbyImageData(
-              placeholder: TRACED_SVG
+              placeholder: DOMINANT_COLOR
               quality: 60
               width: 800
             )
@@ -316,7 +316,7 @@ export const query = graphql`
           }
           bifocalGradientTintSmokeLenses {
             data: gatsbyImageData(
-              placeholder: TRACED_SVG
+              placeholder: DOMINANT_COLOR
               quality: 60
               width: 800
             )
@@ -324,7 +324,7 @@ export const query = graphql`
           }
           bifocalGradientTintBrownLenses {
             data: gatsbyImageData(
-              placeholder: TRACED_SVG
+              placeholder: DOMINANT_COLOR
               quality: 60
               width: 800
             )
@@ -332,7 +332,7 @@ export const query = graphql`
           }
           bifocalGradientTintG15Lenses {
             data: gatsbyImageData(
-              placeholder: TRACED_SVG
+              placeholder: DOMINANT_COLOR
               quality: 60
               width: 800
             )
@@ -340,7 +340,7 @@ export const query = graphql`
           }
           clear {
             data: gatsbyImageData(
-              placeholder: TRACED_SVG
+              placeholder: DOMINANT_COLOR
               quality: 60
               width: 800
             )
@@ -348,7 +348,7 @@ export const query = graphql`
           }
           gradientTintSmokeLenses {
             data: gatsbyImageData(
-              placeholder: TRACED_SVG
+              placeholder: DOMINANT_COLOR
               quality: 60
               width: 800
             )
@@ -356,7 +356,7 @@ export const query = graphql`
           }
           gradientTintBrownLenses {
             data: gatsbyImageData(
-              placeholder: TRACED_SVG
+              placeholder: DOMINANT_COLOR
               quality: 60
               width: 800
             )
@@ -364,7 +364,7 @@ export const query = graphql`
           }
           gradientTintG15Lenses {
             data: gatsbyImageData(
-              placeholder: TRACED_SVG
+              placeholder: DOMINANT_COLOR
               quality: 60
               width: 800
             )
@@ -372,7 +372,7 @@ export const query = graphql`
           }
           sunGlassesSmokeLenses {
             data: gatsbyImageData(
-              placeholder: TRACED_SVG
+              placeholder: DOMINANT_COLOR
               quality: 60
               width: 800
             )
@@ -380,7 +380,7 @@ export const query = graphql`
           }
           sunGlassesBrownLenses {
             data: gatsbyImageData(
-              placeholder: TRACED_SVG
+              placeholder: DOMINANT_COLOR
               quality: 60
               width: 800
             )
@@ -388,7 +388,7 @@ export const query = graphql`
           }
           sunGlassesGreenLenses {
             data: gatsbyImageData(
-              placeholder: TRACED_SVG
+              placeholder: DOMINANT_COLOR
               quality: 60
               width: 800
             )
@@ -396,7 +396,7 @@ export const query = graphql`
           }
           sunGlassesOrangeLenses {
             data: gatsbyImageData(
-              placeholder: TRACED_SVG
+              placeholder: DOMINANT_COLOR
               quality: 60
               width: 800
             )
@@ -404,7 +404,7 @@ export const query = graphql`
           }
           sunGlassesYellowLenses {
             data: gatsbyImageData(
-              placeholder: TRACED_SVG
+              placeholder: DOMINANT_COLOR
               quality: 60
               width: 800
             )
@@ -412,7 +412,7 @@ export const query = graphql`
           }
           sunGlassesBlueLenses {
             data: gatsbyImageData(
-              placeholder: TRACED_SVG
+              placeholder: DOMINANT_COLOR
               quality: 60
               width: 800
             )
@@ -420,7 +420,7 @@ export const query = graphql`
           }
           sunGlassesG15Lenses {
             data: gatsbyImageData(
-              placeholder: TRACED_SVG
+              placeholder: DOMINANT_COLOR
               quality: 60
               width: 800
             )
@@ -428,7 +428,7 @@ export const query = graphql`
           }
           sunGlassesSmokeLensesBifocal {
             data: gatsbyImageData(
-              placeholder: TRACED_SVG
+              placeholder: DOMINANT_COLOR
               quality: 60
               width: 800
             )
@@ -436,7 +436,7 @@ export const query = graphql`
           }
           sunGlassesBrownLensesBifocal {
             data: gatsbyImageData(
-              placeholder: TRACED_SVG
+              placeholder: DOMINANT_COLOR
               quality: 60
               width: 800
             )
@@ -444,7 +444,7 @@ export const query = graphql`
           }
           sunGlassesGreenLensesBifocal {
             data: gatsbyImageData(
-              placeholder: TRACED_SVG
+              placeholder: DOMINANT_COLOR
               quality: 60
               width: 800
             )
@@ -452,7 +452,7 @@ export const query = graphql`
           }
           sunGlassesOrangeLensesBifocal {
             data: gatsbyImageData(
-              placeholder: TRACED_SVG
+              placeholder: DOMINANT_COLOR
               quality: 60
               width: 800
             )
@@ -460,7 +460,7 @@ export const query = graphql`
           }
           sunGlassesYellowLensesBifocal {
             data: gatsbyImageData(
-              placeholder: TRACED_SVG
+              placeholder: DOMINANT_COLOR
               quality: 60
               width: 800
             )
@@ -468,7 +468,7 @@ export const query = graphql`
           }
           sunGlassesBlueLensesBifocal {
             data: gatsbyImageData(
-              placeholder: TRACED_SVG
+              placeholder: DOMINANT_COLOR
               quality: 60
               width: 800
             )
@@ -476,7 +476,7 @@ export const query = graphql`
           }
           sunGlassesG15LensesBifocal {
             data: gatsbyImageData(
-              placeholder: TRACED_SVG
+              placeholder: DOMINANT_COLOR
               quality: 60
               width: 800
             )

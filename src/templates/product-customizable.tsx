@@ -6,7 +6,7 @@ import React, {
   ChangeEvent,
   useCallback,
 } from "react"
-import { Link, graphql } from "gatsby"
+import { Link, graphql, useStaticQuery } from "gatsby"
 import { StaticImage, GatsbyImage as Img } from "gatsby-plugin-image"
 import styled from "styled-components"
 import { useQuantityQuery } from "../hooks/useQuantityQuery"
@@ -19,7 +19,6 @@ import {
   addedCustomizedToCartGTMEvent,
   viewedProductGTMEvent,
 } from "../helpers/gtm"
-import Product from "./product"
 import { CustomizeContext } from "../contexts/customize"
 import FreeShipping from "../components/free-shipping"
 import Spinner from "../components/spinner"
@@ -29,6 +28,7 @@ import PolarizedTooltip from "../components/polarize/polarized-tooltip"
 import { useCaseCollection } from "../hooks/useCaseCollection"
 import { useFilterDuplicateFrames } from "../hooks/useFilterDuplicateFrames"
 import { useFilterHiddenCustomizableVariants } from "../hooks/useFilterHiddenCustomizableVariants"
+import { useReviews } from "../contexts/reviews"
 import FeaturedStyles from "../components/featured-styles"
 import ViewAsType from "../components/view-as-type"
 import Reviews from "../components/reviews"
@@ -37,7 +37,7 @@ import type { YotpoSourceProductBottomLine } from "../types/yotpo"
 import { isDiscounted } from "../helpers/shopify"
 import Divider from "../components/divider"
 import Badge from "../components/badge"
-import { badgeConfig } from "../utils/consts"
+import ProductBottomline from "../components/product-bottomline"
 
 const Page = styled.div`
   .shipping-message {
@@ -354,6 +354,28 @@ const Page = styled.div`
   }
   .learn-more {
   }
+  .new-color-badge {
+    position: absolute;
+    font-size: 13px;
+    border-radius: 4px;
+    padding: 8px 4px;
+    background-color: red;
+    top: -10px;
+    right: -10px;
+    span {
+      text-transform: uppercase;
+      color: white;
+      font-family: var(--sub-heading-font);
+    }
+  }
+  .option-color-image-container {
+    position: relative;
+  }
+  .disabled-polarize-action {
+    pointer-events: none;
+    cursor: not-allowed;
+    opacity: 0.2;
+  }
 `
 type Props = {
   data: {
@@ -365,13 +387,21 @@ type Props = {
         siteUrl: string
       }
     }
+    contentfulHomepage: {
+      enableBogo: boolean
+    }
   }
   location: any
 }
-const ProductCustomizable = ({
-  data: { contentfulProduct, shopifyProduct, yotpoProductBottomline, site },
-  location: any,
-}: Props) => {
+const ProductCustomizable = ({ data, location: any }: Props) => {
+  const {
+    contentfulProduct,
+    shopifyProduct,
+    yotpoProductBottomline,
+    site,
+    contentfulHomepage: { enableBogo },
+  } = data
+
   const { siteUrl } = site.siteMetadata
 
   // cart
@@ -440,26 +470,55 @@ const ProductCustomizable = ({
     shopifyProduct.variants.length
   )
 
+  const reviewListRef = useRef<HTMLDivElement>(null)
+
   // ref to toggle disable classes on buttons
   const actionsRef = useRef<HTMLDivElement>(null)
 
   const seoDescription = contentfulProduct.styleDescription.styleDescription
 
-  // badge logic
+  const isExcludedFromDeals = shopifyProduct.title.includes("Mooneyes")
+
+  const isClearanceVariant =
+    selectedVariant.shopify.product.tags.includes("Clearance") &&
+    selectedVariant.shopify.compareAtPrice &&
+    isDiscounted(
+      selectedVariant.shopify.price,
+      selectedVariant.shopify.compareAtPrice
+    )
+
+  const getSelectedVariantOptionName = (variant: any) => {
+    try {
+      const optionName = variant.selectedOptions.find(c => c.name === "Color")
+      const optionValue = optionName ? optionName.value : ""
+      const colorName = optionValue.split("-")[0].trim()
+      return colorName
+    } catch (e) {
+      return ""
+    }
+  }
+
+  // if color option is new
+  const isNewVariant = (variant: any): boolean => {
+    const colorName = getSelectedVariantOptionName(variant)
+    const tags = shopifyProduct.tags
+    if (tags.includes(`new_color:${colorName}` || `new_color: ${colorName}`)) {
+      return true
+    }
+
+    return false
+  }
 
   const getBadge = (): { label: string; color: string } | null => {
     try {
       // bogo is enabled and product is not a mooneyes product
-      if (
-        badgeConfig &&
-        badgeConfig.bogo &&
-        !shopifyProduct.title.includes("Mooneyes")
-      ) {
+      if (enableBogo && !isExcludedFromDeals) {
         return {
           label: "BOGO",
           color: "#0ee2e2",
         }
       }
+      // check if product is on sale
       const price = selectedVariant.shopify.price
       const compareAtPrice = selectedVariant.shopify.compareAtPrice
       if (compareAtPrice && isDiscounted(price, compareAtPrice)) {
@@ -955,6 +1014,7 @@ const ProductCustomizable = ({
               />
               <div className="heading">
                 <h1>{shopifyProduct.title}</h1>
+                <ProductBottomline reviewListRef={reviewListRef} />
                 <p className="fit">
                   Size: {contentfulProduct && contentfulProduct.fitDimensions}{" "}
                   <span>
@@ -982,36 +1042,49 @@ const ProductCustomizable = ({
 
                 <div className="buttons">
                   {contentfulProduct &&
-                    contentfulProduct.variants.map((variant: any) => (
-                      <button
-                        key={variant.id}
-                        type="button"
-                        data-active={
-                          variant.id === selectedVariant.contentful.id
-                        }
-                        onClick={e => selectVariant(e, variant)}
-                        aria-label={`Color option ${variant.colorImage.title}`}
-                        aria-pressed={
-                          variant.id === selectedVariant.contentful.id
-                            ? "true"
-                            : "false"
-                        }
-                      >
-                        {variant.colorImage ? (
-                          <Img
-                            image={variant.colorImage.data}
-                            alt={variant.colorImage.title}
-                          />
-                        ) : (
-                          <StaticImage
-                            src="../images/empty-color.png"
-                            alt="Tres Noir"
-                            placeholder="tracedSVG"
-                            layout="constrained"
-                          />
-                        )}
-                      </button>
-                    ))}
+                    contentfulProduct.variants.map((variant: any) => {
+                      const shopifyVariant = shopifyProduct.variants.find(
+                        v => v.sku === variant.sku
+                      )
+                      return (
+                        <button
+                          key={variant.id}
+                          type="button"
+                          data-active={
+                            variant.id === selectedVariant.contentful.id
+                          }
+                          onClick={e => selectVariant(e, variant)}
+                          aria-label={`Color option ${variant.colorImage.title}`}
+                          aria-pressed={
+                            variant.id === selectedVariant.contentful.id
+                              ? "true"
+                              : "false"
+                          }
+                        >
+                          {variant.colorImage ? (
+                            <div className="option-color-image-container">
+                              <Img
+                                image={variant.colorImage.data}
+                                alt={variant.colorImage.title}
+                              />
+                              {shopifyVariant &&
+                                isNewVariant(shopifyVariant) && (
+                                  <div className="new-color-badge">
+                                    <span>New</span>
+                                  </div>
+                                )}
+                            </div>
+                          ) : (
+                            <StaticImage
+                              src="../images/empty-color.png"
+                              alt="Tres Noir"
+                              placeholder="dominantColor"
+                              layout="constrained"
+                            />
+                          )}
+                        </button>
+                      )
+                    })}
                 </div>
                 <div className="price">
                   <div className="value">
@@ -1054,9 +1127,15 @@ const ProductCustomizable = ({
                 <div className="actions" ref={actionsRef}>
                   {lensType === LensType.SUNGLASSES && (
                     <>
-                      <div className="polarized-actions" id="polarized-toggle">
+                      <div
+                        className={`polarized-actions ${
+                          isClearanceVariant ? "disabled-polarize-action" : ""
+                        }`}
+                        id="polarized-toggle"
+                      >
                         <div className="polarized-switch">
                           <input
+                            disabled={isClearanceVariant}
                             type="checkbox"
                             id="switch"
                             checked={isPolarized}
@@ -1154,7 +1233,7 @@ const ProductCustomizable = ({
           )}
           <Divider />
           <div className="row-no-flex review-row">
-            <Reviews />
+            <Reviews reviewListRef={reviewListRef} />
           </div>
         </Page>
       </Layout>
@@ -1171,6 +1250,9 @@ export const query = graphql`
         siteUrl
       }
     }
+    contentfulHomepage {
+      enableBogo
+    }
     yotpoProductBottomline(productIdentifier: { eq: $legacyResourceId }) {
       totalReviews
       score
@@ -1185,7 +1267,11 @@ export const query = graphql`
       fitDimensions
       casesAvailable
       featuredStyles {
-        data: gatsbyImageData(placeholder: TRACED_SVG, quality: 60, width: 800)
+        data: gatsbyImageData(
+          placeholder: DOMINANT_COLOR
+          quality: 60
+          width: 800
+        )
         title
       }
       variants {
@@ -1211,7 +1297,7 @@ export const query = graphql`
         customizations {
           gradientTintSmokeLenses {
             data: gatsbyImageData(
-              placeholder: TRACED_SVG
+              placeholder: DOMINANT_COLOR
               quality: 60
               width: 800
             )
@@ -1219,7 +1305,7 @@ export const query = graphql`
           }
           gradientTintBrownLenses {
             data: gatsbyImageData(
-              placeholder: TRACED_SVG
+              placeholder: DOMINANT_COLOR
               quality: 60
               width: 800
             )
@@ -1227,7 +1313,7 @@ export const query = graphql`
           }
           gradientTintG15Lenses {
             data: gatsbyImageData(
-              placeholder: TRACED_SVG
+              placeholder: DOMINANT_COLOR
               quality: 60
               width: 800
             )
@@ -1235,7 +1321,7 @@ export const query = graphql`
           }
           sunGlassesSmokeLenses {
             data: gatsbyImageData(
-              placeholder: TRACED_SVG
+              placeholder: DOMINANT_COLOR
               quality: 60
               width: 800
             )
@@ -1243,7 +1329,7 @@ export const query = graphql`
           }
           sunGlassesBrownLenses {
             data: gatsbyImageData(
-              placeholder: TRACED_SVG
+              placeholder: DOMINANT_COLOR
               quality: 60
               width: 800
             )
@@ -1251,7 +1337,7 @@ export const query = graphql`
           }
           sunGlassesGreenLenses {
             data: gatsbyImageData(
-              placeholder: TRACED_SVG
+              placeholder: DOMINANT_COLOR
               quality: 60
               width: 800
             )
@@ -1259,7 +1345,7 @@ export const query = graphql`
           }
           sunGlassesOrangeLenses {
             data: gatsbyImageData(
-              placeholder: TRACED_SVG
+              placeholder: DOMINANT_COLOR
               quality: 60
               width: 800
             )
@@ -1267,7 +1353,7 @@ export const query = graphql`
           }
           sunGlassesYellowLenses {
             data: gatsbyImageData(
-              placeholder: TRACED_SVG
+              placeholder: DOMINANT_COLOR
               quality: 60
               width: 800
             )
@@ -1275,7 +1361,7 @@ export const query = graphql`
           }
           sunGlassesBlueLenses {
             data: gatsbyImageData(
-              placeholder: TRACED_SVG
+              placeholder: DOMINANT_COLOR
               quality: 60
               width: 800
             )
@@ -1283,7 +1369,7 @@ export const query = graphql`
           }
           sunGlassesG15Lenses {
             data: gatsbyImageData(
-              placeholder: TRACED_SVG
+              placeholder: DOMINANT_COLOR
               quality: 60
               width: 800
             )
@@ -1311,6 +1397,7 @@ export const query = graphql`
       productType
       title
       vendor
+      tags
       variants {
         availableForSale
         id
@@ -1321,6 +1408,10 @@ export const query = graphql`
         storefrontId
         selectedOptions {
           name
+          value
+        }
+        product {
+          tags
         }
         metafields {
           key

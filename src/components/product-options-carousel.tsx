@@ -9,6 +9,11 @@ import { ContentfulProductVariant } from "../types/contentful"
 import "swiper/css"
 
 const Component = styled.div`
+  .six-variants {
+    @media screen and (min-width: 1200px) {
+      display: none;
+    }
+  }
   .navigation {
     display: flex;
     flex-direction: row;
@@ -32,6 +37,26 @@ const Component = styled.div`
     svg {
       color: var(--color-grey-light);
     }
+  }
+  .new-color-badge {
+    position: absolute;
+    font-size: 10px;
+    border-radius: 4px;
+    padding: 0px 3px;
+    background-color: red;
+    top: 0px;
+    right: 4px;
+    line-height: 15px;
+    span {
+      text-transform: uppercase;
+      color: white;
+      font-family: var(--sub-heading-font);
+      margin: 0;
+      padding: 0;
+    }
+  }
+  .relative {
+    position: relative;
   }
 `
 
@@ -62,11 +87,16 @@ const StyledSwiper = styled(Swiper)`
   }
 `
 
+type ExtendedContentfulProductVariant = ContentfulProductVariant & {
+  optionName: string
+}
+
 interface Props {
   uniqueId: string
-  variants: ContentfulProductVariant[]
+  variants: ExtendedContentfulProductVariant[]
   clickHandler: (variant) => void
   color: null | string
+  tags: string[]
 }
 
 const ProductOptionsCarousel = ({
@@ -74,12 +104,19 @@ const ProductOptionsCarousel = ({
   variants,
   clickHandler,
   color,
+  tags,
 }: Props) => {
   const sliderRef = useRef(null)
   const mounted = useRef(false)
   const swiperRef = useRef(null) as any
 
   const [activeIndex, setActiveIndex] = useState<number>(0)
+
+  const minVariantLength = 4
+
+  const showNavigation = variants.length > minVariantLength
+
+  const hasMaxSix = variants.length <= 6
 
   useEffect(() => {
     mounted.current = true
@@ -132,9 +169,14 @@ const ProductOptionsCarousel = ({
   return (
     <Component ref={sliderRef}>
       <div className="navigation">
-        {variants.length > 6 ? (
+        {showNavigation ? (
           <div className="nav-prev">
-            <a className={`prev ${uniqueId}-prev`} role="button">
+            <a
+              className={`prev ${uniqueId}-prev ${
+                hasMaxSix ? "six-variants" : ""
+              }`}
+              role="button"
+            >
               <Left />
             </a>
           </div>
@@ -152,14 +194,6 @@ const ProductOptionsCarousel = ({
               slidesPerView: 4,
               spaceBetween: 1,
             },
-            "768": {
-              slidesPerView: 4,
-              spaceBetween: 1,
-            },
-            "1024": {
-              slidesPerView: 5,
-              spaceBetween: 1,
-            },
             "1200": {
               slidesPerView: 6,
               spaceBetween: 1,
@@ -169,7 +203,7 @@ const ProductOptionsCarousel = ({
           initialSlide={0}
           modules={[Navigation]}
           navigation={
-            variants.length > 6
+            showNavigation
               ? {
                   nextEl: `.${uniqueId}-next`,
                   prevEl: `.${uniqueId}-prev`,
@@ -186,32 +220,63 @@ const ProductOptionsCarousel = ({
           threshold={15}
           watchSlidesProgress
         >
-          {variants.map((variant: ContentfulProductVariant, i: number) => (
-            <SwiperSlide
-              key={`${uniqueId}-${i}`}
-              onClick={() => {
-                clickHandler(variant)
-                setActiveIndex(i)
-              }}
-              className={`option ${i === activeIndex ? "active-option" : ""}`}
-              data-frame-colors={variant.frameColor}
-              data-dominant-color={variant.dominantFrameColor}
-              data-index={i}
-            >
-              <OptionImage className="option-image">
-                <GatsbyImage
-                  image={variant.colorImage.data}
-                  alt={variant.colorName}
-                  loading="eager"
-                />
-              </OptionImage>
-            </SwiperSlide>
-          ))}
+          {variants.map(
+            (variant: ExtendedContentfulProductVariant, i: number) => {
+              const triggerNew = () => {
+                if (variant.optionName === "") return false
+                if (
+                  tags.includes(`new_color:${variant.optionName}`) ||
+                  tags.includes(`new_color :${variant.optionName}`)
+                ) {
+                  return true
+                }
+                return false
+              }
+
+              const isNew = triggerNew()
+
+              return (
+                <SwiperSlide
+                  key={`${uniqueId}-${i}`}
+                  onClick={() => {
+                    clickHandler(variant)
+                    setActiveIndex(i)
+                  }}
+                  className={`option ${
+                    i === activeIndex ? "active-option" : ""
+                  }`}
+                  data-frame-colors={variant.frameColor}
+                  data-dominant-color={variant.dominantFrameColor}
+                  data-index={i}
+                >
+                  <div className="relative">
+                    <OptionImage className="option-image">
+                      <GatsbyImage
+                        image={variant.colorImage.data}
+                        alt={variant.colorName}
+                        loading="eager"
+                      />
+                    </OptionImage>
+                  </div>
+                  {isNew && (
+                    <div className="new-color-badge">
+                      <span>New</span>
+                    </div>
+                  )}
+                </SwiperSlide>
+              )
+            }
+          )}
         </StyledSwiper>
 
-        {variants.length > 6 ? (
+        {showNavigation ? (
           <div className="nav-next">
-            <a className={`next ${uniqueId}-next`} role="button">
+            <a
+              className={`next ${uniqueId}-next ${
+                hasMaxSix ? "six-variants" : ""
+              }`}
+              role="button"
+            >
               <Right />
             </a>
           </div>

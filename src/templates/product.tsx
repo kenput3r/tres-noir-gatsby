@@ -1,4 +1,10 @@
-import React, { useState, useContext, ChangeEvent, useEffect } from "react"
+import React, {
+  useState,
+  useContext,
+  ChangeEvent,
+  useEffect,
+  useRef,
+} from "react"
 import { graphql } from "gatsby"
 import { CartContext } from "../contexts/cart"
 import styled from "styled-components"
@@ -15,6 +21,7 @@ import type { YotpoSourceProductBottomLine } from "../types/yotpo"
 import { isDiscounted } from "../helpers/shopify"
 import Divider from "../components/divider"
 import Badge from "../components/badge"
+import ProductBottomline from "../components/product-bottomline"
 
 const Page = styled.div`
   .shipping-message {
@@ -235,6 +242,8 @@ const Product = ({
     shopifyProduct.variants.length
   )
 
+  const reviewListRef = useRef<HTMLDivElement>(null)
+
   // fire viewed product event
   useEffect(() => {
     const productData = {
@@ -440,10 +449,14 @@ const Product = ({
         <SEO
           title={shopifyProduct.title}
           description={shopifyProduct.description}
-          image={{
-            url: shopifyProduct.featuredImage.originalSrc,
-            alt: shopifyProduct.featuredImage.altText,
-          }}
+          image={
+            shopifyProduct.featuredImage
+              ? {
+                  url: shopifyProduct.featuredImage.originalSrc,
+                  alt: shopifyProduct.featuredImage.altText,
+                }
+              : undefined
+          }
           jsonLdPayload={generateProductJsonLD()}
         />
         <Page>
@@ -457,6 +470,7 @@ const Product = ({
             <div className="col">
               <div className="heading">
                 <h1>{shopifyProduct.title}</h1>
+                <ProductBottomline reviewListRef={reviewListRef} />
                 <form>
                   <div className="product-dropdown">
                     {!shopifyProduct.hasOnlyDefaultVariant && (
@@ -559,7 +573,7 @@ const Product = ({
           <YouMayAlsoLike shopifyProduct={shopifyProduct} />
           <Divider className="r-divider" />
           <div className="review-row">
-            <Reviews />
+            <Reviews reviewListRef={reviewListRef} />
           </div>
         </Page>
       </Layout>

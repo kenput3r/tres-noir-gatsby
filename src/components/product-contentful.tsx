@@ -1,5 +1,5 @@
 import React, { useState } from "react"
-import { Link } from "gatsby"
+import { Link, useStaticQuery, graphql } from "gatsby"
 import styled from "styled-components"
 import { GatsbyImage as Img } from "gatsby-plugin-image"
 import {
@@ -12,7 +12,6 @@ import Badge from "./badge"
 import { isDiscounted } from "../helpers/shopify"
 import { useFilterHiddenCustomizableVariants } from "../hooks/useFilterHiddenCustomizableVariants"
 import { useFilterDuplicateFrames } from "../hooks/useFilterDuplicateFrames"
-import { badgeConfig } from "../utils/consts"
 
 const Component = styled.article`
   margin-bottom: 1.45rem;
@@ -79,7 +78,12 @@ interface Props {
   shopifyProduct: {
     title: string
     handle: string
+    tags: string[]
     variants: {
+      selectedOptions: {
+        name: string
+        value: string
+      }[]
       compareAtPrice: string
       price: string
       sku: string
@@ -97,8 +101,20 @@ const ProductContentful = ({
   collectionHandle,
   shopifyProduct,
 }: Props) => {
+  const {
+    contentfulHomepage: { enableBogo },
+  } = useStaticQuery(graphql`
+    query getBOGOBadgeForCollection {
+      contentfulHomepage {
+        enableBogo
+      }
+    }
+  `)
+
   const isSunglasses =
     collectionHandle.includes("sunglasses") || collectionHandle.includes("new")
+  const isExcludedFromDeals =
+    shopifyProduct && shopifyProduct.handle.includes("mooneyes")
   const lensType = isSunglasses ? "sunglasses" : "glasses"
 
   // remove variants marked as 'hidden' in shopify
@@ -117,27 +133,92 @@ const ProductContentful = ({
   const selectVariant = (variant: ContentfulProductVariant) => {
     setSelectedVariant(variant)
   }
+
+  const getTags = () => {
+    try {
+      return shopifyProduct.tags ?? []
+    } catch (error) {
+      return []
+    }
+  }
+  const productTags = getTags()
+
+  const getSelectedVariantOptionName = (variant: any) => {
+    try {
+      const optionName = variant.selectedOptions.find(c => c.name === "Color")
+      const optionValue = optionName ? optionName.value : ""
+      const colorName = optionValue.split("-")[0].trim()
+      return colorName
+    } catch (e) {
+      return ""
+    }
+  }
+
+  const productVariants = data.variants.map(variant => {
+    try {
+      const shopifyVersion = shopifyProduct.variants.find(
+        v => v.sku === variant.sku
+      )
+      const optionName = getSelectedVariantOptionName(shopifyVersion)
+      return {
+        ...variant,
+        optionName: optionName ?? "",
+      }
+    } catch (error) {
+      return { ...variant, optionName: "" }
+    }
+  })
+
+  const variantHasNewColor = (): boolean => {
+    try {
+      return productVariants.some(v => {
+        const colorName = v.optionName
+
+        if (colorName === "") return false
+        if (
+          productTags.some(
+            tag =>
+              tag === `new_color:${colorName}` ||
+              tag === `new_color: ${colorName}`
+          )
+        ) {
+          return true
+        }
+        return false
+      })
+    } catch (e) {
+      return false
+    }
+  }
+
   const getBadge = (): { label: string; color: string } | null => {
     try {
-      // bogo is enabled and product is not a mooneyes product
-      if (
-        badgeConfig &&
-        badgeConfig.bogo &&
-        !shopifyProduct.title.includes("Mooneyes")
-      ) {
+      // bogo is enabled and product is not an exclusion (e.g. Mooneyes products)
+      if (enableBogo && !isExcludedFromDeals) {
         return {
           label: "BOGO",
           color: "#0ee2e2",
         }
       }
-      const price = shopifyProduct.variants[0].price
-      const compareAtPrice = shopifyProduct.variants[0].compareAtPrice
-      if (compareAtPrice && isDiscounted(price, compareAtPrice)) {
+      // only show sale badge if all variants are on sale
+      const allVariantsOnSale = shopifyProduct.variants.every(
+        v => v.compareAtPrice && isDiscounted(v.price, v.compareAtPrice)
+      )
+      if (allVariantsOnSale) {
         return {
           label: "Sale",
           color: "red",
         }
-      } else if (data.collection.some(col => col.handle === "new")) {
+      }
+
+      // new variant color badge
+      if (variantHasNewColor()) {
+        return {
+          label: "New Color",
+          color: "green",
+        }
+      }
+      if (data.collection.some(col => col.handle === "new")) {
         return {
           label: "New",
           color: "#DAA520",
@@ -179,9 +260,10 @@ const ProductContentful = ({
 
       <ProductOptionsCarousel
         uniqueId={`product-${data.id}`}
-        variants={data.variants}
+        variants={productVariants}
         clickHandler={selectVariant}
         color={color}
+        tags={productTags}
       />
     </Component>
   )

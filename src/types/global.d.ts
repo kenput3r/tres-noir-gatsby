@@ -6,6 +6,7 @@ declare module "*.json"
 
 export interface ShopifyVariant {
   sku: string
+  compareAtPrice: string | null
   storefrontId: string
   title: string
   image: {

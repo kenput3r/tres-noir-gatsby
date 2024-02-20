@@ -7,8 +7,23 @@ import styled from "styled-components"
 import { VscClose } from "react-icons/vsc"
 import { Link } from "gatsby"
 import { isDiscounted } from "../../../helpers/shopify"
+import { clearanceProductHandles } from "../../../utils/const"
 
 const Component = styled.div`
+  .fs-cont {
+    display: flex;
+    justify-content: flex-end;
+  }
+  .final-sale-disclaimer {
+    font-family: var(--sub-heading-font);
+    text-align: right;
+    margin: none;
+    font-size: 0.8rem;
+    color: var(--color-grey-dark);
+    text-transform: uppercase;
+    margin-top: 6px;
+    line-height: 15px;
+  }
   .small {
     p {
       margin: none;
@@ -32,6 +47,17 @@ const SunglassesItem = (props: { item: tnItem }) => {
     useContext(CartContext)
 
   const loadingOverlay = useRef<HTMLDivElement>(null)
+
+  // if a sunglasses's product handle is in const variable and isDiscounted, then it is a clearance sale, and we should show the final sale disclaimer
+  const isClearanceSale =
+    clearanceProductHandles.includes(
+      item.lineItems[0].shopifyItem.variant.product.handle
+    ) &&
+    item.lineItems[0].shopifyItem.variant.compareAtPrice &&
+    isDiscounted(
+      item.lineItems[0].shopifyItem.variant.price.amount,
+      item.lineItems[0].shopifyItem.variant.compareAtPrice.amount
+    )
 
   const removeMultipleProducts = async (item: tnItem) => {
     const loadingContainer = loadingOverlay.current?.closest(".cart-products")
@@ -156,6 +182,13 @@ const SunglassesItem = (props: { item: tnItem }) => {
               )
             )}
           </div>
+          {isClearanceSale && (
+            <div className="fs-cont">
+              <span className="final-sale-disclaimer">
+                Final sale. No returns or exchanges.
+              </span>
+            </div>
+          )}
         </div>
       </div>
     </Component>
