@@ -22,8 +22,12 @@ const Component = styled.article`
   .product-title {
     font-weight: bold;
     text-transform: uppercase;
-    font-size: 32px;
-    line-height: 35px;
+    font-size: 20px;
+    line-height: 22px;
+    @media screen and (min-width: 1024px) {
+      font-size: 22px;
+      line-height: 24px;
+    }
     margin-bottom: 5px;
     a {
       color: #000;
@@ -33,8 +37,18 @@ const Component = styled.article`
   .product-price {
     text-transform: uppercase;
     color: #808080;
-    font-size: 32px;
-    line-height: 35px;
+    font-size: 16px;
+    line-height: 19px;
+    font-family: var(--sub-heading-font);
+    @media screen and (min-width: 1024px) {
+      font-size: 18px;
+      line-height: 20px;
+    }
+  }
+  .aspect-tn {
+    object-fit: cover;
+    object-position: center;
+    aspect-ratio: 3/2;
   }
 `
 
@@ -47,7 +61,7 @@ const Hit = ({ hit }: { hit: Props }) => {
   return (
     <Component>
       <Link to={`/products/${hit.handle}`}>
-        <img src={hit.image} alt={hit.title} />
+        <img src={hit.image} alt={hit.title} className="aspect-tn" />
       </Link>
       <h3 className="product-title">
         <Link to={`/products/${hit.handle}`}>

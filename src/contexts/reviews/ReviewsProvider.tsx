@@ -39,7 +39,7 @@ export function ReviewsProvider({
         setIsLoading(true)
         const YOTPO_APP_KEY = process.env.GATSBY_YOTPO_APP_KEY as string
         const perPage = YOTPO_REVIEWS_PER_PAGE
-        const url = `https://api-cdn.yotpo.com/v1/widget/${YOTPO_APP_KEY}/products/${productId}/reviews.json?per_page=${perPage}`
+        const url = `https://api-cdn.yotpo.com/v1/widget/${YOTPO_APP_KEY}/products/${productId}/reviews.json?sort=date&per_page=${perPage}`
         const response = await fetch(url, {
           method: "GET",
           headers: {
@@ -66,7 +66,7 @@ export function ReviewsProvider({
       setIsRefetching(true)
       const YOTPO_APP_KEY = process.env.GATSBY_YOTPO_APP_KEY as string
       const perPage = YOTPO_REVIEWS_PER_PAGE
-      const url = `https://api-cdn.yotpo.com/v1/widget/${YOTPO_APP_KEY}/products/${productId}/reviews.json?per_page=${perPage}&page=${pageNumber}`
+      const url = `https://api-cdn.yotpo.com/v1/widget/${YOTPO_APP_KEY}/products/${productId}/reviews.json?sort=date&per_page=${perPage}&page=${pageNumber}`
       const response = await fetch(url, {
         method: "GET",
         headers: {

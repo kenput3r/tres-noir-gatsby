@@ -19,6 +19,7 @@ import { RxInfoContext } from "../../contexts/rxInfo"
 import { FaQuestionCircle } from "react-icons/fa"
 import { LocalCheckout } from "../../types/checkout"
 import { rxType } from "../../types/checkout"
+import { isDiscounted } from "../../helpers/shopify"
 
 const Form = ({
   shopifyCollection,
@@ -589,6 +590,18 @@ const Form = ({
                     {product.title}{" "}
                     <span className="price">
                       {` + $${product.variants[0].price}`}
+                      {product.variants[0].compareAtPrice &&
+                        isDiscounted(
+                          product.variants[0].price,
+                          product.variants[0].compareAtPrice
+                        ) && (
+                          <span>
+                            {" "}
+                            <span className="strikethrough-grey">
+                              ${product.variants[0].compareAtPrice}
+                            </span>
+                          </span>
+                        )}
                     </span>
                   </h4>
                   <p>{product.description}</p>
@@ -660,6 +673,18 @@ const Form = ({
                           {variant.title}
                           <span className="price">
                             {` + $${product.variants[0].price}`}
+                            {product.variants[0].compareAtPrice &&
+                              isDiscounted(
+                                product.variants[0].price,
+                                product.variants[0].compareAtPrice
+                              ) && (
+                                <span>
+                                  {" "}
+                                  <span className="strikethrough-grey">
+                                    ${product.variants[0].compareAtPrice}
+                                  </span>
+                                </span>
+                              )}
                           </span>
                         </h6>
                       </div>
@@ -753,6 +778,7 @@ const Form = ({
                   id="right-axis"
                   defaultValue={rxInfo.right.axis}
                   onChange={evt => handleRx(evt)}
+                  disabled={rxInfo.right.cyl === "0.00"}
                 >
                   <option>{""}</option>
                   {range(1, 180, 1, "right-axis").map(el => {
@@ -779,6 +805,9 @@ const Form = ({
                   id="right-add"
                   defaultValue={rxInfo.right.add}
                   onChange={evt => handleRx(evt)}
+                  disabled={
+                    selectedVariants.step1.product.title === "Single Vision"
+                  }
                 >
                   <option>{""}</option>
                   {range(0, 3.5, 0.25, "right-add").map(el => {
@@ -848,6 +877,7 @@ const Form = ({
                   id="left-axis"
                   defaultValue={rxInfo.left.axis}
                   onChange={evt => handleRx(evt)}
+                  disabled={rxInfo.left.cyl === "0.00"}
                 >
                   <option>{""}</option>
                   {range(1, 180, 1, "left-axis").map(el => (
@@ -872,6 +902,9 @@ const Form = ({
                   id="left-add"
                   defaultValue={rxInfo.left.add}
                   onChange={evt => handleRx(evt)}
+                  disabled={
+                    selectedVariants.step1.product.title === "Single Vision"
+                  }
                 >
                   <option>{""}</option>
                   {range(0, 3.5, 0.25, "left-add").map(el => (

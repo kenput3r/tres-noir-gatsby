@@ -24,6 +24,7 @@ export const shopifyProductsFields = graphql`
     }
     title
     variants {
+      compareAtPrice
       sku
       storefrontId
       legacyResourceId

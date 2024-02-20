@@ -146,6 +146,13 @@ const Page = styled.div`
       }
     }
   }
+  .sale-hero {
+    @media screen and (max-width: 600px) {
+      min-height: 210px;
+    }
+    object-fit: cover;
+    object-position: center;
+  }
 `
 
 const IndexPage = ({
@@ -153,6 +160,7 @@ const IndexPage = ({
 }: {
   data: HomePageQuery
 }) => {
+  const { enableSaleHero, saleHero } = contentfulHomepage
   const generateJsonLd = () => {
     try {
       const schema = {
@@ -175,6 +183,16 @@ const IndexPage = ({
       />
       <Page>
         <FreeShipping />
+
+        {enableSaleHero && (
+          <div className="container">
+            <GatsbyImage
+              image={saleHero.gatsbyImageData}
+              alt="Sale Hero"
+              class="sale-hero"
+            />
+          </div>
+        )}
         <div className="hero container">
           <div className="featured">
             <GatsbyImage
@@ -244,6 +262,10 @@ export default IndexPage
 
 interface HomePageQuery {
   contentfulHomepage: {
+    enableSaleHero: boolean
+    saleHero: {
+      gatsbyImageData: IGatsbyImageData
+    }
     hero: {
       gatsbyImageData: IGatsbyImageData
     }
@@ -272,6 +294,10 @@ interface HomePageQuery {
 export const query = graphql`
   query HomepageQuery {
     contentfulHomepage {
+      enableSaleHero
+      saleHero {
+        gatsbyImageData
+      }
       hero {
         gatsbyImageData
       }

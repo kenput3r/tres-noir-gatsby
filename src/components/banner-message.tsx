@@ -1,6 +1,6 @@
 import React from "react"
 import styled from "styled-components"
-import { BANNER_MESSAGE } from "../utils/consts"
+import { useStaticQuery, graphql } from "gatsby"
 
 const Component = styled.div`
   background-color: #a30000;
@@ -18,9 +18,16 @@ const Component = styled.div`
 `
 
 const BannerMessage = () => {
-  return BANNER_MESSAGE && BANNER_MESSAGE !== "" ? (
-    <Component>{BANNER_MESSAGE}</Component>
-  ) : null
+  const data = useStaticQuery(graphql`
+    query getBannerMessage {
+      contentfulHomepage {
+        bannerMessage
+        bannerMessageToggle
+      }
+    }
+  `)
+  const { bannerMessage, bannerMessageToggle } = data.contentfulHomepage
+  return bannerMessageToggle && <Component>{bannerMessage}</Component>
 }
 
 export default BannerMessage

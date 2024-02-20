@@ -16,6 +16,10 @@ export interface ContentfulProductVariant {
   frameColor: string[]
   dominantFrameColor: string
   lensColor: string
+  product: {
+    handle: string
+    title: string
+  }[]
 }
 
 export interface ContentfulProduct {
@@ -33,6 +37,8 @@ export interface ContentfulProduct {
 export interface ContentfulCollection {
   handle: string
   name: string
+  description: string
+  showOverlay: boolean
   featuredImage: {
     data: IGatsbyImageData
     description: string

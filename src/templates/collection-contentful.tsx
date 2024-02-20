@@ -50,7 +50,7 @@ const CollectionContentful = ({
 
     const shopifyProduct = shopifyCollection.products.find(
       shopifyProduct =>
-        shopifyProduct.handle === product.handle ||
+        shopifyProduct.handle.toLowerCase() === product.handle.toLowerCase() ||
         shopifyProduct.title === product.title
     )
 
@@ -73,9 +73,10 @@ const CollectionContentful = ({
           <CollectionImage
             collectionImage={collection.featuredImage.data}
             collectionName={collection.name}
-            collectionDescription={collection.featuredImage.description}
+            collectionDescription={collection.description}
             textColor={collection.featuredImageTextColor}
             position={collection.featuredImageTextPosition}
+            showOverlay={collection.showOverlay}
           />
         )}
 
@@ -93,6 +94,7 @@ const CollectionContentful = ({
             Array.from(products.slice(0, 6)).map(
               (product: ContentfulProduct) => {
                 const shopifyProduct = getShopifyProduct(product)
+
                 return (
                   <Product
                     key={product.id}
@@ -110,16 +112,14 @@ const CollectionContentful = ({
         </Grid>
 
         {collection.featuredImage2 && products.length > 6 && (
-          <CollectionImage
-            collectionImage={collection.featuredImage2.data}
-            collectionName={collection.name}
-          />
+          <CollectionImage collectionImage={collection.featuredImage2.data} />
         )}
 
         <Grid>
           {products.length > 6 &&
             Array.from(products.slice(6)).map((product: ContentfulProduct) => {
               const shopifyProduct = getShopifyProduct(product)
+
               return (
                 <Product
                   key={product.id}
@@ -143,6 +143,8 @@ export const query = graphql`
     contentfulCollection(handle: { eq: $handle }) {
       handle
       name
+      description
+      showOverlay
       featuredImage {
         data: gatsbyImageData(width: 2048, formats: [AUTO, WEBP], quality: 50)
         description
@@ -195,6 +197,7 @@ export const query = graphql`
         title
         handle
         createdAt
+        tags
         variants {
           price
           compareAtPrice
@@ -202,6 +205,10 @@ export const query = graphql`
           metafields {
             key
             namespace
+            value
+          }
+          selectedOptions {
+            name
             value
           }
         }

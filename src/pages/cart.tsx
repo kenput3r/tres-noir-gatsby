@@ -1,5 +1,5 @@
 import React, { useEffect, useContext, useRef, useState } from "react"
-import { Link, navigate } from "gatsby"
+import { Link, navigate, useStaticQuery, graphql } from "gatsby"
 import { GatsbyImage, StaticImage } from "gatsby-plugin-image"
 import styled from "styled-components"
 import Layout from "../components/layout"
@@ -16,8 +16,7 @@ import { SelectedVariants, SelectedVariantStorage } from "../types/global"
 import { CustomizeContext } from "../contexts/customize"
 import { RxInfoContext } from "../contexts/rxInfo"
 import { isDiscounted } from "../helpers/shopify"
-
-import { CART_MESSAGE } from "../utils/consts"
+import { clearanceProductHandles } from "../utils/const"
 
 const LoaderContainer = styled.div`
   position: fixed;
@@ -32,6 +31,11 @@ const LoaderContainer = styled.div`
 `
 
 const Page = styled.div`
+  .final-sale-disclaimer {
+    font-family: var(--sub-heading-font);
+    text-align: right;
+    text-transform: none;
+  }
   .cart-message {
     border: 1px solid;
     background: white;
@@ -173,6 +177,7 @@ const Page = styled.div`
         text-decoration: none;
         text-transform: uppercase;
         font-family: var(--heading-font);
+        appearance: button;
         -webkit-appearance: button-bevel;
         :hover {
           cursor: pointer;
@@ -276,6 +281,17 @@ const Cart = () => {
 
   const { setSelectedVariants, setCurrentStep, setHasSavedCustomized } =
     useContext(CustomizeContext)
+
+  const {
+    contentfulHomepage: { cartMessage, cartMessageToggle },
+  } = useStaticQuery(graphql`
+    query getCartMessageForPage {
+      contentfulHomepage {
+        cartMessage
+        cartMessageToggle
+      }
+    }
+  `)
 
   const stepMap = new Map()
   stepMap.set(1, "RX TYPE")
@@ -552,6 +568,16 @@ const Cart = () => {
     const sunglassesStepMap = new Map()
     sunglassesStepMap.set(1, "CASE")
     const hasDiscount = checkForDiscountInBundle(item.lineItems)
+    // if a sunglasses's product handle is in const variable and isDiscounted, then it is a clearance sale, and we should show the final sale disclaimer
+    const isClearanceSale =
+      clearanceProductHandles.includes(
+        item.lineItems[0].shopifyItem.variant.product.handle
+      ) &&
+      item.lineItems[0].shopifyItem.variant.compareAtPrice &&
+      isDiscounted(
+        item.lineItems[0].shopifyItem.variant.price.amount,
+        item.lineItems[0].shopifyItem.variant.compareAtPrice.amount
+      )
 
     return (
       <li key={item.id} className="customized">
@@ -667,6 +693,11 @@ const Cart = () => {
                     ${totalSum(item.lineItems)}
                   </span>
                 </div>
+                {isClearanceSale && (
+                  <span className="final-sale-disclaimer">
+                    Final sale. No returns or exchanges.
+                  </span>
+                )}
               </div>
             </div>
           </div>
@@ -829,95 +860,91 @@ const Cart = () => {
     )
   }
 
-  const renderContent = () => {
-    if (checkout) {
-      if (checkout?.lineItems.length === 0) {
-        return (
-          <section className="empty-cart">
-            <h1>Cart</h1>
-            <div className="grey-background">
-              <div className="empty-flex">
-                <figure>
-                  <picture>
-                    <StaticImage
-                      src="../images/empty-cart.png"
-                      alt="Empty cart icon."
-                      height={225}
-                    ></StaticImage>
-                  </picture>
-                </figure>
-                <p>Your cart is empty.</p>
-                <Link to={"/"} className="btn">
-                  CONTINUE SHOPPING
-                </Link>
-              </div>
-            </div>
-          </section>
-        )
-      } else {
-        return (
-          <section>
-            <div className="grey-background" ref={loadingOverlay}>
-              <section className="cart-items cart-wrapper wrapper">
-                <h2>
-                  Your cart:{" "}
-                  <span className="total">
-                    ${Number(checkout.subtotalPrice.amount).toFixed(2)}
-                  </span>
-                </h2>
-                <ul>
-                  {checkout &&
-                    checkout.tnLineItems &&
-                    checkout.tnLineItems.map((item: tnItem) => {
-                      if (item) {
-                        if (item.isCustom) {
-                          return renderCustomProduct(item)
-                        } else if (item.lineItems.length === 2) {
-                          return renderSunglasses(item)
-                        }
-                        return renderStandardProduct(item)
-                      }
-                    })}
-                </ul>
-                <div className="subtotal">
-                  <p>
-                    Subtotal:{" "}
-                    <span className="total">
-                      ${Number(checkout.subtotalPrice.amount).toFixed(2)}
-                    </span>
-                  </p>
-                  <p>Delivery & Taxes are calculated at checkout.</p>
-                  {CART_MESSAGE && CART_MESSAGE !== "" && (
-                    <p className="cart-message">{CART_MESSAGE}</p>
-                  )}
-                </div>
-                <div className="btn-container">
-                  <a href={checkout.webUrl} className="btn checkout">
-                    Check Out
-                  </a>
-                </div>
-              </section>
-            </div>
-            <section className="cart-wrapper wrapper">
-              <UpsellCart />
-            </section>
-            {isRemovingFromCart && (
-              <LoaderContainer>
-                <Loader />
-              </LoaderContainer>
-            )}
-          </section>
-        )
-      }
-    } else {
-      return <Loader />
-    }
-  }
-
   return (
     <Layout>
       <SEO title="Cart" />
-      <Page>{renderContent()}</Page>
+      <Page>
+        {!checkout ? (
+          <Loader />
+        ) : (
+          <>
+            {!checkout.lineItems.length ? (
+              <section className="empty-cart">
+                <h1>Cart</h1>
+                <div className="grey-background">
+                  <div className="empty-flex">
+                    <figure>
+                      <picture>
+                        <StaticImage
+                          src="../images/empty-cart.png"
+                          alt="Empty cart icon."
+                          height={225}
+                        ></StaticImage>
+                      </picture>
+                    </figure>
+                    <p>Your cart is empty.</p>
+                    <Link to={"/"} className="btn">
+                      CONTINUE SHOPPING
+                    </Link>
+                  </div>
+                </div>
+              </section>
+            ) : (
+              <section>
+                <div className="grey-background" ref={loadingOverlay}>
+                  <section className="cart-items cart-wrapper wrapper">
+                    <h2>
+                      Your cart:{" "}
+                      <span className="total">
+                        ${Number(checkout.subtotalPrice.amount).toFixed(2)}
+                      </span>
+                    </h2>
+                    <ul>
+                      {checkout &&
+                        checkout.tnLineItems &&
+                        checkout.tnLineItems.map((item: tnItem) => {
+                          if (item) {
+                            if (item.isCustom) {
+                              return renderCustomProduct(item)
+                            } else if (item.lineItems.length === 2) {
+                              return renderSunglasses(item)
+                            }
+                            return renderStandardProduct(item)
+                          }
+                        })}
+                    </ul>
+                    <div className="subtotal">
+                      <p>
+                        Subtotal:{" "}
+                        <span className="total">
+                          ${Number(checkout.subtotalPrice.amount).toFixed(2)}
+                        </span>
+                      </p>
+                      <p>Delivery & Taxes are calculated at checkout.</p>
+                      {cartMessageToggle && (
+                        <p className="cart-message">{cartMessage}</p>
+                      )}
+                    </div>
+                    <div className="btn-container">
+                      <a href={checkout.webUrl} className="btn checkout">
+                        Check Out
+                      </a>
+                    </div>
+                  </section>
+                </div>
+                <section className="cart-wrapper wrapper">
+                  <UpsellCart />
+                </section>
+                {isRemovingFromCart && (
+                  <LoaderContainer>
+                    <Loader />
+                  </LoaderContainer>
+                )}
+              </section>
+            )}
+          </>
+        )}
+      </Page>
     </Layout>
   )
 }
