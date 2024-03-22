@@ -1,4 +1,4 @@
-import React, { useContext, useRef } from "react"
+import React, { useContext, useEffect, useRef } from "react"
 import styled from "styled-components"
 import { useStaticQuery, graphql } from "gatsby"
 import { CartContext } from "../../contexts/cart"
@@ -232,6 +232,15 @@ const CartDrawer = () => {
   useClickAway(clickRef, () => {
     setIsCartDrawerOpen(false)
   })
+
+  useEffect(() => {
+    const intevalAmount = 2750
+    const timer = setInterval(() => {
+      setIsCartDrawerOpen(false)
+    }, intevalAmount)
+
+    return () => clearInterval(timer)
+  }, [isCartDrawerOpen])
 
   // React Spring
   const isBrowser = typeof window !== "undefined"
