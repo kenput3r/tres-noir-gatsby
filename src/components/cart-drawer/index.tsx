@@ -234,6 +234,7 @@ const CartDrawer = () => {
   })
 
   useEffect(() => {
+    if (!isCartDrawerOpen) return
     const intevalAmount = 2750
     const timer = setInterval(() => {
       setIsCartDrawerOpen(false)
