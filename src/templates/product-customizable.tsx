@@ -5,39 +5,39 @@ import React, {
   useRef,
   ChangeEvent,
   useCallback,
-} from 'react';
-import { Link, graphql, useStaticQuery } from 'gatsby';
-import { StaticImage, GatsbyImage as Img } from 'gatsby-plugin-image';
-import styled from 'styled-components';
-import { useQuantityQuery } from '../hooks/useQuantityQuery';
-import ProductCarousel from '../components/product-carousel';
-import Layout from '../components/layout';
-import SEO from '../components/seo';
-import { CartContext } from '../contexts/cart';
+} from "react"
+import { Link, graphql, useStaticQuery } from "gatsby"
+import { StaticImage, GatsbyImage as Img } from "gatsby-plugin-image"
+import styled from "styled-components"
+import { useQuantityQuery } from "../hooks/useQuantityQuery"
+import ProductCarousel from "../components/product-carousel"
+import Layout from "../components/layout"
+import SEO from "../components/seo"
+import { CartContext } from "../contexts/cart"
 import {
   addedToCartGTMEvent,
   addedCustomizedToCartGTMEvent,
   viewedProductGTMEvent,
-} from '../helpers/gtm';
-import { CustomizeContext } from '../contexts/customize';
-import FreeShipping from '../components/free-shipping';
-import Spinner from '../components/spinner';
-import CaseGridSunglasses from '../components/case-grid-sunglasses';
-import ProductDetails from '../components/product-contentful-details';
-import PolarizedTooltip from '../components/polarize/polarized-tooltip';
-import { useCaseCollection } from '../hooks/useCaseCollection';
-import { useFilterDuplicateFrames } from '../hooks/useFilterDuplicateFrames';
-import { useFilterHiddenCustomizableVariants } from '../hooks/useFilterHiddenCustomizableVariants';
-import { useReviews } from '../contexts/reviews';
-import FeaturedStyles from '../components/featured-styles';
-import ViewAsType from '../components/view-as-type';
-import Reviews from '../components/reviews';
-import { ReviewsProvider } from '../contexts/reviews';
-import type { YotpoSourceProductBottomLine } from '../types/yotpo';
-import { isDiscounted } from '../helpers/shopify';
-import Divider from '../components/divider';
-import Badge from '../components/badge';
-import ProductBottomline from '../components/product-bottomline';
+} from "../helpers/gtm"
+import { CustomizeContext } from "../contexts/customize"
+import FreeShipping from "../components/free-shipping"
+import Spinner from "../components/spinner"
+import CaseGridSunglasses from "../components/case-grid-sunglasses"
+import ProductDetails from "../components/product-contentful-details"
+import PolarizedTooltip from "../components/polarize/polarized-tooltip"
+import { useCaseCollection } from "../hooks/useCaseCollection"
+import { useFilterDuplicateFrames } from "../hooks/useFilterDuplicateFrames"
+import { useFilterHiddenCustomizableVariants } from "../hooks/useFilterHiddenCustomizableVariants"
+import { useReviews } from "../contexts/reviews"
+import FeaturedStyles from "../components/featured-styles"
+import ViewAsType from "../components/view-as-type"
+import Reviews from "../components/reviews"
+import { ReviewsProvider } from "../contexts/reviews"
+import type { YotpoSourceProductBottomLine } from "../types/yotpo"
+import { isDiscounted } from "../helpers/shopify"
+import Divider from "../components/divider"
+import Badge from "../components/badge"
+import ProductBottomline from "../components/product-bottomline"
 
 const Page = styled.div`
   .shipping-message {
@@ -123,7 +123,7 @@ const Page = styled.div`
       margin-right: 5px;
       padding: 5px;
       max-width: 50px;
-      &[data-active='true'] {
+      &[data-active="true"] {
         border-color: #000;
       }
       :hover {
@@ -246,7 +246,7 @@ const Page = styled.div`
     }
     .polarized-switch {
       display: flex;
-      input[type='checkbox'] {
+      input[type="checkbox"] {
         height: 0;
         width: 0;
         visibility: hidden;
@@ -264,7 +264,7 @@ const Page = styled.div`
       }
 
       label:after {
-        content: '';
+        content: "";
         position: absolute;
         top: 3px;
         left: 5px;
@@ -376,23 +376,28 @@ const Page = styled.div`
     cursor: not-allowed;
     opacity: 0.2;
   }
-`;
+`
 type Props = {
   data: {
-    contentfulProduct: any;
-    shopifyProduct: any;
-    yotpoProductBottomline: YotpoSourceProductBottomLine;
+    contentfulProduct: any
+    shopifyProduct: any
+    yotpoProductBottomline: YotpoSourceProductBottomLine
     site: {
       siteMetadata: {
-        siteUrl: string;
-      };
-    };
+        siteUrl: string
+      }
+    }
     contentfulHomepage: {
-      enableBogo: boolean;
-    };
-  };
-  location: any;
-};
+      enableBogo: boolean
+    }
+    contentfulVariantCollection: {
+      variants: {
+        sku: string
+      }[]
+    }
+  }
+  location: any
+}
 const ProductCustomizable = ({ data, location: any }: Props) => {
   const {
     contentfulProduct,
@@ -400,147 +405,159 @@ const ProductCustomizable = ({ data, location: any }: Props) => {
     yotpoProductBottomline,
     site,
     contentfulHomepage: { enableBogo },
-  } = data;
+    contentfulVariantCollection,
+  } = data
 
-  const { siteUrl } = site.siteMetadata;
+  const { siteUrl } = site.siteMetadata
 
   // cart
   const { addProductToCart, isAddingToCart, addSunglassesToCart } =
-    useContext(CartContext);
+    useContext(CartContext)
+
+  const createClearanceSKUs = (data): string[] => {
+    try {
+      const { variants } = data
+      const handles = Array.from(variants.map(variant => variant.sku))
+      return handles as string[]
+    } catch (e) {
+      return []
+    }
+  }
+
+  const clearanceItemsData = contentfulVariantCollection
+  const clearanceSKUs = createClearanceSKUs(clearanceItemsData)
 
   const {
     setSelectedVariantsToDefault,
     setCurrentStep,
     setHasSavedCustomized,
     setProductUrl,
-  } = useContext(CustomizeContext);
+  } = useContext(CustomizeContext)
 
   // remove hidden variants
   contentfulProduct.variants = useFilterHiddenCustomizableVariants(
     contentfulProduct,
     shopifyProduct
-  );
+  )
 
   // check if lens type is set
   enum LensType {
-    GLASSES = 'glasses',
-    SUNGLASSES = 'sunglasses',
+    GLASSES = "glasses",
+    SUNGLASSES = "sunglasses",
   }
 
-  const [lensType, setLensType] = useState<string>('sunglasses');
+  const [lensType, setLensType] = useState<string>("sunglasses")
   contentfulProduct.variants = useFilterDuplicateFrames(
     lensType,
     contentfulProduct.variants
-  );
+  )
 
   const [selectedVariant, setSelectedVariant] = useState({
     contentful: contentfulProduct?.variants && contentfulProduct.variants[0],
     shopify: shopifyProduct.variants.find(
       (variant: any) => variant.sku === contentfulProduct.variants[0].sku
     ),
-  });
+  })
 
   const [polarizedVariant, setPolarizedVariant] = useState({
     contentful: contentfulProduct?.variants && contentfulProduct.variants[0],
     shopify: shopifyProduct.variants.find(
       (variant: any) => variant.sku === contentfulProduct.variants[0].sku
     ),
-  });
-  const caseCollection = useCaseCollection();
+  })
+  const caseCollection = useCaseCollection()
 
   const [selectedCase, setSelectedCase] = useState<any>(
     caseCollection[0].variants[0]
-  );
+  )
 
-  const [showPolarizedModal, setShowPolarizedModal] = useState<boolean>(false);
+  const [showPolarizedModal, setShowPolarizedModal] = useState<boolean>(false)
 
   // used to swap polarized image if the lens color is different from original sku
   const [polarizedImage, setPolarizedImage] = useState<
     {
-      data: any;
-      title: string;
+      data: any
+      title: string
     }[]
-  >([]);
+  >([])
 
-  const [isPolarized, setIsPolarized] = useState<boolean>(false);
+  const [isPolarized, setIsPolarized] = useState<boolean>(false)
 
   // return default Product Page if contentful values do not exist
   const quantityLevels = useQuantityQuery(
     shopifyProduct.handle,
     shopifyProduct.variants.length
-  );
+  )
 
-  const reviewListRef = useRef<HTMLDivElement>(null);
+  const reviewListRef = useRef<HTMLDivElement>(null)
 
   // ref to toggle disable classes on buttons
-  const actionsRef = useRef<HTMLDivElement>(null);
+  const actionsRef = useRef<HTMLDivElement>(null)
 
-  const seoDescription = contentfulProduct.styleDescription.styleDescription;
+  const seoDescription = contentfulProduct.styleDescription.styleDescription
 
-  const isExcludedFromDeals = shopifyProduct.title.includes('Mooneyes');
+  const isExcludedFromDeals = shopifyProduct.title.includes("Mooneyes")
 
   const isClearanceVariantPolarizable =
-    selectedVariant.shopify.product.tags.includes('Clearance') &&
+    clearanceSKUs.includes(selectedVariant.shopify.sku) &&
     selectedVariant.shopify.compareAtPrice &&
-    !selectedVariant.shopify.product.tags.includes('Clearance - Polarized') &&
+    !selectedVariant.shopify.product.tags.includes("Clearance - Polarized") &&
     isDiscounted(
       selectedVariant.shopify.price,
       selectedVariant.shopify.compareAtPrice
-    );
+    )
 
   const getSelectedVariantOptionName = (variant: any) => {
     try {
-      const optionName = variant.selectedOptions.find(
-        (c) => c.name === 'Color'
-      );
-      const optionValue = optionName ? optionName.value : '';
-      const colorName = optionValue.split('-')[0].trim();
-      return colorName;
+      const optionName = variant.selectedOptions.find(c => c.name === "Color")
+      const optionValue = optionName ? optionName.value : ""
+      const colorName = optionValue.split("-")[0].trim()
+      return colorName
     } catch (e) {
-      return '';
+      return ""
     }
-  };
+  }
 
   // if color option is new
   const isNewVariant = (variant: any): boolean => {
-    const colorName = getSelectedVariantOptionName(variant);
-    const tags = shopifyProduct.tags;
+    const colorName = getSelectedVariantOptionName(variant)
+    const tags = shopifyProduct.tags
     if (tags.includes(`new_color:${colorName}` || `new_color: ${colorName}`)) {
-      return true;
+      return true
     }
 
-    return false;
-  };
+    return false
+  }
 
   const getBadge = (): { label: string; color: string } | null => {
     try {
       // bogo is enabled and product is not a mooneyes product
       if (enableBogo && !isExcludedFromDeals) {
         return {
-          label: 'BOGO',
-          color: '#0ee2e2',
-        };
+          label: "BOGO",
+          color: "#0ee2e2",
+        }
       }
       // check if product is on sale
-      const price = selectedVariant.shopify.price;
-      const compareAtPrice = selectedVariant.shopify.compareAtPrice;
+      const price = selectedVariant.shopify.price
+      const compareAtPrice = selectedVariant.shopify.compareAtPrice
       if (compareAtPrice && isDiscounted(price, compareAtPrice)) {
         return {
-          label: 'Sale',
-          color: 'red',
-        };
+          label: "Sale",
+          color: "red",
+        }
       }
-      return null;
+      return null
     } catch (error) {
-      return null;
+      return null
     }
-  };
+  }
 
-  const badge = getBadge();
+  const badge = getBadge()
   // switch selected variant to its polarized counterpart, toggled from switch
   // grey out customize option
   const switchToPolarized = (evt: ChangeEvent<HTMLInputElement>) => {
-    const customizeBtn = actionsRef.current?.querySelector('#customize-btn');
+    const customizeBtn = actionsRef.current?.querySelector("#customize-btn")
     // if switch is toggled
     if (evt.target.checked) {
       if (polarizedVariant) {
@@ -548,130 +565,130 @@ const ProductCustomizable = ({ data, location: any }: Props) => {
         // if it is, use string matching/interpolation to get the correct image
         const defaultLensColor: string = selectedVariant.shopify.title
           .toLowerCase()
-          .split('-')[1]
-          .replace('lens', '')
-          .trim();
+          .split("-")[1]
+          .replace("lens", "")
+          .trim()
         const polarizedLensColor: string = polarizedVariant.shopify.title
           .toLowerCase()
-          .split('-')[1]
-          .replace('lens', '')
-          .replace('polarized', '')
-          .trim();
+          .split("-")[1]
+          .replace("lens", "")
+          .replace("polarized", "")
+          .trim()
         // checks if polarized lens color is different from original lens color for a variant
         if (polarizedLensColor !== defaultLensColor) {
           // prefixes used for contentful image key
-          let imagePrefix = 'sunGlasses';
-          const imageSuffix = 'Lenses';
+          let imagePrefix = "sunGlasses"
+          const imageSuffix = "Lenses"
           // if the polarized image is gradient, change prefix to use gradient contentful image keys
-          if (polarizedLensColor.includes('gradient')) {
-            imagePrefix = 'gradientTint';
+          if (polarizedLensColor.includes("gradient")) {
+            imagePrefix = "gradientTint"
           }
           // format color for contentful image key
-          let formattedLensColor = polarizedLensColor.replace('gradient', '');
+          let formattedLensColor = polarizedLensColor.replace("gradient", "")
           // capitalize color
           formattedLensColor =
             formattedLensColor.charAt(0).toUpperCase() +
-            formattedLensColor.slice(1);
+            formattedLensColor.slice(1)
           // join prefix and suffix to get contentful image key
           const polarizedImageKey =
-            imagePrefix + formattedLensColor + imageSuffix;
+            imagePrefix + formattedLensColor + imageSuffix
 
           const polarizedImageValue =
-            selectedVariant.contentful.customizations[polarizedImageKey];
+            selectedVariant.contentful.customizations[polarizedImageKey]
           // only swap the image if the key is valid, this prevents loading bad images
           if (polarizedImageValue) {
-            setPolarizedImage([polarizedImageValue]);
+            setPolarizedImage([polarizedImageValue])
           }
         }
         // disable customize
-        customizeBtn?.classList.add('disable');
-        setIsPolarized(true);
+        customizeBtn?.classList.add("disable")
+        setIsPolarized(true)
         // set polarized variant to non polarized version
         setPolarizedVariant({
           contentful: selectedVariant.contentful,
           shopify: selectedVariant.shopify,
-        });
+        })
         // set selected variant to polarized version
         setSelectedVariant({
           contentful: selectedVariant.contentful,
           shopify: polarizedVariant.shopify,
-        });
+        })
       }
     }
     // if switch is untoggled
     else {
       if (polarizedVariant) {
         // enable customize
-        customizeBtn?.classList.remove('disable');
+        customizeBtn?.classList.remove("disable")
         // set polarized variant to non polarized version
         setPolarizedVariant({
           contentful: selectedVariant.contentful,
           shopify: selectedVariant.shopify,
-        });
+        })
         // set selected variant to polarized version
         setSelectedVariant({
           contentful: selectedVariant.contentful,
           shopify: polarizedVariant.shopify,
-        });
+        })
       }
       // polarized switch has been set to off, reinitialize state and show old images
-      setIsPolarized(false);
-      setPolarizedImage([]);
+      setIsPolarized(false)
+      setPolarizedImage([])
     }
-  };
+  }
 
   // click event handler for variant options
   const selectVariant = (e: React.MouseEvent, variant: any) => {
     const shopify = shopifyProduct.variants.find(
       (_variant: any) => _variant.sku === variant.sku
-    );
+    )
     if (shopify) {
       // clear polarized image on change
-      setPolarizedImage([]);
-      setIsPolarized(false);
+      setPolarizedImage([])
+      setIsPolarized(false)
       //
       setSelectedVariant({
         contentful: variant,
         shopify,
-      });
+      })
       // update url
       setProductUrl(
         `/products/${contentfulProduct.handle}/?variant=${contentfulProduct.sku}`
-      );
+      )
       // update url
-      const isBrowser = typeof window !== 'undefined';
+      const isBrowser = typeof window !== "undefined"
       if (isBrowser) {
-        const params = new URLSearchParams(location.search);
-        params.set('variant', variant.sku);
-        const { protocol, pathname, host } = window.location;
-        const newUrl = `${protocol}//${host}${pathname}?${params.toString()}`;
-        window.history.replaceState({}, '', newUrl);
+        const params = new URLSearchParams(location.search)
+        params.set("variant", variant.sku)
+        const { protocol, pathname, host } = window.location
+        const newUrl = `${protocol}//${host}${pathname}?${params.toString()}`
+        window.history.replaceState({}, "", newUrl)
       }
     }
-  };
+  }
 
   const handleAddToCart = (e: { preventDefault: () => void }) => {
-    e.preventDefault();
-    const id = selectedVariant.shopify.storefrontId;
+    e.preventDefault()
+    const id = selectedVariant.shopify.storefrontId
     if (lensType !== LensType.GLASSES) {
-      const today = new Date();
-      const matchingKey: string = today.valueOf().toString();
+      const today = new Date()
+      const matchingKey: string = today.valueOf().toString()
       addSunglassesToCart(
         [
           {
             variantId: selectedVariant.shopify.storefrontId,
             quantity: 1,
             customAttributes: [
-              { key: 'customizationId', value: matchingKey },
-              { key: 'customizationStep', value: '1' },
+              { key: "customizationId", value: matchingKey },
+              { key: "customizationStep", value: "1" },
             ],
           },
           {
             variantId: selectedCase.storefrontId,
             quantity: 1,
             customAttributes: [
-              { key: 'customizationId', value: matchingKey },
-              { key: 'customizationStep', value: '2' },
+              { key: "customizationId", value: matchingKey },
+              { key: "customizationStep", value: "2" },
             ],
           },
         ],
@@ -680,7 +697,7 @@ const ProductCustomizable = ({ data, location: any }: Props) => {
           ? polarizedImage[0].data
           : selectedVariant.contentful.imageSet[0].data,
         matchingKey
-      );
+      )
 
       // updated to use case
       const productData = {
@@ -709,24 +726,24 @@ const ProductCustomizable = ({ data, location: any }: Props) => {
             productType: selectedCase.product.productType,
             image: selectedCase?.image?.originalSrc
               ? selectedCase.image?.originalSrc
-              : '',
+              : "",
             url: selectedCase.product.onlineStoreUrl,
             vendor: selectedCase.product.vendor,
             price: selectedCase.price,
-            compareAtPrice: '',
+            compareAtPrice: "",
           },
         ],
-      };
-      addedCustomizedToCartGTMEvent(productData);
+      }
+      addedCustomizedToCartGTMEvent(productData)
 
-      return;
+      return
     }
     addProductToCart(
       id,
       1,
       selectedVariant.shopify.sku,
       selectedVariant.contentful.imageSet[0].data
-    );
+    )
     const productData = {
       title: shopifyProduct.title,
       legacyResourceId: selectedVariant.shopify.legacyResourceId,
@@ -743,136 +760,136 @@ const ProductCustomizable = ({ data, location: any }: Props) => {
         (collection: { title: string }) => collection.title
       ),
       quantity: 1,
-    };
-    addedToCartGTMEvent(productData);
-  };
+    }
+    addedToCartGTMEvent(productData)
+  }
 
   // state handler for toggling between glasses vs sunglasses
-  const swapGlassesType = (type: 'glasses' | 'sunglasses') => {
-    setLensType(type);
-    const isBrowser = typeof window !== 'undefined';
+  const swapGlassesType = (type: "glasses" | "sunglasses") => {
+    setLensType(type)
+    const isBrowser = typeof window !== "undefined"
     if (isBrowser) {
-      const params = new URLSearchParams(location.search);
-      params.set('lens_type', type);
-      const { protocol, pathname, host } = window.location;
-      const newUrl = `${protocol}//${host}${pathname}?${params.toString()}`;
-      window.history.replaceState({}, '', newUrl);
+      const params = new URLSearchParams(location.search)
+      params.set("lens_type", type)
+      const { protocol, pathname, host } = window.location
+      const newUrl = `${protocol}//${host}${pathname}?${params.toString()}`
+      window.history.replaceState({}, "", newUrl)
     }
     // edge case for when current state is polarized
-    if (type === 'glasses') {
+    if (type === "glasses") {
       if (isPolarized) {
         switchToPolarized({
           target: { checked: false },
-        } as ChangeEvent<HTMLInputElement>);
+        } as ChangeEvent<HTMLInputElement>)
       }
-      const customizeBtn = actionsRef.current?.querySelector('#customize-btn');
-      customizeBtn?.classList.remove('disable');
+      const customizeBtn = actionsRef.current?.querySelector("#customize-btn")
+      customizeBtn?.classList.remove("disable")
     }
-  };
+  }
 
   const generateProductContentfulJsonLD = () => {
     try {
-      const name = shopifyProduct.title;
-      const sku = shopifyProduct.variants[0].sku;
+      const name = shopifyProduct.title
+      const sku = shopifyProduct.variants[0].sku
       const color =
-        (contentfulProduct.variants[0].dominantFrameColor as string) ?? '';
-      const price = shopifyProduct.variants[0].price;
+        (contentfulProduct.variants[0].dominantFrameColor as string) ?? ""
+      const price = shopifyProduct.variants[0].price
 
-      const featuredImg = contentfulProduct.variants[0].featuredImage.url;
+      const featuredImg = contentfulProduct.variants[0].featuredImage.url
 
       const description =
-        contentfulProduct.styleDescription.styleDescription ?? '';
+        contentfulProduct.styleDescription.styleDescription ?? ""
 
-      const formattedColor = color.charAt(0).toUpperCase() + color.slice(1); // capitalize color
+      const formattedColor = color.charAt(0).toUpperCase() + color.slice(1) // capitalize color
 
       let productSchema = {
-        '@context': 'https://schema.org/',
-        '@type': 'Product',
+        "@context": "https://schema.org/",
+        "@type": "Product",
         name,
         sku,
         color: formattedColor,
         description,
         image: [featuredImg],
         brand: {
-          '@type': 'Brand',
-          name: 'Tres Noir',
+          "@type": "Brand",
+          name: "Tres Noir",
         },
         offers: {
-          '@type': 'Offer',
+          "@type": "Offer",
           priceSpecification: {
-            '@type': 'PriceSpecification',
+            "@type": "PriceSpecification",
             price,
-            priceCurrency: 'USD',
+            priceCurrency: "USD",
           },
           hasMerchantReturnPolicy: {
-            '@type': 'MerchantReturnPolicy',
-            applicableCountry: 'US',
+            "@type": "MerchantReturnPolicy",
+            applicableCountry: "US",
             returnPolicyCategory:
-              'https://schema.org/MerchantReturnFiniteReturnWindow',
+              "https://schema.org/MerchantReturnFiniteReturnWindow",
             merchantReturnDays: 30,
-            returnMethod: 'https://schema.org/ReturnByMail',
-            returnFees: 'https://schema.org/FreeReturn',
+            returnMethod: "https://schema.org/ReturnByMail",
+            returnFees: "https://schema.org/FreeReturn",
           },
         },
-      };
+      }
       if (yotpoProductBottomline) {
-        const { totalReviews, score } = yotpoProductBottomline;
-        productSchema['aggregateRating'] = {
-          '@type': 'AggregateRating',
+        const { totalReviews, score } = yotpoProductBottomline
+        productSchema["aggregateRating"] = {
+          "@type": "AggregateRating",
           ratingValue: score,
           reviewCount: totalReviews,
-        };
+        }
       }
-      return JSON.stringify(productSchema, null, 2);
+      return JSON.stringify(productSchema, null, 2)
     } catch (error) {
-      return null;
+      return null
     }
-  };
+  }
 
   // use effects
 
   useEffect(() => {
-    let paramSku: null | string = null;
-    const isBrowser = typeof window !== 'undefined';
+    let paramSku: null | string = null
+    const isBrowser = typeof window !== "undefined"
     if (isBrowser) {
-      const params = new URLSearchParams(location.search);
-      if (params.get('lens_type'))
-        setLensType(params.get('lens_type') || 'glasses');
-      if (params.get('variant')) paramSku = params.get('variant');
+      const params = new URLSearchParams(location.search)
+      if (params.get("lens_type"))
+        setLensType(params.get("lens_type") || "glasses")
+      if (params.get("variant")) paramSku = params.get("variant")
     }
 
-    const sku = paramSku || null;
+    const sku = paramSku || null
     if (sku) {
       const contentful = contentfulProduct.variants.find(
         (_variant: any) => _variant.sku === sku
-      );
+      )
       const shopify = shopifyProduct.variants.find(
         (_variant: any) => _variant.sku === sku
-      );
+      )
       if (contentful && shopify) {
-        const variant = contentful;
+        const variant = contentful
         setSelectedVariant({
           contentful: variant,
           shopify,
-        });
+        })
       }
     }
-  }, []);
+  }, [])
 
   useEffect(() => {
     setProductUrl(
       `/products/${contentfulProduct.handle}/?variant=${contentfulProduct.sku}`
-    );
-    setCurrentStep(1);
+    )
+    setCurrentStep(1)
     setHasSavedCustomized({
       step1: false,
       step2: false,
       step3: false,
       step4: false,
       case: false,
-    });
-    setSelectedVariantsToDefault();
-  }, []);
+    })
+    setSelectedVariantsToDefault()
+  }, [])
 
   useEffect(() => {
     const productData = {
@@ -890,19 +907,19 @@ const ProductCustomizable = ({ data, location: any }: Props) => {
       collections: shopifyProduct.collections.map(
         (collection: { title: string }) => collection.title
       ),
-    };
-    viewedProductGTMEvent(productData);
-  }, []);
+    }
+    viewedProductGTMEvent(productData)
+  }, [])
 
   // will swap to the first available variant if selected is sold out
   useEffect(() => {
-    let paramSku: null | string = null;
-    const isBrowser = typeof window !== 'undefined';
+    let paramSku: null | string = null
+    const isBrowser = typeof window !== "undefined"
     if (isBrowser) {
-      const params = new URLSearchParams(location.search);
-      if (params.get('lens_type'))
-        setLensType(params.get('lens_type') || 'glasses');
-      if (params.get('variant')) paramSku = params.get('variant');
+      const params = new URLSearchParams(location.search)
+      if (params.get("lens_type"))
+        setLensType(params.get("lens_type") || "glasses")
+      if (params.get("variant")) paramSku = params.get("variant")
     }
     // if variant not supplied select first available
     if (
@@ -910,71 +927,71 @@ const ProductCustomizable = ({ data, location: any }: Props) => {
       quantityLevels &&
       Object.keys(quantityLevels).length !== 0
     ) {
-      const current = selectedVariant;
+      const current = selectedVariant
       if (quantityLevels[current.shopify.sku] <= 0) {
         for (let key in quantityLevels) {
           if (quantityLevels[key] > 0) {
             const shopify = shopifyProduct.variants.find(
               (_variant: any) => _variant.sku === key
-            );
+            )
             const contentful = contentfulProduct.variants.find(
               (_variant: any) => _variant.sku === key
-            );
+            )
             if (shopify && contentful) {
               setSelectedVariant({
                 contentful: contentful,
                 shopify: shopify,
-              });
+              })
             }
-            break;
+            break
           }
         }
       }
     }
-  }, [quantityLevels]);
+  }, [quantityLevels])
 
   // useEffect for initializing polarizedVariant on selectedVariant change
   useEffect(() => {
-    if (lensType === LensType.GLASSES) return;
-    const contentfulData = selectedVariant.contentful;
-    const sku = selectedVariant.shopify.sku;
+    if (lensType === LensType.GLASSES) return
+    const contentfulData = selectedVariant.contentful
+    const sku = selectedVariant.shopify.sku
     const polVar = shopifyProduct.variants.find(
-      (_variant) =>
+      _variant =>
         _variant.sku === `${sku}PZ` ||
         _variant.sku === `${sku}-PZ` ||
         _variant.sku === `${sku}P` ||
         _variant.sku === `${sku}-P`
-    );
+    )
     const polarizedToggle =
-      actionsRef.current?.querySelector('#polarized-toggle');
-    const customizeBtn = actionsRef.current?.querySelector('#customize-btn');
+      actionsRef.current?.querySelector("#polarized-toggle")
+    const customizeBtn = actionsRef.current?.querySelector("#customize-btn")
     // if current Variant is polarized
     if (
-      selectedVariant.shopify.sku.endsWith('PZ') ||
-      selectedVariant.shopify.sku.endsWith('P')
+      selectedVariant.shopify.sku.endsWith("PZ") ||
+      selectedVariant.shopify.sku.endsWith("P")
     ) {
     }
     // if current variant is not polarized, but has a polarized option
     else if (polVar) {
-      customizeBtn?.classList.remove('disable');
-      polarizedToggle?.classList.remove('disable');
+      customizeBtn?.classList.remove("disable")
+      polarizedToggle?.classList.remove("disable")
       const polarizedSwitch: HTMLInputElement | null | undefined =
-        polarizedToggle?.querySelector('#switch');
-      if (polarizedSwitch) polarizedSwitch.checked = false;
+        polarizedToggle?.querySelector("#switch")
+      if (polarizedSwitch) polarizedSwitch.checked = false
       setPolarizedVariant({
         contentful: contentfulData,
         shopify: polVar,
-      });
+      })
     }
     // if current variant is not polarized and has no polarized options
     else {
-      customizeBtn?.classList.remove('disable');
-      polarizedToggle?.classList.add('disable');
+      customizeBtn?.classList.remove("disable")
+      polarizedToggle?.classList.add("disable")
       const polarizedSwitch: HTMLInputElement | null | undefined =
-        polarizedToggle?.querySelector('#switch');
-      if (polarizedSwitch) polarizedSwitch.checked = false;
+        polarizedToggle?.querySelector("#switch")
+      if (polarizedSwitch) polarizedSwitch.checked = false
     }
-  }, [selectedVariant]);
+  }, [selectedVariant])
 
   return (
     <ReviewsProvider
@@ -1019,25 +1036,25 @@ const ProductCustomizable = ({ data, location: any }: Props) => {
                 <h1>{shopifyProduct.title}</h1>
                 <ProductBottomline reviewListRef={reviewListRef} />
                 <p className="fit">
-                  Size: {contentfulProduct && contentfulProduct.fitDimensions}{' '}
+                  Size: {contentfulProduct && contentfulProduct.fitDimensions}{" "}
                   <span>
                     {contentfulProduct &&
                     contentfulProduct.frameWidth.length > 1
                       ? `${contentfulProduct.frameWidth[0]} to ${
                           contentfulProduct.frameWidth[1]
-                        }${' '}`
-                      : `${contentfulProduct.frameWidth[0]}${' '}`}
+                        }${" "}`
+                      : `${contentfulProduct.frameWidth[0]}${" "}`}
                     fit
                   </span>
                 </p>
               </div>
               <form className="options">
-                {selectedVariant.shopify.title !== 'Default Title' && (
+                {selectedVariant.shopify.title !== "Default Title" && (
                   <p className="selected-text-label">
-                    Color:{' '}
+                    Color:{" "}
                     <span>
                       {lensType === LensType.GLASSES
-                        ? selectedVariant.shopify.title.split(' - ')[0]
+                        ? selectedVariant.shopify.title.split(" - ")[0]
                         : selectedVariant.shopify.title}
                     </span>
                   </p>
@@ -1047,8 +1064,8 @@ const ProductCustomizable = ({ data, location: any }: Props) => {
                   {contentfulProduct &&
                     contentfulProduct.variants.map((variant: any) => {
                       const shopifyVariant = shopifyProduct.variants.find(
-                        (v) => v.sku === variant.sku
-                      );
+                        v => v.sku === variant.sku
+                      )
                       return (
                         <button
                           key={variant.id}
@@ -1056,12 +1073,12 @@ const ProductCustomizable = ({ data, location: any }: Props) => {
                           data-active={
                             variant.id === selectedVariant.contentful.id
                           }
-                          onClick={(e) => selectVariant(e, variant)}
+                          onClick={e => selectVariant(e, variant)}
                           aria-label={`Color option ${variant.colorImage.title}`}
                           aria-pressed={
                             variant.id === selectedVariant.contentful.id
-                              ? 'true'
-                              : 'false'
+                              ? "true"
+                              : "false"
                           }
                         >
                           {variant.colorImage ? (
@@ -1086,7 +1103,7 @@ const ProductCustomizable = ({ data, location: any }: Props) => {
                             />
                           )}
                         </button>
-                      );
+                      )
                     })}
                 </div>
                 <div className="price">
@@ -1133,8 +1150,8 @@ const ProductCustomizable = ({ data, location: any }: Props) => {
                       <div
                         className={`polarized-actions ${
                           isClearanceVariantPolarizable
-                            ? 'disabled-polarize-action'
-                            : ''
+                            ? "disabled-polarize-action"
+                            : ""
                         }`}
                         id="polarized-toggle"
                       >
@@ -1144,7 +1161,7 @@ const ProductCustomizable = ({ data, location: any }: Props) => {
                             type="checkbox"
                             id="switch"
                             checked={isPolarized}
-                            onChange={(evt) => switchToPolarized(evt)}
+                            onChange={evt => switchToPolarized(evt)}
                           />
                           <label htmlFor="switch">Toggle</label>
                         </div>
@@ -1167,7 +1184,7 @@ const ProductCustomizable = ({ data, location: any }: Props) => {
                     <div>
                       {lensType !== LensType.GLASSES && (
                         <>
-                          {' '}
+                          {" "}
                           <button
                             type="button"
                             onClick={handleAddToCart}
@@ -1182,7 +1199,7 @@ const ProductCustomizable = ({ data, location: any }: Props) => {
                       )}
 
                       <Link
-                        className={`btn ${isPolarized ? 'disable' : ''}`}
+                        className={`btn ${isPolarized ? "disable" : ""}`}
                         // to={contentfulProduct && customizeUrl}
                         id="customize-btn"
                         to={`/products/${
@@ -1190,7 +1207,7 @@ const ProductCustomizable = ({ data, location: any }: Props) => {
                         }/customize?variant=${selectedVariant.shopify.sku}${
                           lensType !== LensType.SUNGLASSES
                             ? `&lens_type=${lensType}`
-                            : ''
+                            : ""
                         }`}
                       >
                         CUSTOMIZE
@@ -1206,7 +1223,7 @@ const ProductCustomizable = ({ data, location: any }: Props) => {
           </div>
           <div className="row mobile-reverse">
             <div
-              className={`col ${lensType !== LensType.GLASSES ? 'images' : ''}`}
+              className={`col ${lensType !== LensType.GLASSES ? "images" : ""}`}
             >
               <ProductDetails
                 fitDimensions={contentfulProduct.fitDimensions}
@@ -1243,10 +1260,10 @@ const ProductCustomizable = ({ data, location: any }: Props) => {
         </Page>
       </Layout>
     </ReviewsProvider>
-  );
-};
+  )
+}
 
-export default ProductCustomizable;
+export default ProductCustomizable
 
 export const query = graphql`
   query ProductQuery($handle: String, $legacyResourceId: String) {
@@ -1426,5 +1443,10 @@ export const query = graphql`
         }
       }
     }
+    contentfulVariantCollection(handle: { eq: "sale" }) {
+      variants {
+        sku
+      }
+    }
   }
-`;
+`
