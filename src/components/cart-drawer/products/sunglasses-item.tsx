@@ -1,13 +1,12 @@
 import React, { useContext, useRef } from "react"
 import { tnItem } from "../../../types/checkout"
 import { GatsbyImage } from "gatsby-plugin-image"
-import QuantitySelector from "../../quantity-selector"
+import { graphql } from "gatsby"
 import { CartContext } from "../../../contexts/cart"
 import styled from "styled-components"
 import { VscClose } from "react-icons/vsc"
-import { Link } from "gatsby"
+import { Link, useStaticQuery } from "gatsby"
 import { isDiscounted } from "../../../helpers/shopify"
-import { clearanceProductHandles } from "../../../utils/const"
 
 const Component = styled.div`
   .fs-cont {
@@ -46,13 +45,35 @@ const SunglassesItem = (props: { item: tnItem }) => {
   const { removeProductsFromCart, setIsCartDrawerOpen } =
     useContext(CartContext)
 
+  const clearanceItemsData = useStaticQuery(graphql`
+    query getClearanceItemsDrawer {
+      contentfulVariantCollection(handle: { eq: "sale" }) {
+        variants {
+          sku
+        }
+      }
+    }
+  `)
+
+  const createClearanceSKUs = (data): string[] => {
+    try {
+      const { contentfulVariantCollection } = data
+      const { variants } = contentfulVariantCollection
+      const handles = Array.from(variants.map(variant => variant.sku))
+      return handles as string[]
+    } catch (e) {
+      console.log(e)
+      return []
+    }
+  }
+
+  const clearanceSKUs = createClearanceSKUs(clearanceItemsData)
+
   const loadingOverlay = useRef<HTMLDivElement>(null)
 
   // if a sunglasses's product handle is in const variable and isDiscounted, then it is a clearance sale, and we should show the final sale disclaimer
   const isClearanceSale =
-    clearanceProductHandles.includes(
-      item.lineItems[0].shopifyItem.variant.product.handle
-    ) &&
+    clearanceSKUs.includes(item.lineItems[0].shopifyItem.variant.sku) &&
     item.lineItems[0].shopifyItem.variant.compareAtPrice &&
     isDiscounted(
       item.lineItems[0].shopifyItem.variant.price.amount,

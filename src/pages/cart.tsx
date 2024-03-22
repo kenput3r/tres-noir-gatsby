@@ -12,11 +12,10 @@ import { tnItem, tnSubItem, rxType } from "../types/checkout"
 import { startedCheckoutGTMEvent } from "../helpers/gtm"
 import { VscClose } from "react-icons/vsc"
 import UpsellCart from "../components/upsell-cart"
-import { SelectedVariants, SelectedVariantStorage } from "../types/global"
+import { SelectedVariantStorage } from "../types/global"
 import { CustomizeContext } from "../contexts/customize"
 import { RxInfoContext } from "../contexts/rxInfo"
 import { isDiscounted } from "../helpers/shopify"
-import { clearanceProductHandles } from "../utils/const"
 
 const LoaderContainer = styled.div`
   position: fixed;
@@ -284,11 +283,17 @@ const Cart = () => {
 
   const {
     contentfulHomepage: { cartMessage, cartMessageToggle },
+    contentfulVariantCollection: clearanceItemsData,
   } = useStaticQuery(graphql`
     query getCartMessageForPage {
       contentfulHomepage {
         cartMessage
         cartMessageToggle
+      }
+      contentfulVariantCollection(handle: { eq: "sale" }) {
+        variants {
+          sku
+        }
       }
     }
   `)
@@ -568,11 +573,22 @@ const Cart = () => {
     const sunglassesStepMap = new Map()
     sunglassesStepMap.set(1, "CASE")
     const hasDiscount = checkForDiscountInBundle(item.lineItems)
+
+    const createClearanceSKUs = (data): string[] => {
+      try {
+        const { variants } = data
+        const handles = Array.from(variants.map(variant => variant.sku))
+        return handles as string[]
+      } catch (e) {
+        console.log(e)
+        return []
+      }
+    }
+
+    const clearanceSKUs = createClearanceSKUs(clearanceItemsData)
     // if a sunglasses's product handle is in const variable and isDiscounted, then it is a clearance sale, and we should show the final sale disclaimer
     const isClearanceSale =
-      clearanceProductHandles.includes(
-        item.lineItems[0].shopifyItem.variant.product.handle
-      ) &&
+      clearanceSKUs.includes(item.lineItems[0].shopifyItem.variant.sku) &&
       item.lineItems[0].shopifyItem.variant.compareAtPrice &&
       isDiscounted(
         item.lineItems[0].shopifyItem.variant.price.amount,
