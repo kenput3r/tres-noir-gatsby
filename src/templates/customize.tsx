@@ -233,7 +233,7 @@ const Customize = ({
 
   return (
     <Layout>
-      <SEO title="customize" />
+      <SEO title="Customize" />
       <Page>
         <div className="row product-customize">
           <div className="desktop col preview" ref={previewRef}>

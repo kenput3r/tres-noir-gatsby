@@ -307,4 +307,7 @@ export const Component = styled.form`
     color: var(--color-grey-dark);
     text-decoration: line-through;
   }
+  .rx-prism a {
+    text-decoration: none;
+  }
 `
