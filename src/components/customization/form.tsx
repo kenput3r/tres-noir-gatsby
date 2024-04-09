@@ -976,8 +976,15 @@ const Form = ({
           </div>
           <div className="rx-prism">
             <p>
-              Need prism corection? Email <span>info@tresnoir.com</span> or call{" "}
-              <span>714-656-4796</span>
+              Need prism correction OR further assistance inputting your Rx?
+              Email{" "}
+              <a href="mailto:info@tresnoir.com">
+                <span>info@tresnoir.com</span>{" "}
+              </a>
+              or call{" "}
+              <a href="tel:+17146564796">
+                <span>714-656-4796</span>
+              </a>
             </p>
           </div>
         </div>
