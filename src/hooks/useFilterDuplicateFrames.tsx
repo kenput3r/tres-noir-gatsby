@@ -25,6 +25,8 @@ export const useFilterDuplicateFrames = (
     if (lensType === "glasses") {
       const unique = filterDuplicates()
       setFrameVariants(unique)
+    } else {
+      setFrameVariants(variants)
     }
   }, [lensType])
 
