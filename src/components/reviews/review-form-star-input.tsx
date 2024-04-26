@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useState } from "react"
 import styled from "styled-components"
 import { BsStarFill as StarIcon } from "react-icons/bs"
 
@@ -18,53 +18,30 @@ const StarList = styled.div`
     cursor: pointer;
   }
 `
+
 type Props = {
   rating: number
   setRating: (_rating: number) => void
   clearError: () => void
 }
+
 export const ReviewFormStarInput = ({
   rating,
   setRating,
   clearError,
 }: Props) => {
+  const [hovered, setHovered] = useState<number | null>(null)
   const starArr = Array.from(Array(5), (_, x) => x + 1)
 
   const handleChange = (star: number) => {
     if (!rating) clearError()
     setRating(star)
   }
-  const handleHoverIn = (
-    evt: React.MouseEvent<SVGElement, MouseEvent>,
-    star: number
-  ) => {
-    const target = evt.target as SVGElement
-    const siblings = target.parentNode?.childNodes as NodeListOf<SVGElement>
-    if (siblings) {
-      const starsToFill = Array.from(siblings).slice(0, star)
-      starsToFill.forEach((sibling: SVGElement) => {
-        if (sibling.nodeName === "svg") {
-          sibling.classList.add("fill")
-        }
-      })
-    }
+  const handleHoverIn = (star: number) => {
+    setHovered(star)
   }
-
-  const handleHoverOut = (
-    evt: React.MouseEvent<SVGElement, MouseEvent>,
-    star: number
-  ) => {
-    const target = evt.target as SVGElement
-    const siblings = target.parentNode?.childNodes as NodeListOf<SVGElement>
-    if (siblings) {
-      const starsToFill = Array.from(siblings).slice(0, star)
-      starsToFill.forEach((sibling: SVGElement) => {
-        if (sibling.nodeName === "svg") {
-          if (sibling.classList.contains("active")) return
-          sibling.classList.remove("fill")
-        }
-      })
-    }
+  const handleHoverOut = () => {
+    setHovered(null)
   }
 
   return (
@@ -74,9 +51,11 @@ export const ReviewFormStarInput = ({
           key={`star-${star}`}
           role="button"
           onClick={() => handleChange(star)}
-          className={star <= rating ? "fill active" : ""}
-          onMouseOver={evt => handleHoverIn(evt, star)}
-          onMouseLeave={evt => handleHoverOut(evt, star)}
+          onMouseEnter={() => handleHoverIn(star)}
+          onMouseLeave={handleHoverOut}
+          className={
+            (hovered ? star <= hovered : star <= rating) ? "fill active" : ""
+          }
         />
       ))}
     </StarList>
