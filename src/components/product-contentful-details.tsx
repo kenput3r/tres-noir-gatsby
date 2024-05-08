@@ -68,6 +68,7 @@ enum LENSE_COLORS {
   G15 = "g15",
   G15_GRADIENT = "g15 gradient",
   CLEAR = "clear",
+  YELLOW = "yellow",
 }
 
 const ProductDetails: React.FC<Props> = ({
@@ -105,6 +106,9 @@ const ProductDetails: React.FC<Props> = ({
         case LENSE_COLORS.GREEN_GRADIENT:
         case LENSE_COLORS.G15_GRADIENT:
           imageData = lensColors.g15
+          break
+        case LENSE_COLORS.YELLOW:
+          imageData = lensColors.yellow
           break
         default:
           imageData = lensColors.clear

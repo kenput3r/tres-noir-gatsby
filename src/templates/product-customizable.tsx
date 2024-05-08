@@ -952,7 +952,17 @@ const ProductCustomizable = ({ data, location: any }: Props) => {
 
   // useEffect for initializing polarizedVariant on selectedVariant change
   useEffect(() => {
-    if (lensType === LensType.GLASSES) return
+    if (lensType === LensType.GLASSES) {
+      const polarizedToggle =
+        actionsRef.current?.querySelector("#polarized-toggle")
+      const customizeBtn = actionsRef.current?.querySelector("#customize-btn")
+      customizeBtn?.classList.remove("disable")
+      polarizedToggle?.classList.add("disable")
+      const polarizedSwitch: HTMLInputElement | null | undefined =
+        polarizedToggle?.querySelector("#switch")
+      if (polarizedSwitch) polarizedSwitch.checked = false
+      return
+    }
     const contentfulData = selectedVariant.contentful
     const sku = selectedVariant.shopify.sku
     const polVar = shopifyProduct.variants.find(
@@ -966,6 +976,8 @@ const ProductCustomizable = ({ data, location: any }: Props) => {
       actionsRef.current?.querySelector("#polarized-toggle")
     const customizeBtn = actionsRef.current?.querySelector("#customize-btn")
     // if current Variant is polarized
+
+    console.log("selectedVariant", selectedVariant)
     if (
       selectedVariant.shopify.sku.endsWith("PZ") ||
       selectedVariant.shopify.sku.endsWith("P")
@@ -991,7 +1003,7 @@ const ProductCustomizable = ({ data, location: any }: Props) => {
         polarizedToggle?.querySelector("#switch")
       if (polarizedSwitch) polarizedSwitch.checked = false
     }
-  }, [selectedVariant])
+  }, [selectedVariant, lensType])
 
   return (
     <ReviewsProvider
