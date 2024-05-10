@@ -28,7 +28,7 @@ import PolarizedTooltip from "../components/polarize/polarized-tooltip"
 import { useCaseCollection } from "../hooks/useCaseCollection"
 import { useFilterDuplicateFrames } from "../hooks/useFilterDuplicateFrames"
 import { useFilterHiddenCustomizableVariants } from "../hooks/useFilterHiddenCustomizableVariants"
-import { useReviews } from "../contexts/reviews"
+import { useDiscountedPricing } from "../hooks/useDiscountedPricing"
 import FeaturedStyles from "../components/featured-styles"
 import ViewAsType from "../components/view-as-type"
 import Reviews from "../components/reviews"
@@ -409,6 +409,12 @@ const ProductCustomizable = ({ data, location: any }: Props) => {
   } = data
 
   const { siteUrl } = site.siteMetadata
+
+  const { prices, isApplicable } = useDiscountedPricing(
+    shopifyProduct.legacyResourceId
+  )
+
+  console.log("prices", prices)
 
   // cart
   const { addProductToCart, isAddingToCart, addSunglassesToCart } =
@@ -977,7 +983,6 @@ const ProductCustomizable = ({ data, location: any }: Props) => {
     const customizeBtn = actionsRef.current?.querySelector("#customize-btn")
     // if current Variant is polarized
 
-    console.log("selectedVariant", selectedVariant)
     if (
       selectedVariant.shopify.sku.endsWith("PZ") ||
       selectedVariant.shopify.sku.endsWith("P")
