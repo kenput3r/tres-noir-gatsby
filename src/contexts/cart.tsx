@@ -183,6 +183,14 @@ export const CartProvider = ({ children }) => {
     }
   }
 
+  const checkoutIsEmpty = (myCheckout: any) => {
+    try {
+      return myCheckout.lineItems.length === 0
+    } catch (e) {
+      return false
+    }
+  }
+
   /**
    * @function getNewCheckout - creates a new Shopify checkout
    * and sets the shopifyCheckout cookie (Shopify checkout ID)
@@ -534,10 +542,17 @@ export const CartProvider = ({ children }) => {
         // check for params and add discount code
         const code = getDiscountParams()
         if (code && code !== "") {
-          addDiscountCodeToCheckout({
-            checkoutId: checkout.id,
-            code: code,
-          })
+          if (checkoutIsEmpty(checkout)) {
+            Cookies.set("tnDiscountCode", code, {
+              sameSite: "strict",
+              expires: 2592000,
+            })
+          } else {
+            addDiscountCodeToCheckout({
+              checkoutId: checkout.id,
+              code: code,
+            })
+          }
         }
       } catch (err: any) {
         console.error("ERROR", err.message)
