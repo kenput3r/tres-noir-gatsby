@@ -40,6 +40,9 @@ import Badge from "../components/badge"
 import ProductBottomline from "../components/product-bottomline"
 
 const Page = styled.div`
+  .flex {
+    display: flex;
+  }
   .shipping-message {
     text-align: center;
     .h2 {
@@ -1136,19 +1139,21 @@ const ProductCustomizable = ({ data, location: any }: Props) => {
                     })}
                 </div>
                 <div className="price">
-                  <div className="value">
-                    <div className="left">
-                      {!isApplicable ? (
-                        <>
-                          {badge && (
-                            <Badge
-                              label={badge.label}
-                              color={badge.color}
-                              position="static"
-                              top={0}
-                              left={0}
-                            />
-                          )}
+                  {!isApplicable ? (
+                    <>
+                      {badge && (
+                        <div className="flex">
+                          <Badge
+                            label={badge.label}
+                            color={badge.color}
+                            position="static"
+                            top={0}
+                            left={0}
+                          />
+                        </div>
+                      )}
+                      <div className="value">
+                        <div className="left">
                           <div className="current-price-container">
                             <span className="starting-at">STARTING AT</span>
                             <span>${selectedVariant.shopify.price} USD</span>
@@ -1164,42 +1169,62 @@ const ProductCustomizable = ({ data, location: any }: Props) => {
                                 </span>
                               </div>
                             )}
-                        </>
-                      ) : (
-                        discountedPrice &&
-                        isDiscounted(
-                          discountedPrice,
-                          selectedVariant.shopify.price
-                        ) && (
-                          <>
-                            <Badge
-                              color="red"
-                              label={offer}
-                              position="static"
-                              top={0}
-                              left={0}
-                            />
+                        </div>
+                        <span className="right">
+                          <Link
+                            to={
+                              contentfulProduct &&
+                              `/${contentfulProduct.handle}`
+                            }
+                            className="learn-more"
+                          >
+                            Learn More &gt;
+                          </Link>
+                        </span>
+                      </div>
+                    </>
+                  ) : (
+                    discountedPrice &&
+                    isDiscounted(
+                      discountedPrice,
+                      selectedVariant.shopify.price
+                    ) && (
+                      <>
+                        <div className="flex">
+                          <Badge
+                            label={offer}
+                            color={"red"}
+                            position="static"
+                            top={0}
+                            left={0}
+                          />
+                        </div>
+
+                        <div className="value">
+                          <div className="left">
                             <div className="current-price-container">
                               <span className="starting-at">STARTING AT</span>
                               <span>${discountedPrice} USD</span>
                             </div>
-
                             <div className="compare-at-price">
                               <span>${selectedVariant.shopify.price} USD</span>
                             </div>
-                          </>
-                        )
-                      )}
-                    </div>
-                    <span className="right">
-                      <Link
-                        to={contentfulProduct && `/${contentfulProduct.handle}`}
-                        className="learn-more"
-                      >
-                        Learn More &gt;
-                      </Link>
-                    </span>
-                  </div>
+                          </div>
+                          <span className="right">
+                            <Link
+                              to={
+                                contentfulProduct &&
+                                `/${contentfulProduct.handle}`
+                              }
+                              className="learn-more"
+                            >
+                              Learn More &gt;
+                            </Link>
+                          </span>
+                        </div>
+                      </>
+                    )
+                  )}
                 </div>
                 <div className="actions" ref={actionsRef}>
                   {lensType === LensType.SUNGLASSES && (
