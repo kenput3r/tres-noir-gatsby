@@ -674,7 +674,7 @@ const ProductCustomizable = ({ data, location: any }: Props) => {
       })
       // update url
       setProductUrl(
-        `/products/${contentfulProduct.handle}/?variant=${contentfulProduct.sku}`
+        `/products/${contentfulProduct.handle}/?variant=${variant.sku}`
       )
       // update url
       const isBrowser = typeof window !== "undefined"
@@ -898,9 +898,9 @@ const ProductCustomizable = ({ data, location: any }: Props) => {
   }, [])
 
   useEffect(() => {
-    setProductUrl(
-      `/products/${contentfulProduct.handle}/?variant=${contentfulProduct.sku}`
-    )
+    // setProductUrl(
+    //   `/products/${contentfulProduct.handle}/?variant=${shopifyProduct.variants[0].sku}`
+    // )
     setCurrentStep(1)
     setHasSavedCustomized({
       step1: false,
@@ -1290,6 +1290,11 @@ const ProductCustomizable = ({ data, location: any }: Props) => {
                           lensType !== LensType.SUNGLASSES
                             ? `&lens_type=${lensType}`
                             : ""
+                        }${
+                          isApplicable &&
+                          offer &&
+                          offer !== "" &&
+                          `&product_offer=${offer}`
                         }`}
                       >
                         CUSTOMIZE
