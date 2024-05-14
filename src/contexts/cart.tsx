@@ -6,6 +6,7 @@ import React, {
   useMemo,
 } from "react"
 import Client, { Cart } from "shopify-buy"
+import Cookies from "js-cookie"
 import {
   Checkout,
   tnItem,
@@ -21,8 +22,6 @@ const client = Client.buildClient({
   domain: process.env.GATSBY_STORE_MY_SHOPIFY as string,
   storefrontAccessToken: process.env.GATSBY_STORE_STOREFRONT_TOKEN as string,
 } as any)
-
-import Cookies, { set } from "js-cookie"
 
 const isBrowser = typeof window !== "undefined"
 
