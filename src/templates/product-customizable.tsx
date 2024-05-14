@@ -410,11 +410,16 @@ const ProductCustomizable = ({ data, location: any }: Props) => {
 
   const { siteUrl } = site.siteMetadata
 
-  const { prices, isApplicable } = useDiscountedPricing(
-    shopifyProduct.legacyResourceId
-  )
-
-  console.log("prices", prices)
+  const createDiscountApiPayload = (): any[] => {
+    try {
+      return data.shopifyProduct.variants.map(v => ({
+        price: v.price,
+        id: v.legacyResourceId,
+      }))
+    } catch (error) {
+      return []
+    }
+  }
 
   // cart
   const { addProductToCart, isAddingToCart, addSunglassesToCart } =
@@ -499,6 +504,13 @@ const ProductCustomizable = ({ data, location: any }: Props) => {
 
   // ref to toggle disable classes on buttons
   const actionsRef = useRef<HTMLDivElement>(null)
+
+  const { discountedPrice, isApplicable, offer } = useDiscountedPricing({
+    productId: shopifyProduct.legacyResourceId,
+    prices: createDiscountApiPayload(),
+    selectedVariantId: selectedVariant.shopify.legacyResourceId,
+    handle: shopifyProduct.handle,
+  })
 
   const seoDescription = contentfulProduct.styleDescription.styleDescription
 
@@ -1126,30 +1138,58 @@ const ProductCustomizable = ({ data, location: any }: Props) => {
                 <div className="price">
                   <div className="value">
                     <div className="left">
-                      {badge && (
-                        <Badge
-                          label={badge.label}
-                          color={badge.color}
-                          position="static"
-                          top={0}
-                          left={0}
-                        />
-                      )}
-                      <div className="current-price-container">
-                        <span className="starting-at">STARTING AT</span>
-                        <span>${selectedVariant.shopify.price} USD</span>
-                      </div>
-                      {selectedVariant.shopify.compareAtPrice &&
-                        isDiscounted(
-                          selectedVariant.shopify.price,
-                          selectedVariant.shopify.compareAtPrice
-                        ) && (
-                          <div className="compare-at-price">
-                            <span>
-                              ${selectedVariant.shopify.compareAtPrice} USD
-                            </span>
+                      {!isApplicable ? (
+                        <>
+                          {badge && (
+                            <Badge
+                              label={badge.label}
+                              color={badge.color}
+                              position="static"
+                              top={0}
+                              left={0}
+                            />
+                          )}
+                          <div className="current-price-container">
+                            <span className="starting-at">STARTING AT</span>
+                            <span>${selectedVariant.shopify.price} USD</span>
                           </div>
-                        )}
+                          {selectedVariant.shopify.compareAtPrice &&
+                            isDiscounted(
+                              selectedVariant.shopify.price,
+                              selectedVariant.shopify.compareAtPrice
+                            ) && (
+                              <div className="compare-at-price">
+                                <span>
+                                  ${selectedVariant.shopify.compareAtPrice} USD
+                                </span>
+                              </div>
+                            )}
+                        </>
+                      ) : (
+                        discountedPrice &&
+                        isDiscounted(
+                          discountedPrice,
+                          selectedVariant.shopify.price
+                        ) && (
+                          <>
+                            <Badge
+                              color="red"
+                              label={offer}
+                              position="static"
+                              top={0}
+                              left={0}
+                            />
+                            <div className="current-price-container">
+                              <span className="starting-at">STARTING AT</span>
+                              <span>${discountedPrice} USD</span>
+                            </div>
+
+                            <div className="compare-at-price">
+                              <span>${selectedVariant.shopify.price} USD</span>
+                            </div>
+                          </>
+                        )
+                      )}
                     </div>
                     <span className="right">
                       <Link
@@ -1445,6 +1485,7 @@ export const query = graphql`
         sku
         title
         storefrontId
+        legacyResourceId
         selectedOptions {
           name
           value

@@ -121,10 +121,63 @@ export const CartProvider = ({ children }) => {
   const [isRemovingFromCart, setIsRemovingFromCart] = useState<boolean>(false)
 
   /**
+   * @function getDiscountParams - gets the current non-expired chechout cookie
+   */
+  const getDiscountParams = () => {
+    try {
+      const isBrowser = typeof window !== "undefined"
+      if (!isBrowser) return ""
+      const urlParams = new URLSearchParams(window.location.search)
+      const offer = urlParams.get("offer") ?? urlParams.get("discount")
+      if (!offer || offer === "") return ""
+      return offer
+    } catch (error) {
+      return ""
+    }
+  }
+
+  const addDiscountCodeToCheckout = async ({
+    code,
+    checkoutId,
+  }: {
+    code: string
+    checkoutId: string
+  }) => {
+    try {
+      const updatedCheckout = await client.checkout.addDiscount(
+        checkoutId,
+        code
+      )
+      if (isBrowser) {
+        const now = new Date()
+        localStorage.setItem(
+          "checkout",
+          JSON.stringify({
+            value: updatedCheckout,
+            expiry: now.getTime() + 2592000,
+          })
+        )
+      }
+      rebuildBundles(updatedCheckout)
+      setCheckout(updatedCheckout)
+    } catch (err: any) {
+      console.error(err)
+      renderErrorModal()
+    }
+  }
+
+  /**
    * @function getCheckoutCookie - gets the current non-expired chechout cookie
    */
   const getCheckoutCookie = () => {
     return Cookies.get("shopifyCheckout")
+  }
+
+  const applyCookieDiscount = async () => {
+    const code = Cookies.get("tnDiscountCode")
+    if (code && code !== "") {
+      console.log("C", checkout)
+    }
   }
 
   /**
@@ -133,6 +186,19 @@ export const CartProvider = ({ children }) => {
    */
   const getNewCheckout = async () => {
     const newCheckout = await client.checkout.create()
+
+    // check for discount code in URL, if present cookie will be set
+    const code = getDiscountParams()
+    if (code && code !== "") {
+      // set discount code cookie
+      // this cookie will be used to apply discount code once an item is added to cart
+      // buy-sdk does not allow to apply discount code on create checkout with 0 items
+      Cookies.set("tnDiscountCode", code, {
+        sameSite: "strict",
+        expires: 2592000,
+      })
+    }
+
     if (isBrowser) {
       Cookies.set("shopifyCheckout", String(newCheckout.id), {
         sameSite: "strict",
@@ -411,6 +477,7 @@ export const CartProvider = ({ children }) => {
      * @function initializeCheckout - fetches current or creates new Shopify checkout
      * sets checkout [setCheckout]
      */
+
     const initializeCheckout = async () => {
       const validateLocalCheckout = async (localCheckout: LocalCheckout) => {
         const now = new Date()
@@ -457,6 +524,14 @@ export const CartProvider = ({ children }) => {
           checkout = (await getNewCheckout()) as unknown as Checkout
         }
         setCheckout(checkout)
+        // check for params and add discount code
+        const code = getDiscountParams()
+        if (code && code !== "") {
+          addDiscountCodeToCheckout({
+            checkoutId: checkout.id,
+            code: code,
+          })
+        }
       } catch (err: any) {
         console.error("ERROR", err.message)
         renderErrorModal()
@@ -489,6 +564,7 @@ export const CartProvider = ({ children }) => {
           checkout.id,
           lineItems
         )
+
         addToImageStorage(sku, image, checkout.id)
         rebuildBundles(updatedCheckout)
         setCheckout(updatedCheckout)
@@ -691,6 +767,7 @@ export const CartProvider = ({ children }) => {
             })
           )
         }
+        rebuildBundles(updatedCheckout)
         setCheckout(updatedCheckout)
       } catch (err: any) {
         console.error(err)
@@ -714,6 +791,7 @@ export const CartProvider = ({ children }) => {
             })
           )
         }
+        rebuildBundles(updatedCheckout)
         setCheckout(updatedCheckout)
       } catch (err: any) {
         console.error(err)
