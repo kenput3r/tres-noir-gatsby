@@ -173,10 +173,13 @@ export const CartProvider = ({ children }) => {
     return Cookies.get("shopifyCheckout")
   }
 
-  const applyCookieDiscount = async () => {
-    const code = Cookies.get("tnDiscountCode")
-    if (code && code !== "") {
-      console.log("C", checkout)
+  const checkoutHasDiscountV2 = (code: string, myCheckout: any) => {
+    try {
+      return myCheckout.discountApplications.some(
+        discount => discount.code === code
+      )
+    } catch (e) {
+      return false
     }
   }
 
@@ -193,10 +196,13 @@ export const CartProvider = ({ children }) => {
       // set discount code cookie
       // this cookie will be used to apply discount code once an item is added to cart
       // buy-sdk does not allow to apply discount code on create checkout with 0 items
-      Cookies.set("tnDiscountCode", code, {
-        sameSite: "strict",
-        expires: 2592000,
-      })
+      // ignore if discount code is already applied
+      if (!checkoutHasDiscountV2(code, newCheckout)) {
+        Cookies.set("tnDiscountCode", code, {
+          sameSite: "strict",
+          expires: 2592000,
+        })
+      }
     }
 
     if (isBrowser) {
@@ -486,6 +492,7 @@ export const CartProvider = ({ children }) => {
           localStorage.removeItem("cart-images")
           localStorage.removeItem("customs-resume")
           Cookies.remove("tnCartCounter")
+          Cookies.remove("tnDiscountCode")
           // eslint-disable-next-line no-return-await
           return await getNewCheckout()
         }
@@ -570,6 +577,7 @@ export const CartProvider = ({ children }) => {
         setCheckout(updatedCheckout)
         setIsAddingToCart(false)
         if (shouldOpenDrawer) setIsCartDrawerOpen(true)
+        handleDiscountCookie()
       } catch (err: any) {
         console.error(err)
         setIsAddingToCart(false)
@@ -599,6 +607,7 @@ export const CartProvider = ({ children }) => {
         setCheckout(updatedCheckout)
         setIsAddingToCart(false)
         setIsCartDrawerOpen(true)
+        handleDiscountCookie()
       } catch (err: any) {
         console.error(err)
         setIsAddingToCart(false)
@@ -632,6 +641,7 @@ export const CartProvider = ({ children }) => {
         setCheckout(updatedCheckout)
         setIsAddingToCart(false)
         setIsCartDrawerOpen(true)
+        handleDiscountCookie()
       } catch (err: any) {
         console.error(err)
         setIsAddingToCart(false)
@@ -661,6 +671,7 @@ export const CartProvider = ({ children }) => {
         addCustomToLocalStorage(key, resumeData, sku, handle)
         setIsAddingToCart(false)
         if (activateDrawer) setIsCartDrawerOpen(true)
+        handleDiscountCookie()
       } catch (err: any) {
         console.error(err)
         setIsAddingToCart(false)
@@ -748,6 +759,28 @@ export const CartProvider = ({ children }) => {
       } catch (err: any) {
         console.error(err)
         renderErrorModal()
+      }
+    }
+
+    const checkoutHasDiscount = (code: string) => {
+      try {
+        return checkout.discountApplications.some(
+          discount => discount.code === code
+        )
+      } catch (e) {
+        return false
+      }
+    }
+
+    const handleDiscountCookie = async () => {
+      const code = Cookies.get("tnDiscountCode")
+      if (code && code !== "") {
+        // check if code is already applied
+        const isAlreadyApplied = checkoutHasDiscount(code)
+        if (!isAlreadyApplied) {
+          await addDiscountCode(code)
+        }
+        Cookies.remove("tnDiscountCode")
       }
     }
 
