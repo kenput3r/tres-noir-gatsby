@@ -156,7 +156,7 @@ const Customize = ({
       setVariant(_variant)
       let handle = `/products/${contentfulProduct.handle}?variant=${contentful.sku}`
       if (lensType) handle = `${handle}&lens_type=${lensType}`
-      if (offer) handle = `${handle}&offer=${offer}`
+      if (offer && offer !== "") handle = `${handle}&offer=${offer}`
       setProductUrl(handle)
 
       // if (previewRef.current) {
