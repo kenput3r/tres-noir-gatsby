@@ -235,7 +235,7 @@ const CartDrawer = () => {
 
   useEffect(() => {
     if (!isCartDrawerOpen) return
-    const intevalAmount = 2750
+    const intevalAmount = 5000
     const timer = setInterval(() => {
       setIsCartDrawerOpen(false)
     }, intevalAmount)
@@ -268,64 +268,69 @@ const CartDrawer = () => {
 
   return (
     <animated.div style={{ ...slideInStyles }} className="animated">
-      {checkout && checkout.tnLineItems.length !== 0 && (
-        <Component ref={clickRef}>
-          <div className="header">
-            <button onClick={evt => setIsCartDrawerOpen(false)}>
-              <FaChevronRight />
-            </button>
-            <div className="sub-flex">
-              <span>Cart</span>
-              <span onClick={evt => setIsCartDrawerOpen(false)}>
-                <CartIcon />
-              </span>
-            </div>
-          </div>
-          <div className="cart-products">
-            {checkout &&
-              checkout.tnLineItems.map((item: tnItem) => {
-                if (!item.isCustom && item.lineItems.length === 1) {
-                  return <ShopifyItem item={item} key={item.id} />
-                } else if (!item.isCustom && item.lineItems.length === 2) {
-                  return <SunglassesItem item={item} key={item.id} />
-                } else {
-                  return <CustomItem item={item} key={item.id} />
-                }
-              })}
-            {isRemovingFromCart && (
-              <LoaderContainer>
-                <Loader />
-              </LoaderContainer>
-            )}
-          </div>
-          <div className="sticky-bottom">
-            <p>
-              Subtotal:{" "}
-              <span>
-                ${Number(checkout.subtotalPrice.amount).toFixed(2)} USD
-              </span>
-            </p>
-
-            <div className="button-flex">
-              <button
-                className="btn"
-                onClick={evt => setIsCartDrawerOpen(false)}
-              >
-                CONTINUE SHOPPING
+      {checkout &&
+        checkout.tnLineItems &&
+        checkout.tnLineItems.length !== 0 && (
+          <Component ref={clickRef}>
+            <div className="header">
+              <button onClick={evt => setIsCartDrawerOpen(false)}>
+                <FaChevronRight />
               </button>
-              <a
-                className="btn"
-                href={checkout.webUrl}
-                onClick={evt => setIsCartDrawerOpen(false)}
-              >
-                CHECKOUT
-              </a>
+              <div className="sub-flex">
+                <span>Cart</span>
+                <span onClick={evt => setIsCartDrawerOpen(false)}>
+                  <CartIcon />
+                </span>
+              </div>
             </div>
-            <p>TAXES AND SHIPPING WILL BE CALCULATED AT CHECKOUT</p>
-            {cartMessageToggle && <p className="cart-message">{cartMessage}</p>}
-          </div>
-        </Component>
-      )}
+            <div className="cart-products">
+              {checkout &&
+                checkout.tnLineItems &&
+                checkout.tnLineItems.map((item: tnItem) => {
+                  if (!item.isCustom && item.lineItems.length === 1) {
+                    return <ShopifyItem item={item} key={item.id} />
+                  } else if (!item.isCustom && item.lineItems.length === 2) {
+                    return <SunglassesItem item={item} key={item.id} />
+                  } else {
+                    return <CustomItem item={item} key={item.id} />
+                  }
+                })}
+              {isRemovingFromCart && (
+                <LoaderContainer>
+                  <Loader />
+                </LoaderContainer>
+              )}
+            </div>
+            <div className="sticky-bottom">
+              <p>
+                Subtotal:{" "}
+                <span>
+                  ${Number(checkout.subtotalPrice.amount).toFixed(2)} USD
+                </span>
+              </p>
+
+              <div className="button-flex">
+                <button
+                  className="btn"
+                  onClick={evt => setIsCartDrawerOpen(false)}
+                >
+                  CONTINUE SHOPPING
+                </button>
+                <a
+                  className="btn"
+                  href={checkout.webUrl}
+                  onClick={evt => setIsCartDrawerOpen(false)}
+                >
+                  CHECKOUT
+                </a>
+              </div>
+              <p>TAXES AND SHIPPING WILL BE CALCULATED AT CHECKOUT</p>
+              {cartMessageToggle && (
+                <p className="cart-message">{cartMessage}</p>
+              )}
+            </div>
+          </Component>
+        )}
     </animated.div>
   )
 }

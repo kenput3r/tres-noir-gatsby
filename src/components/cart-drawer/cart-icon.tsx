@@ -45,7 +45,10 @@ const CartIcon = () => {
         }
       })
     } else {
-      cartCount = checkout.lineItems.length
+      cartCount =
+        checkout.lineItems && checkout.lineItems.length
+          ? checkout.lineItems.length
+          : 0
     }
   }
   return (

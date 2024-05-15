@@ -28,7 +28,7 @@ import PolarizedTooltip from "../components/polarize/polarized-tooltip"
 import { useCaseCollection } from "../hooks/useCaseCollection"
 import { useFilterDuplicateFrames } from "../hooks/useFilterDuplicateFrames"
 import { useFilterHiddenCustomizableVariants } from "../hooks/useFilterHiddenCustomizableVariants"
-import { useReviews } from "../contexts/reviews"
+import { useDiscountedPricing } from "../hooks/useDiscountedPricing"
 import FeaturedStyles from "../components/featured-styles"
 import ViewAsType from "../components/view-as-type"
 import Reviews from "../components/reviews"
@@ -40,6 +40,9 @@ import Badge from "../components/badge"
 import ProductBottomline from "../components/product-bottomline"
 
 const Page = styled.div`
+  .flex {
+    display: flex;
+  }
   .shipping-message {
     text-align: center;
     .h2 {
@@ -410,6 +413,17 @@ const ProductCustomizable = ({ data, location: any }: Props) => {
 
   const { siteUrl } = site.siteMetadata
 
+  const createDiscountApiPayload = (): any[] => {
+    try {
+      return data.shopifyProduct.variants.map(v => ({
+        price: v.price,
+        id: v.legacyResourceId,
+      }))
+    } catch (error) {
+      return []
+    }
+  }
+
   // cart
   const { addProductToCart, isAddingToCart, addSunglassesToCart } =
     useContext(CartContext)
@@ -493,6 +507,13 @@ const ProductCustomizable = ({ data, location: any }: Props) => {
 
   // ref to toggle disable classes on buttons
   const actionsRef = useRef<HTMLDivElement>(null)
+
+  const { discountedPrice, isApplicable, offer } = useDiscountedPricing({
+    productId: shopifyProduct.legacyResourceId,
+    prices: createDiscountApiPayload(),
+    selectedVariantId: selectedVariant.shopify.legacyResourceId,
+    handle: shopifyProduct.handle,
+  })
 
   const seoDescription = contentfulProduct.styleDescription.styleDescription
 
@@ -653,7 +674,7 @@ const ProductCustomizable = ({ data, location: any }: Props) => {
       })
       // update url
       setProductUrl(
-        `/products/${contentfulProduct.handle}/?variant=${contentfulProduct.sku}`
+        `/products/${contentfulProduct.handle}/?variant=${variant.sku}`
       )
       // update url
       const isBrowser = typeof window !== "undefined"
@@ -878,7 +899,7 @@ const ProductCustomizable = ({ data, location: any }: Props) => {
 
   useEffect(() => {
     setProductUrl(
-      `/products/${contentfulProduct.handle}/?variant=${contentfulProduct.sku}`
+      `/products/${contentfulProduct.handle}/?variant=${shopifyProduct.variants[0].sku}`
     )
     setCurrentStep(1)
     setHasSavedCustomized({
@@ -977,7 +998,6 @@ const ProductCustomizable = ({ data, location: any }: Props) => {
     const customizeBtn = actionsRef.current?.querySelector("#customize-btn")
     // if current Variant is polarized
 
-    console.log("selectedVariant", selectedVariant)
     if (
       selectedVariant.shopify.sku.endsWith("PZ") ||
       selectedVariant.shopify.sku.endsWith("P")
@@ -1119,42 +1139,92 @@ const ProductCustomizable = ({ data, location: any }: Props) => {
                     })}
                 </div>
                 <div className="price">
-                  <div className="value">
-                    <div className="left">
+                  {!isApplicable ? (
+                    <>
                       {badge && (
-                        <Badge
-                          label={badge.label}
-                          color={badge.color}
-                          position="static"
-                          top={0}
-                          left={0}
-                        />
+                        <div className="flex">
+                          <Badge
+                            label={badge.label}
+                            color={badge.color}
+                            position="static"
+                            top={0}
+                            left={0}
+                          />
+                        </div>
                       )}
-                      <div className="current-price-container">
-                        <span className="starting-at">STARTING AT</span>
-                        <span>${selectedVariant.shopify.price} USD</span>
-                      </div>
-                      {selectedVariant.shopify.compareAtPrice &&
-                        isDiscounted(
-                          selectedVariant.shopify.price,
-                          selectedVariant.shopify.compareAtPrice
-                        ) && (
-                          <div className="compare-at-price">
-                            <span>
-                              ${selectedVariant.shopify.compareAtPrice} USD
-                            </span>
+                      <div className="value">
+                        <div className="left">
+                          <div className="current-price-container">
+                            <span className="starting-at">STARTING AT</span>
+                            <span>${selectedVariant.shopify.price} USD</span>
                           </div>
-                        )}
-                    </div>
-                    <span className="right">
-                      <Link
-                        to={contentfulProduct && `/${contentfulProduct.handle}`}
-                        className="learn-more"
-                      >
-                        Learn More &gt;
-                      </Link>
-                    </span>
-                  </div>
+                          {selectedVariant.shopify.compareAtPrice &&
+                            isDiscounted(
+                              selectedVariant.shopify.price,
+                              selectedVariant.shopify.compareAtPrice
+                            ) && (
+                              <div className="compare-at-price">
+                                <span>
+                                  ${selectedVariant.shopify.compareAtPrice} USD
+                                </span>
+                              </div>
+                            )}
+                        </div>
+                        <span className="right">
+                          <Link
+                            to={
+                              contentfulProduct &&
+                              `/${contentfulProduct.handle}`
+                            }
+                            className="learn-more"
+                          >
+                            Learn More &gt;
+                          </Link>
+                        </span>
+                      </div>
+                    </>
+                  ) : (
+                    discountedPrice &&
+                    isDiscounted(
+                      discountedPrice,
+                      selectedVariant.shopify.price
+                    ) && (
+                      <>
+                        <div className="flex">
+                          <Badge
+                            label={offer}
+                            color={"red"}
+                            position="static"
+                            top={0}
+                            left={0}
+                          />
+                        </div>
+
+                        <div className="value">
+                          <div className="left">
+                            <div className="current-price-container">
+                              <span className="starting-at">STARTING AT</span>
+                              <span>${discountedPrice} USD</span>
+                            </div>
+                            <div className="compare-at-price">
+                              <span>${selectedVariant.shopify.price} USD</span>
+                            </div>
+                          </div>
+                          <span className="right">
+                            <Link
+                              to={
+                                contentfulProduct &&
+                                `/${contentfulProduct.handle}`
+                              }
+                              className="learn-more"
+                            >
+                              Learn More &gt;
+                            </Link>
+                          </span>
+                        </div>
+                      </>
+                    )
+                  )}
                 </div>
                 <div className="actions" ref={actionsRef}>
                   {lensType === LensType.SUNGLASSES && (
@@ -1220,6 +1290,8 @@ const ProductCustomizable = ({ data, location: any }: Props) => {
                           lensType !== LensType.SUNGLASSES
                             ? `&lens_type=${lensType}`
                             : ""
+                        }${
+                          offer && offer !== "" ? `&product_offer=${offer}` : ""
                         }`}
                       >
                         CUSTOMIZE
@@ -1440,6 +1512,7 @@ export const query = graphql`
         sku
         title
         storefrontId
+        legacyResourceId
         selectedOptions {
           name
           value
