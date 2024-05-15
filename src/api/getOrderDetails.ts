@@ -1,13 +1,15 @@
 import fetch from "node-fetch"
 import type { GatsbyFunctionRequest, GatsbyFunctionResponse } from "gatsby"
 
-export default async function getOrderDetails(req, res) {
+export default async function getOrderDetails(
+  req: GatsbyFunctionRequest,
+  res: GatsbyFunctionResponse
+) {
   try {
     const orderId = req.body.id
     const url: string = process.env.GATSBY_STORE_MY_SHOPIFY
       ? `https://${process.env.GATSBY_STORE_MY_SHOPIFY}/admin/api/2022-04/graphql.json`
       : ""
-    console.log("url", url)
     const adminToken: string = process.env.GATSBY_STORE_TOKEN
       ? process.env.GATSBY_STORE_TOKEN
       : ""
