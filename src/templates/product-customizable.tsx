@@ -898,9 +898,9 @@ const ProductCustomizable = ({ data, location: any }: Props) => {
   }, [])
 
   useEffect(() => {
-    // setProductUrl(
-    //   `/products/${contentfulProduct.handle}/?variant=${shopifyProduct.variants[0].sku}`
-    // )
+    setProductUrl(
+      `/products/${contentfulProduct.handle}/?variant=${shopifyProduct.variants[0].sku}`
+    )
     setCurrentStep(1)
     setHasSavedCustomized({
       step1: false,
@@ -1291,10 +1291,7 @@ const ProductCustomizable = ({ data, location: any }: Props) => {
                             ? `&lens_type=${lensType}`
                             : ""
                         }${
-                          isApplicable &&
-                          offer &&
-                          offer !== "" &&
-                          `&product_offer=${offer}`
+                          offer && offer !== "" ? `&product_offer=${offer}` : ""
                         }`}
                       >
                         CUSTOMIZE

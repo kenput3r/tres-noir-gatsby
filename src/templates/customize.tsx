@@ -114,13 +114,11 @@ const Page = styled.div`
 
 const Customize = ({
   data: { contentfulProduct, shopifyProduct },
-  location,
 }: {
   data: {
     contentfulProduct: ContentfulProduct
     shopifyProduct: ShopifyProduct
   }
-  location: any
 }) => {
   const { currentStep, setProductUrl, selectedVariants } =
     useContext(CustomizeContext)
@@ -155,10 +153,13 @@ const Customize = ({
       const _variant = { contentful, shopify }
       setVariant(_variant)
       let handle = `/products/${contentfulProduct.handle}?variant=${contentful.sku}`
-      if (lensType) handle = `${handle}&lens_type=${lensType}`
-      if (offer && offer !== "") handle = `${handle}&offer=${offer}`
+      if (lensType) {
+        handle = `${handle}&lens_type=${lensType}`
+      }
+      if (offer) {
+        handle = `${handle}&offer=${offer}`
+      }
       setProductUrl(handle)
-
       // if (previewRef.current) {
       //   const previewImage = previewRef.current.querySelector(
       //     ".gatsby-image-wrapper img[data-main-image]"
