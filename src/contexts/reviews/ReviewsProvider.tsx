@@ -35,9 +35,6 @@ export function ReviewsProvider({
 
   const abortController = new AbortController()
 
-  const isBrowser = typeof window !== `undefined`
-  if (!isBrowser) return null
-
   useEffect(() => {
     let isMounted = true
 

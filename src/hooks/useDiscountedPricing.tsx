@@ -26,8 +26,6 @@ export const useDiscountedPricing = ({
   const { getAppliedDiscountCode } = useContext(CartContext)
 
   const abortController = new AbortController()
-  const isBrowser = typeof window !== `undefined`
-  if (!isBrowser) return null
 
   // on mount
   useEffect(() => {
