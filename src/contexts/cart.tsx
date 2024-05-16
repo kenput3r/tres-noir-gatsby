@@ -6,6 +6,7 @@ import React, {
   useMemo,
 } from "react"
 import Client, { Cart } from "shopify-buy"
+import Cookies from "js-cookie"
 import {
   Checkout,
   tnItem,
@@ -21,8 +22,6 @@ const client = Client.buildClient({
   domain: process.env.GATSBY_STORE_MY_SHOPIFY as string,
   storefrontAccessToken: process.env.GATSBY_STORE_STOREFRONT_TOKEN as string,
 } as any)
-
-import Cookies, { set } from "js-cookie"
 
 const isBrowser = typeof window !== "undefined"
 
@@ -105,6 +104,7 @@ const DefaultContext = {
   addDiscountCode: (code: string) => {},
   removeDiscountCode: () => {},
   isRemovingFromCart: false,
+  getAppliedDiscountCode: () => "",
 }
 
 export const CartContext = createContext(DefaultContext)
@@ -121,10 +121,74 @@ export const CartProvider = ({ children }) => {
   const [isRemovingFromCart, setIsRemovingFromCart] = useState<boolean>(false)
 
   /**
+   * @function getDiscountParams - gets the current non-expired chechout cookie
+   */
+  const getDiscountParams = () => {
+    try {
+      const isBrowser = typeof window !== "undefined"
+      if (!isBrowser) return ""
+      const urlParams = new URLSearchParams(window.location.search)
+      const offer = urlParams.get("offer") ?? urlParams.get("discount")
+      if (!offer || offer === "") return ""
+      return offer
+    } catch (error) {
+      return ""
+    }
+  }
+
+  const addDiscountCodeToCheckout = async ({
+    code,
+    checkoutId,
+  }: {
+    code: string
+    checkoutId: string
+  }) => {
+    try {
+      const updatedCheckout = await client.checkout.addDiscount(
+        checkoutId,
+        code
+      )
+      if (isBrowser) {
+        const now = new Date()
+        localStorage.setItem(
+          "checkout",
+          JSON.stringify({
+            value: updatedCheckout,
+            expiry: now.getTime() + 2592000,
+          })
+        )
+      }
+      rebuildBundles(updatedCheckout)
+      setCheckout(updatedCheckout)
+    } catch (err: any) {
+      console.error(err)
+      renderErrorModal()
+    }
+  }
+
+  /**
    * @function getCheckoutCookie - gets the current non-expired chechout cookie
    */
   const getCheckoutCookie = () => {
     return Cookies.get("shopifyCheckout")
+  }
+
+  const checkoutHasDiscountV2 = (code: string, myCheckout: any) => {
+    try {
+      return myCheckout.discountApplications.some(
+        discount => discount.code === code
+      )
+    } catch (e) {
+      return false
+    }
+  }
+
+  const checkoutIsEmpty = (myCheckout: any) => {
+    try {
+      return myCheckout.lineItems.length === 0
+    } catch (e) {
+      return false
+    }
   }
 
   /**
@@ -133,6 +197,22 @@ export const CartProvider = ({ children }) => {
    */
   const getNewCheckout = async () => {
     const newCheckout = await client.checkout.create()
+
+    // check for discount code in URL, if present cookie will be set
+    const code = getDiscountParams()
+    if (code && code !== "") {
+      // set discount code cookie
+      // this cookie will be used to apply discount code once an item is added to cart
+      // buy-sdk does not allow to apply discount code on create checkout with 0 items
+      // ignore if discount code is already applied
+      if (!checkoutHasDiscountV2(code, newCheckout)) {
+        Cookies.set("tnDiscountCode", code, {
+          sameSite: "strict",
+          expires: 2592000,
+        })
+      }
+    }
+
     if (isBrowser) {
       Cookies.set("shopifyCheckout", String(newCheckout.id), {
         sameSite: "strict",
@@ -411,6 +491,7 @@ export const CartProvider = ({ children }) => {
      * @function initializeCheckout - fetches current or creates new Shopify checkout
      * sets checkout [setCheckout]
      */
+
     const initializeCheckout = async () => {
       const validateLocalCheckout = async (localCheckout: LocalCheckout) => {
         const now = new Date()
@@ -419,6 +500,7 @@ export const CartProvider = ({ children }) => {
           localStorage.removeItem("cart-images")
           localStorage.removeItem("customs-resume")
           Cookies.remove("tnCartCounter")
+          Cookies.remove("tnDiscountCode")
           // eslint-disable-next-line no-return-await
           return await getNewCheckout()
         }
@@ -457,6 +539,21 @@ export const CartProvider = ({ children }) => {
           checkout = (await getNewCheckout()) as unknown as Checkout
         }
         setCheckout(checkout)
+        // check for params and add discount code
+        const code = getDiscountParams()
+        if (code && code !== "") {
+          if (checkoutIsEmpty(checkout)) {
+            Cookies.set("tnDiscountCode", code, {
+              sameSite: "strict",
+              expires: 2592000,
+            })
+          } else {
+            addDiscountCodeToCheckout({
+              checkoutId: checkout.id,
+              code: code,
+            })
+          }
+        }
       } catch (err: any) {
         console.error("ERROR", err.message)
         renderErrorModal()
@@ -489,11 +586,13 @@ export const CartProvider = ({ children }) => {
           checkout.id,
           lineItems
         )
+
         addToImageStorage(sku, image, checkout.id)
         rebuildBundles(updatedCheckout)
         setCheckout(updatedCheckout)
         setIsAddingToCart(false)
         if (shouldOpenDrawer) setIsCartDrawerOpen(true)
+        handleDiscountCookie()
       } catch (err: any) {
         console.error(err)
         setIsAddingToCart(false)
@@ -523,6 +622,7 @@ export const CartProvider = ({ children }) => {
         setCheckout(updatedCheckout)
         setIsAddingToCart(false)
         setIsCartDrawerOpen(true)
+        handleDiscountCookie()
       } catch (err: any) {
         console.error(err)
         setIsAddingToCart(false)
@@ -556,6 +656,7 @@ export const CartProvider = ({ children }) => {
         setCheckout(updatedCheckout)
         setIsAddingToCart(false)
         setIsCartDrawerOpen(true)
+        handleDiscountCookie()
       } catch (err: any) {
         console.error(err)
         setIsAddingToCart(false)
@@ -585,6 +686,7 @@ export const CartProvider = ({ children }) => {
         addCustomToLocalStorage(key, resumeData, sku, handle)
         setIsAddingToCart(false)
         if (activateDrawer) setIsCartDrawerOpen(true)
+        handleDiscountCookie()
       } catch (err: any) {
         console.error(err)
         setIsAddingToCart(false)
@@ -675,6 +777,28 @@ export const CartProvider = ({ children }) => {
       }
     }
 
+    const checkoutHasDiscount = (code: string) => {
+      try {
+        return checkout.discountApplications.some(
+          discount => discount.code === code
+        )
+      } catch (e) {
+        return false
+      }
+    }
+
+    const handleDiscountCookie = async () => {
+      const code = Cookies.get("tnDiscountCode")
+      if (code && code !== "") {
+        // check if code is already applied
+        const isAlreadyApplied = checkoutHasDiscount(code)
+        if (!isAlreadyApplied) {
+          await addDiscountCode(code)
+        }
+        Cookies.remove("tnDiscountCode")
+      }
+    }
+
     const addDiscountCode = async (code: string) => {
       try {
         const updatedCheckout = await client.checkout.addDiscount(
@@ -691,6 +815,7 @@ export const CartProvider = ({ children }) => {
             })
           )
         }
+        rebuildBundles(updatedCheckout)
         setCheckout(updatedCheckout)
       } catch (err: any) {
         console.error(err)
@@ -714,12 +839,30 @@ export const CartProvider = ({ children }) => {
             })
           )
         }
+        rebuildBundles(updatedCheckout)
         setCheckout(updatedCheckout)
       } catch (err: any) {
         console.error(err)
         renderErrorModal()
       }
     }
+
+    const getAppliedDiscountCode = (): string => {
+      try {
+        if (!checkout) return ""
+        if (checkoutIsEmpty(checkout)) {
+          const cookie = Cookies.get("tnDiscountCode")
+          return cookie ? cookie : ""
+        }
+        if (checkout.discountApplications.length > 0) {
+          return checkout.discountApplications[0].code
+        }
+        return ""
+      } catch (err) {
+        return ""
+      }
+    }
+
     return {
       isDrawerOpen,
       setIsDrawerOpen,
@@ -744,6 +887,7 @@ export const CartProvider = ({ children }) => {
       // for sunglasses
       addSunglassesToCart,
       isRemovingFromCart,
+      getAppliedDiscountCode,
     }
   }, [
     isDrawerOpen,

@@ -22,6 +22,7 @@ import { isDiscounted } from "../helpers/shopify"
 import Divider from "../components/divider"
 import Badge from "../components/badge"
 import ProductBottomline from "../components/product-bottomline"
+import { useDiscountedPricing } from "../hooks/useDiscountedPricing"
 
 const Page = styled.div`
   .shipping-message {
@@ -241,6 +242,24 @@ const Product = ({
     shopifyProduct.handle,
     shopifyProduct.variants.length
   )
+
+  const createDiscountApiPayload = (): any[] => {
+    try {
+      return shopifyProduct.variants.map(v => ({
+        price: v.price,
+        id: v.legacyResourceId,
+      }))
+    } catch (error) {
+      return []
+    }
+  }
+
+  const { discountedPrice, isApplicable, offer } = useDiscountedPricing({
+    productId: shopifyProduct.legacyResourceId,
+    prices: createDiscountApiPayload(),
+    selectedVariantId: selectedVariant.legacyResourceId,
+    handle: shopifyProduct.handle,
+  })
 
   const reviewListRef = useRef<HTMLDivElement>(null)
 
@@ -498,34 +517,65 @@ const Product = ({
                   </div>
 
                   <div className="price">
-                    {badge && (
-                      <div className="badge-container">
-                        <Badge
-                          label={badge.label}
-                          color={badge.color}
-                          position="static"
-                          top={0}
-                          left={0}
-                        />
-                      </div>
-                    )}
-
-                    <div className="value">
-                      <div>
-                        <span>${selectedVariant.price} USD</span>
-                      </div>
-                      {selectedVariant.compareAtPrice &&
-                        isDiscounted(
-                          selectedVariant.price,
-                          selectedVariant.compareAtPrice
-                        ) && (
-                          <div className="compare-at-price">
-                            <span className="compare-at-price">
-                              ${selectedVariant.compareAtPrice} USD
-                            </span>
+                    {!isApplicable ? (
+                      <>
+                        {badge && (
+                          <div className="badge-container">
+                            <Badge
+                              label={badge.label}
+                              color={badge.color}
+                              position="static"
+                              top={0}
+                              left={0}
+                            />
                           </div>
                         )}
-                    </div>
+
+                        <div className="value">
+                          <div>
+                            <span>${selectedVariant.price} USD</span>
+                          </div>
+                          {selectedVariant.compareAtPrice &&
+                            isDiscounted(
+                              selectedVariant.price,
+                              selectedVariant.compareAtPrice
+                            ) && (
+                              <div className="compare-at-price">
+                                <span className="compare-at-price">
+                                  ${selectedVariant.compareAtPrice} USD
+                                </span>
+                              </div>
+                            )}
+                        </div>
+                      </>
+                    ) : (
+                      discountedPrice &&
+                      isDiscounted(discountedPrice, selectedVariant.price) && (
+                        <>
+                          <div className="badge-container">
+                            <Badge
+                              label={offer}
+                              color={"red"}
+                              position="static"
+                              top={0}
+                              left={0}
+                            />
+                          </div>
+
+                          <div className="value">
+                            <div>
+                              <span>${discountedPrice} USD</span>
+                            </div>
+
+                            <div className="compare-at-price">
+                              <span className="compare-at-price">
+                                ${selectedVariant.price} USD
+                              </span>
+                            </div>
+                          </div>
+                        </>
+                      )
+                    )}
                   </div>
                 </form>
                 {selectedVariant.price > "0.00" && (

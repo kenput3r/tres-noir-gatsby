@@ -152,7 +152,9 @@ const Customize = ({
       const _variant = { contentful, shopify }
       setVariant(_variant)
       let handle = `/products/${contentfulProduct.handle}?variant=${contentful.sku}`
-      if (lensType) handle = `${handle}&lens_type=${lensType}`
+      if (lensType) {
+        handle = `${handle}&lens_type=${lensType}`
+      }
       setProductUrl(handle)
       // if (previewRef.current) {
       //   const previewImage = previewRef.current.querySelector(
