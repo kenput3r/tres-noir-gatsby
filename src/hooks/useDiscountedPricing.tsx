@@ -1,4 +1,6 @@
-import { useEffect, useState } from "react"
+import { useEffect, useState, useContext } from "react"
+import { CartContext } from "../contexts/cart"
+import { get } from "js-cookie"
 
 type Params = {
   productId: string
@@ -20,16 +22,15 @@ export const useDiscountedPricing = ({
   >([])
   const [isApplicable, setIsApplicable] = useState(false)
   const [offer, setOffer] = useState("")
+  // cart
+  const { getAppliedDiscountCode } = useContext(CartContext)
 
   // on mount
   useEffect(() => {
     const fetchDiscountedPricing = async () => {
       try {
+        const offer = getAppliedDiscountCode()
         // get URL params
-        const isBrowser = typeof window !== "undefined"
-        if (!isBrowser) return
-        const urlParams = new URLSearchParams(window.location.search)
-        const offer = urlParams.get("offer")
         if (!offer || offer === "") return
 
         const res = await fetch("/api/getDiscountedPricing", {
@@ -45,7 +46,7 @@ export const useDiscountedPricing = ({
       } catch (error) {}
     }
     fetchDiscountedPricing()
-  }, [])
+  }, [getAppliedDiscountCode])
 
   return {
     isApplicable:

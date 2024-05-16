@@ -104,6 +104,7 @@ const DefaultContext = {
   addDiscountCode: (code: string) => {},
   removeDiscountCode: () => {},
   isRemovingFromCart: false,
+  getAppliedDiscountCode: () => "",
 }
 
 export const CartContext = createContext(DefaultContext)
@@ -845,6 +846,23 @@ export const CartProvider = ({ children }) => {
         renderErrorModal()
       }
     }
+
+    const getAppliedDiscountCode = (): string => {
+      try {
+        if (!checkout) return ""
+        if (checkoutIsEmpty(checkout)) {
+          const cookie = Cookies.get("tnDiscountCode")
+          return cookie ? cookie : ""
+        }
+        if (checkout.discountApplications.length > 0) {
+          return checkout.discountApplications[0].code
+        }
+        return ""
+      } catch (err) {
+        return ""
+      }
+    }
+
     return {
       isDrawerOpen,
       setIsDrawerOpen,
@@ -869,6 +887,7 @@ export const CartProvider = ({ children }) => {
       // for sunglasses
       addSunglassesToCart,
       isRemovingFromCart,
+      getAppliedDiscountCode,
     }
   }, [
     isDrawerOpen,
