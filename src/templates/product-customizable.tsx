@@ -1290,8 +1290,6 @@ const ProductCustomizable = ({ data, location: any }: Props) => {
                           lensType !== LensType.SUNGLASSES
                             ? `&lens_type=${lensType}`
                             : ""
-                        }${
-                          offer && offer !== "" ? `&product_offer=${offer}` : ""
                         }`}
                       >
                         CUSTOMIZE
