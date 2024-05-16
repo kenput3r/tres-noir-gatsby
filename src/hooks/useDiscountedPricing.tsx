@@ -25,6 +25,10 @@ export const useDiscountedPricing = ({
   // cart
   const { getAppliedDiscountCode } = useContext(CartContext)
 
+  const abortController = new AbortController()
+  const isBrowser = typeof window !== `undefined`
+  if (!isBrowser) return null
+
   // on mount
   useEffect(() => {
     const fetchDiscountedPricing = async () => {
@@ -36,6 +40,7 @@ export const useDiscountedPricing = ({
         const res = await fetch("/api/getDiscountedPricing", {
           method: "POST",
           body: JSON.stringify({ productId, offer, prices, handle }),
+          signal: abortController.signal,
         })
         const json = await res.json()
         if (res.ok) {
@@ -46,6 +51,9 @@ export const useDiscountedPricing = ({
       } catch (error) {}
     }
     fetchDiscountedPricing()
+    return () => {
+      abortController.abort()
+    }
   }, [getAppliedDiscountCode])
 
   return {

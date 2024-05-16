@@ -14,6 +14,8 @@ export function useQuantityQuery(handle: string, size: number) {
     : ""
 
   const abortController = new AbortController()
+  const isBrowser = typeof window !== `undefined`
+  if (!isBrowser) return null
 
   const fetchQuery = async () => {
     try {
