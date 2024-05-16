@@ -11,7 +11,6 @@ import {
   YotpoRetrieveReviewsResponse,
   YotpoCreateFormData,
 } from "../../types/yotpo"
-import { a } from "react-spring"
 
 type Props = {
   productId: number
