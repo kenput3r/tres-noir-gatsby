@@ -33,6 +33,8 @@ export function ReviewsProvider({
   const [isLoading, setIsLoading] = useState(true)
   const [isRefetching, setIsRefetching] = useState(false)
 
+  const abortController = new AbortController()
+
   useEffect(() => {
     let isMounted = true
 
@@ -48,6 +50,7 @@ export function ReviewsProvider({
             "Content-Type": "application/json",
             Accept: "application/json",
           },
+          signal: abortController.signal,
         })
         const json = (await response.json()) as YotpoRetrieveReviewsData
         if (json.status.code !== 200) {
@@ -66,6 +69,7 @@ export function ReviewsProvider({
 
     return () => {
       isMounted = false
+      abortController.abort()
     }
   }, [productId])
 
