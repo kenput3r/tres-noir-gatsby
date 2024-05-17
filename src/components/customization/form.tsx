@@ -441,12 +441,14 @@ const Form = ({
           const validationArr = [
             "Blue Light Blocking",
             "Polarized-G15",
+            "Polarized - For Non Prescription-G15",
             "XTRActive Polarized-Smoke",
             "Transitions - For Progressive",
           ]
           blockedSelections.push(
             "Blue Light Blocking",
             "Polarized-G15",
+            "Polarized - For Non Prescription-G15",
             "XTRActive Polarized-Smoke",
             "Transitions - For Progressive-Smoke",
             "Transitions - For Progressive-Brown"
@@ -474,7 +476,7 @@ const Form = ({
         // if Bifocal and Polarized or Gradient Tint or Transitions, disable Hi-Index
         if (
           (selectedVariants.step1.product.title === "Bifocal" &&
-            (selectedVariants.step2.product.title === "Polarized" ||
+            (selectedVariants.step2.product.title.includes("Polarized") ||
               selectedVariants.step2.product.title === "Gradient Tint")) ||
           selectedVariants.step2.product.title === "Transitions"
         ) {
@@ -488,7 +490,7 @@ const Form = ({
         }
         // if Polarized G15 option, disabled Hi-Index
         else if (
-          selectedVariants.step2.product.title === "Polarized" &&
+          selectedVariants.step2.product.title.includes("Polarized") &&
           selectedVariants.step2.title === "G15"
         ) {
           blockedSelections.push("Hi-Index")
