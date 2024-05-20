@@ -3,10 +3,13 @@ import styled from "styled-components"
 import { RxInfoContext } from "../contexts/rxInfo"
 
 const Component = styled.div`
-  margin-top: 12px;
+  margin-top: 20px;
   .grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
+    @media screen and (max-width: 768px) {
+      grid-template-columns: repeat(3, 1fr);
+    }
   }
   .grid label {
     padding: 1rem;
@@ -16,6 +19,7 @@ const Component = styled.div`
     display: flex;
     align-items: center;
     justify-content: center;
+    font-family: var(--sub-heading-font);
   }
   .grid input[type="radio"] {
     display: none;
@@ -29,12 +33,27 @@ const Component = styled.div`
     color: #fff;
   }
   .title {
+    text-align: center;
     display: block;
     margin-bottom: 8px;
     font-family: var(--sub-heading-font);
     font-size: 18px;
     @media screen and (max-width: 768px) {
       font-size: 16px;
+    }
+  }
+  .rx-prism {
+    margin-top: 10px;
+    font-family: var(--sub-heading-font);
+    p {
+      color: #808080;
+      margin: 0;
+      span {
+        color: initial;
+      }
+    }
+    a {
+      text-decoration: none;
     }
   }
 `
@@ -94,6 +113,18 @@ const ReadersTable: React.FC<Props> = ({ clearErrors, isNowValid }) => {
             </label>
           </div>
         ))}
+      </div>
+      <div className="rx-prism">
+        <p>
+          Need prism correction OR further assistance inputting your Rx? Email{" "}
+          <a href="mailto:info@tresnoir.com">
+            <span>info@tresnoir.com</span>{" "}
+          </a>
+          or call{" "}
+          <a href="tel:+17146564796">
+            <span>714-656-4796</span>
+          </a>
+        </p>
       </div>
     </Component>
   )

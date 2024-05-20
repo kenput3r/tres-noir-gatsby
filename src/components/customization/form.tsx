@@ -671,7 +671,11 @@ const Form = ({
               >
                 <GatsbyImage
                   image={
-                    product.images[0].localFile.childImageSharp.gatsbyImageData
+                    product.featuredImage && product.featuredImage.localFile
+                      ? product.featuredImage.localFile.childImageSharp
+                          .gatsbyImageData
+                      : product.images[0].localFile.childImageSharp
+                          .gatsbyImageData
                   }
                   alt={product.images[0].altText || product.title}
                 />
@@ -734,7 +738,11 @@ const Form = ({
               >
                 <GatsbyImage
                   image={
-                    product.images[0].localFile.childImageSharp.gatsbyImageData
+                    product.featuredImage && product.featuredImage.localFile
+                      ? product.featuredImage.localFile.childImageSharp
+                          .gatsbyImageData
+                      : product.images[0].localFile.childImageSharp
+                          .gatsbyImageData
                   }
                   alt={product.images[0].altText || product.title}
                 />

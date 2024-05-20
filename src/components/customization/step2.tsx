@@ -24,10 +24,16 @@ const Step2: React.FC<Props> = ({ handle }) => {
     product => product.handle === "non-prescription-polarized-lenses"
   )
 
+  const transitionsForProgressiveLenses = shopifyCollection.products.find(
+    product => product.handle === "transitions-for-progressive"
+  )
+
   const initialFilteredCollection = {
     ...shopifyCollection,
     products: shopifyCollection.products.filter(
-      product => product.handle !== "non-prescription-polarized-lenses"
+      product =>
+        product.handle !== "non-prescription-polarized-lenses" &&
+        product.handle !== "transitions-for-progressive"
     ),
   }
 
@@ -42,7 +48,16 @@ const Step2: React.FC<Props> = ({ handle }) => {
           ? nonPrescriptionPolarizedLenses
           : product
       )
-
+      setFilteredCollection({
+        ...initialFilteredCollection,
+        products: updatedProducts,
+      })
+    } else if (selectedVariants.step1.product.title === "Progressive") {
+      const updatedProducts = initialFilteredCollection.products.map(product =>
+        product.title === "Transitions" || product.handle === "transitions-1"
+          ? transitionsForProgressiveLenses
+          : product
+      )
       setFilteredCollection({
         ...initialFilteredCollection,
         products: updatedProducts,
