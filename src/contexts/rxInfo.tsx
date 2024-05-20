@@ -16,6 +16,7 @@ interface rxDetails {
 interface rxType {
   right: rxDetails
   left: rxDetails
+  lensPower?: string
 }
 
 const rxInit: rxType = {
@@ -33,6 +34,7 @@ const rxInit: rxType = {
     add: "",
     pd: "63.0",
   },
+  lensPower: "",
 }
 
 const defaultContext = {
@@ -55,6 +57,7 @@ const actionList = {
   LEFT_PD: "left-pd",
   FULL: "full",
   RESET: "reset",
+  POWER: "lens-power",
 }
 const reducer = (state, action) => {
   switch (action.type) {
@@ -78,6 +81,8 @@ const reducer = (state, action) => {
       return { ...state, left: { ...state.left, add: action.payload } }
     case actionList.LEFT_PD:
       return { ...state, left: { ...state.left, pd: action.payload } }
+    case actionList.POWER:
+      return { ...state, lensPower: action.payload }
     case actionList.FULL:
       return action.payload
     case actionList.RESET:

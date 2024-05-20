@@ -3,7 +3,11 @@ import { CustomizeContext } from "../../contexts/customize"
 import { useStaticQuery, graphql } from "gatsby"
 import Form from "./form"
 
-const Step2 = () => {
+type Props = {
+  handle: string
+}
+
+const Step2: React.FC<Props> = ({ handle }) => {
   const { selectedVariants } = useContext(CustomizeContext)
   const { shopifyCollection } = useStaticQuery(graphql`
     query Step2Query {
@@ -46,7 +50,7 @@ const Step2 = () => {
     }
   }, [selectedVariants])
 
-  return <Form shopifyCollection={filteredCollection} />
+  return <Form shopifyCollection={filteredCollection} handle={handle} />
 }
 
 export default Step2
