@@ -21,6 +21,12 @@ export const shopifyProductsFields = graphql`
     featuredImage {
       originalSrc
       altText
+      localFile {
+        id
+        childImageSharp {
+          gatsbyImageData(quality: 50)
+        }
+      }
     }
     title
     variants {
