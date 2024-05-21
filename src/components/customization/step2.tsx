@@ -1,8 +1,14 @@
-import React from "react"
+import React, { useContext, useEffect, useState } from "react"
+import { CustomizeContext } from "../../contexts/customize"
 import { useStaticQuery, graphql } from "gatsby"
 import Form from "./form"
 
-const Step2 = () => {
+type Props = {
+  handle: string
+}
+
+const Step2: React.FC<Props> = ({ handle }) => {
+  const { selectedVariants } = useContext(CustomizeContext)
   const { shopifyCollection } = useStaticQuery(graphql`
     query Step2Query {
       shopifyCollection(handle: { eq: "lens-type" }) {
@@ -13,7 +19,53 @@ const Step2 = () => {
       }
     }
   `)
-  return <Form shopifyCollection={shopifyCollection} />
+
+  const nonPrescriptionPolarizedLenses = shopifyCollection.products.find(
+    product => product.handle === "non-prescription-polarized-lenses"
+  )
+
+  const transitionsForProgressiveLenses = shopifyCollection.products.find(
+    product => product.handle === "transitions-for-progressive"
+  )
+
+  const initialFilteredCollection = {
+    ...shopifyCollection,
+    products: shopifyCollection.products.filter(
+      product =>
+        product.handle !== "non-prescription-polarized-lenses" &&
+        product.handle !== "transitions-for-progressive"
+    ),
+  }
+
+  const [filteredCollection, setFilteredCollection] = useState(
+    initialFilteredCollection
+  )
+
+  useEffect(() => {
+    if (selectedVariants.step1.product.title === "Non-Prescription Lens") {
+      const updatedProducts = initialFilteredCollection.products.map(product =>
+        product.title === "Polarized" || product.handle === "polarized-1"
+          ? nonPrescriptionPolarizedLenses
+          : product
+      )
+      setFilteredCollection({
+        ...initialFilteredCollection,
+        products: updatedProducts,
+      })
+    } else if (selectedVariants.step1.product.title === "Progressive") {
+      const updatedProducts = initialFilteredCollection.products.map(product =>
+        product.title === "Transitions" || product.handle === "transitions-1"
+          ? transitionsForProgressiveLenses
+          : product
+      )
+      setFilteredCollection({
+        ...initialFilteredCollection,
+        products: updatedProducts,
+      })
+    }
+  }, [selectedVariants])
+
+  return <Form shopifyCollection={filteredCollection} handle={handle} />
 }
 
 export default Step2

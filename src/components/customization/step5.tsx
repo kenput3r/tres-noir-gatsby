@@ -190,9 +190,14 @@ const Step5 = (props: {
           {
             key: "Prescription",
             value:
-              step1.product.title !== "Non-Prescription Lens"
-                ? JSON.stringify(rxInfo)
-                : "Non-Prescription",
+              step1.product.title === "Non-Prescription Lens"
+                ? "Non-Prescription"
+                : step1.product.title === "Reader's"
+                ? JSON.stringify({ lensPower: rxInfo.lensPower })
+                : JSON.stringify({
+                    right: rxInfo.right,
+                    left: rxInfo.left,
+                  }),
           },
           {
             key: "_frameName",

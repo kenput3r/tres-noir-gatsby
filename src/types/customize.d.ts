@@ -112,6 +112,7 @@ export interface ShopifyProduct {
     originalSrc: string
   }
   id: string
+  handle: string
   legacyResourceId: string
   onlineStoreUrl: string
   priceRangeV2: {
