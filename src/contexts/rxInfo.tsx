@@ -37,6 +37,34 @@ const rxInit: rxType = {
   lensPower: "",
 }
 
+export const handleRxFromAttribute = (input: rxType) => {
+  try {
+    const defaultPrescription = {
+      sph: "0.00",
+      cyl: "0.00",
+      axis: "",
+      add: "",
+      pd: "63.0",
+    }
+    const defaultContext = {
+      right: { ...defaultPrescription },
+      left: { ...defaultPrescription },
+      lensPower: "",
+    }
+    let context = { ...defaultContext }
+    if (input.hasOwnProperty("lensPower")) {
+      context.lensPower = input.lensPower ?? ""
+    }
+    if (input.hasOwnProperty("right") && input.hasOwnProperty("left")) {
+      context.right = { ...input.right }
+      context.left = { ...input.left }
+    }
+    return context
+  } catch (error) {
+    return defaultContext
+  }
+}
+
 const defaultContext = {
   isRxAble: false,
   rxInfo: rxInit,
@@ -84,7 +112,7 @@ const reducer = (state, action) => {
     case actionList.POWER:
       return { ...state, lensPower: action.payload }
     case actionList.FULL:
-      return action.payload
+      return handleRxFromAttribute(action.payload)
     case actionList.RESET:
       return rxInit
     default:

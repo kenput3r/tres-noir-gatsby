@@ -21,6 +21,7 @@ import { LocalCheckout } from "../../types/checkout"
 import { rxType } from "../../types/checkout"
 import { isDiscounted } from "../../helpers/shopify"
 import ReadersTable from "../readers-table"
+import { handleRxFromAttribute } from "../../contexts/rxInfo"
 
 const Form = ({
   shopifyCollection,
@@ -68,6 +69,12 @@ const Form = ({
         continueBtn.current?.classList.remove("disable")
       }
     } else if (variant.product?.title === "Single Vision") {
+      if (messageRef.current) {
+        if (messageRef.current.querySelector("#readers-error")) {
+          removeChildNodes(messageRef.current)
+          continueBtn.current?.classList.remove("disable")
+        }
+      }
       rxInfoDispatch({ type: `right-add`, payload: "" })
       rxInfoDispatch({ type: `left-add`, payload: "" })
       if (errorRefs.current[`select-right-add`])
@@ -82,6 +89,13 @@ const Form = ({
       if (messageRef.current) {
         removeChildNodes(messageRef.current)
         continueBtn.current?.classList.remove("disable")
+      }
+    } else {
+      if (messageRef.current) {
+        if (messageRef.current.querySelector("#readers-error")) {
+          removeChildNodes(messageRef.current)
+          continueBtn.current?.classList.remove("disable")
+        }
       }
     }
     setHasSavedCustomized({
@@ -267,7 +281,6 @@ const Form = ({
       setIsFormValid(isValid)
       return isValid
     }
-
     if (isReaders) {
       if (rxInfo.lensPower === "") {
         let node = document.createElement("li")
