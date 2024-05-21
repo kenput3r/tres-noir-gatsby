@@ -38,40 +38,30 @@ const rxInit: rxType = {
 }
 
 export const handleRxFromAttribute = (input: rxType) => {
-  // Default prescription object
-  const defaultPrescription = {
-    sph: "0.00",
-    cyl: "0.00",
-    axis: "",
-    add: "",
-    pd: "63.0",
-  }
-
-  // Default context object
-  const defaultContext = {
-    right: { ...defaultPrescription },
-    left: { ...defaultPrescription },
-    lensPower: "",
-  }
-
   try {
+    const defaultPrescription = {
+      sph: "0.00",
+      cyl: "0.00",
+      axis: "",
+      add: "",
+      pd: "63.0",
+    }
+    const defaultContext = {
+      right: { ...defaultPrescription },
+      left: { ...defaultPrescription },
+      lensPower: "",
+    }
     let context = { ...defaultContext }
-
-    // If input contains lensPower only
     if (input.hasOwnProperty("lensPower")) {
       context.lensPower = input.lensPower ?? ""
     }
-
-    // If input contains right and left prescriptions
     if (input.hasOwnProperty("right") && input.hasOwnProperty("left")) {
       context.right = { ...input.right }
       context.left = { ...input.left }
     }
-
     return context
   } catch (error) {
-    console.error("Error processing lens power input:", error)
-    return defaultContext // Return default context shape on error
+    return defaultContext
   }
 }
 
