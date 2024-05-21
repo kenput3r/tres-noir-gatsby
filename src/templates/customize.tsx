@@ -269,10 +269,10 @@ const Customize = ({
               <span>${currentPrice}</span>
             </p>
             <div className="current-step">
-              {currentStep === 1 && <Step1 />}
-              {currentStep === 2 && <Step2 />}
-              {currentStep === 3 && <Step3 />}
-              {currentStep === 4 && <Step4 />}
+              {currentStep === 1 && <Step1 handle={shopifyProduct.handle} />}
+              {currentStep === 2 && <Step2 handle={shopifyProduct.handle} />}
+              {currentStep === 3 && <Step3 handle={shopifyProduct.handle} />}
+              {currentStep === 4 && <Step4 handle={shopifyProduct.handle} />}
               {currentStep === 5 && (
                 <Step5
                   productTitle={shopifyProduct.title}
@@ -511,6 +511,9 @@ export const query = graphql`
         }
       }
       title
+      handle
+      id
+      legacyResourceId
       variants {
         availableForSale
         compareAtPrice

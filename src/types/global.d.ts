@@ -32,6 +32,14 @@ export interface ShopifyProduct {
   handle: string
   description: string
   id: string
+  featuredImage?: {
+    localFile: {
+      id: string
+      childImageSharp: {
+        gatsbyImageData: IGatsbyImageData
+      }
+    }
+  }
   images: [
     {
       altText: string

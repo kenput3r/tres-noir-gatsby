@@ -20,11 +20,15 @@ import { FaQuestionCircle } from "react-icons/fa"
 import { LocalCheckout } from "../../types/checkout"
 import { rxType } from "../../types/checkout"
 import { isDiscounted } from "../../helpers/shopify"
+import ReadersTable from "../readers-table"
+import { handleRxFromAttribute } from "../../contexts/rxInfo"
 
 const Form = ({
   shopifyCollection,
+  handle,
 }: {
   shopifyCollection: ShopifyCollection
+  handle: string
 }) => {
   const {
     currentStep,
@@ -51,6 +55,7 @@ const Form = ({
   const topRef = useRef<HTMLDivElement>(null)
   const [filteredCollection, setFilteredCollection] = useState<string[]>([])
   const [editHasError, setEditHasError] = useState(false)
+  const isReaders = selectedVariants.step1.product.title === "Reader's"
 
   const handleChange = (
     evt: React.ChangeEvent<HTMLInputElement> | null,
@@ -64,6 +69,12 @@ const Form = ({
         continueBtn.current?.classList.remove("disable")
       }
     } else if (variant.product?.title === "Single Vision") {
+      if (messageRef.current) {
+        if (messageRef.current.querySelector("#readers-error")) {
+          removeChildNodes(messageRef.current)
+          continueBtn.current?.classList.remove("disable")
+        }
+      }
       rxInfoDispatch({ type: `right-add`, payload: "" })
       rxInfoDispatch({ type: `left-add`, payload: "" })
       if (errorRefs.current[`select-right-add`])
@@ -74,6 +85,18 @@ const Form = ({
         errorRefs.current[`select-left-add`].classList.add("disable")
       if (errorRefs.current[`select-left-add`])
         errorRefs.current[`select-left-add`].querySelector("select").value = ""
+    } else if (variant.product?.title === "Reader's") {
+      if (messageRef.current) {
+        removeChildNodes(messageRef.current)
+        continueBtn.current?.classList.remove("disable")
+      }
+    } else {
+      if (messageRef.current) {
+        if (messageRef.current.querySelector("#readers-error")) {
+          removeChildNodes(messageRef.current)
+          continueBtn.current?.classList.remove("disable")
+        }
+      }
     }
     setHasSavedCustomized({
       ...hasSavedCustomized,
@@ -185,6 +208,13 @@ const Form = ({
 
   const clearErrors = (evt: ChangeEvent<HTMLSelectElement>) => {
     let id: string = evt.target.id
+
+    if (evt.target.name === "lens-power") {
+      // reader's table
+      let msg = messageRef.current.querySelector("#readers-error")
+      if (msg) msg.remove()
+    }
+
     // disable axis whether a cyl value is present or not
     if (id.includes("cyl")) {
       let subId = id.split("-")[0]
@@ -246,6 +276,33 @@ const Form = ({
     let isValid = true
     let messages: HTMLElement[] = []
     if (messageRef.current) removeChildNodes(messageRef.current)
+
+    if (selectedVariants.step1.product.title === "Non-Prescription Lens") {
+      setIsFormValid(isValid)
+      return isValid
+    }
+    if (isReaders) {
+      if (rxInfo.lensPower === "") {
+        let node = document.createElement("li")
+        node.textContent = "Please add a lens power"
+        node.setAttribute("id", "readers-error")
+        messages.push(node)
+        isValid = false
+        if (!isValid && messageRef.current) {
+          for (let i = 0; i < messages.length; ++i) {
+            messageRef.current?.appendChild(messages[i])
+          }
+        }
+        if (!isValid) {
+          continueBtn.current?.classList.add("disable")
+        }
+        setIsFormValid(isValid)
+        return isValid
+      } else {
+        setIsFormValid(isValid)
+        return isValid
+      }
+    }
     if (
       rxInfo.right.sph === "0.00" &&
       rxInfo.left.sph === "0.00" &&
@@ -436,20 +493,55 @@ const Form = ({
     // temp array to store blocked selections
     let blockedSelections: any[] = []
     switch (currentStep) {
+      case 1:
+        // disabled Progressive and Bifocal for TN's and TN X's
+        const isTnsFrame = handle === "tns" || handle === "tns-x"
+        if (isTnsFrame) {
+          const validationArr = ["Progressive", "Bifocal"]
+          blockedSelections.push(...validationArr)
+          if (
+            validationArr.includes(
+              selectedVariants[`step${currentStep}`].product.title
+            )
+          ) {
+            disableContinue(currentStep)
+          }
+        }
+
       case 2:
+        if (isReaders) {
+          const validationArr = [
+            "Sunglasses",
+            "Transitions",
+            "Transitions - For Progressive",
+            "Gradient",
+            "Polarized",
+            "XTRActive Polarized",
+          ]
+          blockedSelections.push(...validationArr)
+          if (
+            validationArr.includes(
+              selectedVariants[`step${currentStep}`].product.title
+            )
+          ) {
+            disableContinue(currentStep)
+          }
+        }
+
         if (selectedVariants.step1.product.title === "Bifocal") {
           const validationArr = [
             "Blue Light Blocking",
             "Polarized-G15",
-            "XTRActive Polarized-Smoke",
+            "Polarized - For Non Prescription-G15",
+            "XTRActive Polarized",
             "Transitions - For Progressive",
           ]
           blockedSelections.push(
             "Blue Light Blocking",
             "Polarized-G15",
-            "XTRActive Polarized-Smoke",
-            "Transitions - For Progressive-Smoke",
-            "Transitions - For Progressive-Brown"
+            "Polarized - For Non Prescription-G15",
+            "XTRActive Polarized",
+            "Transitions - For Progressive"
           )
           if (
             validationArr.includes(
@@ -461,7 +553,7 @@ const Form = ({
         }
         // XTractive Polarized is only disable
         if (selectedVariants.step1.product.title === "Bifocal") {
-          blockedSelections.push("XTRActive Polarized-Smoke")
+          blockedSelections.push("XTRActive Polarized")
           if (
             selectedVariants[`step${currentStep}`].product.title ===
             "XTRActive Polarized"
@@ -474,7 +566,7 @@ const Form = ({
         // if Bifocal and Polarized or Gradient Tint or Transitions, disable Hi-Index
         if (
           (selectedVariants.step1.product.title === "Bifocal" &&
-            (selectedVariants.step2.product.title === "Polarized" ||
+            (selectedVariants.step2.product.title.includes("Polarized") ||
               selectedVariants.step2.product.title === "Gradient Tint")) ||
           selectedVariants.step2.product.title === "Transitions"
         ) {
@@ -488,12 +580,23 @@ const Form = ({
         }
         // if Polarized G15 option, disabled Hi-Index
         else if (
-          selectedVariants.step2.product.title === "Polarized" &&
+          selectedVariants.step2.product.title.includes("Polarized") &&
           selectedVariants.step2.title === "G15"
         ) {
           blockedSelections.push("Hi-Index")
           if (
             selectedVariants[`step${currentStep}`].product.title === "Hi-Index"
+          ) {
+            disableContinue(currentStep)
+          }
+        }
+        if (isReaders) {
+          const validationArr = ["Poly Carbonate", "Hi-Index"]
+          blockedSelections.push(...validationArr)
+          if (
+            validationArr.includes(
+              selectedVariants[`step${currentStep}`].product.title
+            )
           ) {
             disableContinue(currentStep)
           }
@@ -581,7 +684,11 @@ const Form = ({
               >
                 <GatsbyImage
                   image={
-                    product.images[0].localFile.childImageSharp.gatsbyImageData
+                    product.featuredImage && product.featuredImage.localFile
+                      ? product.featuredImage.localFile.childImageSharp
+                          .gatsbyImageData
+                      : product.images[0].localFile.childImageSharp
+                          .gatsbyImageData
                   }
                   alt={product.images[0].altText || product.title}
                 />
@@ -637,10 +744,18 @@ const Form = ({
                 )}
               </div>
             ) : (
-              <div className={`product-option with-variants`}>
+              <div
+                className={`product-option with-variants ${
+                  filteredCollection.includes(product.title) ? "inactive" : ""
+                }`}
+              >
                 <GatsbyImage
                   image={
-                    product.images[0].localFile.childImageSharp.gatsbyImageData
+                    product.featuredImage && product.featuredImage.localFile
+                      ? product.featuredImage.localFile.childImageSharp
+                          .gatsbyImageData
+                      : product.images[0].localFile.childImageSharp
+                          .gatsbyImageData
                   }
                   alt={product.images[0].altText || product.title}
                 />
@@ -655,7 +770,7 @@ const Form = ({
                       className={`${
                         filteredCollection.includes(
                           `${product.title}-${variant.title}`
-                        )
+                        ) || filteredCollection.includes(product.title)
                           ? "inactive"
                           : ""
                       }`}
@@ -701,7 +816,7 @@ const Form = ({
                       />
                       {!filteredCollection.includes(
                         `${product.title}-${variant.title}`
-                      ) ? (
+                      ) || !filteredCollection.includes(product.title) ? (
                         <div className="checkmark" />
                       ) : (
                         <div className="checkmark disabled" />
@@ -715,7 +830,8 @@ const Form = ({
         )
       })}
       {(currentStep === 1 &&
-        selectedVariants.step1.product.title !== "Non-Prescription Lens") ||
+        selectedVariants.step1.product.title !== "Non-Prescription Lens" &&
+        selectedVariants.step1.product.title !== "Reader's") ||
       selectedVariants.step1.product.title === "" ? (
         <div className="rx-info">
           <div className="rx-box">
@@ -988,6 +1104,8 @@ const Form = ({
             </p>
           </div>
         </div>
+      ) : currentStep === 1 && isReaders ? (
+        <ReadersTable clearErrors={clearErrors} isNowValid={isNowValid} />
       ) : null}
       <div className="row button-row">
         {currentStep === 1 ? (

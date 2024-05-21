@@ -2,7 +2,10 @@ import React from "react"
 import { useStaticQuery, graphql } from "gatsby"
 import Form from "./form"
 
-const Step1 = () => {
+type Props = {
+  handle: string
+}
+const Step1: React.FC<Props> = ({ handle }) => {
   const { shopifyCollection } = useStaticQuery(graphql`
     query Step1Query {
       shopifyCollection(handle: { eq: "rx-type" }) {
@@ -13,7 +16,7 @@ const Step1 = () => {
       }
     }
   `)
-  return <Form shopifyCollection={shopifyCollection} />
+  return <Form shopifyCollection={shopifyCollection} handle={handle} />
 }
 
 export default Step1

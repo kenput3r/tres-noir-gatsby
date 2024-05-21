@@ -43,6 +43,8 @@ export const changeImage = (
           case "Transitions":
           case "Transitions - For Progressive":
           case "XTRActive Polarized":
+          case "Polarized - For Non Prescription":
+          case "Non Prescription Polarized Lenses":
           case "Polarized": {
             const property = isBifocal
               ? `sunGlasses${variantTitle}LensesBifocal`
