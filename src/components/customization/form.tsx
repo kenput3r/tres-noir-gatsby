@@ -281,8 +281,6 @@ const Form = ({
       setIsFormValid(isValid)
       return isValid
     }
-    console.log("rxInfo", rxInfo)
-    console.log("isReaders", isReaders)
     if (isReaders) {
       if (rxInfo.lensPower === "") {
         let node = document.createElement("li")
