@@ -112,7 +112,7 @@ const reducer = (state, action) => {
     case actionList.POWER:
       return { ...state, lensPower: action.payload }
     case actionList.FULL:
-      return action.payload
+      return handleRxFromAttribute(action.payload)
     case actionList.RESET:
       return rxInit
     default:

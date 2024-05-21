@@ -439,7 +439,7 @@ const Form = ({
             const prescription = JSON.parse(rxAttr) as rxType
             rxInfoDispatch({
               type: `full`,
-              payload: handleRxFromAttribute(prescription),
+              payload: prescription,
             })
           }
           const parsedCustoms = customsStorage.value.customs
