@@ -4,7 +4,9 @@ import React, {
   useState,
   useEffect,
   useMemo,
+  useCallback,
 } from "react"
+import { graphql, useStaticQuery } from "gatsby"
 import Client, { Cart } from "shopify-buy"
 import Cookies from "js-cookie"
 import {
@@ -105,6 +107,7 @@ const DefaultContext = {
   removeDiscountCode: () => {},
   isRemovingFromCart: false,
   getAppliedDiscountCode: () => "",
+  updateShipInsureAttribute: (enableShipInsure: boolean) => {},
 }
 
 export const CartContext = createContext(DefaultContext)
@@ -117,8 +120,58 @@ export const CartProvider = ({ children }) => {
   const [isActive, setIsActive] = useState("shop")
   const [checkout, setCheckout] = useState<any>()
   const [isAddingToCart, setIsAddingToCart] = useState<boolean>(false)
-
   const [isRemovingFromCart, setIsRemovingFromCart] = useState<boolean>(false)
+
+  const getShipInsureStatus = useCallback(() => {
+    // return false if line attribute is found and is false, otherwise true
+    try {
+      if (!checkout) return false
+      console.log(
+        "checkout.customAttributes",
+        checkout.customAttributes,
+        checkout.customAttributes.find(attr => attr.key === "_ShipInsure")
+      )
+      const shipInsureAttribute = checkout.customAttributes.find(
+        attr => attr.key === "_ShipInsure"
+      )
+      if (shipInsureAttribute) {
+        return shipInsureAttribute.value === "false" ? true : false
+      }
+      return true
+    } catch (e) {
+      return true
+    }
+  }, [checkout])
+
+  const isShipInsureEnabled = getShipInsureStatus()
+
+  const shipInsureData = useStaticQuery(graphql`
+    query cartContextSettings {
+      contentfulHomepage {
+        autoEnableShipInsure
+      }
+      shopifyProduct(handle: { eq: "shipinsure" }) {
+        id
+        handle
+        legacyResourceId
+        variants {
+          price
+          legacyResourceId
+          storefrontId
+          sku
+          title
+        }
+        featuredImage {
+          altText
+          localFile {
+            childImageSharp {
+              gatsbyImageData
+            }
+          }
+        }
+      }
+    }
+  `)
 
   /**
    * @function getDiscountParams - gets the current non-expired chechout cookie
@@ -582,11 +635,11 @@ export const CartProvider = ({ children }) => {
             quantity,
           },
         ]
-        const updatedCheckout = await client.checkout.addLineItems(
+        const preShipInsure = await client.checkout.addLineItems(
           checkout.id,
           lineItems
         )
-
+        const updatedCheckout = await handleShipInsure(preShipInsure)
         addToImageStorage(sku, image, checkout.id)
         rebuildBundles(updatedCheckout)
         setCheckout(updatedCheckout)
@@ -863,6 +916,86 @@ export const CartProvider = ({ children }) => {
       }
     }
 
+    // gets the correct ship insure variant based on subtotal
+    const getCorrectShipInsureVariant = (subtotal: number) => {
+      try {
+        const shipInsureProduct = shipInsureData.shopifyProduct
+        const parseRange = (sku: string) => {
+          const match = sku.match(/SI_LEVEL_(\d+)-(\d+)/)
+          if (match) {
+            return {
+              min: parseInt(match[1]),
+              max: parseInt(match[2]),
+            }
+          }
+          return null
+        }
+        const correctVariant = shipInsureProduct.variants.find(variant => {
+          const range = parseRange(variant.sku)
+          return range && subtotal >= range.min && subtotal <= range.max
+        })
+        return correctVariant
+      } catch (e) {
+        return undefined
+      }
+    }
+
+    const findShipInsureInCart = (checkout: any) => {
+      try {
+        return checkout.lineItems.some(item => {
+          return item.variant.product.handle === "shipinsure"
+        })
+      } catch (e) {
+        return false
+      }
+    }
+
+    const handleShipInsure = async (checkout: any) => {
+      try {
+        const subtotal = checkout.subtotalPrice.amount
+        const correctVariant = getCorrectShipInsureVariant(Number(subtotal))
+        // only add ship insure if it's not already in cart, and is enabled
+        const isShipInsureValid = !findShipInsureInCart(checkout)
+        console.log("isShipInsureValid", isShipInsureValid)
+        if (isShipInsureValid && correctVariant) {
+          const lineItems = [
+            {
+              variantId: correctVariant.storefrontId,
+              quantity: 1,
+            },
+          ]
+          const newCheckout = await client.checkout.addLineItems(
+            checkout.id,
+            lineItems
+          )
+          return newCheckout
+        }
+      } catch (e) {
+        console.log("error", e)
+        return checkout
+      }
+    }
+
+    const updateShipInsureAttribute = async (enableShipInsure: boolean) => {
+      try {
+        const updatedCheckout = await client.checkout.updateAttributes(
+          checkout.id,
+          {
+            customAttributes: [
+              {
+                key: "_ShipInsure",
+                value: String(enableShipInsure),
+              },
+            ],
+          }
+        )
+        rebuildBundles(updatedCheckout)
+        setCheckout(updatedCheckout)
+      } catch (e) {
+        console.error("error", e)
+      }
+    }
+
     return {
       isDrawerOpen,
       setIsDrawerOpen,
@@ -888,6 +1021,7 @@ export const CartProvider = ({ children }) => {
       addSunglassesToCart,
       isRemovingFromCart,
       getAppliedDiscountCode,
+      updateShipInsureAttribute,
     }
   }, [
     isDrawerOpen,

@@ -16,6 +16,7 @@ import { SelectedVariantStorage } from "../types/global"
 import { CustomizeContext } from "../contexts/customize"
 import { RxInfoContext } from "../contexts/rxInfo"
 import { isDiscounted } from "../helpers/shopify"
+import EnableShipInsure from "../components/enable-shipinsure"
 
 const LoaderContainer = styled.div`
   position: fixed;
@@ -265,7 +266,12 @@ const Page = styled.div`
   }
 `
 
-const Cart = () => {
+const Cart = ({
+  data: {
+    contentfulHomepage: { cartMessage, cartMessageToggle },
+    contentfulVariantCollection: clearanceItemsData,
+  },
+}) => {
   const {
     checkout,
     removeProductFromCart,
@@ -280,23 +286,6 @@ const Cart = () => {
 
   const { setSelectedVariants, setCurrentStep, setHasSavedCustomized } =
     useContext(CustomizeContext)
-
-  const {
-    contentfulHomepage: { cartMessage, cartMessageToggle },
-    contentfulVariantCollection: clearanceItemsData,
-  } = useStaticQuery(graphql`
-    query getCartMessageForPage {
-      contentfulHomepage {
-        cartMessage
-        cartMessageToggle
-      }
-      contentfulVariantCollection(handle: { eq: "sale" }) {
-        variants {
-          sku
-        }
-      }
-    }
-  `)
 
   const stepMap = new Map()
   stepMap.set(1, "RX TYPE")
@@ -929,6 +918,7 @@ const Cart = () => {
                           }
                         })}
                     </ul>
+                    <EnableShipInsure />
                     <div className="subtotal">
                       <p>
                         Subtotal:{" "}
@@ -966,3 +956,17 @@ const Cart = () => {
 }
 
 export default Cart
+
+export const query = graphql`
+  query getCartSettings {
+    contentfulHomepage {
+      cartMessage
+      cartMessageToggle
+    }
+    contentfulVariantCollection(handle: { eq: "sale" }) {
+      variants {
+        sku
+      }
+    }
+  }
+`
