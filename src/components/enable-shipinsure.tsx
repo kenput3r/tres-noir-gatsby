@@ -16,11 +16,15 @@ const Label = styled.span`
   margin-right: 1rem;
 `
 
-const Switch = styled(animated.div)`
+interface SwitchProps {
+  checked: boolean
+}
+
+const Switch = styled(animated.label)<SwitchProps>`
   position: relative;
   width: 50px;
   height: 25px;
-  background-color: #ccc;
+  background-color: ${props => (props.checked ? "#4caf50" : "#ccc")};
   border-radius: 25px;
   cursor: pointer;
   display: flex;
@@ -37,32 +41,36 @@ const Handle = styled(animated.div)`
   box-shadow: 0 0 2px rgba(0, 0, 0, 0.2);
 `
 
+const Checkbox = styled.input`
+  opacity: 0;
+  width: 0;
+  height: 0;
+`
+
 const EnableShipInsure: React.FC = () => {
-  const { updateShipInsureAttribute } = useContext(CartContext)
+  const { updateShipInsureAttribute, isShipInsureEnabled } =
+    useContext(CartContext)
 
   const handleToggle = () => {
-    console.log("update attribute")
-    updateShipInsureAttribute(false)
-    // setIsShipInsureEnabled(!isShipInsureEnabled)
+    updateShipInsureAttribute(!isShipInsureEnabled)
   }
 
-  // const springProps = useSpring({
-  //   transform: isShipInsureEnabled ? "translateX(25px)" : "translateX(0px)",
-  //   backgroundColor: isShipInsureEnabled ? "#4caf50" : "#ccc",
-  //   config: { duration: 200 },
-  // })
+  const springProps = useSpring({
+    transform: isShipInsureEnabled ? "translateX(25px)" : "translateX(0px)",
+    config: { duration: 200 },
+  })
 
   return (
     <SwitchWrapper>
       <Label>Enable ShipInsure shipping insurance</Label>
-      <Switch
-        role="switch"
-        // aria-checked={isShipInsureEnabled}
-        tabIndex={0}
-        // style={{ backgroundColor: springProps.backgroundColor }}
-        onClick={handleToggle}
-      >
-        {/* <Handle style={{ transform: springProps.transform }} /> */}
+      {isShipInsureEnabled ? <span>Enabled</span> : <span>Disabled</span>}
+      <Switch checked={isShipInsureEnabled}>
+        <Checkbox
+          type="checkbox"
+          checked={isShipInsureEnabled}
+          onChange={handleToggle}
+        />
+        <Handle style={springProps} />
       </Switch>
     </SwitchWrapper>
   )

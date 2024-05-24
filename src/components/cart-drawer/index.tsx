@@ -11,6 +11,7 @@ import ShopifyItem from "./products/shopify-item"
 import SunglassesItem from "./products/sunglasses-item"
 import CustomItem from "./products/custom-item"
 import Loader from "../loader"
+import EnableShipInsure from "../enable-shipinsure"
 
 const Component = styled.div`
   display: flex;
@@ -302,6 +303,9 @@ const CartDrawer = () => {
               )}
             </div>
             <div className="sticky-bottom">
+              <div>
+                <EnableShipInsure />
+              </div>
               <p>
                 Subtotal:{" "}
                 <span>
