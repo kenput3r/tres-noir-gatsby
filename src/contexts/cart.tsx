@@ -1024,6 +1024,7 @@ export const CartProvider = ({ children }) => {
 
     const updateShipInsureAttribute = async (enableShipInsure: boolean) => {
       try {
+        setIsRemovingFromCart(true)
         const updatedCheckout = await client.checkout.updateAttributes(
           checkout.id,
           {
@@ -1035,7 +1036,6 @@ export const CartProvider = ({ children }) => {
             ],
           }
         )
-
         // if ship insure is enabled, add the correct variant to cart
         if (enableShipInsure) {
           const updatedCheckoutWithShipInsure = await addShipInsure(
@@ -1043,6 +1043,7 @@ export const CartProvider = ({ children }) => {
           )
           rebuildBundles(updatedCheckoutWithShipInsure)
           setCheckout(updatedCheckoutWithShipInsure)
+          setIsRemovingFromCart(false)
         } else {
           // remove ship insure from cart
           const updatedCheckoutWithoutShipInsure = await deleteShipInsure(
@@ -1050,9 +1051,11 @@ export const CartProvider = ({ children }) => {
           )
           rebuildBundles(updatedCheckoutWithoutShipInsure)
           setCheckout(updatedCheckoutWithoutShipInsure)
+          setIsRemovingFromCart(false)
         }
       } catch (e) {
         console.error("error", e)
+        setIsRemovingFromCart(false)
       }
     }
 
