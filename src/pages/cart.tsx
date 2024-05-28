@@ -8,7 +8,7 @@ import Loader from "../components/loader"
 import QuantitySelector from "../components/quantity-selector"
 import { CartContext } from "../contexts/cart"
 import { CustomerContext } from "../contexts/customer"
-import { tnItem, tnSubItem, rxType } from "../types/checkout"
+import { tnItem, tnSubItem, rxType, LineItem } from "../types/checkout"
 import { startedCheckoutGTMEvent } from "../helpers/gtm"
 import { VscClose } from "react-icons/vsc"
 import UpsellCart from "../components/upsell-cart"
@@ -278,6 +278,7 @@ const Cart = ({
     updateProductInCart,
     removeProductsFromCart,
     isRemovingFromCart,
+    updateShipInsureAttribute,
   } = useContext(CartContext)
 
   const { associateCheckout } = useContext(CustomerContext)
@@ -441,7 +442,16 @@ const Cart = ({
   }
 
   const renderStandardProduct = (item: tnItem) => {
+    // check if product is shipinsure, if so, return the shipinsure component
+
     const line = item.lineItems[0].shopifyItem
+
+    console.log("line", line)
+
+    if (line.variant.product.handle === "shipinsure") {
+      return renderShipInsure(line)
+    }
+
     const hasDiscount = line.discountAllocations.length > 0
     const originalPrice = line.variant.price.amount
 
@@ -552,6 +562,78 @@ const Cart = ({
                 </span>
               </div>
             </div>
+          </div>
+        </div>
+      </li>
+    )
+  }
+
+  const renderShipInsure = (item: LineItem) => {
+    return (
+      <li key={item.id}>
+        <div className="close-btn">
+          <a
+            className="remove-item"
+            href="#"
+            onClick={() => updateShipInsureAttribute(false)}
+          >
+            <VscClose className="text-btn" />
+          </a>
+        </div>
+        <div className="card">
+          <div className="card-image">
+            <StaticImage src="../images/product-no-image.jpg" alt="No image" />
+          </div>
+          <div className="card-items">
+            <div>
+              <p className="title">
+                <Link to={`/products/${item.variant.product.handle}`}>
+                  {item.title}
+                </Link>
+              </p>
+              <div className="sub-title">
+                <span>
+                  {/* {item.variant.title !== "Default Title"
+                    ? item.variant.title
+                    : ""} */}
+                </span>
+                <div className="price-group">
+                  <span className="price">
+                    ${Number(item.variant.price.amount).toFixed(2)}
+                  </span>
+                </div>
+              </div>
+            </div>
+            <hr />
+            {/* <div className="quantity-selector">
+              <QuantitySelector
+                lineId={line.id}
+                quantity={line.quantity}
+                imageId={item.id}
+                updateQuantity={updateQuantity}
+              />
+              <div className="price-group">
+                {hasDiscount ? (
+                  <span className="price original-price">
+                    ${totalOriginalPrice}
+                  </span>
+                ) : (
+                  line.variant.compareAtPrice &&
+                  isDiscounted(totalOriginalPrice, totalCompareAtPrice) && (
+                    <span className="price original-price">
+                      ${totalCompareAtPrice}
+                    </span>
+                  )
+                )}
+                <span className="price">
+                  $
+                  {(
+                    Number(line.variant.price.amount) * line.quantity -
+                    discountAllocation
+                  ).toFixed(2)}
+                </span>
+              </div>
+            </div> */}
           </div>
         </div>
       </li>
