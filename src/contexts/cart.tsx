@@ -8,7 +8,7 @@ import React, {
 } from "react"
 import { graphql, useStaticQuery } from "gatsby"
 import Client, { Cart } from "shopify-buy"
-import Cookies, { get } from "js-cookie"
+import Cookies from "js-cookie"
 import {
   Checkout,
   tnItem,
@@ -123,24 +123,6 @@ export const CartProvider = ({ children }) => {
   const [isAddingToCart, setIsAddingToCart] = useState<boolean>(false)
   const [isRemovingFromCart, setIsRemovingFromCart] = useState<boolean>(false)
 
-  const getShipInsureStatus = useCallback(() => {
-    // return false if line attribute is found and is false, otherwise true
-    try {
-      if (!checkout) return false
-      const shipInsureAttribute = checkout.customAttributes.find(
-        attr => attr.key === "_ShipInsure"
-      )
-      if (shipInsureAttribute) {
-        return shipInsureAttribute.value === "false" ? false : true
-      }
-      return true
-    } catch (e) {
-      return true
-    }
-  }, [checkout])
-
-  const isShipInsureEnabled = getShipInsureStatus()
-
   const shipInsureData = useStaticQuery(graphql`
     query cartContextSettings {
       contentfulHomepage {
@@ -168,6 +150,36 @@ export const CartProvider = ({ children }) => {
       }
     }
   `)
+
+  const { autoEnableShipInsure } = shipInsureData.contentfulHomepage
+
+  const getShipInsureStatusCore = checkout => {
+    try {
+      if (!checkout) return false
+      const shipInsureAttribute = checkout.customAttributes.find(
+        attr => attr.key === "_ShipInsure"
+      )
+      if (autoEnableShipInsure) {
+        if (shipInsureAttribute) {
+          return shipInsureAttribute.value === "false" ? false : true
+        }
+        return true
+      } else {
+        if (shipInsureAttribute) {
+          return shipInsureAttribute.value === "true" ? true : false
+        }
+        return false
+      }
+    } catch (e) {
+      return autoEnableShipInsure ? true : false
+    }
+  }
+
+  const getShipInsureStatus = useCallback(() => {
+    return getShipInsureStatusCore(checkout)
+  }, [checkout, autoEnableShipInsure])
+
+  const isShipInsureEnabled = getShipInsureStatus()
 
   /**
    * @function getDiscountParams - gets the current non-expired chechout cookie
@@ -942,10 +954,27 @@ export const CartProvider = ({ children }) => {
       }
     }
 
+    const getSubtotalWithoutShipInsure = (checkout: any) => {
+      try {
+        const shipInsureItem = checkout.lineItems.find(
+          item => item.variant.product.handle === "shipinsure"
+        )
+        if (shipInsureItem) {
+          return (
+            Number(checkout.subtotalPrice.amount) -
+            Number(shipInsureItem.variant.price.amount)
+          ).toFixed(2)
+        }
+        return checkout.subtotalPrice.amount
+      } catch (e) {
+        return checkout.subtotalPrice.amount
+      }
+    }
+
     // adds ship insure to cart and returns new checkout from buy-sdk
     const addShipInsure = async (checkout: any) => {
       try {
-        const subtotal = checkout.subtotalPrice.amount
+        const subtotal = getSubtotalWithoutShipInsure(checkout)
         const correctVariant = getCorrectShipInsureVariant(Number(subtotal))
         const currentShipInsure = checkout.lineItems.find(
           item => item.variant.product.handle === "shipinsure"
@@ -954,11 +983,18 @@ export const CartProvider = ({ children }) => {
         const hasShipInsureInCart = currentShipInsure !== undefined
 
         // check cart attributes for ship insure
-        const isShipInsured =
-          checkout.customAttributes.find(attr => attr.key === "_ShipInsure")
-            ?.value !== "false"
+        const isShipInsured = getShipInsureStatusCore(checkout)
 
         if (!isShipInsured) return checkout
+
+        // if only ship insure in cart, remove it
+        if (checkout.lineItems.length === 1 && hasShipInsureInCart) {
+          const newCheckout = await client.checkout.removeLineItems(
+            checkout.id,
+            [currentShipInsure.id]
+          )
+          return newCheckout
+        }
 
         if (hasShipInsureInCart) {
           if (correctVariant.storefrontId !== currentShipInsure.variant.id) {
