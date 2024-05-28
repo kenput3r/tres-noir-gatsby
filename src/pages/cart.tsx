@@ -1,6 +1,10 @@
 import React, { useEffect, useContext, useRef, useState } from "react"
 import { Link, navigate, useStaticQuery, graphql } from "gatsby"
-import { GatsbyImage, StaticImage } from "gatsby-plugin-image"
+import {
+  GatsbyImage,
+  StaticImage,
+  type IGatsbyImageData,
+} from "gatsby-plugin-image"
 import styled from "styled-components"
 import Layout from "../components/layout"
 import SEO from "../components/seo"
@@ -446,10 +450,8 @@ const Cart = ({
 
     const line = item.lineItems[0].shopifyItem
 
-    console.log("line", line)
-
     if (line.variant.product.handle === "shipinsure") {
-      return renderShipInsure(line)
+      return renderShipInsure(line, item.image)
     }
 
     const hasDiscount = line.discountAllocations.length > 0
@@ -568,7 +570,12 @@ const Cart = ({
     )
   }
 
-  const renderShipInsure = (item: LineItem) => {
+  const renderShipInsure = (
+    item: LineItem,
+    image: IGatsbyImageData | null | undefined
+  ) => {
+    console.log("item", item)
+    console.log("image", image)
     return (
       <li key={item.id}>
         <div className="close-btn">
@@ -582,7 +589,14 @@ const Cart = ({
         </div>
         <div className="card">
           <div className="card-image">
-            <StaticImage src="../images/product-no-image.jpg" alt="No image" />
+            {image ? (
+              <GatsbyImage image={image} alt={item.title ?? "ShipInsure"} />
+            ) : (
+              <StaticImage
+                src="../images/product-no-image.jpg"
+                alt="No image"
+              />
+            )}
           </div>
           <div className="card-items">
             <div>

@@ -9,11 +9,12 @@ const SwitchWrapper = styled.div`
   justify-content: end;
   margin-bottom: 15px;
   flex-wrap: wrap;
+  gap: 3px;
 `
 
 const Label = styled.span`
   font-family: var(--sub-heading-font) !important;
-  margin-right: 1rem;
+  margin-right: 15px;
 `
 
 interface SwitchProps {
@@ -47,6 +48,10 @@ const Checkbox = styled.input`
   height: 0;
 `
 
+const StatusLabel = styled.span`
+  margin-right: 5px;
+`
+
 const EnableShipInsure: React.FC = () => {
   const { updateShipInsureAttribute, isShipInsureEnabled } =
     useContext(CartContext)
@@ -62,8 +67,13 @@ const EnableShipInsure: React.FC = () => {
 
   return (
     <SwitchWrapper>
-      <Label>Enable ShipInsure shipping insurance</Label>
-      {isShipInsureEnabled ? <span>Enabled</span> : <span>Disabled</span>}
+      <Label>Enable ShipInsure shipping insurance:</Label>
+
+      {isShipInsureEnabled ? (
+        <StatusLabel>Enabled</StatusLabel>
+      ) : (
+        <StatusLabel>Disabled</StatusLabel>
+      )}
       <Switch checked={isShipInsureEnabled}>
         <Checkbox
           type="checkbox"

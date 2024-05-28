@@ -58,11 +58,6 @@ const ShipInsureItem: React.FC<Props> = ({ item }) => {
             >
               <p className="title">{item.lineItems[0].shopifyItem.title}</p>
             </Link>
-            {/* <p className="subtitle">
-              {item.lineItems[0].shopifyItem.variant.title === "Default Title"
-                ? ""
-                : item.lineItems[0].shopifyItem.variant.title}
-            </p> */}
           </div>
           <div className="price-quantity">
             <div className="price-wrapper">

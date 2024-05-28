@@ -8,7 +8,7 @@ import React, {
 } from "react"
 import { graphql, useStaticQuery } from "gatsby"
 import Client, { Cart } from "shopify-buy"
-import Cookies from "js-cookie"
+import Cookies, { remove } from "js-cookie"
 import {
   Checkout,
   tnItem,
@@ -930,7 +930,7 @@ export const CartProvider = ({ children }) => {
       }
     }
 
-    // gets the correct ship insure variant based on subtotal
+    // Gets the correct ship insure variant based on subtotal
     const getCorrectShipInsureVariant = (subtotal: number) => {
       try {
         const shipInsureProduct = shipInsureData.shopifyProduct
@@ -948,6 +948,24 @@ export const CartProvider = ({ children }) => {
           const range = parseRange(variant.sku)
           return range && subtotal >= range.min && subtotal <= range.max
         })
+        if (!correctVariant && subtotal > 1000) {
+          return shipInsureProduct.variants[
+            shipInsureProduct.variants.length - 1
+          ]
+        }
+        if (!correctVariant) {
+          let maxRangeVariant = null
+          let maxRange = 0
+          shipInsureProduct.variants.forEach(variant => {
+            const range = parseRange(variant.sku)
+            if (range && range.max > maxRange) {
+              maxRange = range.max
+              maxRangeVariant = variant
+            }
+          })
+          return maxRangeVariant
+        }
+
         return correctVariant
       } catch (e) {
         return undefined
@@ -993,6 +1011,7 @@ export const CartProvider = ({ children }) => {
             checkout.id,
             [currentShipInsure.id]
           )
+          removeFromImageStorage(currentShipInsure.variant.sku)
           return newCheckout
         }
 
@@ -1005,6 +1024,7 @@ export const CartProvider = ({ children }) => {
               checkout.id,
               [currentShipInsure.id]
             )
+            removeFromImageStorage(currentShipInsure.variant.sku)
             // add correct ship insure
             const updatedCheckout = await client.checkout.addLineItems(
               newCheckout.id,
@@ -1014,6 +1034,12 @@ export const CartProvider = ({ children }) => {
                   quantity: 1,
                 },
               ]
+            )
+            addToImageStorage(
+              correctVariant.sku,
+              shipInsureData.shopifyProduct.featuredImage.localFile
+                .childImageSharp.gatsbyImageData,
+              checkout.id
             )
             return updatedCheckout
           }
@@ -1029,6 +1055,12 @@ export const CartProvider = ({ children }) => {
           const newCheckout = await client.checkout.addLineItems(
             checkout.id,
             lineItems
+          )
+          addToImageStorage(
+            correctVariant.sku,
+            shipInsureData.shopifyProduct.featuredImage.localFile
+              .childImageSharp.gatsbyImageData,
+            checkout.id
           )
           return newCheckout
         }
@@ -1049,6 +1081,8 @@ export const CartProvider = ({ children }) => {
             checkout.id,
             [shipInsureItem.id]
           )
+          // remove ship insure from local storage
+          removeFromImageStorage(shipInsureItem.variant.sku)
           return newCheckout
         }
         return checkout
