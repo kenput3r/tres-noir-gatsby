@@ -9,9 +9,20 @@ import { Link } from "gatsby"
 import { isDiscounted } from "../../../helpers/shopify"
 
 const Component = styled.div`
+  .product-card {
+    padding-bottom: 0px !important;
+  }
   .original-price {
     text-decoration-line: line-through;
     color: var(--color-grey-dark);
+  }
+  .title {
+    font-size: 16px;
+    line-height: 20px;
+  }
+  .product-image {
+    margin-top: -20px;
+    padding-right: 0px !important;
   }
 `
 type Props = {

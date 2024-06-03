@@ -13,7 +13,7 @@ import CustomItem from "./products/custom-item"
 import Loader from "../loader"
 import EnableShipInsure from "../enable-shipinsure"
 
-const DRAWER_INTERVAL = 7500
+const DRAWER_INTERVAL = 75000000
 
 const Component = styled.div`
   display: flex;

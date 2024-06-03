@@ -50,6 +50,8 @@ const Checkbox = styled.input`
 
 const StatusLabel = styled.span`
   margin-right: 5px;
+  font-family: var(--sub-heading-font) !important;
+  text-transform: uppercase;
 `
 
 const EnableShipInsure: React.FC = () => {

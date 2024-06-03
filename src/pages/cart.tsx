@@ -22,6 +22,20 @@ import { RxInfoContext } from "../contexts/rxInfo"
 import { isDiscounted } from "../helpers/shopify"
 import EnableShipInsure from "../components/enable-shipinsure"
 
+const ShipInsureComponent = styled.div`
+  .card {
+    flex-direction: row !important;
+    padding-bottom: 0px !important;
+  }
+  .card-image {
+    margin-top: -30px;
+    img {
+      max-height: 120px;
+      height: auto;
+    }
+  }
+`
+
 const LoaderContainer = styled.div`
   position: fixed;
   top: 0;
@@ -574,82 +588,52 @@ const Cart = ({
     item: LineItem,
     image: IGatsbyImageData | null | undefined
   ) => {
-    console.log("item", item)
-    console.log("image", image)
     return (
       <li key={item.id}>
-        <div className="close-btn">
-          <a
-            className="remove-item"
-            href="#"
-            onClick={() => updateShipInsureAttribute(false)}
-          >
-            <VscClose className="text-btn" />
-          </a>
-        </div>
-        <div className="card">
-          <div className="card-image">
-            {image ? (
-              <GatsbyImage image={image} alt={item.title ?? "ShipInsure"} />
-            ) : (
-              <StaticImage
-                src="../images/product-no-image.jpg"
-                alt="No image"
-              />
-            )}
+        <ShipInsureComponent>
+          <div className="close-btn">
+            <a
+              className="remove-item"
+              href="#"
+              onClick={() => updateShipInsureAttribute(false)}
+            >
+              <VscClose className="text-btn" />
+            </a>
           </div>
-          <div className="card-items">
-            <div>
-              <p className="title">
-                <Link to={`/products/${item.variant.product.handle}`}>
-                  {item.title}
-                </Link>
-              </p>
-              <div className="sub-title">
-                <span>
-                  {/* {item.variant.title !== "Default Title"
+          <div className="card">
+            <div className="card-image">
+              {image ? (
+                <GatsbyImage image={image} alt={item.title ?? "ShipInsure"} />
+              ) : (
+                <StaticImage
+                  src="../images/product-no-image.jpg"
+                  alt="No image"
+                />
+              )}
+            </div>
+            <div className="card-items">
+              <div>
+                <p className="title">
+                  <Link to={`/products/${item.variant.product.handle}`}>
+                    {item.title}
+                  </Link>
+                </p>
+                <div className="sub-title">
+                  <span>
+                    {/* {item.variant.title !== "Default Title"
                     ? item.variant.title
                     : ""} */}
-                </span>
-                <div className="price-group">
-                  <span className="price">
-                    ${Number(item.variant.price.amount).toFixed(2)}
                   </span>
+                  <div className="price-group">
+                    <span className="price">
+                      ${Number(item.variant.price.amount).toFixed(2)}
+                    </span>
+                  </div>
                 </div>
               </div>
             </div>
-            <hr />
-            {/* <div className="quantity-selector">
-              <QuantitySelector
-                lineId={line.id}
-                quantity={line.quantity}
-                imageId={item.id}
-                updateQuantity={updateQuantity}
-              />
-              <div className="price-group">
-                {hasDiscount ? (
-                  <span className="price original-price">
-                    ${totalOriginalPrice}
-                  </span>
-                ) : (
-                  line.variant.compareAtPrice &&
-                  isDiscounted(totalOriginalPrice, totalCompareAtPrice) && (
-                    <span className="price original-price">
-                      ${totalCompareAtPrice}
-                    </span>
-                  )
-                )}
-                <span className="price">
-                  $
-                  {(
-                    Number(line.variant.price.amount) * line.quantity -
-                    discountAllocation
-                  ).toFixed(2)}
-                </span>
-              </div>
-            </div> */}
           </div>
-        </div>
+        </ShipInsureComponent>
       </li>
     )
   }
