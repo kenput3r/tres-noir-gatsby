@@ -4,6 +4,12 @@
 
 **Features**
 
+- Added ShipInsure shipping insurance functionality to cart, based on cart attribute
+
+## v.01.10 - 2024-05-20
+
+**Features**
+
 - TN's and TN's X have Progressive and Bifocal options disabled
 - Polarized SKU will now change pricing depending on whether the lens is prescription or not
 - Added new Reader's prescription
