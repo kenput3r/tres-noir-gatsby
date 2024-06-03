@@ -79,7 +79,8 @@ exports.createPages = async ({ graphql, actions: { createPage } }) => {
         productType !== "Lens Customization" &&
         productType !== "Lenses" &&
         productType !== "Upsell AO" &&
-        productType !== "Case Add-Ons"
+        productType !== "Case Add-Ons" &&
+        productType !== "Insurance"
       ) {
         createPage({
           path: `/products/${handle}`,

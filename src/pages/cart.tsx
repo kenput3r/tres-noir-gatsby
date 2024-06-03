@@ -1,6 +1,10 @@
 import React, { useEffect, useContext, useRef, useState } from "react"
 import { Link, navigate, useStaticQuery, graphql } from "gatsby"
-import { GatsbyImage, StaticImage } from "gatsby-plugin-image"
+import {
+  GatsbyImage,
+  StaticImage,
+  type IGatsbyImageData,
+} from "gatsby-plugin-image"
 import styled from "styled-components"
 import Layout from "../components/layout"
 import SEO from "../components/seo"
@@ -8,7 +12,7 @@ import Loader from "../components/loader"
 import QuantitySelector from "../components/quantity-selector"
 import { CartContext } from "../contexts/cart"
 import { CustomerContext } from "../contexts/customer"
-import { tnItem, tnSubItem, rxType } from "../types/checkout"
+import { tnItem, tnSubItem, rxType, LineItem } from "../types/checkout"
 import { startedCheckoutGTMEvent } from "../helpers/gtm"
 import { VscClose } from "react-icons/vsc"
 import UpsellCart from "../components/upsell-cart"
@@ -16,6 +20,21 @@ import { SelectedVariantStorage } from "../types/global"
 import { CustomizeContext } from "../contexts/customize"
 import { RxInfoContext } from "../contexts/rxInfo"
 import { isDiscounted } from "../helpers/shopify"
+import EnableShipInsure from "../components/enable-shipinsure"
+
+const ShipInsureComponent = styled.div`
+  .card {
+    flex-direction: row !important;
+    padding-bottom: 0px !important;
+  }
+  .card-image {
+    margin-top: -30px;
+    img {
+      max-height: 120px;
+      height: auto;
+    }
+  }
+`
 
 const LoaderContainer = styled.div`
   position: fixed;
@@ -265,13 +284,19 @@ const Page = styled.div`
   }
 `
 
-const Cart = () => {
+const Cart = ({
+  data: {
+    contentfulHomepage: { cartMessage, cartMessageToggle },
+    contentfulVariantCollection: clearanceItemsData,
+  },
+}) => {
   const {
     checkout,
     removeProductFromCart,
     updateProductInCart,
     removeProductsFromCart,
     isRemovingFromCart,
+    updateShipInsureAttribute,
   } = useContext(CartContext)
 
   const { associateCheckout } = useContext(CustomerContext)
@@ -280,23 +305,6 @@ const Cart = () => {
 
   const { setSelectedVariants, setCurrentStep, setHasSavedCustomized } =
     useContext(CustomizeContext)
-
-  const {
-    contentfulHomepage: { cartMessage, cartMessageToggle },
-    contentfulVariantCollection: clearanceItemsData,
-  } = useStaticQuery(graphql`
-    query getCartMessageForPage {
-      contentfulHomepage {
-        cartMessage
-        cartMessageToggle
-      }
-      contentfulVariantCollection(handle: { eq: "sale" }) {
-        variants {
-          sku
-        }
-      }
-    }
-  `)
 
   const stepMap = new Map()
   stepMap.set(1, "RX TYPE")
@@ -452,7 +460,14 @@ const Cart = () => {
   }
 
   const renderStandardProduct = (item: tnItem) => {
+    // check if product is shipinsure, if so, return the shipinsure component
+
     const line = item.lineItems[0].shopifyItem
+
+    if (line.variant.product.handle === "shipinsure") {
+      return renderShipInsure(line, item.image)
+    }
+
     const hasDiscount = line.discountAllocations.length > 0
     const originalPrice = line.variant.price.amount
 
@@ -565,6 +580,60 @@ const Cart = () => {
             </div>
           </div>
         </div>
+      </li>
+    )
+  }
+
+  const renderShipInsure = (
+    item: LineItem,
+    image: IGatsbyImageData | null | undefined
+  ) => {
+    return (
+      <li key={item.id}>
+        <ShipInsureComponent>
+          <div className="close-btn">
+            <a
+              className="remove-item"
+              href="#"
+              onClick={() => updateShipInsureAttribute(false)}
+            >
+              <VscClose className="text-btn" />
+            </a>
+          </div>
+          <div className="card">
+            <div className="card-image">
+              {image ? (
+                <GatsbyImage image={image} alt={item.title ?? "ShipInsure"} />
+              ) : (
+                <StaticImage
+                  src="../images/product-no-image.jpg"
+                  alt="No image"
+                />
+              )}
+            </div>
+            <div className="card-items">
+              <div>
+                <p className="title">
+                  <Link to={`/products/${item.variant.product.handle}`}>
+                    {item.title}
+                  </Link>
+                </p>
+                <div className="sub-title">
+                  <span>
+                    {/* {item.variant.title !== "Default Title"
+                    ? item.variant.title
+                    : ""} */}
+                  </span>
+                  <div className="price-group">
+                    <span className="price">
+                      ${Number(item.variant.price.amount).toFixed(2)}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </ShipInsureComponent>
       </li>
     )
   }
@@ -929,6 +998,7 @@ const Cart = () => {
                           }
                         })}
                     </ul>
+                    <EnableShipInsure />
                     <div className="subtotal">
                       <p>
                         Subtotal:{" "}
@@ -966,3 +1036,17 @@ const Cart = () => {
 }
 
 export default Cart
+
+export const query = graphql`
+  query getCartSettings {
+    contentfulHomepage {
+      cartMessage
+      cartMessageToggle
+    }
+    contentfulVariantCollection(handle: { eq: "sale" }) {
+      variants {
+        sku
+      }
+    }
+  }
+`
