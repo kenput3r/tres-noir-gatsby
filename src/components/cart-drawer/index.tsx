@@ -11,6 +11,9 @@ import ShopifyItem from "./products/shopify-item"
 import SunglassesItem from "./products/sunglasses-item"
 import CustomItem from "./products/custom-item"
 import Loader from "../loader"
+import EnableShipInsure from "../enable-shipinsure"
+
+const DRAWER_INTERVAL = 10000
 
 const Component = styled.div`
   display: flex;
@@ -196,9 +199,8 @@ const Component = styled.div`
     opacity: 0.5;
   }
 `
-
 const LoaderContainer = styled.div`
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
   right: 0;
@@ -206,6 +208,7 @@ const LoaderContainer = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  background-color: rgba(204, 204, 204, 0.6);
 `
 
 const CartDrawer = () => {
@@ -235,7 +238,7 @@ const CartDrawer = () => {
 
   useEffect(() => {
     if (!isCartDrawerOpen) return
-    const intevalAmount = 5000
+    const intevalAmount = DRAWER_INTERVAL
     const timer = setInterval(() => {
       setIsCartDrawerOpen(false)
     }, intevalAmount)
@@ -295,13 +298,11 @@ const CartDrawer = () => {
                     return <CustomItem item={item} key={item.id} />
                   }
                 })}
-              {isRemovingFromCart && (
-                <LoaderContainer>
-                  <Loader />
-                </LoaderContainer>
-              )}
             </div>
             <div className="sticky-bottom">
+              <div>
+                <EnableShipInsure />
+              </div>
               <p>
                 Subtotal:{" "}
                 <span>
@@ -329,6 +330,11 @@ const CartDrawer = () => {
                 <p className="cart-message">{cartMessage}</p>
               )}
             </div>
+            {isRemovingFromCart && (
+              <LoaderContainer>
+                <Loader />
+              </LoaderContainer>
+            )}
           </Component>
         )}
     </animated.div>
