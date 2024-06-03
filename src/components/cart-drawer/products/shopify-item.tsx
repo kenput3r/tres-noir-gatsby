@@ -7,6 +7,7 @@ import styled from "styled-components"
 import { VscClose } from "react-icons/vsc"
 import { Link } from "gatsby"
 import { isDiscounted } from "../../../helpers/shopify"
+import ShipInsureItem from "./shipinsure-item"
 
 const Component = styled.div`
   .original-price {
@@ -21,6 +22,10 @@ const ShopifyItem = (props: { item: tnItem }) => {
     useContext(CartContext)
 
   const loadingOverlay = useRef<HTMLDivElement>(null)
+
+  if (item.lineItems[0].shopifyItem.variant.product.handle === "shipinsure") {
+    return <ShipInsureItem item={item} />
+  }
 
   const removeSingleProduct = async item => {
     const loadingContainer = loadingOverlay.current?.closest(".cart-products")

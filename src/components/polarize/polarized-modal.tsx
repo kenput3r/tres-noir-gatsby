@@ -31,7 +31,7 @@ const Container = styled.div`
     width: 500px;
   }
   @media only screen and (max-width: 500px) {
-    width: 395å0px;
+    width: 395px;
   }
   @media only screen and (max-width: 325px) {
     width: 280px;
