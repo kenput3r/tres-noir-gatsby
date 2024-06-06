@@ -15,7 +15,7 @@
     "form-data": "^4.0.0",
     "gatsby": "^5.13.6",
     "gatsby-adapter-netlify": "^1.1.6",
-    "gatsby-cli": "^4.9.0",
+    "gatsby-cli": "^4.25.0",
     "gatsby-plugin-algolia": "^1.0.3",
     "gatsby-plugin-gatsby-cloud": "^5.13.1",
     "gatsby-plugin-google-tagmanager": "^5.13.1",
