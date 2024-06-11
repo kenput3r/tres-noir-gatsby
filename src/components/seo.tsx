@@ -25,9 +25,9 @@ interface ImageMeta {
 }
 
 const SEO = ({
-  description,
-  lang,
-  meta,
+  description = "",
+  lang = "en",
+  meta = [],
   title,
   isIndex = false,
   image,
@@ -139,12 +139,6 @@ const SEO = ({
       )}
     </Helmet>
   )
-}
-
-SEO.defaultProps = {
-  lang: `en`,
-  meta: [],
-  description: ``,
 }
 
 export default SEO
