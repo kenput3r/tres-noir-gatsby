@@ -49,7 +49,6 @@ export default async function createReview(
       body: JSON.stringify({ ...payload }),
     })
     const resJson = await response.json()
-    console.log("resJson", resJson)
     if (resJson.code === 200) {
       return res.status(200).json("Success")
     } else {
