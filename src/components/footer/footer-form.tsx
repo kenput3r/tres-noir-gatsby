@@ -140,53 +140,56 @@ const FooterForm = () => {
   }
 
   const submitNewletter = async evt => {
-    evt.preventDefault()
-    formRef.current?.classList.remove("outline-green")
-    buttonRef.current?.querySelector(".btn-check")?.classList.add("hide")
-    buttonRef.current
-      ?.querySelector(".btn-chevron-right")
-      ?.classList.remove("hide")
-
-    if (!validEmail(emailInput)) {
-      if (emailMsg.current)
-        emailMsg.current.textContent = "Please enter a valid email"
-      emailMsg.current?.classList.add("red-text")
-      emailMsg.current?.classList.remove("green-text")
-      formRef.current?.classList.add("outline-red")
-      return
-    }
-    formRef.current?.classList.remove("outline-red")
-    buttonRef.current
-      ?.querySelector(".btn-chevron-right")
-      ?.classList.add("hide")
-    buttonRef.current?.querySelector(".btn-check")?.classList.add("hide")
-    buttonRef.current?.querySelector(".btn-spinner")?.classList.remove("hide")
-    formRef.current?.classList.add("disable")
-
-    const response = await fetchReq(emailInput)
-    if (response && response.status === 200) {
-      buttonRef.current?.querySelector(".btn-spinner")?.classList.add("hide")
-      buttonRef.current?.querySelector(".btn-check")?.classList.remove("hide")
-      formRef.current?.classList.remove("disable")
-      emailMsg.current?.classList.add("green-text")
-      emailMsg.current?.classList.remove("red-text")
-      formRef.current?.classList.add("outline-green")
-      // identify customer
-      identifyCustomerGTMEvent(emailInput)
-
-      if (emailMsg.current)
-        emailMsg.current.textContent = "You are now subscribed!"
-    } else {
-      if (emailMsg.current)
-        emailMsg.current.textContent = "An error has occured, please try again"
-      formRef.current?.classList.remove("disable")
-      buttonRef.current?.querySelector(".btn-spinner")?.classList.add("hide")
+    try {
+      evt.preventDefault()
+      formRef.current?.classList.remove("outline-green")
+      buttonRef.current?.querySelector(".btn-check")?.classList.add("hide")
       buttonRef.current
         ?.querySelector(".btn-chevron-right")
         ?.classList.remove("hide")
-      emailMsg.current?.classList.add("red-text")
-      formRef.current?.classList.add("outline-red")
-    }
+
+      if (!validEmail(emailInput)) {
+        if (emailMsg.current)
+          emailMsg.current.textContent = "Please enter a valid email"
+        emailMsg.current?.classList.add("red-text")
+        emailMsg.current?.classList.remove("green-text")
+        formRef.current?.classList.add("outline-red")
+        return
+      }
+      formRef.current?.classList.remove("outline-red")
+      buttonRef.current
+        ?.querySelector(".btn-chevron-right")
+        ?.classList.add("hide")
+      buttonRef.current?.querySelector(".btn-check")?.classList.add("hide")
+      buttonRef.current?.querySelector(".btn-spinner")?.classList.remove("hide")
+      formRef.current?.classList.add("disable")
+
+      const response = await fetchReq(emailInput)
+      if (response && response.status === 200) {
+        buttonRef.current?.querySelector(".btn-spinner")?.classList.add("hide")
+        buttonRef.current?.querySelector(".btn-check")?.classList.remove("hide")
+        formRef.current?.classList.remove("disable")
+        emailMsg.current?.classList.add("green-text")
+        emailMsg.current?.classList.remove("red-text")
+        formRef.current?.classList.add("outline-green")
+        // identify customer
+        identifyCustomerGTMEvent(emailInput)
+
+        if (emailMsg.current)
+          emailMsg.current.textContent = "You are now subscribed!"
+      } else {
+        if (emailMsg.current)
+          emailMsg.current.textContent =
+            "An error has occured, please try again"
+        formRef.current?.classList.remove("disable")
+        buttonRef.current?.querySelector(".btn-spinner")?.classList.add("hide")
+        buttonRef.current
+          ?.querySelector(".btn-chevron-right")
+          ?.classList.remove("hide")
+        emailMsg.current?.classList.add("red-text")
+        formRef.current?.classList.add("outline-red")
+      }
+    } catch (error) {}
   }
 
   return (
