@@ -145,7 +145,9 @@ const ProductContentful = ({
 
   const getSelectedVariantOptionName = (variant: any) => {
     try {
-      const optionName = variant.selectedOptions.find(c => c.name === "Color")
+      const optionName = variant.selectedOptions.find(
+        c => c.name === "Color" || c.name === "color"
+      )
       const optionValue = optionName ? optionName.value : ""
       const colorName = optionValue.split("-")[0].trim()
       return colorName
@@ -210,7 +212,6 @@ const ProductContentful = ({
           color: "red",
         }
       }
-
       // new variant color badge
       if (variantHasNewColor()) {
         return {

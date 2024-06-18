@@ -26,7 +26,7 @@ const Component = styled.div`
   }
 `
 
-const DEFAULT_MESSAGE = "ALL ORDERS SHIP SAME OR NEXT BUSINESS DAY"
+const DEFAULT_MESSAGE = "NON-CUSTOM ORDERS SHIP SAME OR NEXT BUSINESS DAY"
 
 const FreeShipping = () => {
   const data = useStaticQuery(graphql`
