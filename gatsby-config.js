@@ -161,7 +161,38 @@ module.exports = {
         appSecret: process.env.YOTPO_SECRET,
       },
     },
-    `gatsby-plugin-sitemap`,
+    {
+      resolve: `gatsby-plugin-sitemap`,
+      options: {
+        query: `
+          {
+            allSitePage {
+              nodes {
+                path
+              }
+            }
+            allSite {
+              nodes {
+                siteMetadata {
+                  siteUrl
+                }
+              }
+            }
+          }
+        `,
+        resolvePages: ({ allSitePage: { nodes: allPages } }) => {
+          // Include all product and customize pages, but ensure correct structure
+          return allPages
+        },
+        serialize: ({ path }) => {
+          return {
+            url: path,
+            changefreq: `daily`,
+            priority: 0.7,
+          }
+        },
+      },
+    },
     // this (optional) plugin enables Progressive Web App + Offline functionality
     // To learn more, visit: https://gatsby.dev/offline
     // `gatsby-plugin-offline`,
