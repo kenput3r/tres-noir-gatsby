@@ -9,6 +9,8 @@ const contentfulConfig = {
     process.env.CONTENTFUL_DELIVERY_TOKEN,
 }
 
+const siteUrl = `https://www.tresnoir.com`
+
 /**
  * The currently active environment.
  * This is used to set the corresponding Tag Manager environment config.
@@ -51,7 +53,7 @@ module.exports = {
     title: `Tres Noir`,
     description: `Tres Noir is an independent eyewear company located in Santa Ana, Calif.`,
     author: `@SuavecitoInc`,
-    siteUrl: `https://www.tresnoir.com`,
+    siteUrl: siteUrl,
   },
   plugins: [
     {
@@ -162,7 +164,7 @@ module.exports = {
       },
     },
     {
-      resolve: `gatsby-plugin-sitemap`,
+      resolve: "gatsby-plugin-sitemap",
       options: {
         query: `
           {
@@ -171,24 +173,117 @@ module.exports = {
                 path
               }
             }
-            allSite {
-              nodes {
-                siteMetadata {
-                  siteUrl
+            allShopifyProduct {
+              edges {
+                node {
+                  handle
+                  updatedAt
+                }
+              }
+            }
+            allShopifyCollection {
+              edges {
+                node {
+                  handle
+                  updatedAt
+                }
+              }
+            }
+            allContentfulProduct {
+              edges {
+                node {
+                  handle
+                  updatedAt
+                }
+              }
+            }
+            allContentfulCollection {
+              edges {
+                node {
+                  handle
+                  updatedAt
+                }
+              }
+            }
+            allContentfulVariantCollection {
+              edges {
+                node {
+                  handle
+                  updatedAt
                 }
               }
             }
           }
         `,
-        resolvePages: ({ allSitePage: { nodes: allPages } }) => {
-          // Include all product and customize pages, but ensure correct structure
+        resolveSiteUrl: ({ site }) => siteUrl,
+        resolvePages: ({
+          allSitePage: { nodes: allPages },
+          allShopifyProduct: { edges: allShopifyProducts },
+          allShopifyCollection: { edges: allShopifyCollections },
+          allContentfulProduct: { edges: allContentfulProducts },
+          allContentfulCollection: { edges: allContentfulCollections },
+          allContentfulVariantCollection: {
+            edges: allContentfulVariantCollections,
+          },
+        }) => {
+          // Create maps for Shopify and Contentful nodes
+          const shopifyProductMap = allShopifyProducts.reduce(
+            (acc, { node }) => {
+              acc[`/products/${node.handle}`] = { updatedAt: node.updatedAt }
+              return acc
+            },
+            {}
+          )
+
+          const shopifyCollectionMap = allShopifyCollections.reduce(
+            (acc, { node }) => {
+              acc[`/collections/${node.handle}`] = { updatedAt: node.updatedAt }
+              return acc
+            },
+            {}
+          )
+
+          const contentfulProductMap = allContentfulProducts.reduce(
+            (acc, { node }) => {
+              acc[`/${node.handle}`] = { updatedAt: node.updatedAt }
+              return acc
+            },
+            {}
+          )
+
+          const contentfulCollectionMap = allContentfulCollections.reduce(
+            (acc, { node }) => {
+              acc[`/collections/${node.handle}`] = { updatedAt: node.updatedAt }
+              return acc
+            },
+            {}
+          )
+
+          const contentfulVariantCollectionMap =
+            allContentfulVariantCollections.reduce((acc, { node }) => {
+              acc[`/collections/${node.handle}`] = { updatedAt: node.updatedAt }
+              return acc
+            }, {})
+
+          // Combine page data with metadata from Shopify and Contentful
           return allPages
+            .map(page => {
+              const path = page.path
+              return {
+                ...page, // Spread the properties of the current page
+                ...shopifyProductMap[path], // Spread the properties of the corresponding Shopify product metadata (if any)
+                ...shopifyCollectionMap[path], // Spread the properties of the corresponding Shopify collection metadata (if any)
+                ...contentfulProductMap[path], // Spread the properties of the corresponding Contentful product metadata (if any)
+                ...contentfulCollectionMap[path], // Spread the properties of the corresponding Contentful collection metadata (if any)
+                ...contentfulVariantCollectionMap[path], // Spread the properties of the corresponding Contentful variant collection metadata (if any)
+              }
+            })
+            .filter(page => !page.path.includes("/customize")) // Filter out `/products/customize`
         },
-        serialize: ({ path }) => {
+        serialize: ({ path, updatedAt }) => {
           return {
             url: path,
-            changefreq: `daily`,
-            priority: 0.7,
+            lastmod: updatedAt,
           }
         },
       },
