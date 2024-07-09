@@ -191,7 +191,7 @@ module.exports = {
         }
       }
     `,
-        resolveSiteUrl: ({ site }) => site.siteMetadata.siteUrl,
+        resolveSiteUrl: ({ site }) => siteUrl,
         resolvePages: ({
           allSitePage: { nodes: allPages },
           allShopifyProduct: { edges: allShopifyProducts },
