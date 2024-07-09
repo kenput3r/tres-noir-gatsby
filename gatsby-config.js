@@ -167,68 +167,42 @@ module.exports = {
       resolve: "gatsby-plugin-sitemap",
       options: {
         query: `
-          {
-            allSitePage {
-              nodes {
-                path
-              }
-            }
-            allShopifyProduct {
-              edges {
-                node {
-                  handle
-                  updatedAt
-                }
-              }
-            }
-            allShopifyCollection {
-              edges {
-                node {
-                  handle
-                  updatedAt
-                }
-              }
-            }
-            allContentfulProduct {
-              edges {
-                node {
-                  handle
-                  updatedAt
-                }
-              }
-            }
-            allContentfulCollection {
-              edges {
-                node {
-                  handle
-                  updatedAt
-                }
-              }
-            }
-            allContentfulVariantCollection {
-              edges {
-                node {
-                  handle
-                  updatedAt
-                }
-              }
+      {
+        allSitePage {
+          nodes {
+            path
+          }
+        }
+        allShopifyProduct {
+          edges {
+            node {
+              handle
+              updatedAt
             }
           }
-        `,
-        resolveSiteUrl: ({ site }) => siteUrl,
+        }
+        allShopifyCollection {
+          edges {
+            node {
+              handle
+              updatedAt
+            }
+          }
+        }
+      }
+    `,
+        resolveSiteUrl: ({ site }) => site.siteMetadata.siteUrl,
         resolvePages: ({
           allSitePage: { nodes: allPages },
           allShopifyProduct: { edges: allShopifyProducts },
           allShopifyCollection: { edges: allShopifyCollections },
-          allContentfulProduct: { edges: allContentfulProducts },
-          allContentfulCollection: { edges: allContentfulCollections },
-          allContentfulVariantCollection: {
-            edges: allContentfulVariantCollections,
-          },
         }) => {
+          const normalizePath = path => path.replace(/\/+$/, "")
+
           const shopifyProductMap = allShopifyProducts.reduce(
             (acc, { node }) => {
-              acc[`/products/${node.handle}`] = { updatedAt: node.updatedAt }
+              const path = normalizePath(`/products/${node.handle}`)
+              acc[path] = { updatedAt: node.updatedAt }
               return acc
             },
             {}
@@ -236,47 +210,29 @@ module.exports = {
 
           const shopifyCollectionMap = allShopifyCollections.reduce(
             (acc, { node }) => {
-              acc[`/collections/${node.handle}`] = { updatedAt: node.updatedAt }
+              const path = normalizePath(`/collections/${node.handle}`)
+              acc[path] = { updatedAt: node.updatedAt }
               return acc
             },
             {}
           )
 
-          const contentfulProductMap = allContentfulProducts.reduce(
-            (acc, { node }) => {
-              acc[`/${node.handle}`] = { updatedAt: node.updatedAt }
-              return acc
-            },
-            {}
-          )
-
-          const contentfulCollectionMap = allContentfulCollections.reduce(
-            (acc, { node }) => {
-              acc[`/collections/${node.handle}`] = { updatedAt: node.updatedAt }
-              return acc
-            },
-            {}
-          )
-
-          const contentfulVariantCollectionMap =
-            allContentfulVariantCollections.reduce((acc, { node }) => {
-              acc[`/collections/${node.handle}`] = { updatedAt: node.updatedAt }
-              return acc
-            }, {})
-
-          return allPages
+          const pages = allPages
             .map(page => {
-              const path = page.path
-              return {
+              const path = normalizePath(page.path)
+              const productData = shopifyProductMap[path] || {}
+              const collectionData = shopifyCollectionMap[path] || {}
+              const pageData = {
                 ...page,
-                ...shopifyProductMap[path],
-                ...shopifyCollectionMap[path],
-                ...contentfulProductMap[path],
-                ...contentfulCollectionMap[path],
-                ...contentfulVariantCollectionMap[path],
+                ...productData,
+                ...collectionData,
               }
+
+              return pageData
             })
             .filter(page => !page.path.includes("/customize"))
+
+          return pages
         },
         serialize: ({ path, updatedAt }) => {
           return {
