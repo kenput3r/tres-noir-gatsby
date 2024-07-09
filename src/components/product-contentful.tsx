@@ -112,7 +112,9 @@ const ProductContentful = ({
   `)
 
   const isSunglasses =
-    collectionHandle.includes("sunglasses") || collectionHandle.includes("new")
+    collectionHandle.includes("sunglasses") ||
+    collectionHandle.includes("new") ||
+    collectionHandle.includes("loser-machine")
   const isExcludedFromDeals =
     shopifyProduct && shopifyProduct.handle.includes("mooneyes")
   const lensType = isSunglasses ? "sunglasses" : "glasses"
