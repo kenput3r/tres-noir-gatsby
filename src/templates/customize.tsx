@@ -235,7 +235,7 @@ const Customize = ({
 
   return (
     <Layout>
-      <SEO title="Customize" />
+      <SEO title="Customize" shouldIndex={false} />
       <Page>
         <div className="row product-customize">
           <div className="desktop col preview" ref={previewRef}>

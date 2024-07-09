@@ -9,6 +9,7 @@ exports.createPages = async ({ graphql, actions: { createPage } }) => {
             handle
             id
             legacyResourceId
+            status
             metafields {
               key
               value
@@ -56,7 +57,7 @@ exports.createPages = async ({ graphql, actions: { createPage } }) => {
 
   pageable.data.allShopifyProduct.edges.forEach(
     async ({
-      node: { handle, id, metafields, productType, legacyResourceId },
+      node: { handle, id, metafields, productType, legacyResourceId, status },
     }) => {
       let template = "product"
       if (metafields.length) {
@@ -80,7 +81,8 @@ exports.createPages = async ({ graphql, actions: { createPage } }) => {
         productType !== "Lenses" &&
         productType !== "Upsell AO" &&
         productType !== "Case Add-Ons" &&
-        productType !== "Insurance"
+        productType !== "Insurance" &&
+        status === "ACTIVE"
       ) {
         createPage({
           path: `/products/${handle}`,

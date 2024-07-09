@@ -79,18 +79,19 @@ const CollectionContentful = ({
             showOverlay={collection.showOverlay}
           />
         )}
-
-        <div className="filters-container">
-          <Filters
-            collection={collection}
-            filters={filters}
-            setFilters={setFilters}
-            setProducts={setProducts}
-          />
-        </div>
+        {products && (
+          <div className="filters-container">
+            <Filters
+              collection={collection}
+              filters={filters}
+              setFilters={setFilters}
+              setProducts={setProducts}
+            />
+          </div>
+        )}
 
         <Grid>
-          {products.length ? (
+          {products && products.length ? (
             Array.from(products.slice(0, 6)).map(
               (product: ContentfulProduct) => {
                 const shopifyProduct = getShopifyProduct(product)
@@ -116,7 +117,8 @@ const CollectionContentful = ({
         )}
 
         <Grid>
-          {products.length > 6 &&
+          {products &&
+            products.length > 6 &&
             Array.from(products.slice(6)).map((product: ContentfulProduct) => {
               const shopifyProduct = getShopifyProduct(product)
 

@@ -9,6 +9,8 @@ const contentfulConfig = {
     process.env.CONTENTFUL_DELIVERY_TOKEN,
 }
 
+const siteUrl = `https://www.tresnoir.com`
+
 /**
  * The currently active environment.
  * This is used to set the corresponding Tag Manager environment config.
@@ -51,7 +53,7 @@ module.exports = {
     title: `Tres Noir`,
     description: `Tres Noir is an independent eyewear company located in Santa Ana, Calif.`,
     author: `@SuavecitoInc`,
-    siteUrl: `https://www.tresnoir.com`,
+    siteUrl: siteUrl,
   },
   plugins: [
     {
@@ -161,7 +163,85 @@ module.exports = {
         appSecret: process.env.YOTPO_SECRET,
       },
     },
-    `gatsby-plugin-sitemap`,
+    {
+      resolve: "gatsby-plugin-sitemap",
+      options: {
+        query: `
+      {
+        allSitePage {
+          nodes {
+            path
+          }
+        }
+        allShopifyProduct {
+          edges {
+            node {
+              handle
+              updatedAt
+            }
+          }
+        }
+        allShopifyCollection {
+          edges {
+            node {
+              handle
+              updatedAt
+            }
+          }
+        }
+      }
+    `,
+        resolveSiteUrl: ({ site }) => siteUrl,
+        resolvePages: ({
+          allSitePage: { nodes: allPages },
+          allShopifyProduct: { edges: allShopifyProducts },
+          allShopifyCollection: { edges: allShopifyCollections },
+        }) => {
+          const normalizePath = path => path.replace(/\/+$/, "")
+
+          const shopifyProductMap = allShopifyProducts.reduce(
+            (acc, { node }) => {
+              const path = normalizePath(`/products/${node.handle}`)
+              acc[path] = { updatedAt: node.updatedAt }
+              return acc
+            },
+            {}
+          )
+
+          const shopifyCollectionMap = allShopifyCollections.reduce(
+            (acc, { node }) => {
+              const path = normalizePath(`/collections/${node.handle}`)
+              acc[path] = { updatedAt: node.updatedAt }
+              return acc
+            },
+            {}
+          )
+
+          const pages = allPages
+            .map(page => {
+              const path = normalizePath(page.path)
+              const productData = shopifyProductMap[path] || {}
+              const collectionData = shopifyCollectionMap[path] || {}
+              const pageData = {
+                ...page,
+                ...productData,
+                ...collectionData,
+              }
+
+              return pageData
+            })
+            .filter(page => !page.path.includes("/customize"))
+
+          return pages
+        },
+        serialize: ({ path, updatedAt }) => {
+          return {
+            url: path,
+            lastmod: updatedAt,
+          }
+        },
+      },
+    },
     // this (optional) plugin enables Progressive Web App + Offline functionality
     // To learn more, visit: https://gatsby.dev/offline
     // `gatsby-plugin-offline`,
