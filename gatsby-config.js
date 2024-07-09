@@ -226,7 +226,6 @@ module.exports = {
             edges: allContentfulVariantCollections,
           },
         }) => {
-          // Create maps for Shopify and Contentful nodes
           const shopifyProductMap = allShopifyProducts.reduce(
             (acc, { node }) => {
               acc[`/products/${node.handle}`] = { updatedAt: node.updatedAt }
@@ -265,20 +264,19 @@ module.exports = {
               return acc
             }, {})
 
-          // Combine page data with metadata from Shopify and Contentful
           return allPages
             .map(page => {
               const path = page.path
               return {
-                ...page, // Spread the properties of the current page
-                ...shopifyProductMap[path], // Spread the properties of the corresponding Shopify product metadata (if any)
-                ...shopifyCollectionMap[path], // Spread the properties of the corresponding Shopify collection metadata (if any)
-                ...contentfulProductMap[path], // Spread the properties of the corresponding Contentful product metadata (if any)
-                ...contentfulCollectionMap[path], // Spread the properties of the corresponding Contentful collection metadata (if any)
-                ...contentfulVariantCollectionMap[path], // Spread the properties of the corresponding Contentful variant collection metadata (if any)
+                ...page,
+                ...shopifyProductMap[path],
+                ...shopifyCollectionMap[path],
+                ...contentfulProductMap[path],
+                ...contentfulCollectionMap[path],
+                ...contentfulVariantCollectionMap[path],
               }
             })
-            .filter(page => !page.path.includes("/customize")) // Filter out `/products/customize`
+            .filter(page => !page.path.includes("/customize"))
         },
         serialize: ({ path, updatedAt }) => {
           return {
