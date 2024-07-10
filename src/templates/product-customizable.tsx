@@ -810,11 +810,15 @@ const ProductCustomizable = ({ data, location: any }: Props) => {
 
   const generateProductContentfulJsonLD = () => {
     try {
+      const firstNonPolarizedVariant = shopifyProduct.variants.find(
+        variant => !variant.sku.includes("PZ") && !variant.sku.includes("P") // filter out polarized variants
+      )
+      const seoVariant = firstNonPolarizedVariant ?? shopifyProduct.variants[0]
       const name = shopifyProduct.title
-      const sku = shopifyProduct.variants[0].sku
+      const sku = seoVariant.sku
       const color =
         (contentfulProduct.variants[0].dominantFrameColor as string) ?? ""
-      const price = shopifyProduct.variants[0].price
+      const price = seoVariant.price
 
       const featuredImg = contentfulProduct.variants[0].featuredImage.url
 
