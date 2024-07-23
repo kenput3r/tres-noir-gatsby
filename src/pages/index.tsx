@@ -6,6 +6,7 @@ import Carousel from "../components/carousel"
 import Layout from "../components/layout-index"
 import SEO from "../components/seo"
 import FreeShipping from "../components/free-shipping"
+import SaleHeroBanner from "../components/sale-hero-banner"
 
 const Page = styled.div`
   margin: auto;
@@ -160,7 +161,8 @@ const IndexPage = ({
 }: {
   data: HomePageQuery
 }) => {
-  const { enableSaleHero, saleHero } = contentfulHomepage
+  const { enableSaleHero, saleHero, saleHeroUrl, enableSaleHeroUrl } =
+    contentfulHomepage
   const generateJsonLd = () => {
     try {
       const schema = {
@@ -184,15 +186,13 @@ const IndexPage = ({
       <Page>
         <FreeShipping />
 
-        {enableSaleHero && (
-          <div className="container">
-            <GatsbyImage
-              image={saleHero.gatsbyImageData}
-              alt="Sale Hero"
-              class="sale-hero"
-            />
-          </div>
-        )}
+        <SaleHeroBanner
+          data={saleHero}
+          enableSaleHero={enableSaleHero}
+          saleHeroUrl={saleHeroUrl}
+          enableSaleHeroUrl={enableSaleHeroUrl}
+        />
+
         <div className="hero container">
           <div className="featured">
             <GatsbyImage
@@ -266,6 +266,8 @@ interface HomePageQuery {
     saleHero: {
       gatsbyImageData: IGatsbyImageData
     }
+    saleHeroUrl: string
+    enableSaleHeroUrl: boolean
     hero: {
       gatsbyImageData: IGatsbyImageData
     }
@@ -298,6 +300,8 @@ export const query = graphql`
       saleHero {
         gatsbyImageData
       }
+      saleHeroUrl
+      enableSaleHeroUrl
       hero {
         gatsbyImageData
       }

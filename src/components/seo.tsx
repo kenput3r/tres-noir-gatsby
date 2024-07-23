@@ -17,6 +17,7 @@ interface Props {
   isIndex?: boolean
   image?: ImageMeta
   jsonLdPayload?: string | null
+  shouldIndex?: boolean
 }
 
 interface ImageMeta {
@@ -32,6 +33,7 @@ const SEO = ({
   isIndex = false,
   image,
   jsonLdPayload,
+  shouldIndex = true,
 }: Props) => {
   const { site } = useStaticQuery(
     graphql`
@@ -60,6 +62,19 @@ const SEO = ({
     } else {
       return `%s | ${siteTitle}`
     }
+  }
+
+  const robotsContent = () => {
+    if (!shouldIndex) {
+      return "noindex, nofollow"
+    }
+    if (
+      process.env.GATSBY_ENVIRONMENT === "STAGING" ||
+      process.env.GATSBY_ENVIRONMENT === "staging"
+    ) {
+      return "noindex, nofollow"
+    }
+    return ""
   }
 
   const formattedTitle = isIndex ? `${siteTitle} | ${title}` : title
@@ -126,11 +141,7 @@ const SEO = ({
         },
         {
           name: `robots`,
-          content:
-            process.env.GATSBY_ENVIRONMENT === "STAGING" ||
-            process.env.GATSBY_ENVIRONMENT === "staging"
-              ? `noindex, nofollow`
-              : ``,
+          content: robotsContent(),
         },
       ].concat(meta)}
     >

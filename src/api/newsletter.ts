@@ -6,6 +6,13 @@ export default async function klaviyoFormHandler(
   res: GatsbyFunctionResponse
 ) {
   try {
+    res.setHeader("Access-Control-Allow-Origin", "*")
+    res.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS")
+    res.setHeader("Access-Control-Allow-Headers", "Content-Type")
+
+    if (req.method === "OPTIONS") {
+      return res.status(200).end()
+    }
     const reqEmail = req.body.inEmail
     const listId = "R4y2R5"
     const apiKey = process.env.KLAVIYO_PRIVATE_KEY
