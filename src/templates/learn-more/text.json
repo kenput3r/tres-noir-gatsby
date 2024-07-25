@@ -7,29 +7,36 @@
     {
       "title": "Prescription Types",
       "items": [
-        "Single Vision", "Progressive", "Biflocal", "Non-Prescription", "& More"
+        "Single Vision",
+        "Progressive",
+        "Bifocal",
+        "Non-Prescription",
+        "Reader's",
+        "& More"
       ]
     },
     {
       "title": "Lens Options",
       "items": [
-        "Clear", "Polarized", "Blue Light Blocking", "Gradient Tint", "Sun Tint", "Vantage", "Transitions", "& More"
+        "Clear",
+        "Polarized",
+        "Blue Light Blocking",
+        "Gradient Tint",
+        "Sun Tint",
+        "Vantage",
+        "Transitions",
+        "& More"
       ]
     },
     {
       "title": "Lens Coating",
-      "items": [
-        "Anti-Reflective", "UV Coat", "Scratch Coat", "& More"
-      ]
+      "items": ["Anti-Reflective", "UV Coat", "Scratch Coat", "& More"]
     },
     {
       "title": "Lens Material",
-      "items": [
-        "CR-39", "Hi-Index", "Polycarbonate", "& More"
-      ]
+      "items": ["CR-39", "Hi-Index", "Polycarbonate", "& More"]
     }
   ],
   "lensesInfoAlt": "More about our stock cr-39 lenses: CR-39 lenses are used on every pair of acetate frames. Best plastic for clarity. 100% UVA & UVB protection. Shatterproof plastic. Custom and prescription lenses are available in many materials including CR-39, Polycarbonate, and Hi-Index.",
-  "whatYouGet": "Each pair of Tres Noir glasses comes with a free case and microfiber cleaning cloth. We also offer free shipping in the USA."
-
+  "whatYouGet": "Each pair of Tres Noir glasses comes with a microfiber pouch and cleaning cloth. We also offer free shipping in the USA."
 }
