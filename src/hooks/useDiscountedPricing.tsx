@@ -1,6 +1,7 @@
 import { useEffect, useState, useContext } from "react"
+
 import { CartContext } from "../contexts/cart"
-import { get } from "js-cookie"
+import useDiscountIdentifier from "./useDiscountIdentifier"
 
 type Params = {
   productId: string
@@ -24,14 +25,21 @@ export const useDiscountedPricing = ({
   const [offer, setOffer] = useState("")
   // cart
   const { getAppliedDiscountCode } = useContext(CartContext)
-
+  const { discountIdentifier, enableDiscountIdentifier } =
+    useDiscountIdentifier()
   const abortController = new AbortController()
 
   // on mount
   useEffect(() => {
     const fetchDiscountedPricing = async () => {
       try {
-        const offer = getAppliedDiscountCode()
+        let offer = ""
+        if (enableDiscountIdentifier) {
+          offer = discountIdentifier
+        } else {
+          offer = getAppliedDiscountCode()
+        }
+
         // get URL params
         if (!offer || offer === "") return
 
