@@ -6,6 +6,7 @@ import { BsChevronLeft as Left, BsChevronRight as Right } from "react-icons/bs"
 import styled from "styled-components"
 
 import "swiper/css"
+import { set } from "js-cookie"
 
 const Component = styled.div`
   .navigation {
@@ -59,6 +60,7 @@ const ProductCarousel = ({ imageSet }: { imageSet: ImageSet[] }) => {
         navigation={{ nextEl: ".next", prevEl: ".prev" }}
         modules={[Thumbs, Navigation]}
         grabCursor
+        onSlideChange={swiper => thumbsSwiper?.slideTo(swiper.realIndex)}
       >
         {imageSet.map((image: ImageSet, i: number) => (
           <SwiperSlide key={`product-carousel-slide-${i}`}>
