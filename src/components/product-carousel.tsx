@@ -6,7 +6,6 @@ import { BsChevronLeft as Left, BsChevronRight as Right } from "react-icons/bs"
 import styled from "styled-components"
 
 import "swiper/css"
-import { set } from "js-cookie"
 
 const Component = styled.div`
   .navigation {
