@@ -7,7 +7,6 @@ export default async function getDiscountedPricing(
   res: GatsbyFunctionResponse
 ) {
   // START HELPER FUNCTIONS
-
   const formatNumber = (inputNumber: string) =>
     isNaN(parseFloat(inputNumber))
       ? NaN
@@ -148,6 +147,15 @@ export default async function getDiscountedPricing(
                       products(first: 250) {
                         nodes {
                           handle
+                        }
+                      }
+                    }
+                    ... on DiscountCollections {
+                      collections(first: 50) {
+                        nodes {
+                          id
+                          handle
+                          hasProduct(id: $productId)
                         }
                       }
                     }
