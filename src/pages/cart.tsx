@@ -11,7 +11,6 @@ import SEO from "../components/seo"
 import Loader from "../components/loader"
 import QuantitySelector from "../components/quantity-selector"
 import { CartContext } from "../contexts/cart"
-import { CustomerContext } from "../contexts/customer"
 import { tnItem, tnSubItem, rxType, LineItem } from "../types/checkout"
 import { startedCheckoutGTMEvent } from "../helpers/gtm"
 import { VscClose } from "react-icons/vsc"
@@ -299,8 +298,6 @@ const Cart = ({
     updateShipInsureAttribute,
   } = useContext(CartContext)
 
-  const { associateCheckout } = useContext(CustomerContext)
-
   const { rxInfo, rxInfoDispatch } = useContext(RxInfoContext)
 
   const { setSelectedVariants, setCurrentStep, setHasSavedCustomized } =
@@ -318,7 +315,6 @@ const Cart = ({
       if (checkout.lineItems.length > 0) {
         startedCheckoutGTMEvent(checkout)
       }
-      associateCheckout(checkout.id)
     }
   }, [checkout])
 
