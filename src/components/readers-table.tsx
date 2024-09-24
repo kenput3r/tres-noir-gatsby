@@ -6,6 +6,7 @@ const Component = styled.div`
   margin-top: 20px;
   .grid {
     display: grid;
+    gap: 5px;
     grid-template-columns: repeat(4, 1fr);
     @media screen and (max-width: 768px) {
       grid-template-columns: repeat(3, 1fr);
@@ -59,7 +60,6 @@ const Component = styled.div`
 `
 
 const lensPower = [
-  "0.00",
   "1.00",
   "1.25",
   "1.50",
