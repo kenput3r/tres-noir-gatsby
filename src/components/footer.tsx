@@ -2,6 +2,7 @@ import React from "react"
 import styled from "styled-components"
 import { FaFacebookF as F } from "react-icons/fa"
 import { FaInstagram as I } from "react-icons/fa"
+import { FaPinterest as P } from "react-icons/fa"
 import FooterLinks from "./footer/footer-links"
 import FooterForm from "./footer/footer-form"
 import { StaticImage } from "gatsby-plugin-image"
@@ -149,6 +150,15 @@ const Footer = () => {
                     rel="noreferrer"
                   >
                     <F className="foot-icon" />
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="https://www.pinterest.com/tres_noir/"
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    <P className="foot-icon" />
                   </a>
                 </li>
               </ul>
