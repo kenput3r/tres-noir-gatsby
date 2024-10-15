@@ -12,6 +12,7 @@ import {
   FaSearch,
   FaFacebookF as FacebookIcon,
   FaInstagram as InstagramIcon,
+  FaPinterest as PinterestIcon,
   FaBars,
 } from "react-icons/fa"
 import { useClickAway } from "react-use"
@@ -229,6 +230,13 @@ const Header = ({
               rel="noreferrer"
             >
               <FacebookIcon className="text-btn" />
+            </a>
+            <a
+              href="https://www.pinterest.com/tres_noir/"
+              target="_blank"
+              rel="noreferrer"
+            >
+              <PinterestIcon className="text-btn" />
             </a>
           </div>
           <div className="search">
