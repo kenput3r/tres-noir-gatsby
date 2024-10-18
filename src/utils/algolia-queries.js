@@ -127,6 +127,7 @@ function products(data) {
                 reviews: yotpo.node.totalReviews,
               }
             : null,
+          internal: node.internal,
         },
       })
     }
