@@ -149,6 +149,7 @@ function productToAlgoliaRecord({
     product_image,
     handle,
     yotpo,
+    internal,
   },
 }) {
   return {
@@ -165,6 +166,7 @@ function productToAlgoliaRecord({
     image: product_image,
     handle: handle,
     yotpo: yotpo,
+    internal: internal,
   }
 }
 
