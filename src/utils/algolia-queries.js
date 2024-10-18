@@ -12,6 +12,11 @@ const productsQuery = `{
   Shopify: allShopifyProduct {
     edges {
       node {
+        internal {
+          contentDigest
+          type
+          owner
+        }
         handle
         id
         legacyResourceId
@@ -43,6 +48,11 @@ const productsQuery = `{
   Contentful: allContentfulProduct {
     edges {
       node {
+        internal {
+          contentDigest
+          type
+          owner
+        }
         handle
         styleDescription {
           styleDescription
@@ -60,6 +70,11 @@ const productsQuery = `{
   Yotpo: allYotpoProductBottomline {
     edges {
       node {
+        internal {
+          contentDigest
+          type
+          owner
+        }
         id
         productIdentifier
         score
@@ -112,6 +127,7 @@ function products(data) {
                 reviews: yotpo.node.totalReviews,
               }
             : null,
+          internal: node.internal,
         },
       })
     }
@@ -134,6 +150,7 @@ function productToAlgoliaRecord({
     product_image,
     handle,
     yotpo,
+    internal,
   },
 }) {
   return {
@@ -150,6 +167,7 @@ function productToAlgoliaRecord({
     image: product_image,
     handle: handle,
     yotpo: yotpo,
+    internal: internal,
   }
 }
 
