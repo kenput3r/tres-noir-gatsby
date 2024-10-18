@@ -13,9 +13,9 @@ const productsQuery = `{
     edges {
       node {
         internal {
+          contentDigest
           type
           owner
-          contentDigest
         }
         handle
         id
@@ -49,9 +49,9 @@ const productsQuery = `{
     edges {
       node {
         internal {
+          contentDigest
           type
           owner
-          contentDigest
         }
         handle
         styleDescription {
@@ -71,9 +71,9 @@ const productsQuery = `{
     edges {
       node {
         internal {
+          contentDigest
           type
           owner
-          contentDigest
         }
         id
         productIdentifier
