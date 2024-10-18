@@ -12,6 +12,11 @@ const productsQuery = `{
   Shopify: allShopifyProduct {
     edges {
       node {
+        internal {
+          type
+          owner
+          contentDigest
+        }
         handle
         id
         legacyResourceId
@@ -43,6 +48,11 @@ const productsQuery = `{
   Contentful: allContentfulProduct {
     edges {
       node {
+        internal {
+          type
+          owner
+          contentDigest
+        }
         handle
         styleDescription {
           styleDescription
@@ -60,6 +70,11 @@ const productsQuery = `{
   Yotpo: allYotpoProductBottomline {
     edges {
       node {
+        internal {
+          type
+          owner
+          contentDigest
+        }
         id
         productIdentifier
         score
