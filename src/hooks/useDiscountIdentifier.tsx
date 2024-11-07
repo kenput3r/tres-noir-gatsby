@@ -9,10 +9,14 @@ export const useDiscountIdentifier = () => {
       }
     }
   `)
+  // return {
+  //   discountIdentifier: data.contentfulHomepage.discountIdentifier as string,
+  //   enableDiscountIdentifier: data.contentfulHomepage
+  //     .enableDiscountIdentifier as boolean,
+  // }
   return {
-    discountIdentifier: data.contentfulHomepage.discountIdentifier as string,
-    enableDiscountIdentifier: data.contentfulHomepage
-      .enableDiscountIdentifier as boolean,
+    discountIdentifier: "TEST24",
+    enableDiscountIdentifier: true,
   }
 }
 

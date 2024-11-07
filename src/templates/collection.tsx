@@ -284,7 +284,6 @@ export const query = graphql`
   query CollectionQuery($handle: String!) {
     shopifyCollection(handle: { eq: $handle }) {
       handle
-      id
       title
       description
       image {
@@ -293,6 +292,8 @@ export const query = graphql`
       }
       products {
         handle
+        id
+        legacyResourceId
         featuredImage {
           altText
           localFile {

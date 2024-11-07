@@ -11,6 +11,8 @@ import { addedToCartGTMEvent } from "../helpers/gtm"
 import { isDiscounted } from "../helpers/shopify"
 import Badge from "./badge"
 
+import { useDiscountedPricing } from "../hooks/useDiscountedPricing"
+
 const Component = styled.article`
   h3,
   p,
@@ -80,7 +82,22 @@ const Component = styled.article`
       }
     }
   }
+  .badge-container {
+    display: flex;
+    padding-bottom: 8px;
+  }
 `
+
+const createDiscountApiPayload = (shopifyProduct): any[] => {
+  try {
+    return shopifyProduct.variants.map(v => ({
+      price: v.price,
+      id: v.legacyResourceId,
+    }))
+  } catch (error) {
+    return []
+  }
+}
 
 const Product = ({
   data,
@@ -89,6 +106,19 @@ const Product = ({
   data: ShopifyProduct
   collection: string
 }) => {
+  console.log("DATA", JSON.stringify(data, null, 2))
+  const selectedVariant = data.variants[0]
+  const { discountedPrice, isApplicable, offer } = useDiscountedPricing({
+    productId: data.legacyResourceId,
+    prices: createDiscountApiPayload(data),
+    selectedVariantId: selectedVariant.legacyResourceId,
+    handle: data.handle,
+  })
+
+  console.log("DISCOUNTED PRICE", discountedPrice)
+  console.log("IS APPLICABLE", isApplicable)
+  console.log("OFFER", offer)
+
   const quantityLevels = useQuantityQuery(data.handle, data.variants.length)
 
   const { addProductToCart, isAddingToCart } = useContext(CartContext)
@@ -170,6 +200,17 @@ const Product = ({
                 />
               )}
               {badge && <Badge label={badge.label} color={badge.color} />}
+              {isApplicable && (
+                <div className="badge-container">
+                  <Badge
+                    label={offer}
+                    color={"red"}
+                    position="absolute"
+                    top={0}
+                    left={0}
+                  />
+                </div>
+              )}
             </>
           </Link>
           {data.variants.length > 1 ? (
@@ -192,18 +233,30 @@ const Product = ({
           {" "}
           <Link to={`/products/${data.handle}`}>{data.title}</Link>
         </h3>
-        <div className="price-container">
-          <span className="product-price">${price} USD</span>
-          {data.variants[0].compareAtPrice &&
-            isDiscounted(
-              data.variants[0].price,
-              data.variants[0].compareAtPrice
-            ) && (
+        {!isApplicable ? (
+          <div className="price-container not-discounted">
+            <span className="product-price">${price} USD</span>
+            {data.variants[0].compareAtPrice &&
+              isDiscounted(
+                data.variants[0].price,
+                data.variants[0].compareAtPrice
+              ) && (
+                <span className="product-compare-at-price">
+                  ${data.variants[0].compareAtPrice} USD
+                </span>
+              )}
+          </div>
+        ) : (
+          discountedPrice &&
+          isDiscounted(discountedPrice, selectedVariant.price) && (
+            <div className="price-container discounted">
+              <span className="product-price">${discountedPrice} USD</span>
               <span className="product-compare-at-price">
-                ${data.variants[0].compareAtPrice} USD
+                ${selectedVariant.price} USD
               </span>
-            )}
-        </div>
+            </div>
+          )
+        )}
       </div>
     </Component>
   )
