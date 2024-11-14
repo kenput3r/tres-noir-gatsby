@@ -15,7 +15,7 @@ export const useDiscountIdentifier = () => {
   //     .enableDiscountIdentifier as boolean,
   // }
   return {
-    discountIdentifier: "TEST24",
+    discountIdentifier: "TEST-RX-24",
     enableDiscountIdentifier: true,
   }
 }

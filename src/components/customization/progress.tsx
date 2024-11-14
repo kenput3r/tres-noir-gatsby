@@ -44,7 +44,7 @@ const Component = styled.div`
   }
 `
 
-const CustomizationProgress = ({ step }: { step: Number }) => (
+const CustomizationProgress = ({ step }: { step: number }) => (
   <Component>
     <div className="marker active">
       <div className="circle active" />

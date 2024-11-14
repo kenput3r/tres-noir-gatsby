@@ -11,7 +11,7 @@ import { addedToCartGTMEvent } from "../helpers/gtm"
 import { isDiscounted } from "../helpers/shopify"
 import Badge from "./badge"
 
-import { useDiscountedPricing } from "../hooks/useDiscountedPricing"
+// import { useDiscountedPricing } from "../hooks/useDiscountedPricing"
 
 const Component = styled.article`
   h3,
@@ -102,43 +102,52 @@ const createDiscountApiPayload = (shopifyProduct): any[] => {
 const Product = ({
   data,
   collection,
+  discount = {
+    discountedPrice: "",
+    isApplicable: false,
+    offer: "",
+  },
 }: {
   data: ShopifyProduct
   collection: string
+  discount?: {
+    discountedPrice: string
+    isApplicable: boolean
+    offer: string
+  }
 }) => {
-  console.log("DATA", JSON.stringify(data, null, 2))
   const selectedVariant = data.variants[0]
-  const { discountedPrice, isApplicable, offer } = useDiscountedPricing({
-    productId: data.legacyResourceId,
-    prices: createDiscountApiPayload(data),
-    selectedVariantId: selectedVariant.legacyResourceId,
-    handle: data.handle,
-  })
-
-  console.log("DISCOUNTED PRICE", discountedPrice)
-  console.log("IS APPLICABLE", isApplicable)
-  console.log("OFFER", offer)
+  console.log("data", selectedVariant)
+  // const { discountedPrice, isApplicable, offer } = useDiscountedPricing({
+  //   productId: data.legacyResourceId,
+  //   prices: createDiscountApiPayload(data),
+  //   selectedVariantId: selectedVariant.legacyResourceId,
+  //   handle: data.handle,
+  // })
+  const { isApplicable, offer, discountedPrice } = discount
 
   const quantityLevels = useQuantityQuery(data.handle, data.variants.length)
 
   const { addProductToCart, isAddingToCart } = useContext(CartContext)
 
-  const price: string = parseFloat(
-    data.priceRangeV2.minVariantPrice.amount.toString()
-  ).toFixed(2)
+  // const price: string = parseFloat(
+  //   data.priceRangeV2.minVariantPrice.amount.toString()
+  // ).toFixed(2)
+
+  const price = selectedVariant.price
 
   const handleAddToCart = (e: { preventDefault: () => void }) => {
     e.preventDefault()
-    const id = data.variants[0].storefrontId
-    const sku = data.variants[0].sku
+    const id = selectedVariant.storefrontId
+    const sku = selectedVariant.sku
     const image = data.featuredImage.localFile.childImageSharp.gatsbyImageData
     const qty = 1
     addProductToCart(id, qty, sku, image)
 
     const productData = {
       title: data.title,
-      legacyResourceId: data.variants[0].legacyResourceId,
-      sku: data.variants[0].sku,
+      legacyResourceId: selectedVariant.legacyResourceId,
+      sku: selectedVariant.sku,
       productType: data.productType,
       image: data?.featuredImage?.originalSrc
         ? data.featuredImage.originalSrc
@@ -155,8 +164,8 @@ const Product = ({
 
   const getBadge = (): { label: string; color: string } | null => {
     try {
-      const price = data.variants[0].price
-      const compareAtPrice = data.variants[0].compareAtPrice
+      const price = selectedVariant.price
+      const compareAtPrice = selectedVariant.compareAtPrice
       if (compareAtPrice && isDiscounted(price, compareAtPrice)) {
         return {
           label: "Sale",
@@ -170,6 +179,8 @@ const Product = ({
   }
 
   const badge = getBadge()
+
+  console.log("badge", data.variants[0])
 
   return (
     <Component>
@@ -199,7 +210,9 @@ const Product = ({
                   height={183}
                 />
               )}
-              {badge && <Badge label={badge.label} color={badge.color} />}
+              {badge && !isApplicable && (
+                <Badge label={badge.label} color={badge.color} />
+              )}
               {isApplicable && (
                 <div className="badge-container">
                   <Badge
@@ -219,7 +232,7 @@ const Product = ({
             </ProductAction>
           ) : (
             <ProductAction>
-              {quantityLevels && quantityLevels[data.variants[0].sku] > 0 ? (
+              {quantityLevels && quantityLevels[selectedVariant.sku] > 0 ? (
                 <button type="button" onClick={handleAddToCart}>
                   {isAddingToCart ? <Spinner /> : `Add To Cart`}
                 </button>
@@ -234,22 +247,22 @@ const Product = ({
           <Link to={`/products/${data.handle}`}>{data.title}</Link>
         </h3>
         {!isApplicable ? (
-          <div className="price-container not-discounted">
+          <div className="price-container">
             <span className="product-price">${price} USD</span>
             {data.variants[0].compareAtPrice &&
               isDiscounted(
-                data.variants[0].price,
-                data.variants[0].compareAtPrice
+                selectedVariant.price,
+                selectedVariant.compareAtPrice
               ) && (
                 <span className="product-compare-at-price">
-                  ${data.variants[0].compareAtPrice} USD
+                  ${selectedVariant.compareAtPrice} USD
                 </span>
               )}
           </div>
         ) : (
           discountedPrice &&
           isDiscounted(discountedPrice, selectedVariant.price) && (
-            <div className="price-container discounted">
+            <div className="price-container">
               <span className="product-price">${discountedPrice} USD</span>
               <span className="product-compare-at-price">
                 ${selectedVariant.price} USD
