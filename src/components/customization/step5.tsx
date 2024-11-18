@@ -136,8 +136,6 @@ const Step5 = (props: {
     setSelectedVariantsToDefault,
   } = useContext(CustomizeContext)
 
-  console.log("selectedVariants", selectedVariants)
-
   // const { bundledCustoms, bundledDispatch } = useContext(CustomProductsContext)
   const {
     addProductCustomToCart,

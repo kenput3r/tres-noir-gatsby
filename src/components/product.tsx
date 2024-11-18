@@ -11,8 +11,6 @@ import { addedToCartGTMEvent } from "../helpers/gtm"
 import { isDiscounted } from "../helpers/shopify"
 import Badge from "./badge"
 
-// import { useDiscountedPricing } from "../hooks/useDiscountedPricing"
-
 const Component = styled.article`
   h3,
   p,
@@ -117,13 +115,6 @@ const Product = ({
   }
 }) => {
   const selectedVariant = data.variants[0]
-  console.log("data", selectedVariant)
-  // const { discountedPrice, isApplicable, offer } = useDiscountedPricing({
-  //   productId: data.legacyResourceId,
-  //   prices: createDiscountApiPayload(data),
-  //   selectedVariantId: selectedVariant.legacyResourceId,
-  //   handle: data.handle,
-  // })
   const { isApplicable, offer, discountedPrice } = discount
 
   const quantityLevels = useQuantityQuery(data.handle, data.variants.length)
@@ -179,8 +170,6 @@ const Product = ({
   }
 
   const badge = getBadge()
-
-  console.log("badge", data.variants[0])
 
   return (
     <Component>

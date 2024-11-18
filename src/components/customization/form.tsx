@@ -43,8 +43,6 @@ const Form = ({
     defaultVariant,
   } = useContext(CustomizeContext)
 
-  console.log("selected variants initial", selectedVariants)
-
   const stepMap = new Map()
   stepMap.set(1, "RX TYPE")
   stepMap.set(2, "LENS TYPE")
@@ -71,7 +69,6 @@ const Form = ({
     variant: ShopifyVariant,
     isSetFromEvent: boolean = true
   ) => {
-    console.log("VARIANT ---> ", variant)
     setRxAble(variant.product?.title !== "Non-Prescription Lens")
     if (variant.product?.title === "Non-Prescription Lens") {
       if (messageRef.current) {
@@ -403,7 +400,6 @@ const Form = ({
         p.variants = patchedVariants
         return p
       })
-      console.log("PATCHED COLLECTION ---> ", patchedCollection)
       setCurrentCollection({
         title: tempCollection.title,
         products: patchedCollection,
