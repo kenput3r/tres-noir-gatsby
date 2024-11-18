@@ -9,14 +9,10 @@ export const useDiscountIdentifier = () => {
       }
     }
   `)
-  // return {
-  //   discountIdentifier: data.contentfulHomepage.discountIdentifier as string,
-  //   enableDiscountIdentifier: data.contentfulHomepage
-  //     .enableDiscountIdentifier as boolean,
-  // }
   return {
-    discountIdentifier: "TEST-RX-24",
-    enableDiscountIdentifier: true,
+    discountIdentifier: data.contentfulHomepage.discountIdentifier as string,
+    enableDiscountIdentifier: data.contentfulHomepage
+      .enableDiscountIdentifier as boolean,
   }
 }
 
