@@ -46,6 +46,7 @@ export const shopifyProductsFields = graphql`
       }
       price
       product {
+        legacyResourceId
         title
         description
         onlineStoreUrl

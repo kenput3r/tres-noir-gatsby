@@ -4,6 +4,7 @@ import React, {
   ChangeEvent,
   useState,
   useEffect,
+  useCallback,
 } from "react"
 import { Link } from "gatsby"
 import { GatsbyImage } from "gatsby-plugin-image"
@@ -22,6 +23,7 @@ import { rxType } from "../../types/checkout"
 import { isDiscounted } from "../../helpers/shopify"
 import ReadersTable from "../readers-table"
 import { handleRxFromAttribute } from "../../contexts/rxInfo"
+import useCollectionDiscountedPricing from "../../hooks/useCollectionDiscountedPricing"
 
 const Form = ({
   shopifyCollection,
@@ -49,6 +51,11 @@ const Form = ({
   const { isRxAble, setRxAble, rxInfo, rxInfoDispatch } =
     useContext(RxInfoContext)
   const messageRef = useRef<any>()
+
+  const [currentCollection, setCurrentCollection] = useState<ShopifyCollection>(
+    { ...shopifyCollection }
+  )
+
   const [isFormValid, setIsFormValid] = useState(true)
   const errorRefs = useRef({})
   const continueBtn = useRef<HTMLButtonElement>(null)
@@ -366,6 +373,40 @@ const Form = ({
     }
   }
 
+  // start discounted prices
+  const prices = shopifyCollection.products.map(p => ({
+    id: p.variants[0].legacyResourceId,
+    price: p.variants[0].price,
+  }))
+
+  const { offer, isApplicable, discountedPrices } =
+    useCollectionDiscountedPricing({ prices, handle })
+
+  useEffect(() => {
+    if (isApplicable && discountedPrices) {
+      const tempCollection = JSON.parse(JSON.stringify(shopifyCollection))
+
+      const patchedCollection = tempCollection.products.map(p => {
+        const patchedVariants = p.variants.map(v => {
+          const patchedPrice = discountedPrices.find(
+            el => el.id === v.legacyResourceId
+          )
+          if (patchedPrice) {
+            v.compareAtPrice = v.price
+            v.price = patchedPrice.discountedPrice
+          }
+          return v
+        })
+        p.variants = patchedVariants
+        return p
+      })
+      setCurrentCollection({
+        title: tempCollection.title,
+        products: patchedCollection,
+      })
+    }
+  }, [offer, isApplicable, discountedPrices])
+
   useEffect(() => {
     // remove lens coatings that are no longer eligible if step3 changes
     if (
@@ -385,11 +426,14 @@ const Form = ({
     }
   }, [])
 
+  // end discounted prices
+
   useEffect(() => {
     if (hasSavedCustomized[`step${currentStep}`] === false) {
-      handleChange(null, shopifyCollection.products[0].variants[0], false)
+      // handleChange(null, shopifyCollection.products[0].variants[0], false)
+      handleChange(null, currentCollection.products[0].variants[0], false)
     }
-  }, [])
+  }, [currentCollection])
 
   // useEffect to fix bug where Non Precription Lens selection will still error out
   useEffect(() => {
@@ -668,7 +712,7 @@ const Form = ({
       <div className="step-header" ref={topRef}>
         <p>Choose your {stepMap.get(currentStep)}</p>
       </div>
-      {shopifyCollection.products.map((product: ShopifyProduct, index) => {
+      {currentCollection.products.map((product: ShopifyProduct, index) => {
         // fix variant.image is null
         if (product.variants[0].image === null) {
           product.variants[0].image = product.images[0]
@@ -710,6 +754,7 @@ const Form = ({
                           </span>
                         )}
                     </span>
+                    {/* <Price product={product} /> */}
                   </h4>
                   <p>{product.description}</p>
                 </div>
