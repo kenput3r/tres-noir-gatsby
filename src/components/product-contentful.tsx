@@ -148,7 +148,7 @@ const ProductContentful = ({
   const getSelectedVariantOptionName = (variant: any) => {
     try {
       const optionName = variant.selectedOptions.find(
-        c => c.name === "Color" || c.name === "color"
+        c => c.name.toLowerCase() === "color"
       )
       const optionValue = optionName ? optionName.value : ""
       const colorName = optionValue.split("-")[0].trim()
