@@ -449,31 +449,6 @@ const Step5 = (props: {
                     </span>
                   )}
               </span>
-              {/* <Price
-                product={
-                  {
-                    legacyResourceId:
-                      selectedVariants[`step${i + 1}`].product.legacyResourceId,
-                    variants: [
-                      {
-                        sku: "",
-                        legacyResourceId:
-                          selectedVariants[`step${i + 1}`].legacyResourceId,
-                        price: selectedVariants[`step${i + 1}`].price,
-                        compareAtPrice:
-                          selectedVariants[`step${i + 1}`].compareAtPrice,
-                        storefrontId:
-                          selectedVariants[`step${i + 1}`].storefrontId,
-                        title: selectedVariants[`step${i + 1}`].title,
-                        image: selectedVariants[`step${i + 1}`].image,
-                        product: selectedVariants[`step${i + 1}`].product,
-                        selectedOptions:
-                          selectedVariants[`step${i + 1}`].selectedOptions,
-                      },
-                    ],
-                  } as any
-                }
-              /> */}
             </h4>
             <p>{selectedVariants[`step${i + 1}`].product.description}</p>
           </div>
