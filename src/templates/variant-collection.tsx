@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect } from "react"
-import { graphql } from "gatsby"
+import { graphql, useStaticQuery } from "gatsby"
 import styled from "styled-components"
 import Product from "../components/product-contentful"
 import Variant from "../components/variant"
@@ -50,10 +50,10 @@ const VariantCollection = ({
   data: {
     contentfulVariantCollection: any
     shopifyCollection: { products: any[] }
+    contentfulHomepage: any
   }
 }) => {
-  const { contentfulVariantCollection: collection, shopifyCollection } = data
-
+  const { contentfulVariantCollection: collection, shopifyCollection, contentfulHomepage } = data
   const defaultFilters = { frameWidth: "", colorName: "" }
   const [filters, setFilters] = useState<{
     frameWidth: string
@@ -101,7 +101,7 @@ const VariantCollection = ({
     }
   }
 
-  const geColorOptionName = variant => {
+  const getColorOptionName = variant => {
     try {
       const handle = variant.product[0].handle
 
@@ -117,7 +117,7 @@ const VariantCollection = ({
       )
 
       const optionName = shopifyVariant.selectedOptions.find(
-        option => option.name === "Color"
+        option => option.name.toLowerCase() === "color"
       ).value
 
       const formattedOptionName = optionName.split("-")[0]
@@ -125,6 +125,61 @@ const VariantCollection = ({
       return formattedOptionName.trim()
     } catch (error) {
       return variant.colorName
+    }
+  }
+
+  const getBadge = variant => {
+    const handle = variant.product[0].handle
+
+    if (!shopifyCollection?.products) return null
+
+    const shopifyProduct = shopifyCollection.products.find(
+      shopifyProduct =>
+        shopifyProduct.handle.toLowerCase() === handle.toLowerCase()
+    )
+
+    const isExcludedFromDeals =
+      (shopifyProduct && shopifyProduct.handle.includes("mooneyes")) ||
+      (shopifyProduct && shopifyProduct.handle.includes("loser-machine"))
+
+    // only enable BOGO, NEW, and NEW COLOR badges for variant collection
+    // variant collection currently only used for clearance and collaboration items, neither of which are included in sales
+    // keep BOGO b/c clearance items are included in BOGO sales 
+    try {
+      // bogo is enabled and product is not an exclusion (e.g. collaboration products)
+      if (contentfulHomepage.enableBogo && !isExcludedFromDeals) {
+        return {
+          label: "BOGO",
+          color: "#0ee2e2",
+        }
+      }
+      // new variant color badge
+      if (
+        shopifyProduct.tags.some(
+          tag =>
+            tag === `new_color:${getColorOptionName(variant)}` ||
+            tag === `new_color: ${getColorOptionName(variant)}`
+        )
+      ) {
+        return {
+          label: "New Color",
+          color: "green",
+        }
+      }
+      if (
+        shopifyProduct.tags.some(
+          tag =>
+            tag === `new_release`
+        )
+      ) {
+        return {
+          label: "New",
+          color: "#DAA520",
+        }
+      }
+      return null
+    } catch (error) {
+      return null
     }
   }
 
@@ -161,8 +216,9 @@ const VariantCollection = ({
             variants.map(variant => {
               const { price, compareAtPrice } = getShopifyPrice(variant)
               const productTitle = variant.product[0].title
-              const colorName = geColorOptionName(variant)
+              const colorName = getColorOptionName(variant)
               const formattedTitle = [productTitle, colorName].join(" - ")
+              const badge = getBadge(variant)
               return (
                 <Variant
                   key={variant.id}
@@ -171,6 +227,7 @@ const VariantCollection = ({
                   price={price}
                   name={formattedTitle}
                   compareAtPrice={compareAtPrice}
+                  badge={badge}
                 />
               )
             })
@@ -249,6 +306,9 @@ export const query = graphql`
           }
         }
       }
+    }
+    contentfulHomepage {
+      enableBogo
     }
   }
 `

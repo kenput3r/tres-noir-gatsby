@@ -530,7 +530,9 @@ const ProductCustomizable = ({ data, location: any }: Props) => {
 
   const getSelectedVariantOptionName = (variant: any) => {
     try {
-      const optionName = variant.selectedOptions.find(c => c.name === "Color")
+      const optionName = variant.selectedOptions.find(
+        c => c.name.toLowerCase() === "color"
+      )
       const optionValue = optionName ? optionName.value : ""
       const colorName = optionValue.split("-")[0].trim()
       return colorName
