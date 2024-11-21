@@ -92,6 +92,14 @@ export const useRandomizeCollection = (currentProductId: string) => {
         onlineStoreUrl: string | null
         storefrontId: string
       }) => {
+        if (process.env.NODE_ENV === "development") {
+          return (
+            el.storefrontId !== currentProductId &&
+            !el.tags.includes("upsell_item") &&
+            !el.hasOutOfStockVariants &&
+            el.productType !== "Gift Card"
+          )
+        }
         return (
           el.storefrontId !== currentProductId &&
           !el.tags.includes("upsell_item") &&
