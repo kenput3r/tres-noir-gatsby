@@ -5,6 +5,7 @@ import { GatsbyImage } from "gatsby-plugin-image"
 import ProductAction from "./collection-product-action"
 import type { ContentfulProductVariant } from "../types/contentful"
 import { isDiscounted } from "../helpers/shopify"
+import Badge from "./badge"
 
 const Component = styled.div`
   margin-bottom: 1.45rem;
@@ -96,6 +97,7 @@ type Props = {
   compareAtPrice: string
   productHandle: string
   name: string
+  badge: { label: string; color: string } | null
 }
 
 const Variant = ({
@@ -104,6 +106,7 @@ const Variant = ({
   productHandle,
   name,
   compareAtPrice,
+  badge,
 }: Props) => {
   const { sku } = contentfulData
   const link = `/products/${productHandle}?variant=${sku}`
@@ -116,6 +119,7 @@ const Variant = ({
             image={contentfulData.featuredImage.data}
             alt={"contentfulData.title"}
           />
+          {badge && <Badge label={badge.label} color={badge.color} />}
         </Link>
         <ProductAction>
           <Link to={link}>View Product</Link>
