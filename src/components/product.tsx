@@ -10,6 +10,7 @@ import { useQuantityQuery } from "../hooks/useQuantityQuery"
 import { addedToCartGTMEvent } from "../helpers/gtm"
 import { isDiscounted } from "../helpers/shopify"
 import Badge from "./badge"
+import useDiscountIdentifier from "../hooks/useDiscountIdentifier"
 
 const Component = styled.article`
   h3,
@@ -86,17 +87,6 @@ const Component = styled.article`
   }
 `
 
-const createDiscountApiPayload = (shopifyProduct): any[] => {
-  try {
-    return shopifyProduct.variants.map(v => ({
-      price: v.price,
-      id: v.legacyResourceId,
-    }))
-  } catch (error) {
-    return []
-  }
-}
-
 const Product = ({
   data,
   collection,
@@ -116,6 +106,8 @@ const Product = ({
 }) => {
   const selectedVariant = data.variants[0]
   const { isApplicable, offer, discountedPrice } = discount
+
+  const { overwriteLabel } = useDiscountIdentifier()
 
   const quantityLevels = useQuantityQuery(data.handle, data.variants.length)
 
@@ -205,7 +197,7 @@ const Product = ({
               {isApplicable && (
                 <div className="badge-container">
                   <Badge
-                    label={offer}
+                    label={overwriteLabel ? "Sale" : offer}
                     color={"red"}
                     position="absolute"
                     top={0}
