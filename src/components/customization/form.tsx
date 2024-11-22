@@ -116,12 +116,6 @@ const Form = ({
 
     if (currentStep === 4) {
       const blockedSelections: string[] = []
-      if (
-        selectedVariants.step3.product.title === "Poly Carbonate" ||
-        selectedVariants.step3.product.title === "Hi-Index"
-      ) {
-        blockedSelections.push("Scratch Coat", "UV Coat")
-      }
       const checked =
         isSetFromEvent === false
           ? true
@@ -130,8 +124,6 @@ const Form = ({
           : false
       const name = evt?.target.getAttribute("name") as string
       if (checked) {
-        toggleAntiReflective(blockedSelections, name, checked)
-
         // no coating
         if (name === "No Coating") {
           setSelectedVariants({
@@ -182,29 +174,6 @@ const Form = ({
         [`step${currentStep}`]: variant,
       })
     }
-  }
-
-  const toggleAntiReflective = (
-    blockedSelections: string[],
-    name: string | null,
-    checked: boolean
-  ) => {
-    if (checked) {
-      if (name && name.includes("Anti-Reflective")) {
-        if (name === "Anti-Reflective - Standard") {
-          blockedSelections.push("Anti-Reflective Coat - Premium")
-        } else {
-          blockedSelections.push("Anti-Reflective - Standard")
-        }
-      } else if (
-        name &&
-        !name.includes("Anti-Reflective") &&
-        name !== "No Coating"
-      ) {
-        blockedSelections = [...filteredCollection]
-      }
-    }
-    setFilteredCollection([...new Set(blockedSelections)])
   }
 
   const handleRx = (evt: ChangeEvent<HTMLSelectElement>) => {
@@ -406,25 +375,6 @@ const Form = ({
       })
     }
   }, [offer, isApplicable, discountedPrices])
-
-  useEffect(() => {
-    // remove lens coatings that are no longer eligible if step3 changes
-    if (
-      (currentStep === 4 &&
-        selectedVariants.step3.product.title === "Poly Carbonate") ||
-      selectedVariants.step3.product.title === "Hi-Index"
-    ) {
-      const coatings: string[] = ["Scratch Coat", "UV Coat"]
-      setSelectedVariants({
-        ...selectedVariants,
-        ["step4"]: [
-          ...selectedVariants.step4.filter(
-            el => !coatings.includes(el.product.title)
-          ),
-        ],
-      })
-    }
-  }, [])
 
   // end discounted prices
 
@@ -635,7 +585,7 @@ const Form = ({
           }
         }
         if (isReaders) {
-          const validationArr = ["Poly Carbonate", "Hi-Index"]
+          const validationArr = ["Hi-Index"]
           blockedSelections.push(...validationArr)
           if (
             validationArr.includes(
@@ -643,51 +593,6 @@ const Form = ({
             )
           ) {
             disableContinue(currentStep)
-          }
-        }
-        break
-      case 4:
-        // if poly carbonate or hi index, disable scratch coat and uv coat
-        const selectedCoatings = selectedVariants.step4.map(
-          el => el.product.title
-        )
-        if (
-          selectedVariants.step3.product.title === "Poly Carbonate" ||
-          selectedVariants.step3.product.title === "Hi-Index"
-        ) {
-          blockedSelections.push("Scratch Coat", "UV Coat")
-          //
-          if (
-            selectedCoatings.some(v => ["Scratch Coat", "UV Coat"].includes(v))
-          ) {
-            disableContinue(currentStep)
-          }
-        }
-
-        if (
-          selectedCoatings.includes("Anti-Reflective - Standard") ||
-          selectedCoatings.includes("Anti-Reflective Coat - Premium")
-        ) {
-          if (selectedCoatings.includes("Anti-Reflective - Standard")) {
-            blockedSelections.push("Anti-Reflective Coat - Premium")
-            //
-            if (
-              ["Anti-Reflective Coat - Premium"].some(v =>
-                selectedCoatings.includes(v)
-              )
-            ) {
-              disableContinue(currentStep)
-            }
-          } else {
-            blockedSelections.push("Anti-Reflective - Standard")
-            //
-            if (
-              ["Anti-Reflective - Standard"].some(v =>
-                selectedCoatings.includes(v)
-              )
-            ) {
-              disableContinue(currentStep)
-            }
           }
         }
         break
