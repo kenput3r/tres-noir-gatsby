@@ -346,6 +346,7 @@ const Form = ({
   const prices = shopifyCollection.products.map(p => ({
     id: p.variants[0].legacyResourceId,
     price: p.variants[0].price,
+    handle: p.handle,
   }))
 
   const { offer, isApplicable, discountedPrices } =

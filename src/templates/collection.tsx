@@ -153,6 +153,7 @@ const Collection = ({
         return {
           id: v.legacyResourceId,
           price: v.price,
+          handle: p.handle,
         }
       })
     })

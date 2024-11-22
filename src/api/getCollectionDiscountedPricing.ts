@@ -21,25 +21,6 @@ export default async function getCollectionDiscountedPricing(
     ) as DiscountedPricesType[]
   }
 
-  const variantCreateDiscounts = (
-    discount: ShopifyDiscount,
-    prices: PricesType[],
-    applicableVariants: ShopifyApplicableVariant[]
-  ) => {
-    let discountedPrices: DiscountedPricesType[] = []
-    for (const item of prices) {
-      const { id } = item
-      const variantId = applicableVariants.some(
-        el => getLegacyId(el.id) === String(id)
-      )
-      if (variantId) {
-        const discountedPrice = calculateDiscount(discount, item)
-        discountedPrices.push(discountedPrice as DiscountedPricesType)
-      }
-    }
-    return discountedPrices
-  }
-
   const calculateDiscount = (
     discount: ShopifyDiscount,
     variant: PricesType
@@ -70,15 +51,6 @@ export default async function getCollectionDiscountedPricing(
       .json({ error: "Error while fetching from admin api" })
   }
 
-  const getLegacyId = (id: string): string => {
-    try {
-      const match = id.match(/(\d+)$/)
-      return match ? match[0] : ""
-    } catch (err: any) {
-      return ""
-    }
-  }
-
   const roundShopify = (amount: number) => {
     try {
       const amountString = amount.toFixed(3)
@@ -97,7 +69,11 @@ export default async function getCollectionDiscountedPricing(
 
   // END HELPER FUNCTIONS
   try {
-    const { offer, handle, prices } = JSON.parse(req.body)
+    const { offer, handle, prices } = JSON.parse(req.body) as {
+      offer: string
+      handle: string
+      prices: PricesType[]
+    }
 
     const adminToken: string = process.env.GATSBY_STORE_TOKEN ?? ""
     const storeName = process.env.GATSBY_STORE_MY_SHOPIFY ?? ""
@@ -143,8 +119,32 @@ export default async function getCollectionDiscountedPricing(
                   }
                   items {
                     __typename
+                    ... on DiscountProducts {
+                      products(first: 250) {
+                        nodes {
+                          legacyResourceId
+                          handle
+                          variants(first: 250) {
+                            nodes {
+                              id
+                              legacyResourceId
+                            }
+                          }
+                        }
+                      }
+                      productVariants(first: 250) {
+                        nodes {
+                          id
+                          legacyResourceId
+                          product {
+                            handle
+                            legacyResourceId
+                          }
+                        }
+                      }
+                    }
                     ... on DiscountCollections {
-                      collections(first: 250) {
+                      collections(first: 25) {
                         nodes {
                           id
                           handle
@@ -183,8 +183,32 @@ export default async function getCollectionDiscountedPricing(
                   }
                   items {
                     __typename
+                    ... on DiscountProducts {
+                      products(first: 250) {
+                        nodes {
+                          legacyResourceId
+                          handle
+                          variants(first: 250) {
+                            nodes {
+                              id
+                              legacyResourceId
+                            }
+                          }
+                        }
+                      }
+                      productVariants(first: 250) {
+                        nodes {
+                          id
+                          legacyResourceId
+                          product {
+                            handle
+                            legacyResourceId
+                          }
+                        }
+                      }
+                    }
                     ... on DiscountCollections {
-                      collections(first: 250) {
+                      collections(first: 25) {
                         nodes {
                           id
                           handle
@@ -225,6 +249,7 @@ export default async function getCollectionDiscountedPricing(
           "Error while fetching from admin api",
       })
     }
+
     const { data } = responseJson
 
     const { discountNodes } = data
@@ -272,11 +297,32 @@ export default async function getCollectionDiscountedPricing(
         const applicableCollections = flattenConnection(
           applicableItems.collections
         )
-        // @ts-ignore
-        const requestCollectionIsApplicable = true
 
-        if (requestCollectionIsApplicable) {
-          const newPrices = productCreateDiscounts(applicableDiscount, prices)
+        const applicableCollectionProducts = applicableCollections.map(el =>
+          el.products.nodes.map(el => el.handle)
+        )
+        // get handles of products in applicable collections
+        const applicableProductHandles = Array.from(
+          new Set(applicableCollectionProducts.flat())
+        )
+        // check if request collection has applicable products
+        const applicableCollectionProductHandles = applicableCollections
+          .map(el => el.products.nodes.map(el => el.handle))
+          .flat()
+        const requestCollectionHasApplicableProducts =
+          applicableProductHandles.some(el =>
+            applicableCollectionProductHandles.includes(el)
+          )
+
+        if (requestCollectionHasApplicableProducts) {
+          // filter prices by applicable product handles, then create discounts
+          const filteredCollectionPrices = prices.filter(el =>
+            applicableProductHandles.includes(el.handle)
+          )
+          const newPrices = productCreateDiscounts(
+            applicableDiscount,
+            filteredCollectionPrices
+          )
           if (!newPrices || newPrices.length === 0) {
             return res
               .status(400)
@@ -290,39 +336,49 @@ export default async function getCollectionDiscountedPricing(
         break
       default:
         // applicableProducts is are either products with single variants or products with ALL variants selected
-        const applicableProducts = flattenConnection(applicableItems.products)
+        const applicableProducts =
+          applicableItems?.products &&
+          applicableItems?.products.nodes?.length > 0
+            ? flattenConnection(applicableItems.products)
+            : []
+
         // applicableVariants is are products w/ multiple variants, but not all variants are selected
-        const applicableVariants = flattenConnection(
-          applicableItems.productVariants
+        const applicableVariants =
+          applicableItems?.productVariants &&
+          applicableItems?.productVariants?.nodes?.length > 0
+            ? flattenConnection(applicableItems.productVariants)
+            : []
+        // check if prices array contains an id that matches an applicable product id
+        // filter out prices that are not applicable
+        const applicableProductIds = applicableProducts
+          .map(el => el.variants.nodes.map(el => el.legacyResourceId))
+          .flat() // flatten array of arrays
+
+        const applicableVariantIds = applicableVariants.map(
+          el => el.legacyResourceId
         )
-        const requestProductIsApplicable = applicableProducts.some(
-          el => el.handle === handle
+
+        // concat applicable product ids and applicable variant ids
+        const applicableIds = applicableProductIds.concat(applicableVariantIds)
+        // get ids of prices to modify
+        const priceApplicableIds = prices.map(el => el.id)
+        const requestIsApplicable = applicableIds.some(el =>
+          priceApplicableIds.includes(el)
         )
-        const requestVariantIsApplicable = applicableVariants.some(
-          el => el.product.handle === handle
-        )
+
         // check if request product is applicable to offer
-        // case "DiscountProducts":
-        if (requestProductIsApplicable) {
-          const newPrices = productCreateDiscounts(applicableDiscount, prices)
+        if (requestIsApplicable) {
+          const filteredProductPrices = prices.filter(el =>
+            applicableIds.includes(el.id)
+          )
+          const newPrices = productCreateDiscounts(
+            applicableDiscount,
+            filteredProductPrices
+          )
+
           if (!newPrices || newPrices.length === 0) {
             return res.status(400).json({
               error: "Product price discount unable to be created",
-            })
-          }
-          return res.status(200).json({
-            prices: newPrices,
-            type: applicableDiscountType,
-          })
-        } else if (requestVariantIsApplicable) {
-          const newPrices = variantCreateDiscounts(
-            applicableDiscount,
-            prices,
-            applicableVariants
-          )
-          if (!newPrices || newPrices.length === 0) {
-            return res.status(400).json({
-              error: "Variant price discount unable to be created",
             })
           }
           return res.status(200).json({
@@ -344,6 +400,7 @@ export default async function getCollectionDiscountedPricing(
 type PricesType = {
   id: string
   price: string
+  handle: string
 }
 
 type DiscountedPricesType = {
