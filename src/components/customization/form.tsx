@@ -384,7 +384,7 @@ const Form = ({
       handleChange(null, shopifyCollection.products[0].variants[0], false)
       // handleChange(null, currentCollection.products[0].variants[0], false)
     }
-  }, [shopifyCollection])
+  }, [])
 
   // useEffect to fix bug where Non Precription Lens selection will still error out
   useEffect(() => {
