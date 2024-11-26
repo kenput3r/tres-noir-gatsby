@@ -9,10 +9,16 @@ export const useDiscountIdentifier = () => {
       }
     }
   `)
+  // return {
+  //   discountIdentifier: data.contentfulHomepage.discountIdentifier as string,
+  //   enableDiscountIdentifier: data.contentfulHomepage
+  //     .enableDiscountIdentifier as boolean,
+  //   overwriteLabel: true,
+  // }
+  // TODO: Delete after testing
   return {
-    discountIdentifier: data.contentfulHomepage.discountIdentifier as string,
-    enableDiscountIdentifier: data.contentfulHomepage
-      .enableDiscountIdentifier as boolean,
+    discountIdentifier: "TEST-RX",
+    enableDiscountIdentifier: true,
     overwriteLabel: true,
   }
 }
