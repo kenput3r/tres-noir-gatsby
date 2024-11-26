@@ -42,17 +42,12 @@ const Step2: React.FC<Props> = ({ handle }) => {
   )
 
   useEffect(() => {
-    console.log(
-      "selectedVariants.step1.product.title",
-      selectedVariants.step1.product.title
-    )
     if (selectedVariants.step1.product.title === "Non-Prescription Lens") {
       const updatedProducts = initialFilteredCollection.products.map(product =>
         product.title === "Polarized" || product.handle === "polarized-1"
           ? nonPrescriptionPolarizedLenses
           : product
       )
-      console.log("updatedProducts", updatedProducts)
       setFilteredCollection({
         ...initialFilteredCollection,
         products: updatedProducts,

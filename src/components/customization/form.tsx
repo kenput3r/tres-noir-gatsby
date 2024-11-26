@@ -52,8 +52,6 @@ const Form = ({
     useContext(RxInfoContext)
   const messageRef = useRef<any>()
 
-  console.log("shopifyCollection", shopifyCollection)
-
   // const [currentCollection, setCurrentCollection] = useState<ShopifyCollection>(
   //   { ...shopifyCollection }
   // )
@@ -621,8 +619,6 @@ const Form = ({
         <p>Choose your {stepMap.get(currentStep)}</p>
       </div>
       {shopifyCollection.products.map((product: ShopifyProduct, index) => {
-        // delete
-        console.log("product", product)
         // fix variant.image is null
         if (product.variants[0].image === null) {
           product.variants[0].image = product.images[0]
