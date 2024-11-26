@@ -52,9 +52,11 @@ const Form = ({
     useContext(RxInfoContext)
   const messageRef = useRef<any>()
 
-  const [currentCollection, setCurrentCollection] = useState<ShopifyCollection>(
-    { ...shopifyCollection }
-  )
+  console.log("shopifyCollection", shopifyCollection)
+
+  // const [currentCollection, setCurrentCollection] = useState<ShopifyCollection>(
+  //   { ...shopifyCollection }
+  // )
 
   const [isFormValid, setIsFormValid] = useState(true)
   const errorRefs = useRef({})
@@ -154,7 +156,7 @@ const Form = ({
         }
       } else {
         // remove
-        toggleAntiReflective(blockedSelections, name, checked)
+        // toggleAntiReflective(blockedSelections, name, checked)
         // do not let removal of one
         if (selectedVariants.step4.length === 1) {
           disableContinue(4)
@@ -342,49 +344,49 @@ const Form = ({
     }
   }
 
-  // start discounted prices
-  const prices = shopifyCollection.products.map(p => ({
-    id: p.variants[0].legacyResourceId,
-    price: p.variants[0].price,
-    handle: p.handle,
-  }))
+  // // start discounted prices
+  // const prices = shopifyCollection.products.map(p => ({
+  //   id: p.variants[0].legacyResourceId,
+  //   price: p.variants[0].price,
+  //   handle: p.handle,
+  // }))
 
-  const { offer, isApplicable, discountedPrices } =
-    useCollectionDiscountedPricing({ prices, handle })
+  // const { offer, isApplicable, discountedPrices } =
+  //   useCollectionDiscountedPricing({ prices, handle })
 
-  useEffect(() => {
-    if (isApplicable && discountedPrices) {
-      const tempCollection = JSON.parse(JSON.stringify(shopifyCollection))
+  // useEffect(() => {
+  //   if (isApplicable && discountedPrices) {
+  //     const tempCollection = JSON.parse(JSON.stringify(shopifyCollection))
 
-      const patchedCollection = tempCollection.products.map(p => {
-        const patchedVariants = p.variants.map(v => {
-          const patchedPrice = discountedPrices.find(
-            el => el.id === v.legacyResourceId
-          )
-          if (patchedPrice) {
-            v.compareAtPrice = v.price
-            v.price = patchedPrice.discountedPrice
-          }
-          return v
-        })
-        p.variants = patchedVariants
-        return p
-      })
-      setCurrentCollection({
-        title: tempCollection.title,
-        products: patchedCollection,
-      })
-    }
-  }, [offer, isApplicable, discountedPrices])
+  //     const patchedCollection = tempCollection.products.map(p => {
+  //       const patchedVariants = p.variants.map(v => {
+  //         const patchedPrice = discountedPrices.find(
+  //           el => el.id === v.legacyResourceId
+  //         )
+  //         if (patchedPrice) {
+  //           v.compareAtPrice = v.price
+  //           v.price = patchedPrice.discountedPrice
+  //         }
+  //         return v
+  //       })
+  //       p.variants = patchedVariants
+  //       return p
+  //     })
+  //     setCurrentCollection({
+  //       title: tempCollection.title,
+  //       products: patchedCollection,
+  //     })
+  //   }
+  // }, [offer, isApplicable, discountedPrices])
 
   // end discounted prices
 
   useEffect(() => {
     if (hasSavedCustomized[`step${currentStep}`] === false) {
-      // handleChange(null, shopifyCollection.products[0].variants[0], false)
-      handleChange(null, currentCollection.products[0].variants[0], false)
+      handleChange(null, shopifyCollection.products[0].variants[0], false)
+      // handleChange(null, currentCollection.products[0].variants[0], false)
     }
-  }, [currentCollection])
+  }, [shopifyCollection])
 
   // useEffect to fix bug where Non Precription Lens selection will still error out
   useEffect(() => {
@@ -618,7 +620,9 @@ const Form = ({
       <div className="step-header" ref={topRef}>
         <p>Choose your {stepMap.get(currentStep)}</p>
       </div>
-      {currentCollection.products.map((product: ShopifyProduct, index) => {
+      {shopifyCollection.products.map((product: ShopifyProduct, index) => {
+        // delete
+        console.log("product", product)
         // fix variant.image is null
         if (product.variants[0].image === null) {
           product.variants[0].image = product.images[0]
