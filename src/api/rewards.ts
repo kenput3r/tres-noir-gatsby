@@ -86,7 +86,7 @@ async function getCustomerId(email: string) {
   return null
 }
 
-export default async function customerLoyalty(
+export default async function rewards(
   req: GatsbyFunctionRequest,
   res: GatsbyFunctionResponse
 ) {
@@ -98,8 +98,14 @@ export default async function customerLoyalty(
 
     // get customer id
     const customerId = await getCustomerId(email)
+    console.log("customerId", customerId)
     if (!customerId) {
-      return res.status(400).json("Customer not found")
+      console.log("Customer not found")
+      return res.status(400).json({
+        success: false,
+        message: null,
+        error: "Customer not found",
+      })
     }
 
     const input = {
@@ -151,14 +157,30 @@ export default async function customerLoyalty(
     `
 
     const response = await shopifyAdmin<UpdateBirthDate>(mutation, input)
+    console.log("response", JSON.stringify(response, null, 2))
 
     if (response && response.metafieldsSet.metafields.length) {
-      return res.status(200).json(response.metafieldsSet.metafields)
+      console.log("Birth date updated successfully")
+      return res.status(200).json({
+        success: true,
+        message: "Birth date updated successfully",
+        error: null,
+      })
     }
 
-    return res.status(400).json("Error while accessing shopify admin")
+    console.log("Failed to update birth date")
+
+    return res.status(400).json({
+      success: false,
+      message: null,
+      error: "Failed to update birth date",
+    })
   } catch (error) {
     console.log("Error on customer details", error)
-    return res.status(500).json("Internal server error")
+    return res.status(500).json({
+      success: false,
+      message: null,
+      error: "Internal server error",
+    })
   }
 }
