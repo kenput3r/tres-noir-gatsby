@@ -15,7 +15,7 @@ export const useDiscountIdentifier = () => {
   //     .enableDiscountIdentifier as boolean,
   //   overwriteLabel: true,
   // }
-  // TODO: Delete after testing
+  // TODO: Delete after testing and uncomment above
   return {
     discountIdentifier: "TEST-RX",
     enableDiscountIdentifier: true,
