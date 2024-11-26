@@ -8,6 +8,7 @@ import { ShopifyCollection, ShopifyProduct } from "../types/shopify"
 import { GatsbyImage } from "gatsby-plugin-image"
 import FreeShipping from "../components/free-shipping"
 import { viewedCollectionGTMEvent } from "../helpers/gtm"
+import { useCollectionDiscountedPricing } from "../hooks/useCollectionDiscountedPricing"
 
 const Page = styled.section`
   .grid {
@@ -122,6 +123,14 @@ const Page = styled.section`
   }
 `
 
+type Discount =
+  | {
+      offer: string
+      isApplicable: boolean
+      discountedPrice: string
+    }
+  | undefined
+
 const Collection = ({
   data,
 }: {
@@ -137,6 +146,21 @@ const Collection = ({
   const collectionSize = collection.products.length
 
   const showOverlay = collectionImages ? collectionImages.showOverlay : false
+
+  const prices = collection.products
+    .map(p => {
+      return p.variants.map(v => {
+        return {
+          id: v.legacyResourceId,
+          price: v.price,
+          handle: p.handle,
+        }
+      })
+    })
+    .flat()
+
+  const { isApplicable, discountedPrices, offer } =
+    useCollectionDiscountedPricing({ prices, handle: collection.handle })
 
   useEffect(() => {
     const collectionInfo = {
@@ -231,13 +255,27 @@ const Collection = ({
             <div className="grid">
               {collection.products
                 .slice(0, 8)
-                .map((product: ShopifyProduct) => (
-                  <Product
-                    key={product.handle}
-                    data={product}
-                    collection={collection.title}
-                  />
-                ))}
+                .map((product: ShopifyProduct) => {
+                  const found = discountedPrices?.find(
+                    el => el.id === product.variants[0].legacyResourceId
+                  )
+                  let discount: Discount = undefined
+                  if (found) {
+                    discount = {
+                      offer,
+                      isApplicable,
+                      discountedPrice: found.discountedPrice,
+                    }
+                  }
+                  return (
+                    <Product
+                      key={product.handle}
+                      data={product}
+                      collection={collection.title}
+                      discount={discount}
+                    />
+                  )
+                })}
             </div>
             {collectionImages &&
               collectionSize >= 8 &&
@@ -263,13 +301,27 @@ const Collection = ({
               {collectionSize >= 8 &&
                 collection.products
                   .slice(8, collectionSize)
-                  .map((product: ShopifyProduct) => (
-                    <Product
-                      key={product.handle}
-                      data={product}
-                      collection={collection.title}
-                    />
-                  ))}
+                  .map((product: ShopifyProduct) => {
+                    const found = discountedPrices?.find(
+                      el => el.id === product.variants[0].legacyResourceId
+                    )
+                    let discount: Discount = undefined
+                    if (found) {
+                      discount = {
+                        offer,
+                        isApplicable,
+                        discountedPrice: found.discountedPrice,
+                      }
+                    }
+                    return (
+                      <Product
+                        key={product.handle}
+                        data={product}
+                        collection={collection.title}
+                        discount={discount}
+                      />
+                    )
+                  })}
             </div>
           </div>
         )}
@@ -284,7 +336,6 @@ export const query = graphql`
   query CollectionQuery($handle: String!) {
     shopifyCollection(handle: { eq: $handle }) {
       handle
-      id
       title
       description
       image {
@@ -293,6 +344,8 @@ export const query = graphql`
       }
       products {
         handle
+        id
+        legacyResourceId
         featuredImage {
           altText
           localFile {

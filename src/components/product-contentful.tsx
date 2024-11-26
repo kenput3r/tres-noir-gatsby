@@ -116,7 +116,8 @@ const ProductContentful = ({
     collectionHandle.includes("new") ||
     collectionHandle.includes("loser-machine")
   const isExcludedFromDeals =
-    shopifyProduct && shopifyProduct.handle.includes("mooneyes")
+    (shopifyProduct && shopifyProduct.handle.includes("mooneyes")) ||
+    (shopifyProduct && shopifyProduct.handle.includes("loser-machine"))
   const lensType = isSunglasses ? "sunglasses" : "glasses"
 
   // remove variants marked as 'hidden' in shopify
@@ -148,7 +149,7 @@ const ProductContentful = ({
   const getSelectedVariantOptionName = (variant: any) => {
     try {
       const optionName = variant.selectedOptions.find(
-        c => c.name === "Color" || c.name === "color"
+        c => c.name.toLowerCase() === "color"
       )
       const optionValue = optionName ? optionName.value : ""
       const colorName = optionValue.split("-")[0].trim()
@@ -197,7 +198,7 @@ const ProductContentful = ({
 
   const getBadge = (): { label: string; color: string } | null => {
     try {
-      // bogo is enabled and product is not an exclusion (e.g. Mooneyes products)
+      // bogo is enabled and product is not an exclusion (e.g. collaboration products)
       if (enableBogo && !isExcludedFromDeals) {
         return {
           label: "BOGO",

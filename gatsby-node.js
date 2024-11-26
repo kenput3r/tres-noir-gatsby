@@ -1,5 +1,17 @@
 const path = require("path")
 
+// patch development store schema
+if (process.env.NODE_ENV === "development") {
+  exports.createSchemaCustomization = ({ actions }) => {
+    const { createTypes } = actions
+    createTypes(`
+      type ShopifyProduct {
+        onlineStoreUrl: String
+      }
+    `)
+  }
+}
+
 exports.createPages = async ({ graphql, actions: { createPage } }) => {
   const pageable = await graphql(`
     query PagesQuery {

@@ -13,6 +13,7 @@ export const useDiscountIdentifier = () => {
     discountIdentifier: data.contentfulHomepage.discountIdentifier as string,
     enableDiscountIdentifier: data.contentfulHomepage
       .enableDiscountIdentifier as boolean,
+    overwriteLabel: true,
   }
 }
 

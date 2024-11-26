@@ -6,6 +6,7 @@ declare module "*.json"
 
 export interface ShopifyVariant {
   sku: string
+  legacyResourceId: string
   compareAtPrice: string | null
   storefrontId: string
   title: string
@@ -32,6 +33,7 @@ export interface ShopifyProduct {
   handle: string
   description: string
   id: string
+  legacyResourceId: string
   featuredImage?: {
     localFile: {
       id: string
@@ -52,12 +54,12 @@ export interface ShopifyProduct {
     }
   ]
   title: string
-  variants: [ShopifyVariant]
+  variants: ShopifyVariant[]
 }
 
 export interface ShopifyCollection {
   title: string
-  products: [ShopifyProduct]
+  products: ShopifyProduct[]
 }
 
 export interface SelectedVariants {

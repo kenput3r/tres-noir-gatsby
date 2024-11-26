@@ -524,6 +524,7 @@ export const query = graphql`
         storefrontId
         title
         product {
+          legacyResourceId
           title
           handle
           onlineStoreUrl
