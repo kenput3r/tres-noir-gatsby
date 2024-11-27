@@ -68,7 +68,7 @@ const Page = styled.div`
 
 const About = () => {
   const description =
-    "Tres Noir was built around the mission of crafting high-quality eyewear and offering it at a fair price. We believe no one should overpay for a pair of sunglasses. Consider us the anti-luxottica, anti-big business eyewear company. We're a West Coast lifestyle brand that draws inspiration from our deep-seeded roots in car culture and rock n roll. It's not limited to a certain aesthetic or way of life, but more so, an attitude that promotes and carries authenticity. We believe the customer is above all else and we pride ourselves in providing exceptional service and quality; the end result is a loyal and satisfied customer base."
+    "Tres Noir is a California-based company, dedicated to crafting high-quality eyewear with a commitment to affordability. Founded with a mission to provide premium sunglasses at a fair price, Tres Noir focuses on unique designs and meticulous craftsmanship, all while remaining a small, family-run business. As a West Coast lifestyle brand that draws inspiration from car culture and rock n roll, we are not limited to a certain aesthetic or way of life, but more so, an attitude that promotes and carries authenticity. We believe the customer is above all else and we pride ourselves in providing exceptional service and quality; the end result is a loyal and satisfied customer."
 
   const aboutImage = useStaticQuery(graphql`
     query AboutImageQuery {
@@ -88,23 +88,21 @@ const About = () => {
         <div className="page-width">
           <div className="row">
             <div className="col">
-              <h2>
-                TRES NOIR EYEWEAR CO. IS A CALIFORNIA BASED, INDEPENDENT, SMALL
-                BUSINESS.
-              </h2>
+              <h2>Designed in California, Worn Worldwide.</h2>
               <article>
                 <p>
-                  Tres Noir was built around the mission of crafting
-                  high-quality eyewear and offering it at a fair price. We
-                  believe no one should overpay for a pair of sunglasses.
-                  Consider us the anti-luxottica, anti-big business eyewear
-                  company. We're a West Coast lifestyle brand that draws
-                  inspiration from our deep-seeded roots in car culture and rock
-                  n roll. It's not limited to a certain aesthetic or way of
-                  life, but more so, an attitude that promotes and carries
-                  authenticity. We believe the customer is above all else and we
-                  pride ourselves in providing exceptional service and quality;
-                  the end result is a loyal and satisfied customer base.
+                  <strong>Tres Noir</strong> is a California-based company,
+                  dedicated to crafting high-quality eyewear with a commitment
+                  to affordability. Founded with a mission to provide premium
+                  sunglasses at a fair price, Tres Noir focuses on unique
+                  designs and meticulous craftsmanship, all while remaining a
+                  small, family-run business. As a West Coast lifestyle brand
+                  that draws inspiration from car culture and rock n roll, we
+                  are not limited to a certain aesthetic or way of life, but
+                  more so, an attitude that promotes and carries authenticity.
+                  We believe the customer is above all else and we pride
+                  ourselves in providing exceptional service and quality; the
+                  end result is a loyal and satisfied customer.
                 </p>
                 <ul>
                   <p>PRODUCT FEATURES:</p>
@@ -123,7 +121,7 @@ const About = () => {
                       src="../../images/diamond.png"
                       height={13}
                     ></StaticImage>
-                    <span>CR-39 SHATTERPROOF LENSES</span>
+                    <span>STOCK LENS MADE OF CR-39 MATERIAL</span>
                   </li>
                   <li>
                     <StaticImage
@@ -139,7 +137,7 @@ const About = () => {
                       src="../../images/diamond.png"
                       height={13}
                     ></StaticImage>
-                    <span>MOST ARE Rx-ABLE and FEATURE A U BEVEL</span>
+                    <span>ALL FRAMES ARE RX-ABLE</span>
                   </li>
                   <li>
                     <StaticImage
@@ -147,7 +145,11 @@ const About = () => {
                       src="../../images/diamond.png"
                       height={13}
                     ></StaticImage>
-                    <span>ALL TEMPLES CONSTRUCTED AROUND A WIRE CORE</span>
+                    <span>
+                      1 YEAR WARRANTY TO PROTECT AGAINST MANUFACTURER DEFECTS,
+                      THIS DOES NOT INCLUDE LENS SCRATCHES, ACCIDENTS, THEFT OR
+                      EVERY DAY WEAR AND TEAR
+                    </span>
                   </li>
                   <li>
                     <StaticImage
@@ -155,7 +157,10 @@ const About = () => {
                       src="../../images/diamond.png"
                       height={13}
                     ></StaticImage>
-                    <span>1 YEAR MANUFACTURERS WARRANTY</span>
+                    <span>
+                      REFUNDS AND EXCHANGES MUST BE RETURNED IN NEW, UNWORN
+                      CONDITION WITHIN 30 DAYS OF PURCHASE
+                    </span>
                   </li>
                 </ul>
               </article>
