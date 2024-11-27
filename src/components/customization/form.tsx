@@ -4,7 +4,6 @@ import React, {
   ChangeEvent,
   useState,
   useEffect,
-  useCallback,
 } from "react"
 import { Link } from "gatsby"
 import { GatsbyImage } from "gatsby-plugin-image"
@@ -22,8 +21,7 @@ import { LocalCheckout } from "../../types/checkout"
 import { rxType } from "../../types/checkout"
 import { isDiscounted } from "../../helpers/shopify"
 import ReadersTable from "../readers-table"
-import { handleRxFromAttribute } from "../../contexts/rxInfo"
-import useCollectionDiscountedPricing from "../../hooks/useCollectionDiscountedPricing"
+// import { handleRxFromAttribute } from "../../contexts/rxInfo"
 
 const Form = ({
   shopifyCollection,
@@ -51,10 +49,6 @@ const Form = ({
   const { isRxAble, setRxAble, rxInfo, rxInfoDispatch } =
     useContext(RxInfoContext)
   const messageRef = useRef<any>()
-
-  // const [currentCollection, setCurrentCollection] = useState<ShopifyCollection>(
-  //   { ...shopifyCollection }
-  // )
 
   const [isFormValid, setIsFormValid] = useState(true)
   const errorRefs = useRef({})
@@ -153,8 +147,6 @@ const Form = ({
           }
         }
       } else {
-        // remove
-        // toggleAntiReflective(blockedSelections, name, checked)
         // do not let removal of one
         if (selectedVariants.step4.length === 1) {
           disableContinue(4)
@@ -342,49 +334,11 @@ const Form = ({
     }
   }
 
-  // // start discounted prices
-  // const prices = shopifyCollection.products.map(p => ({
-  //   id: p.variants[0].legacyResourceId,
-  //   price: p.variants[0].price,
-  //   handle: p.handle,
-  // }))
-
-  // const { offer, isApplicable, discountedPrices } =
-  //   useCollectionDiscountedPricing({ prices, handle })
-
-  // useEffect(() => {
-  //   if (isApplicable && discountedPrices) {
-  //     const tempCollection = JSON.parse(JSON.stringify(shopifyCollection))
-
-  //     const patchedCollection = tempCollection.products.map(p => {
-  //       const patchedVariants = p.variants.map(v => {
-  //         const patchedPrice = discountedPrices.find(
-  //           el => el.id === v.legacyResourceId
-  //         )
-  //         if (patchedPrice) {
-  //           v.compareAtPrice = v.price
-  //           v.price = patchedPrice.discountedPrice
-  //         }
-  //         return v
-  //       })
-  //       p.variants = patchedVariants
-  //       return p
-  //     })
-  //     setCurrentCollection({
-  //       title: tempCollection.title,
-  //       products: patchedCollection,
-  //     })
-  //   }
-  // }, [offer, isApplicable, discountedPrices])
-
-  // end discounted prices
-
   useEffect(() => {
     if (hasSavedCustomized[`step${currentStep}`] === false) {
       handleChange(null, shopifyCollection.products[0].variants[0], false)
-      // handleChange(null, currentCollection.products[0].variants[0], false)
     }
-  }, [])
+  }, [shopifyCollection.products[0].variants[0]]) // this is the only dependency that should be here
 
   // useEffect to fix bug where Non Precription Lens selection will still error out
   useEffect(() => {

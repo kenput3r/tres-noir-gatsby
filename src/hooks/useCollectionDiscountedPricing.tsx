@@ -40,6 +40,7 @@ export const useCollectionDiscountedPricing = ({ prices, handle }: Params) => {
           method: "POST",
           body: JSON.stringify({ offer, prices, handle }),
           signal: abortController.signal,
+          cache: "force-cache",
         })
         const json = await res.json()
         if (res.ok) {
@@ -49,6 +50,7 @@ export const useCollectionDiscountedPricing = ({ prices, handle }: Params) => {
         }
       } catch (error) {}
     }
+    if (!enableDiscountIdentifier) return
     fetchDiscountedPricing()
     return () => {
       abortController.abort()
