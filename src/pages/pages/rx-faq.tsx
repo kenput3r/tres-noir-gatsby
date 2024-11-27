@@ -61,14 +61,16 @@ const RxFAQ = () => (
               <p>
                 A Single Vision lens is a standard Rx lens. Single Vision is
                 used to correct one field of vision, the entire lens has ONE
-                correction. If your prescription does not include and "ADD", you
+                correction. If your prescription does not include an "ADD", you
                 have a single vision prescription.
               </p>
               <p>
                 A Bifocal or Progressive lens has TWO areas of correction on the
                 lens. On a Bifocal lens, these two areas are separated by a
-                line, usually somewhere on the bottom half of the lens. A
-                Progressive lens is a no-line bifocal. The two areas are
+                line, usually somewhere on the bottom half of the lens.
+              </p>
+              <p>
+                A Progressive lens is a no-line bifocal. The two areas are
                 separated by a smooth transition, and no line is visible. If
                 your prescription includes an "ADD" your lenses will be
                 Progressive or Bifocal.
@@ -126,10 +128,45 @@ const RxFAQ = () => (
             </li>
             <li>
               <h4>Do you accept insurance?</h4>
-              <p>
-                Unfortunately, we do not accept insurance, however, we can
-                provide an itemized receipt which may be used for reimbursement.
-              </p>
+              <ul>
+                <li>
+                  <p>
+                    Make the most of your healthcare benefits with us. We
+                    proudly accept both FSA (Flexible Spending Account) and HSA
+                    (Health Savings Account) payments for our complete range of
+                    vision care products. Use your benefits to invest in:
+                  </p>
+                  <p>
+                    - Prescription eyewear with advanced lens options: 
+                    Blue-light filtering technology, Light responsive lenses, 
+                    progressive lenses
+                  </p>
+                  <p>- Prescription sunglasses</p>
+                  <p>- Safety (coming 2025)</p>
+                </li>
+                <li>
+                  <p>An Itemized receipt will be included in your order.</p>
+                </li>
+                <li>
+                  <p>
+                    No FSA or HSA card (insurance debit card)? No problem, we
+                    will provide you with an itemized receipt so that you may
+                    submit to your vision insurance for reimbursement.
+                  </p>
+                </li>
+                <li>
+                  <p>
+                    For questions about insurance, please email{" "}
+                    <a
+                      href="mailto:info@tresnoir.com"
+                      aria-describedby="a11y-external-message"
+                    >
+                      info@tresnoir.com
+                    </a>{" "}
+                    or call us 714-656-4796
+                  </p>
+                </li>
+              </ul>
             </li>
             <li>
               <h4>
