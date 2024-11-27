@@ -18,7 +18,7 @@ export const useDiscountIdentifier = () => {
 
   // TODO: Delete after testing and uncomment above
   return {
-    discountIdentifier: "TEST-RX",
+    discountIdentifier: "BF24",
     enableDiscountIdentifier: true,
     overwriteLabel: true,
   }
