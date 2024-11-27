@@ -67,22 +67,35 @@ const ShippingInfo = () => (
       <article>
         <h3>Return Policy</h3>
         <p>
-          <span>Rx & Custom Lenses are NON-REFUNDABLE.</span> The return policy
-          does not apply to Rx & Custom Orders. All sales are final for Rx &
-          Custom lenses.
+          If you are not happy with a product purchased on our website or
+          directly from Tres Noir at an event, you may return it within 30 days
+          of the purchase date, unworn and in its original package. Please keep
+          in mind that original shipping charges cannot be refunded.
         </p>
         <p>
-          Tres Noir offers a "no questions asked" return policy. If you are
-          unsatisfied for any reason you can return your order for exchange or
-          refund.
+          <strong>
+            We are unable to accept returns on custom lenses with an Rx and/or
+            lens coatings.
+          </strong>{" "}
+          Should the frames themselves be unworn and in the same condition in
+          which they were shipped, they may be returned for refund of exchange.
         </p>
         <p>
-          Returns must be received within 30 days of your original order. Items
-          must be in original packaging and in new, unworn condition.
+          Any product that is marked down in our SALE section(s) is not eligible
+          for refund or exchange- All sales are FINAL.
         </p>
         <p>
-          Exchanges and Refunds will be issued within 3 business days of
-          receipt.
+          There is a small restocking fee of 5% for processing, which will be
+          deducted from your total refund.
+        </p>
+        <p>
+          Purchases made from other authorized retailers must be returned to the
+          original point of purchase.
+        </p>
+        <p>
+          Purchases made online at TresNoir.com may be returned or exchanged at
+          our store front in Santa Ana, CA. Please have receipt of payment and
+          order number available.
         </p>
         <p>Click below to download the return form.</p>
         <p>
