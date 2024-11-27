@@ -1,7 +1,10 @@
 const path = require("path")
 
 // patch development store schema
-if (process.env.NODE_ENV === "development") {
+if (
+  process.env.GATSBY_ENVIRONMENT === "development" ||
+  process.env.GATSBY_ENVIRONMENT === "staging"
+) {
   exports.createSchemaCustomization = ({ actions }) => {
     const { createTypes } = actions
     createTypes(`
