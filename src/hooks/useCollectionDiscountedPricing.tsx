@@ -40,6 +40,7 @@ export const useCollectionDiscountedPricing = ({ prices, handle }: Params) => {
           method: "POST",
           body: JSON.stringify({ offer, prices, handle }),
           signal: abortController.signal,
+          cache: "force-cache",
         })
         const json = await res.json()
         if (res.ok) {

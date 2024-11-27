@@ -289,10 +289,17 @@ export default async function getCollectionDiscountedPricing(
             .status(400)
             .json({ error: "Error while calculating order discount" })
         }
-        return res.status(200).json({
-          prices: newPrices,
-          type: applicableDiscountType,
-        })
+        return res
+          .setHeader("Cache-Control", [
+            "max-age=60",
+            "s-maxage=60",
+            "stale-while-revalidate=60",
+          ])
+          .status(200)
+          .json({
+            prices: newPrices,
+            type: applicableDiscountType,
+          })
       case "DiscountCollections":
         const applicableCollections = flattenConnection(
           applicableItems.collections
@@ -328,10 +335,17 @@ export default async function getCollectionDiscountedPricing(
               .status(400)
               .json({ error: "Product price discount unable to be created" })
           }
-          return res.status(200).json({
-            prices: newPrices,
-            type: applicableDiscountType,
-          })
+          return res
+            .setHeader("Cache-Control", [
+              "max-age=60",
+              "s-maxage=60",
+              "stale-while-revalidate=60",
+            ])
+            .status(200)
+            .json({
+              prices: newPrices,
+              type: applicableDiscountType,
+            })
         }
         break
       default:
@@ -381,10 +395,17 @@ export default async function getCollectionDiscountedPricing(
               error: "Product price discount unable to be created",
             })
           }
-          return res.status(200).json({
-            prices: newPrices,
-            type: applicableDiscountType,
-          })
+          return res
+            .setHeader("Cache-Control", [
+              "max-age=60",
+              "s-maxage=60",
+              "stale-while-revalidate=60",
+            ])
+            .status(200)
+            .json({
+              prices: newPrices,
+              type: applicableDiscountType,
+            })
         }
         break
     }
