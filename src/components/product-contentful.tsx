@@ -205,6 +205,13 @@ const ProductContentful = ({
           color: "#0ee2e2",
         }
       }
+      // overwrite sale badge
+      if (shopifyProduct.tags.includes("On Sale")) {
+        return {
+          label: "Sale",
+          color: "red",
+        }
+      }
       // only show sale badge if all variants are on sale
       const allVariantsOnSale = shopifyProduct.variants.every(
         v => v.compareAtPrice && isDiscounted(v.price, v.compareAtPrice)
