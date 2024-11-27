@@ -50,27 +50,44 @@ const Step2: React.FC<Props> = ({ handle }) => {
     initialFilteredCollection
   )
 
-  const [nonPrescriptionPolarizedLenses, setNonPrescriptionPolarizedLenses] =
-    useState(
+  const initialNonPrescriptionPolarizedLenses = useMemo(
+    () =>
       shopifyCollection.products.find(
         product => product.handle === "non-prescription-polarized-lenses"
-      )
-    )
+      ),
+    [shopifyCollection]
+  )
 
-  const [transitionsForProgressiveLenses, setTransitionsForProgressiveLenses] =
-    useState(
+  const [nonPrescriptionPolarizedLenses, setNonPrescriptionPolarizedLenses] =
+    useState(initialNonPrescriptionPolarizedLenses)
+
+  const initialTransitionsForProgressiveLenses = useMemo(
+    () =>
       shopifyCollection.products.find(
         product => product.handle === "transitions-for-progressive"
-      )
-    )
+      ),
+    [shopifyCollection]
+  )
+
+  const [transitionsForProgressiveLenses, setTransitionsForProgressiveLenses] =
+    useState(initialTransitionsForProgressiveLenses)
 
   const [filteredCollection, setFilteredCollection] =
     useState(currentCollection)
 
   useEffect(() => {
     if (isApplicable && discountedPrices) {
+      // clone the initial collection and variants
       const tempCollection = JSON.parse(
         JSON.stringify(initialFilteredCollection)
+      )
+      // clone the initial non-prescription polarized lenses and transitions for progressive lenses
+      const tempNonPrescriptionPolarizedLenses = JSON.parse(
+        JSON.stringify(initialNonPrescriptionPolarizedLenses)
+      )
+      // clone the initial transitions for progressive lenses
+      const tempTransitionsForProgressiveLenses = JSON.parse(
+        JSON.stringify(initialTransitionsForProgressiveLenses)
       )
 
       const patchedCollection = tempCollection.products.map(p => {
@@ -89,8 +106,8 @@ const Step2: React.FC<Props> = ({ handle }) => {
       })
       // patch non-prescription polarized lenses
       const patchedNonPrescriptionPolarizedLenses = {
-        ...nonPrescriptionPolarizedLenses,
-        variants: nonPrescriptionPolarizedLenses.variants.map(v => {
+        ...tempNonPrescriptionPolarizedLenses,
+        variants: tempNonPrescriptionPolarizedLenses.variants.map(v => {
           const patchedPrice = discountedPrices.find(
             el => el.id === v.legacyResourceId
           )
@@ -104,8 +121,8 @@ const Step2: React.FC<Props> = ({ handle }) => {
       setNonPrescriptionPolarizedLenses(patchedNonPrescriptionPolarizedLenses)
       // patch transitions for progressive lenses
       const patchedTransitionsForProgressiveLenses = {
-        ...transitionsForProgressiveLenses,
-        variants: transitionsForProgressiveLenses.variants.map(v => {
+        ...tempTransitionsForProgressiveLenses,
+        variants: tempTransitionsForProgressiveLenses.variants.map(v => {
           const patchedPrice = discountedPrices.find(
             el => el.id === v.legacyResourceId
           )
@@ -145,6 +162,15 @@ const Step2: React.FC<Props> = ({ handle }) => {
         setFilteredCollection({
           ...initialFilteredCollection,
           products: updatedProducts,
+        })
+      } else {
+        setCurrentCollection({
+          ...initialFilteredCollection,
+          products: patchedCollection,
+        })
+        setFilteredCollection({
+          ...initialFilteredCollection,
+          products: patchedCollection,
         })
       }
     }
