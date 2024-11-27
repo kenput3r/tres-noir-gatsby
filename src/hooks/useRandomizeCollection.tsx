@@ -92,7 +92,10 @@ export const useRandomizeCollection = (currentProductId: string) => {
         onlineStoreUrl: string | null
         storefrontId: string
       }) => {
-        if (process.env.NODE_ENV === "development") {
+        if (
+          process.env.GATSBY_ENVIRONMENT === "development" ||
+          process.env.GATSBY_ENVIRONMENT === "staging"
+        ) {
           return (
             el.storefrontId !== currentProductId &&
             !el.tags.includes("upsell_item") &&
