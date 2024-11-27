@@ -9,17 +9,10 @@ export const useDiscountIdentifier = () => {
       }
     }
   `)
-  // return {
-  //   discountIdentifier: data.contentfulHomepage.discountIdentifier as string,
-  //   enableDiscountIdentifier: data.contentfulHomepage
-  //     .enableDiscountIdentifier as boolean,
-  //   overwriteLabel: true,
-  // }
-
-  // TODO: Delete after testing and uncomment above
   return {
-    discountIdentifier: "BF24",
-    enableDiscountIdentifier: true,
+    discountIdentifier: data.contentfulHomepage.discountIdentifier as string,
+    enableDiscountIdentifier: data.contentfulHomepage
+      .enableDiscountIdentifier as boolean,
     overwriteLabel: true,
   }
 }
