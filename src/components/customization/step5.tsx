@@ -148,8 +148,6 @@ const Step5 = (props: {
     useContext(RxInfoContext)
   const [addedToCart, setAddedToCart] = useState(false)
 
-  console.log("selectedVariants", selectedVariants)
-
   useEffect(() => {
     return () => {
       if (addedToCart) {

@@ -49,6 +49,7 @@ export const useCollectionDiscountedPricing = ({ prices, handle }: Params) => {
         }
       } catch (error) {}
     }
+    if (!enableDiscountIdentifier) return
     fetchDiscountedPricing()
     return () => {
       abortController.abort()
