@@ -1,9 +1,17 @@
 import React from "react"
+import ReactDOM from "react-dom/client"
 import { CustomizeProvider } from "./src/contexts/customize"
 import { CartProvider } from "./src/contexts/cart"
 import { RxInfoContextProvider } from "./src/contexts/rxInfo"
 import { ErrorModalProvider } from "./src/contexts/error"
 import ErrorBoundary from "./src/components/error-boundary"
+
+export const replaceHydrateFunction = () => {
+  return (element, container) => {
+    const root = ReactDOM.createRoot(container)
+    root.render(element)
+  }
+}
 
 export const wrapRootElement = ({ element }) => {
   return (

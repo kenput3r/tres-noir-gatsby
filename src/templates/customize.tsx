@@ -19,6 +19,7 @@ import {
   ShopifyProductVariant,
 } from "../types/customize"
 import { ImageStorage } from "../types/checkout"
+import { useDiscountedPricing } from "../hooks/useDiscountedPricing"
 
 const Page = styled.div`
   .row {
@@ -120,6 +121,24 @@ const Customize = ({
     shopifyProduct: ShopifyProduct
   }
 }) => {
+  const createDiscountApiPayload = (): any[] => {
+    try {
+      return shopifyProduct.variants.map(v => ({
+        price: v.price,
+        id: v.legacyResourceId,
+      }))
+    } catch (error) {
+      return []
+    }
+  }
+
+  const { discountedPrice, isApplicable, offer } = useDiscountedPricing({
+    productId: shopifyProduct.legacyResourceId,
+    prices: createDiscountApiPayload(),
+    selectedVariantId: shopifyProduct.variants[0].legacyResourceId,
+    handle: shopifyProduct.handle,
+  })
+
   const { currentStep, setProductUrl, selectedVariants } =
     useContext(CustomizeContext)
   const [variant, setVariant] = useState({
@@ -177,7 +196,12 @@ const Customize = ({
 
   /* UPDATE PRICING */
   useEffect(() => {
-    let totalPrice = Number(variant.shopify.price)
+    // patch price if applicable
+    const variantPrice =
+      isApplicable && discountedPrice ? discountedPrice : variant.shopify.price
+    let totalPrice = Number(variantPrice)
+
+    // let totalPrice = Number(variant.shopify.price)
     for (let i = currentStep; i > 0; --i) {
       const el =
         i === 5 ? selectedVariants[`case`] : selectedVariants[`step${i}`]
@@ -190,7 +214,7 @@ const Customize = ({
       }
     }
     setCurrentPrice(totalPrice.toFixed(2))
-  }, [selectedVariants])
+  }, [selectedVariants, isApplicable, discountedPrice])
 
   /* UPDATE IMAGE */
   useEffect(() => {

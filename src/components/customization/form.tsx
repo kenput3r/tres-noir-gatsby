@@ -4,7 +4,6 @@ import React, {
   ChangeEvent,
   useState,
   useEffect,
-  useCallback,
 } from "react"
 import { Link } from "gatsby"
 import { GatsbyImage } from "gatsby-plugin-image"
@@ -22,8 +21,7 @@ import { LocalCheckout } from "../../types/checkout"
 import { rxType } from "../../types/checkout"
 import { isDiscounted } from "../../helpers/shopify"
 import ReadersTable from "../readers-table"
-import { handleRxFromAttribute } from "../../contexts/rxInfo"
-import useCollectionDiscountedPricing from "../../hooks/useCollectionDiscountedPricing"
+// import { handleRxFromAttribute } from "../../contexts/rxInfo"
 
 const Form = ({
   shopifyCollection,
@@ -51,10 +49,6 @@ const Form = ({
   const { isRxAble, setRxAble, rxInfo, rxInfoDispatch } =
     useContext(RxInfoContext)
   const messageRef = useRef<any>()
-
-  const [currentCollection, setCurrentCollection] = useState<ShopifyCollection>(
-    { ...shopifyCollection }
-  )
 
   const [isFormValid, setIsFormValid] = useState(true)
   const errorRefs = useRef({})
@@ -116,12 +110,6 @@ const Form = ({
 
     if (currentStep === 4) {
       const blockedSelections: string[] = []
-      if (
-        selectedVariants.step3.product.title === "Poly Carbonate" ||
-        selectedVariants.step3.product.title === "Hi-Index"
-      ) {
-        blockedSelections.push("Scratch Coat", "UV Coat")
-      }
       const checked =
         isSetFromEvent === false
           ? true
@@ -130,8 +118,6 @@ const Form = ({
           : false
       const name = evt?.target.getAttribute("name") as string
       if (checked) {
-        toggleAntiReflective(blockedSelections, name, checked)
-
         // no coating
         if (name === "No Coating") {
           setSelectedVariants({
@@ -161,8 +147,6 @@ const Form = ({
           }
         }
       } else {
-        // remove
-        toggleAntiReflective(blockedSelections, name, checked)
         // do not let removal of one
         if (selectedVariants.step4.length === 1) {
           disableContinue(4)
@@ -182,29 +166,6 @@ const Form = ({
         [`step${currentStep}`]: variant,
       })
     }
-  }
-
-  const toggleAntiReflective = (
-    blockedSelections: string[],
-    name: string | null,
-    checked: boolean
-  ) => {
-    if (checked) {
-      if (name && name.includes("Anti-Reflective")) {
-        if (name === "Anti-Reflective - Standard") {
-          blockedSelections.push("Anti-Reflective Coat - Premium")
-        } else {
-          blockedSelections.push("Anti-Reflective - Standard")
-        }
-      } else if (
-        name &&
-        !name.includes("Anti-Reflective") &&
-        name !== "No Coating"
-      ) {
-        blockedSelections = [...filteredCollection]
-      }
-    }
-    setFilteredCollection([...new Set(blockedSelections)])
   }
 
   const handleRx = (evt: ChangeEvent<HTMLSelectElement>) => {
@@ -373,68 +334,11 @@ const Form = ({
     }
   }
 
-  // start discounted prices
-  const prices = shopifyCollection.products.map(p => ({
-    id: p.variants[0].legacyResourceId,
-    price: p.variants[0].price,
-    handle: p.handle,
-  }))
-
-  const { offer, isApplicable, discountedPrices } =
-    useCollectionDiscountedPricing({ prices, handle })
-
-  useEffect(() => {
-    if (isApplicable && discountedPrices) {
-      const tempCollection = JSON.parse(JSON.stringify(shopifyCollection))
-
-      const patchedCollection = tempCollection.products.map(p => {
-        const patchedVariants = p.variants.map(v => {
-          const patchedPrice = discountedPrices.find(
-            el => el.id === v.legacyResourceId
-          )
-          if (patchedPrice) {
-            v.compareAtPrice = v.price
-            v.price = patchedPrice.discountedPrice
-          }
-          return v
-        })
-        p.variants = patchedVariants
-        return p
-      })
-      setCurrentCollection({
-        title: tempCollection.title,
-        products: patchedCollection,
-      })
-    }
-  }, [offer, isApplicable, discountedPrices])
-
-  useEffect(() => {
-    // remove lens coatings that are no longer eligible if step3 changes
-    if (
-      (currentStep === 4 &&
-        selectedVariants.step3.product.title === "Poly Carbonate") ||
-      selectedVariants.step3.product.title === "Hi-Index"
-    ) {
-      const coatings: string[] = ["Scratch Coat", "UV Coat"]
-      setSelectedVariants({
-        ...selectedVariants,
-        ["step4"]: [
-          ...selectedVariants.step4.filter(
-            el => !coatings.includes(el.product.title)
-          ),
-        ],
-      })
-    }
-  }, [])
-
-  // end discounted prices
-
   useEffect(() => {
     if (hasSavedCustomized[`step${currentStep}`] === false) {
-      // handleChange(null, shopifyCollection.products[0].variants[0], false)
-      handleChange(null, currentCollection.products[0].variants[0], false)
+      handleChange(null, shopifyCollection.products[0].variants[0], false)
     }
-  }, [currentCollection])
+  }, [shopifyCollection.products[0].variants[0]]) // this is the only dependency that should be here
 
   // useEffect to fix bug where Non Precription Lens selection will still error out
   useEffect(() => {
@@ -636,7 +540,7 @@ const Form = ({
           }
         }
         if (isReaders) {
-          const validationArr = ["Poly Carbonate", "Hi-Index"]
+          const validationArr = ["Hi-Index"]
           blockedSelections.push(...validationArr)
           if (
             validationArr.includes(
@@ -644,51 +548,6 @@ const Form = ({
             )
           ) {
             disableContinue(currentStep)
-          }
-        }
-        break
-      case 4:
-        // if poly carbonate or hi index, disable scratch coat and uv coat
-        const selectedCoatings = selectedVariants.step4.map(
-          el => el.product.title
-        )
-        if (
-          selectedVariants.step3.product.title === "Poly Carbonate" ||
-          selectedVariants.step3.product.title === "Hi-Index"
-        ) {
-          blockedSelections.push("Scratch Coat", "UV Coat")
-          //
-          if (
-            selectedCoatings.some(v => ["Scratch Coat", "UV Coat"].includes(v))
-          ) {
-            disableContinue(currentStep)
-          }
-        }
-
-        if (
-          selectedCoatings.includes("Anti-Reflective - Standard") ||
-          selectedCoatings.includes("Anti-Reflective Coat - Premium")
-        ) {
-          if (selectedCoatings.includes("Anti-Reflective - Standard")) {
-            blockedSelections.push("Anti-Reflective Coat - Premium")
-            //
-            if (
-              ["Anti-Reflective Coat - Premium"].some(v =>
-                selectedCoatings.includes(v)
-              )
-            ) {
-              disableContinue(currentStep)
-            }
-          } else {
-            blockedSelections.push("Anti-Reflective - Standard")
-            //
-            if (
-              ["Anti-Reflective - Standard"].some(v =>
-                selectedCoatings.includes(v)
-              )
-            ) {
-              disableContinue(currentStep)
-            }
           }
         }
         break
@@ -713,7 +572,7 @@ const Form = ({
       <div className="step-header" ref={topRef}>
         <p>Choose your {stepMap.get(currentStep)}</p>
       </div>
-      {currentCollection.products.map((product: ShopifyProduct, index) => {
+      {shopifyCollection.products.map((product: ShopifyProduct, index) => {
         // fix variant.image is null
         if (product.variants[0].image === null) {
           product.variants[0].image = product.images[0]
