@@ -6,7 +6,7 @@ type Body = {
   email: string
   firstName: string
   lastName: string
-  phoneNumber: string
+  phone: string
   smsConsent: boolean
 }
 
@@ -33,14 +33,10 @@ async function shopifyAdmin<T>(query: string, variables: any) {
   })
 
   const responseJson = await response.json()
+  console.log("responseJson", JSON.stringify(responseJson, null, 2))
 
   if (response.ok) {
     return responseJson.data as T
-  }
-
-  if (responseJson.errors) {
-    console.error(responseJson.errors)
-    throw new Error("Failed to fetch data")
   }
 
   return null
@@ -50,6 +46,10 @@ async function getCustomerId(email: string) {
   const customerQuery = `#graphql
     query GetCustomer($query: String!) {
       customers(first:1, query: $query) {
+        userErrors {
+          field
+          message
+        }
         edges {
           node {
             id
@@ -62,6 +62,10 @@ async function getCustomerId(email: string) {
 
   type GetCustomer = {
     customers: {
+      userErrors: {
+        field: string
+        message: string
+      }[]
       edges: {
         node: {
           id: string
@@ -75,6 +79,10 @@ async function getCustomerId(email: string) {
     query: email,
   })
 
+  if (response && response.customers?.userErrors.length) {
+    throw new Error(response.customers.userErrors[0].message)
+  }
+
   if (response && response?.customers?.edges?.length) {
     const customer = response.customers.edges[0].node
     if (customer.email.toLowerCase() === email.toLowerCase()) {
@@ -86,6 +94,98 @@ async function getCustomerId(email: string) {
   return null
 }
 
+async function createCustomer(customer: {
+  email: string
+  phone: string
+  firstName: string
+  lastName: string
+}) {
+  const customerCreateMutation = `#graphql
+    mutation customerCreate($input: CustomerInput!) {
+      customerCreate(input: $input) {
+        userErrors {
+          field
+          message
+        }
+        customer {
+          id
+          email
+          phone
+          taxExempt
+          firstName
+          lastName
+          amountSpent {
+            amount
+            currencyCode
+          }
+          smsMarketingConsent {
+            marketingState
+            marketingOptInLevel
+            consentUpdatedAt
+          }
+          emailMarketingConsent {
+            marketingState
+            marketingOptInLevel
+            consentUpdatedAt
+          }
+        }
+      }
+    }
+  `
+
+  type CustomerCreate = {
+    customerCreate: {
+      userErrors: {
+        field: string
+        message: string
+      }[]
+      customer: {
+        id: string
+        email: string
+        phone: string
+        taxExempt: boolean
+        firstName: string
+        lastName: string
+        amountSpent: {
+          amount: string
+          currencyCode: string
+        }
+        smsMarketingConsent: {
+          marketingState: string
+          marketingOptInLevel: string
+          consentUpdatedAt: string
+        }
+      }
+    }
+  }
+
+  const response = await shopifyAdmin<CustomerCreate>(customerCreateMutation, {
+    input: {
+      email: customer.email,
+      phone: customer.phone,
+      firstName: customer.firstName,
+      lastName: customer.lastName,
+      emailMarketingConsent: {
+        marketingState: "SUBSCRIBED",
+        marketingOptInLevel: "SINGLE_OPT_IN",
+      },
+      smsMarketingConsent: {
+        marketingState: "SUBSCRIBED",
+        marketingOptInLevel: "SINGLE_OPT_IN",
+      },
+    },
+  })
+
+  if (response && response.customerCreate.userErrors.length) {
+    throw new Error(response.customerCreate.userErrors[0].message)
+  }
+
+  if (response && response.customerCreate.customer.id) {
+    return response.customerCreate.customer.id
+  }
+  return null
+}
+
 export default async function rewards(
   req: GatsbyFunctionRequest,
   res: GatsbyFunctionResponse
@@ -94,17 +194,40 @@ export default async function rewards(
     const parsedBody: Body =
       typeof req.body === "string" ? JSON.parse(req.body) : req.body
 
-    const { birthDate, email } = parsedBody
+    const { birthDate, email, firstName, lastName, phone } = parsedBody
 
     // get customer id
-    const customerId = await getCustomerId(email)
+    let customerId = await getCustomerId(email)
     console.log("customerId", customerId)
     if (!customerId) {
       console.log("Customer not found")
+      console.log("Creating customer", {
+        email,
+        phone,
+        firstName,
+        lastName,
+      })
+      // create customer
+      customerId = await createCustomer({
+        email,
+        phone,
+        firstName,
+        lastName,
+      })
+
+      // return res.status(400).json({
+      //   success: false,
+      //   message: null,
+      //   error: "Customer not found",
+      // })
+    }
+
+    if (!customerId) {
+      console.log("Failed to create customer")
       return res.status(400).json({
         success: false,
         message: null,
-        error: "Customer not found",
+        error: "Failed to create customer",
       })
     }
 
@@ -175,12 +298,12 @@ export default async function rewards(
       message: null,
       error: "Failed to update birth date",
     })
-  } catch (error) {
+  } catch (error: any) {
     console.log("Error on customer details", error)
     return res.status(500).json({
       success: false,
       message: null,
-      error: "Internal server error",
+      error: error.message,
     })
   }
 }
