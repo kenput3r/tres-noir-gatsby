@@ -575,7 +575,8 @@ const Form = ({
       {shopifyCollection.products.map((product: ShopifyProduct, index) => {
         // fix variant.image is null
         if (product.variants[0].image === null) {
-          product.variants[0].image = product.images[0]
+          // product.variants[0].image = product.media[0].image
+          product.variants[0].image = product.media[0].image
         }
         return (
           <React.Fragment key={product.id}>
@@ -591,10 +592,10 @@ const Form = ({
                     product.featuredImage && product.featuredImage.localFile
                       ? product.featuredImage.localFile.childImageSharp
                           .gatsbyImageData
-                      : product.images[0].localFile.childImageSharp
+                      : product.media[0].image.localFile.childImageSharp
                           .gatsbyImageData
                   }
-                  alt={product.images[0].altText || product.title}
+                  alt={product.media[0].image.altText || product.title}
                 />
                 <div className="product-description">
                   <h4>
@@ -659,10 +660,10 @@ const Form = ({
                     product.featuredImage && product.featuredImage.localFile
                       ? product.featuredImage.localFile.childImageSharp
                           .gatsbyImageData
-                      : product.images[0].localFile.childImageSharp
+                      : product.media[0].image.localFile.childImageSharp
                           .gatsbyImageData
                   }
-                  alt={product.images[0].altText || product.title}
+                  alt={product.media[0].image.altText || product.title}
                 />
                 <div className="product-description">
                   <h4>{product.title}</h4>
