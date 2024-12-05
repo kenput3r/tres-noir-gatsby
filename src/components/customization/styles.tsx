@@ -51,7 +51,7 @@ export const Component = styled.form`
       :hover {
         cursor: pointer;
       }
-      :checked ~ .checkmark:after {
+      &:checked ~ .checkmark:after {
         display: block;
       }
     }
@@ -64,7 +64,7 @@ export const Component = styled.form`
       align-self: center;
       margin-left: auto;
       padding-left: 0;
-      :after {
+      &:after {
         content: "";
         position: absolute;
         display: none;
@@ -80,7 +80,7 @@ export const Component = styled.form`
       }
     }
     .disabled {
-      :after {
+      &:after {
         display: block;
         left: 11px;
         top: 0px;
@@ -184,7 +184,7 @@ export const Component = styled.form`
                   color: inherit;
                   text-decoration: inherit;
                 }
-                ::after {
+                &:after {
                   content: "";
                   position: absolute;
                   top: 100%;
@@ -213,7 +213,7 @@ export const Component = styled.form`
                 .tooltip-text {
                   margin-left: -80px;
                   left: unset;
-                  ::after {
+                  &:after {
                     left: 90%;
                   }
                 }

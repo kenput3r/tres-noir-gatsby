@@ -36,7 +36,7 @@ const Component = styled.nav`
         }
       }
     }
-    :first-child {
+    &:first-child {
       @media (min-width: 100px) {
         margin-right: 3.2vw;
       }
@@ -44,7 +44,7 @@ const Component = styled.nav`
         margin-right: 0;
       }
     }
-    :nth-child(2) {
+    &:nth-child(2) {
       margin-left: 22px;
     }
   }

@@ -87,7 +87,7 @@ const Component = styled.footer`
     @media (max-width: 600px) {
       flex-direction: column;
     }
-    :nth-child(2) {
+    &:nth-child(2) {
       margin-top: -16px;
       @media (max-width: 600px) {
         margin-top: 2px;

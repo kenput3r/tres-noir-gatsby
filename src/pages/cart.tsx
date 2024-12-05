@@ -215,10 +215,10 @@ const Page = styled.div`
       font-family: var(--heading-font);
       text-transform: uppercase;
     }
-    :nth-child(1) {
+    &:nth-child(1) {
       background: #e0e0e0;
     }
-    :nth-child(2) {
+    &:nth-child(2) {
       background: white;
     }
     hr {
@@ -356,7 +356,8 @@ const Cart = ({
         setCurrentStep(5)
         // navigate to step 5 of customize page
         navigate(
-          `/products/${handle}/customize?variant=${sku}&custom_id=${item.id}`
+          // @ts-ignore
+          `/products/${handle}/customize?variant=${sku}&custom_id=${item.id.toString()}`
         )
       }
     }
