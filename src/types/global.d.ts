@@ -53,6 +53,19 @@ export interface ShopifyProduct {
       }
     }
   ]
+  media: [
+    {
+      image: {
+        altText: string
+        localFile: {
+          id: string
+          childImageSharp: {
+            gatsbyImageData: IGatsbyImageData
+          }
+        }
+      }
+    }
+  ]
   title: string
   variants: ShopifyVariant[]
 }

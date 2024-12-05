@@ -6,12 +6,16 @@ export const shopifyProductsFields = graphql`
     description
     id
     legacyResourceId
-    images {
-      altText
-      localFile {
-        id
-        childImageSharp {
-          gatsbyImageData(width: 100)
+    media {
+      ... on ShopifyMediaImage {
+        image {
+          altText
+          localFile {
+            id
+            childImageSharp {
+              gatsbyImageData(quality: 50)
+            }
+          }
         }
       }
     }
