@@ -5,6 +5,7 @@ import { yupResolver } from "@hookform/resolvers/yup"
 import * as yup from "yup"
 import Layout from "../../components/layout"
 import SEO from "../../components/seo"
+import Spinner from "../../components/spinner"
 
 const Page = styled.div`
   .flex-container {
@@ -271,8 +272,8 @@ const Rewards = () => {
               unsubscribe at any time by clicking the link at the bottom of our
               emails.
             </p>
-            <button type="submit" className="button btn">
-              Submit
+            <button type="submit" className="button btn" disabled={loading}>
+              {loading ? <Spinner /> : "Submit"}
             </button>
             {success && <p>Form submitted successfully</p>}
             {error && <p>{error}</p>}

@@ -46,14 +46,13 @@ async function getCustomerId(email: string) {
   const customerQuery = `#graphql
     query GetCustomer($query: String!) {
       customers(first:1, query: $query) {
-        userErrors {
-          field
-          message
-        }
         edges {
           node {
             id
             email
+            birthDate: metafield(namespace: "tresnoir", key: "birth_date") {
+              value
+            }
           }
         }
       }
@@ -62,14 +61,13 @@ async function getCustomerId(email: string) {
 
   type GetCustomer = {
     customers: {
-      userErrors: {
-        field: string
-        message: string
-      }[]
       edges: {
         node: {
           id: string
           email: string
+          birthDate: {
+            value: string
+          }
         }
       }[]
     }
@@ -79,14 +77,13 @@ async function getCustomerId(email: string) {
     query: email,
   })
 
-  if (response && response.customers?.userErrors.length) {
-    throw new Error(response.customers.userErrors[0].message)
-  }
-
   if (response && response?.customers?.edges?.length) {
     const customer = response.customers.edges[0].node
     if (customer.email.toLowerCase() === email.toLowerCase()) {
-      return customer.id
+      return {
+        id: customer.id,
+        birthDate: customer.birthDate?.value,
+      }
     }
     return null
   }
@@ -181,10 +178,18 @@ async function createCustomer(customer: {
   }
 
   if (response && response.customerCreate.customer.id) {
-    return response.customerCreate.customer.id
+    return {
+      id: response.customerCreate.customer.id,
+      birthDate: null,
+    }
   }
   return null
 }
+
+type Customer = {
+  id: string | null
+  birthDate: string | null
+} | null
 
 export default async function rewards(
   req: GatsbyFunctionRequest,
@@ -197,9 +202,9 @@ export default async function rewards(
     const { birthDate, email, firstName, lastName, phone } = parsedBody
 
     // get customer id
-    let customerId = await getCustomerId(email)
-    console.log("customerId", customerId)
-    if (!customerId) {
+    let customer: Customer = await getCustomerId(email)
+    console.log("customerId", customer?.id)
+    if (!customer || !customer.id) {
       console.log("Customer not found")
       console.log("Creating customer", {
         email,
@@ -208,21 +213,15 @@ export default async function rewards(
         lastName,
       })
       // create customer
-      customerId = await createCustomer({
+      customer = await createCustomer({
         email,
         phone,
         firstName,
         lastName,
       })
-
-      // return res.status(400).json({
-      //   success: false,
-      //   message: null,
-      //   error: "Customer not found",
-      // })
     }
 
-    if (!customerId) {
+    if (!customer || !customer.id) {
       console.log("Failed to create customer")
       return res.status(400).json({
         success: false,
@@ -231,12 +230,21 @@ export default async function rewards(
       })
     }
 
+    if (customer?.birthDate) {
+      console.log("Customer birth date already exists")
+      return res.status(400).json({
+        success: false,
+        message: "Customer birth date already set",
+        error: "Customer birth date already set",
+      })
+    }
+
     const input = {
       metafields: [
         {
           key: "birth_date",
           namespace: "tresnoir",
-          ownerId: customerId,
+          ownerId: customer.id,
           type: "date",
           value: birthDate,
         },
