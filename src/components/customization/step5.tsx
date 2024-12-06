@@ -74,7 +74,7 @@ const Component = styled.div`
     font-family: var(--sub-heading-font);
     padding: 10px 20px;
     text-decoration: none;
-    :hover {
+    &:hover {
       cursor: pointer;
     }
   }

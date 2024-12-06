@@ -59,12 +59,12 @@ const Component = styled.article`
   .upsell-image {
     position: relative;
     max-width: 280px;
-    :hover {
+    &:hover {
       opacity: 0.7;
     }
   }
   .product-title {
-    :hover {
+    &:hover {
       text-decoration: underline;
     }
   }

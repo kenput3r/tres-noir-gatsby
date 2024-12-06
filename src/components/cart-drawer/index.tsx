@@ -64,7 +64,7 @@ const Component = styled.div`
       display: flex;
       margin-right: 15px;
       > span {
-        :first-of-type {
+        &:first-of-type {
           margin-right: 18px;
         }
       }
@@ -98,10 +98,10 @@ const Component = styled.div`
       display: flex;
       justify-content: space-between;
       > div {
-        :first-of-type {
+        &:first-of-type {
           flex: 0.7;
         }
-        :last-of-type {
+        &:last-of-type {
           flex: 1;
         }
       }
@@ -118,8 +118,8 @@ const Component = styled.div`
         a {
           text-decoration: none;
           color: black;
-          :hover,
-          :focus {
+          &:hover,
+          &:focus {
             text-decoration: underline;
           }
         }
@@ -173,10 +173,10 @@ const Component = styled.div`
       margin: 0;
       text-align: right;
       margin-bottom: 20px;
-      :first-of-type {
+      &:first-of-type {
         font-size: 1.3rem;
       }
-      :not(:first-of-type) {
+      &:not(:first-of-type) {
         color: var(--color-grey-dark);
         text-align: center;
       }

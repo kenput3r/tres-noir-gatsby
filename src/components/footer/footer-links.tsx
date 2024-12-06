@@ -27,8 +27,8 @@ const Component = styled.nav`
         }
         padding: 3px;
         text-transform: uppercase;
-        :hover,
-        :focus {
+        &:hover,
+        &:focus {
           color: #262626;
         }
         .active {

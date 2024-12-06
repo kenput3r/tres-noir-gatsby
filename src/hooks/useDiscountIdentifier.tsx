@@ -10,16 +10,11 @@ export const useDiscountIdentifier = () => {
     }
   `)
   return {
-    discountIdentifier: "40% OFF Shirts & Accessories",
-    enableDiscountIdentifier: true,
+    discountIdentifier: data.contentfulHomepage.discountIdentifier as string,
+    enableDiscountIdentifier: data.contentfulHomepage
+      .enableDiscountIdentifier as boolean,
     overwriteLabel: true,
   }
-  // return {
-  //   discountIdentifier: data.contentfulHomepage.discountIdentifier as string,
-  //   enableDiscountIdentifier: data.contentfulHomepage
-  //     .enableDiscountIdentifier as boolean,
-  //   overwriteLabel: true,
-  // }
 }
 
 export default useDiscountIdentifier

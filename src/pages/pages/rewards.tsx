@@ -88,7 +88,7 @@ const Page = styled.div`
     text-transform: uppercase;
     font-family: var(--heading-font);
     -webkit-appearance: button-bevel;
-    :hover {
+    &:hover {
       cursor: pointer;
     }
     @media only screen and (max-width: 480px) {

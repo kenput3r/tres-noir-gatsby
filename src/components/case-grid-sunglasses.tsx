@@ -51,7 +51,7 @@ const Component = styled.div`
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
-    :hover input ~ .checkmark {
+    &:hover input ~ .checkmark {
       background-color: grey;
     }
     input {
@@ -91,15 +91,15 @@ const Component = styled.div`
   }
   .ps-btn {
     cursor: pointer;
-    :hover,
-    :focus {
+    &:hover,
+    &:focus {
       opacity: 0.7;
     }
   }
   .ps-text {
     cursor: pointer;
-    :hover,
-    :focus {
+    &:hover,
+    &:focus {
       text-decoration: underline;
     }
   }

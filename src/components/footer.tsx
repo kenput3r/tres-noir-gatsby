@@ -112,11 +112,11 @@ const Component = styled.footer`
     padding-right: 55px;
   }
   .foot-icon {
-    :hover,
+    &:hover,
     .focus {
       color: #262626;
     }
-    :active {
+    &:active {
       color: #4f4f4f;
     }
   }

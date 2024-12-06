@@ -22,7 +22,7 @@ const Page = styled.div`
     display: flex;
     .col {
       flex-basis: 50%;
-      :nth-of-type(2) {
+      &:nth-of-type(2) {
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -93,7 +93,7 @@ const Page = styled.div`
     text-transform: uppercase;
     font-family: var(--heading-font);
     -webkit-appearance: button-bevel;
-    :hover {
+    &:hover {
       cursor: pointer;
     }
     @media only screen and (max-width: 480px) {

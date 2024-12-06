@@ -48,7 +48,7 @@ export const Component = styled.form`
       position: absolute;
       width: calc(100% - 10px);
       z-index: 2;
-      :hover {
+      &:hover {
         cursor: pointer;
       }
       &:checked ~ .checkmark:after {
@@ -124,7 +124,7 @@ export const Component = styled.form`
       justify-content: space-between;
       margin: 25px 0;
       .rx-col {
-        :nth-of-type(odd) {
+        &:nth-of-type(odd) {
           margin-right: 25px;
           @media only screen and (max-width: 480px) {
             margin-right: 10px;
@@ -195,7 +195,7 @@ export const Component = styled.form`
                   border-color: #555 transparent transparent transparent;
                 }
               }
-              :hover .tooltip-text {
+              &:hover .tooltip-text {
                 visibility: visible;
                 opacity: 1;
               }

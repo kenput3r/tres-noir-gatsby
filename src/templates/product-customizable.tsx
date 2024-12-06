@@ -129,7 +129,7 @@ const Page = styled.div`
       &[data-active="true"] {
         border-color: #000;
       }
-      :hover {
+      &:hover {
         cursor: pointer;
       }
       .gatsby-image-wrapper {
@@ -187,7 +187,7 @@ const Page = styled.div`
       a {
         color: var(--color-grey-dark);
         text-decoration: none;
-        :hover {
+        &:hover {
           text-decoration: underline;
         }
       }

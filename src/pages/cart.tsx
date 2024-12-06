@@ -121,7 +121,7 @@ const Page = styled.div`
         }
         .title {
           /* font-weight: bold; */
-          :hover {
+          &:hover {
             text-decoration: underline;
           }
           margin-bottom: 0;
@@ -169,10 +169,10 @@ const Page = styled.div`
     .subtotal {
       text-align: right;
       p {
-        :first-child {
+        &:first-child {
           font-size: 1.75rem;
         }
-        :not(:first-child) {
+        &:not(:first-child) {
           color: var(--color-grey-dark);
           font-family: var(--sub-heading-font);
         }
