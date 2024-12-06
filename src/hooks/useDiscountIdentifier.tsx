@@ -10,7 +10,7 @@ export const useDiscountIdentifier = () => {
     }
   `)
   return {
-    discountIdentifier: "40% OFF Shirts & Accessories",
+    discountIdentifier: "20% OFF RX and Custom Lenses",
     enableDiscountIdentifier: true,
     overwriteLabel: true,
   }
