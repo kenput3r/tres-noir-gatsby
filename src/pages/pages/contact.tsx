@@ -238,13 +238,13 @@ const Contact = () => {
               </div>
               <div>
                 <label htmlFor="email">Email</label>
-                <input type="email" id="email" name="email" />
+                <input type="email" id="email" name="email" required />
               </div>
             </section>
             <section className="grid-bottom-form">
               <div>
                 <label htmlFor="email">Message</label>
-                <textarea id="message" name="message" />
+                <textarea id="message" name="message" required />
               </div>
               <button type="submit" className="button">
                 Submit
