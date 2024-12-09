@@ -234,7 +234,7 @@ const Contact = () => {
               <h3>Send us a message</h3>
               <div>
                 <label htmlFor="name">Name</label>
-                <input type="text" id="name" name="name" />
+                <input type="text" id="name" name="name" required/>
               </div>
               <div>
                 <label htmlFor="email">Email</label>
