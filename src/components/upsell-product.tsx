@@ -241,7 +241,7 @@ const UpsellProduct = ({
           </div>
           <div className="price-container">
             <span className="current">
-              <span>${formatPrice(selectedVariant.price)}</span>
+              <span>${formatPrice(selectedVariant.price)} USD</span>
             </span>
             {selectedVariant.compareAtPrice > 0 &&
               isDiscounted(
@@ -249,7 +249,7 @@ const UpsellProduct = ({
                 selectedVariant.compareAtPrice ?? 0
               ) && (
                 <span className="compare-at">
-                  ${selectedVariant.compareAtPrice}
+                  ${selectedVariant.compareAtPrice} USD
                 </span>
               )}
           </div>
