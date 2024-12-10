@@ -19,7 +19,7 @@ import { RxInfoContext } from "../../contexts/rxInfo"
 import { FaQuestionCircle } from "react-icons/fa"
 import { LocalCheckout } from "../../types/checkout"
 import { rxType } from "../../types/checkout"
-import { isDiscounted } from "../../helpers/shopify"
+import { isDiscounted, formatPrice } from "../../helpers/shopify"
 import ReadersTable from "../readers-table"
 // import { handleRxFromAttribute } from "../../contexts/rxInfo"
 
@@ -131,7 +131,7 @@ const Form = ({
           if (!found) {
             if (
               selectedVariants.step4.length === 1 &&
-              selectedVariants.step4[0].price === "0.00"
+              selectedVariants.step4[0].price === 0
             ) {
               setSelectedVariants({
                 ...selectedVariants,
@@ -601,8 +601,8 @@ const Form = ({
                   <h4>
                     {product.title}{" "}
                     <span className="price">
-                      {` + $${product.variants[0].price}`}
-                      {product.variants[0].compareAtPrice &&
+                      {` + $${formatPrice(product.variants[0].price)}`}
+                      {!!product.variants[0].compareAtPrice &&
                         isDiscounted(
                           product.variants[0].price,
                           product.variants[0].compareAtPrice
@@ -610,7 +610,7 @@ const Form = ({
                           <span>
                             {" "}
                             <span className="strikethrough-grey">
-                              ${product.variants[0].compareAtPrice}
+                              ${formatPrice(product.variants[0].compareAtPrice)}
                             </span>
                           </span>
                         )}
@@ -693,8 +693,8 @@ const Form = ({
                         <h6>
                           {variant.title}
                           <span className="price">
-                            {` + $${product.variants[0].price}`}
-                            {product.variants[0].compareAtPrice &&
+                            {` + $${formatPrice(product.variants[0].price)}`}
+                            {!!product.variants[0].compareAtPrice &&
                               isDiscounted(
                                 product.variants[0].price,
                                 product.variants[0].compareAtPrice
@@ -702,7 +702,10 @@ const Form = ({
                                 <span>
                                   {" "}
                                   <span className="strikethrough-grey">
-                                    ${product.variants[0].compareAtPrice}
+                                    $
+                                    {formatPrice(
+                                      product.variants[0].compareAtPrice
+                                    )}
                                   </span>
                                 </span>
                               )}

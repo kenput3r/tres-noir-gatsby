@@ -9,7 +9,7 @@ import { ShopifyProductVariant } from "../../types/customize"
 import CaseGridCustomize from "../case-grid-customize"
 import Spinner from "../spinner"
 import { navigate } from "gatsby"
-import { isDiscounted } from "../../helpers/shopify"
+import { isDiscounted, formatPrice } from "../../helpers/shopify"
 
 const Component = styled.div`
   padding: 10px;
@@ -413,6 +413,8 @@ const Step5 = (props: {
     })
     addedCustomizedToCartGTMEvent(productData)
     setIsAddingToCart(false)
+    // todo: fix this type issue
+    // @ts-ignore
     navigate("/cart")
   }
 
@@ -435,8 +437,8 @@ const Step5 = (props: {
             <h4>
               {selectedVariants[`step${i + 1}`].product.title}{" "}
               <span className="price">
-                + ${selectedVariants[`step${i + 1}`].price}
-                {selectedVariants[`step${i + 1}`].compareAtPrice &&
+                + ${formatPrice(selectedVariants[`step${i + 1}`].price)}
+                {!!selectedVariants[`step${i + 1}`].compareAtPrice &&
                   isDiscounted(
                     selectedVariants[`step${i + 1}`].price,
                     selectedVariants[`step${i + 1}`].compareAtPrice
@@ -444,7 +446,10 @@ const Step5 = (props: {
                     <span>
                       {" "}
                       <span className="strikethrough-grey">
-                        ${selectedVariants[`step${i + 1}`].compareAtPrice}
+                        $
+                        {formatPrice(
+                          selectedVariants[`step${i + 1}`].compareAtPrice
+                        )}
                       </span>
                     </span>
                   )}
@@ -481,13 +486,13 @@ const Step5 = (props: {
             <h4>
               {el.product.title}{" "}
               <span className="price">
-                + ${el.price}
-                {el.compareAtPrice &&
+                + ${formatPrice(el.price)}
+                {!!el.compareAtPrice &&
                   isDiscounted(el.price, el.compareAtPrice) && (
                     <span>
                       {" "}
                       <span className="strikethrough-grey">
-                        ${el.compareAtPrice}
+                        ${formatPrice(el.compareAtPrice)}
                       </span>
                     </span>
                   )}

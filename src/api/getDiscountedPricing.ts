@@ -54,7 +54,7 @@ export default async function getDiscountedPricing(
       const roundedDiscountAmount = roundShopify(discountAmount)
       return {
         id,
-        discountedPrice: roundedDiscountAmount,
+        discountedPrice: Number(roundedDiscountAmount),
       }
     } else if (discountValue.__typename === "DiscountPercentage") {
       const { percentage } = discountValue
@@ -62,7 +62,7 @@ export default async function getDiscountedPricing(
       const roundedDiscountAmount = roundShopify(discountAmount)
       return {
         id,
-        discountedPrice: roundedDiscountAmount,
+        discountedPrice: Number(roundedDiscountAmount),
       }
     }
     return res
@@ -229,7 +229,7 @@ export default async function getDiscountedPricing(
         variables,
       }),
     })
-    const responseJson = await response.json()
+    const responseJson: any = await response.json()
     if (responseJson.errors) {
       return res.status(400).json({
         error:
@@ -359,7 +359,7 @@ type PricesType = {
 
 type DiscountedPricesType = {
   id: string
-  discountedPrice: string
+  discountedPrice: number
 }
 
 type ShopifyApplicableVariant = {

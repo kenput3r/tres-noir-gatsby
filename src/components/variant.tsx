@@ -93,8 +93,8 @@ const Component = styled.div`
 
 type Props = {
   contentfulData: ContentfulProductVariant
-  price: string
-  compareAtPrice: string
+  price: number
+  compareAtPrice: number
   productHandle: string
   name: string
   badge: { label: string; color: string } | null
@@ -128,7 +128,7 @@ const Variant = ({
       <h3>
         <Link to={link}>{name}</Link>
       </h3>
-      {price !== "0.00" && price !== "" && (
+      {price !== 0 && (
         <div className="price-container">
           <span>${price} USD</span>
           {compareAtPrice && isDiscounted(price, compareAtPrice) && (

@@ -15,6 +15,11 @@ export const useDiscountIdentifier = () => {
       .enableDiscountIdentifier as boolean,
     overwriteLabel: true,
   }
+  // return {
+  //   discountIdentifier: "40% OFF Shirts & Accessories",
+  //   enableDiscountIdentifier: true,
+  //   overwriteLabel: true,
+  // }
 }
 
 export default useDiscountIdentifier

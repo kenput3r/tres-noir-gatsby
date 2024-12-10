@@ -18,7 +18,7 @@ import AddToCartButton from "../components/add-to-cart-button"
 import { ReviewsProvider } from "../contexts/reviews"
 import Reviews from "../components/reviews"
 import type { YotpoSourceProductBottomLine } from "../types/yotpo"
-import { isDiscounted } from "../helpers/shopify"
+import { isDiscounted, formatPrice } from "../helpers/shopify"
 import Divider from "../components/divider"
 import Badge from "../components/badge"
 import ProductBottomline from "../components/product-bottomline"
@@ -533,7 +533,9 @@ const Product = ({
 
                         <div className="value">
                           <div>
-                            <span>${selectedVariant.price} USD</span>
+                            <span>
+                              ${formatPrice(selectedVariant.price)} USD
+                            </span>
                           </div>
                           {selectedVariant.compareAtPrice &&
                             isDiscounted(
@@ -542,14 +544,15 @@ const Product = ({
                             ) && (
                               <div className="compare-at-price">
                                 <span className="compare-at-price">
-                                  ${selectedVariant.compareAtPrice} USD
+                                  ${formatPrice(selectedVariant.compareAtPrice)}{" "}
+                                  USD
                                 </span>
                               </div>
                             )}
                         </div>
                       </>
                     ) : (
-                      discountedPrice &&
+                      !!discountedPrice &&
                       isDiscounted(discountedPrice, selectedVariant.price) && (
                         <>
                           <div className="badge-container">
@@ -564,12 +567,12 @@ const Product = ({
 
                           <div className="value">
                             <div>
-                              <span>${discountedPrice} USD</span>
+                              <span>${formatPrice(discountedPrice)} USD</span>
                             </div>
 
                             <div className="compare-at-price">
                               <span className="compare-at-price">
-                                ${selectedVariant.price} USD
+                                ${formatPrice(selectedVariant.price)} USD
                               </span>
                             </div>
                           </div>

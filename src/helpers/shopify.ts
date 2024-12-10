@@ -7,12 +7,7 @@
 //   return false
 // }
 
-export function isDiscounted(
-  price: string | number,
-  compareAtPrice: string | number
-) {
-  price = Number(price)
-  compareAtPrice = Number(compareAtPrice)
+export function isDiscounted(price: number, compareAtPrice: number) {
   if (price === 0 || compareAtPrice === 0) return false
   if (compareAtPrice > price) {
     return true
@@ -20,6 +15,6 @@ export function isDiscounted(
   return false
 }
 
-export function formatPrice(price: string) {
-  return Number(price).toFixed(2)
+export function formatPrice(price: number) {
+  return price.toFixed(2)
 }

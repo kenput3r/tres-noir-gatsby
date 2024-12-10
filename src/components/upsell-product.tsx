@@ -7,7 +7,7 @@ import styled from "styled-components"
 import { addedToCartGTMEvent } from "../helpers/gtm"
 import { UpsellItem, UpsellItemVariant } from "../types/upsell"
 import AddToCartButton from "./add-to-cart-button"
-import { isDiscounted } from "../helpers/shopify"
+import { isDiscounted, formatPrice } from "../helpers/shopify"
 import Badge from "./badge"
 
 const Component = styled.article`
@@ -241,12 +241,12 @@ const UpsellProduct = ({
           </div>
           <div className="price-container">
             <span className="current">
-              <span>${selectedVariant.price}</span>
+              <span>${formatPrice(selectedVariant.price)}</span>
             </span>
-            {selectedVariant.compareAtPrice &&
+            {selectedVariant.compareAtPrice > 0 &&
               isDiscounted(
                 selectedVariant.price,
-                selectedVariant.compareAtPrice ?? "0.00"
+                selectedVariant.compareAtPrice ?? 0
               ) && (
                 <span className="compare-at">
                   ${selectedVariant.compareAtPrice}

@@ -4,14 +4,14 @@ import { CartContext } from "../contexts/cart"
 import useDiscountIdentifier from "./useDiscountIdentifier"
 
 type Params = {
-  prices: { id: string; price: string }[]
+  prices: { id: string; price: number }[]
   handle: string
 }
 export const useCollectionDiscountedPricing = ({ prices, handle }: Params) => {
   const [discountedPrices, setDiscountedPrices] = useState<
     {
       id: string
-      discountedPrice: string
+      discountedPrice: number
     }[]
   >([])
   const [isApplicable, setIsApplicable] = useState(false)

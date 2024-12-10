@@ -4,7 +4,7 @@ import styled from "styled-components"
 import { IGatsbyImageData } from "gatsby-plugin-image"
 import { ShopifyVariant } from "../types/global"
 import { CustomizeContext } from "../contexts/customize"
-
+import { formatPrice } from "../helpers/shopify"
 import { useCaseCollection } from "../hooks/useCaseCollection"
 
 const Component = styled.div`
@@ -146,11 +146,11 @@ const CaseGridCustomize: React.FC<Props> = ({ casesAvailable }) => {
     return str.split(" - AO")[0]
   }
 
-  const formatMoney = (price: string) => {
-    if (price === "0.00") {
+  const formatMoney = (price: number) => {
+    if (price === 0) {
       return "FREE"
     }
-    return `+ $${price} USD`
+    return `+ $${formatPrice(price)} USD`
   }
 
   const handleChange = (variant: ShopifyVariant, isSetFromEvent: boolean) => {
