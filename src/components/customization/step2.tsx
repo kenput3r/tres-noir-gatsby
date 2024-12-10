@@ -23,11 +23,17 @@ const Step2: React.FC<Props> = ({ handle }) => {
 
   const prices = useMemo(
     () =>
-      shopifyCollection.products.map(p => ({
-        id: p.variants[0].legacyResourceId,
-        price: p.variants[0].price,
-        handle: p.handle,
-      })),
+      shopifyCollection.products
+        .map(p =>
+          p.variants.map(v => {
+            return {
+              id: v.legacyResourceId,
+              price: v.price,
+              handle: p.handle,
+            }
+          })
+        )
+        .flat(),
     [shopifyCollection]
   )
 
