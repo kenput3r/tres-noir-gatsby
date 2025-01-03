@@ -97,11 +97,12 @@ export default async function getDiscountedPricing(
 
   // END HELPER FUNCTIONS
   try {
+    const API_VERSION = process.env.GATSBY_STORE_API_VERSION ?? "2024-10"
     const { offer, handle, productId, prices } = JSON.parse(req.body)
 
     const adminToken: string = process.env.GATSBY_STORE_TOKEN ?? ""
     const storeName = process.env.GATSBY_STORE_MY_SHOPIFY ?? ""
-    const url = `https://${storeName}/admin/api/2022-04/graphql.json`
+    const url = `https://${storeName}/admin/api/${API_VERSION}/graphql.json`
 
     const variables = {
       productId: `gid://shopify/Product/${productId}`,

@@ -5,6 +5,7 @@ export default async function addOrderNote(
   res: GatsbyFunctionResponse
 ) {
   try {
+    const API_VERSION = process.env.GATSBY_STORE_API_VERSION ?? "2024-10"
     const parsedBody = JSON.parse(req.body)
     const orderId = parsedBody.id
     const orderNote = parsedBody.note
@@ -13,7 +14,7 @@ export default async function addOrderNote(
       id: `gid://shopify/Order/${orderId}`,
     }
     const url: string = process.env.GATSBY_STORE_MY_SHOPIFY
-      ? `https://${process.env.GATSBY_STORE_MY_SHOPIFY}/admin/api/2022-04/graphql.json`
+      ? `https://${process.env.GATSBY_STORE_MY_SHOPIFY}/admin/api/${API_VERSION}/graphql.json`
       : ""
     const adminToken: string = process.env.GATSBY_STORE_TOKEN
       ? process.env.GATSBY_STORE_TOKEN

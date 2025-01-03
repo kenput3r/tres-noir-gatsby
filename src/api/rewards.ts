@@ -11,8 +11,9 @@ type Body = {
 }
 
 async function shopifyAdmin<T>(query: string, variables: any) {
+  const API_VERSION = process.env.GATSBY_STORE_API_VERSION ?? "2024-10"
   const url: string = process.env.GATSBY_STORE_MY_SHOPIFY
-    ? `https://${process.env.GATSBY_STORE_MY_SHOPIFY}/admin/api/2022-04/graphql.json`
+    ? `https://${process.env.GATSBY_STORE_MY_SHOPIFY}/admin/api/${API_VERSION}/graphql.json`
     : ""
 
   const adminToken: string = process.env.GATSBY_STORE_TOKEN
@@ -32,7 +33,7 @@ async function shopifyAdmin<T>(query: string, variables: any) {
     }),
   })
 
-  const responseJson = await response.json()
+  const responseJson: any = await response.json()
   console.log("responseJson", JSON.stringify(responseJson, null, 2))
 
   if (response.ok) {

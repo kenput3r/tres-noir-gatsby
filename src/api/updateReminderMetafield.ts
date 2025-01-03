@@ -5,6 +5,7 @@ export default async function updateReminderMetafield(
   res: GatsbyFunctionResponse
 ) {
   try {
+    const API_VERSION = process.env.GATSBY_STORE_API_VERSION ?? "2024-10"
     const parsedBody = JSON.parse(req.body)
     const orderId = parsedBody.id
     const metafieldId = "gid://shopify/Metafield/23035194867942"
@@ -16,7 +17,7 @@ export default async function updateReminderMetafield(
       id: `gid://shopify/Order/${orderId}`,
     }
     const url: string = process.env.GATSBY_STORE_MY_SHOPIFY
-      ? `https://${process.env.GATSBY_STORE_MY_SHOPIFY}/admin/api/2022-04/graphql.json`
+      ? `https://${process.env.GATSBY_STORE_MY_SHOPIFY}/admin/api/${API_VERSION}/graphql.json`
       : ""
     const adminToken: string = process.env.GATSBY_STORE_TOKEN
       ? process.env.GATSBY_STORE_TOKEN

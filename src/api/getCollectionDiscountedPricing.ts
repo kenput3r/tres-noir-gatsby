@@ -69,6 +69,7 @@ export default async function getCollectionDiscountedPricing(
 
   // END HELPER FUNCTIONS
   try {
+    const API_VERSION = process.env.GATSBY_STORE_API_VERSION ?? "2024-10"
     const { offer, handle, prices } = JSON.parse(req.body) as {
       offer: string
       handle: string
@@ -77,7 +78,7 @@ export default async function getCollectionDiscountedPricing(
 
     const adminToken: string = process.env.GATSBY_STORE_TOKEN ?? ""
     const storeName = process.env.GATSBY_STORE_MY_SHOPIFY ?? ""
-    const url = `https://${storeName}/admin/api/2022-04/graphql.json`
+    const url = `https://${storeName}/admin/api/${API_VERSION}/graphql.json`
 
     const variables = {
       query: `(title:${offer}) AND (status:active)`,

@@ -693,19 +693,16 @@ const Form = ({
                         <h6>
                           {variant.title}
                           <span className="price">
-                            {` + $${formatPrice(product.variants[0].price)}`}
-                            {!!product.variants[0].compareAtPrice &&
+                            {` + $${variant.price}`}
+                            {variant.compareAtPrice &&
                               isDiscounted(
-                                product.variants[0].price,
-                                product.variants[0].compareAtPrice
+                                variant.price,
+                                variant.compareAtPrice
                               ) && (
                                 <span>
                                   {" "}
                                   <span className="strikethrough-grey">
-                                    $
-                                    {formatPrice(
-                                      product.variants[0].compareAtPrice
-                                    )}
+                                    ${variant.compareAtPrice}
                                   </span>
                                 </span>
                               )}

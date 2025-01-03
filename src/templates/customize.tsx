@@ -132,13 +132,6 @@ const Customize = ({
     }
   }
 
-  const { discountedPrice, isApplicable, offer } = useDiscountedPricing({
-    productId: shopifyProduct.legacyResourceId,
-    prices: createDiscountApiPayload(),
-    selectedVariantId: shopifyProduct.variants[0].legacyResourceId,
-    handle: shopifyProduct.handle,
-  })
-
   const { currentStep, setProductUrl, selectedVariants } =
     useContext(CustomizeContext)
   const [variant, setVariant] = useState({
@@ -154,6 +147,13 @@ const Customize = ({
       variant?.contentful && variant.contentful.customizations?.clear.title,
   })
   const previewRef = useRef<HTMLDivElement>(null)
+
+  const { discountedPrice, isApplicable, offer } = useDiscountedPricing({
+    productId: shopifyProduct.legacyResourceId,
+    prices: createDiscountApiPayload(),
+    selectedVariantId: variant.shopify.legacyResourceId,
+    handle: variant.shopify.product.handle,
+  })
 
   useEffect(() => {
     const isBrowser = typeof window !== "undefined"
@@ -214,7 +214,7 @@ const Customize = ({
       }
     }
     setCurrentPrice(totalPrice.toFixed(2))
-  }, [selectedVariants, isApplicable, discountedPrice])
+  }, [selectedVariants, isApplicable, discountedPrice, variant])
 
   /* UPDATE IMAGE */
   useEffect(() => {

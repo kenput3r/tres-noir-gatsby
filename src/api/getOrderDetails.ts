@@ -6,9 +6,10 @@ export default async function getOrderDetails(
   res: GatsbyFunctionResponse
 ) {
   try {
+    const API_VERSION = process.env.GATSBY_STORE_API_VERSION ?? "2024-10"
     const orderId = req.body.id
     const url: string = process.env.GATSBY_STORE_MY_SHOPIFY
-      ? `https://${process.env.GATSBY_STORE_MY_SHOPIFY}/admin/api/2022-04/graphql.json`
+      ? `https://${process.env.GATSBY_STORE_MY_SHOPIFY}/admin/api/${API_VERSION}/graphql.json`
       : ""
     const adminToken: string = process.env.GATSBY_STORE_TOKEN
       ? process.env.GATSBY_STORE_TOKEN
