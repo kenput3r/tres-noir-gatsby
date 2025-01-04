@@ -1,8 +1,8 @@
 import React, { useContext, useRef } from "react"
-import { tnItem } from "../../../types/checkout"
+import type { tnItem } from "../../../contexts/storefront-cart/types/storefront-cart"
 import { GatsbyImage } from "gatsby-plugin-image"
 import QuantitySelector from "../../quantity-selector"
-import { CartContext } from "../../../contexts/cart"
+import { useCart } from "../../../contexts/storefront-cart"
 import styled from "styled-components"
 import { VscClose } from "react-icons/vsc"
 import { Link } from "gatsby"
@@ -19,11 +19,13 @@ const Component = styled.div`
 const ShopifyItem = (props: { item: tnItem }) => {
   const { item } = props
   const { updateProductInCart, removeProductFromCart, setIsCartDrawerOpen } =
-    useContext(CartContext)
+    useCart()
 
   const loadingOverlay = useRef<HTMLDivElement>(null)
 
-  if (item.lineItems[0].shopifyItem.variant.product.handle === "shipinsure") {
+  if (
+    item.lineItems[0].shopifyItem.merchandise.product.handle === "shipinsure"
+  ) {
     return <ShipInsureItem item={item} />
   }
 
@@ -36,12 +38,13 @@ const ShopifyItem = (props: { item: tnItem }) => {
 
   const updateQuantity = async (
     lineId: string,
+    variantId: string,
     quantity: number,
     imageId: string
   ) => {
     const loadingContainer = loadingOverlay.current?.closest(".cart-products")
     loadingContainer?.classList.add("no-events")
-    await updateProductInCart(lineId, quantity, imageId)
+    await updateProductInCart(lineId, variantId, quantity, imageId)
     loadingContainer?.classList.remove("no-events")
   }
 
@@ -76,7 +79,7 @@ const ShopifyItem = (props: { item: tnItem }) => {
           <div className="product-image">
             <GatsbyImage
               image={item.image}
-              alt={item.lineItems[0].shopifyItem.title}
+              alt={item.lineItems[0].shopifyItem.merchandise.product.title}
             />
           </div>
         )}
@@ -85,19 +88,23 @@ const ShopifyItem = (props: { item: tnItem }) => {
           <div className="product-titles">
             <Link
               onClick={evt => setIsCartDrawerOpen(false)}
-              to={`/products/${item.lineItems[0].shopifyItem.variant.product.handle}`}
+              to={`/products/${item.lineItems[0].shopifyItem.merchandise.product.handle}`}
             >
-              <p className="title">{item.lineItems[0].shopifyItem.title}</p>
+              <p className="title">
+                {item.lineItems[0].shopifyItem.merchandise.product.title}
+              </p>
             </Link>
             <p className="subtitle">
-              {item.lineItems[0].shopifyItem.variant.title === "Default Title"
+              {item.lineItems[0].shopifyItem.merchandise.title ===
+              "Default Title"
                 ? ""
-                : item.lineItems[0].shopifyItem.variant.title}
+                : item.lineItems[0].shopifyItem.merchandise.title}
             </p>
           </div>
           <div className="price-quantity">
             <QuantitySelector
               lineId={item.lineItems[0].shopifyItem.id}
+              variantId={item.lineItems[0].shopifyItem.merchandise.id}
               quantity={item.lineItems[0].shopifyItem.quantity}
               imageId={item.lineItems[0].shopifyItem.id}
               updateQuantity={updateQuantity}
@@ -106,7 +113,7 @@ const ShopifyItem = (props: { item: tnItem }) => {
               <p>
                 $
                 {priceTimesQuantity(
-                  item.lineItems[0].shopifyItem.variant.price.amount,
+                  item.lineItems[0].shopifyItem.merchandise.price.amount,
                   item.lineItems[0].shopifyItem.quantity
                 )}
               </p>
@@ -114,20 +121,21 @@ const ShopifyItem = (props: { item: tnItem }) => {
                 <p className="original-price">
                   $
                   {priceTimesQuantityOriginal(
-                    item.lineItems[0].shopifyItem.variant.price.amount,
+                    item.lineItems[0].shopifyItem.merchandise.price.amount,
                     item.lineItems[0].shopifyItem.quantity
                   )}
                 </p>
               ) : (
-                item.lineItems[0].shopifyItem.variant.compareAtPrice &&
+                item.lineItems[0].shopifyItem.merchandise.compareAtPrice &&
                 isDiscounted(
-                  item.lineItems[0].shopifyItem.variant.price.amount,
-                  item.lineItems[0].shopifyItem.variant.compareAtPrice.amount
+                  item.lineItems[0].shopifyItem.merchandise.price.amount,
+                  item.lineItems[0].shopifyItem.merchandise.compareAtPrice
+                    .amount
                 ) && (
                   <p className="original-price">
                     $
                     {priceTimesQuantityOriginal(
-                      item.lineItems[0].shopifyItem.variant.compareAtPrice
+                      item.lineItems[0].shopifyItem.merchandise.compareAtPrice
                         .amount,
                       item.lineItems[0].shopifyItem.quantity
                     )}

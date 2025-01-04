@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from "react"
 import styled from "styled-components"
 import { GatsbyImage, StaticImage, IGatsbyImageData } from "gatsby-plugin-image"
 import { CustomizeContext } from "../../contexts/customize"
-import { CartContext } from "../../contexts/cart"
+import { useCart } from "../../contexts/storefront-cart"
 import { RxInfoContext } from "../../contexts/rxInfo"
 import { addedCustomizedToCartGTMEvent } from "../../helpers/gtm"
 import { ShopifyProductVariant } from "../../types/customize"
@@ -143,7 +143,7 @@ const Step5 = (props: {
     isAddingToCart,
     setIsAddingToCart,
     isRemovingFromCart,
-  } = useContext(CartContext)
+  } = useCart()
   const { isRxAble, setRxAble, rxInfo, rxInfoDispatch } =
     useContext(RxInfoContext)
   const [addedToCart, setAddedToCart] = useState(false)
@@ -178,7 +178,7 @@ const Step5 = (props: {
       {
         variantId: step1.storefrontId,
         quantity: 1,
-        customAttributes: [
+        attributes: [
           {
             key: "customizationId",
             value: matchingKey,
@@ -208,7 +208,7 @@ const Step5 = (props: {
       {
         variantId: step2.storefrontId,
         quantity: 1,
-        customAttributes: [
+        attributes: [
           {
             key: "customizationId",
             value: matchingKey,
@@ -226,7 +226,7 @@ const Step5 = (props: {
       {
         variantId: step3.storefrontId,
         quantity: 1,
-        customAttributes: [
+        attributes: [
           {
             key: "customizationId",
             value: matchingKey,
@@ -244,7 +244,7 @@ const Step5 = (props: {
       {
         variantId: selectedVariants.case.storefrontId,
         quantity: 1,
-        customAttributes: [
+        attributes: [
           {
             key: "customizationId",
             value: matchingKey,
@@ -265,7 +265,7 @@ const Step5 = (props: {
       stepItems.push({
         variantId: el.storefrontId,
         quantity: 1,
-        customAttributes: [
+        attributes: [
           {
             key: "customizationId",
             value: matchingKey,
@@ -284,7 +284,7 @@ const Step5 = (props: {
     const frameVariant = {
       variantId: variant.storefrontId,
       quantity: 1,
-      customAttributes: [
+      attributes: [
         {
           key: "customizationId",
           value: matchingKey,

@@ -1,12 +1,6 @@
-import React, {
-  useState,
-  useContext,
-  ChangeEvent,
-  useEffect,
-  useRef,
-} from "react"
+import React, { useState, ChangeEvent, useEffect, useRef } from "react"
 import { graphql } from "gatsby"
-import { CartContext } from "../contexts/cart"
+import { useCart } from "../contexts/storefront-cart"
 import styled from "styled-components"
 import Layout from "../components/layout"
 import SEO from "../components/seo"
@@ -318,7 +312,7 @@ const Product = ({
   const [selectedVariantQuantity, setSelectedVariantQuantity] =
     useState<string>("1")
 
-  const { addProductToCart, isAddingToCart } = useContext(CartContext)
+  const { addProductToCart, isAddingToCart } = useCart()
 
   const handleVariant = (evt: ChangeEvent<HTMLSelectElement>) => {
     const sku = evt.target.value

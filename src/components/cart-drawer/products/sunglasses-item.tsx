@@ -1,12 +1,13 @@
 import React, { useContext, useRef } from "react"
-import { tnItem } from "../../../types/checkout"
+import type { tnItem } from "../../../contexts/storefront-cart/types/storefront-cart"
 import { GatsbyImage } from "gatsby-plugin-image"
 import { graphql } from "gatsby"
-import { CartContext } from "../../../contexts/cart"
+import { useCart } from "../../../contexts/storefront-cart"
 import styled from "styled-components"
 import { VscClose } from "react-icons/vsc"
 import { Link, useStaticQuery } from "gatsby"
 import { isDiscounted } from "../../../helpers/shopify"
+import type { Cart } from "../../../contexts/storefront-cart/types/storefront-cart"
 
 const Component = styled.div`
   .fs-cont {
@@ -42,8 +43,7 @@ const Component = styled.div`
 
 const SunglassesItem = (props: { item: tnItem }) => {
   const { item } = props
-  const { removeProductsFromCart, setIsCartDrawerOpen } =
-    useContext(CartContext)
+  const { removeProductsFromCart, setIsCartDrawerOpen } = useCart()
 
   const clearanceItemsData = useStaticQuery(graphql`
     query getClearanceItemsDrawer {
@@ -73,11 +73,11 @@ const SunglassesItem = (props: { item: tnItem }) => {
 
   // if a sunglasses's product handle is in const variable and isDiscounted, then it is a clearance sale, and we should show the final sale disclaimer
   const isClearanceSale =
-    clearanceSKUs.includes(item.lineItems[0].shopifyItem.variant.sku) &&
-    item.lineItems[0].shopifyItem.variant.compareAtPrice &&
+    clearanceSKUs.includes(item.lineItems[0].shopifyItem.merchandise.sku) &&
+    item.lineItems[0].shopifyItem.merchandise.compareAtPrice &&
     isDiscounted(
-      item.lineItems[0].shopifyItem.variant.price.amount,
-      item.lineItems[0].shopifyItem.variant.compareAtPrice.amount
+      item.lineItems[0].shopifyItem.merchandise.price.amount,
+      item.lineItems[0].shopifyItem.merchandise.compareAtPrice.amount
     )
 
   const removeMultipleProducts = async (item: tnItem) => {
@@ -98,8 +98,8 @@ const SunglassesItem = (props: { item: tnItem }) => {
   const totalCompareAt = lineItems => {
     let sum = 0
     lineItems.forEach(item => {
-      let price = item.shopifyItem.variant.compareAtPrice
-        ? item.shopifyItem.variant.compareAtPrice.amount
+      let price = item.shopifyItem.merchandise.compareAtPrice
+        ? item.shopifyItem.merchandise.compareAtPrice.amount
         : "0.00"
       sum += parseFloat(price)
     })
@@ -111,7 +111,7 @@ const SunglassesItem = (props: { item: tnItem }) => {
     lineItems.forEach(item => {
       // new discounts
       const hasDiscount = item.shopifyItem.discountAllocations.length > 0
-      let price = item.shopifyItem.variant.price.amount
+      let price = item.shopifyItem.merchandise.price.amount
       if (hasDiscount) {
         price = (
           Number(price) -
@@ -127,7 +127,7 @@ const SunglassesItem = (props: { item: tnItem }) => {
   const totalOriginalSum = lineItems => {
     let sum = 0
     lineItems.forEach(item => {
-      let price = item.shopifyItem.variant.price.amount
+      let price = item.shopifyItem.merchandise.price.amount
       sum += parseFloat(price)
     })
     return sum.toFixed(2)
@@ -161,7 +161,7 @@ const SunglassesItem = (props: { item: tnItem }) => {
           <div className="product-image">
             <GatsbyImage
               image={item.image}
-              alt={item.lineItems[0].shopifyItem.title}
+              alt={item.lineItems[0].shopifyItem.merchandise.product.title}
             />
           </div>
         )}
@@ -170,19 +170,23 @@ const SunglassesItem = (props: { item: tnItem }) => {
           <div className="product-titles">
             <Link
               onClick={evt => setIsCartDrawerOpen(false)}
-              to={`/products/${item.lineItems[0].shopifyItem.variant.product.handle}`}
+              to={`/products/${item.lineItems[0].shopifyItem.merchandise.product.handle}`}
             >
-              <p className="title">{item.lineItems[0].shopifyItem.title}</p>
+              <p className="title">
+                {item.lineItems[0].shopifyItem.merchandise.product.title}
+              </p>
             </Link>
             <p className="subtitle">
-              {item.lineItems[0].shopifyItem.variant.title === "Default Title"
+              {item.lineItems[0].shopifyItem.merchandise.title ===
+              "Default Title"
                 ? ""
-                : item.lineItems[0].shopifyItem.variant.title}
+                : item.lineItems[0].shopifyItem.merchandise.title}
             </p>
             <p className="subtitle">
               +{" "}
               {formatCaseName(
-                item.lineItems[item.lineItems.length - 1].shopifyItem.title
+                item.lineItems[item.lineItems.length - 1].shopifyItem
+                  .merchandise.product.title
               )}
             </p>
           </div>

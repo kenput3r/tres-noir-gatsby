@@ -1,8 +1,8 @@
 import React, { useContext, useEffect, useRef } from "react"
 import styled from "styled-components"
 import { useStaticQuery, graphql } from "gatsby"
-import { CartContext } from "../../contexts/cart"
-import { tnItem } from "../../types/checkout"
+import { useCart } from "../../contexts/storefront-cart"
+import type { tnItem } from "../../contexts/storefront-cart/types/storefront-cart"
 import CartIcon from "./cart-icon"
 import { FaChevronRight } from "react-icons/fa"
 import { useClickAway } from "react-use"
@@ -212,12 +212,8 @@ const LoaderContainer = styled.div`
 `
 
 const CartDrawer = () => {
-  const {
-    checkout,
-    isCartDrawerOpen,
-    setIsCartDrawerOpen,
-    isRemovingFromCart,
-  } = useContext(CartContext)
+  const { cart, isCartDrawerOpen, setIsCartDrawerOpen, isRemovingFromCart } =
+    useCart()
 
   const {
     contentfulHomepage: { cartMessage, cartMessageToggle },
@@ -271,72 +267,68 @@ const CartDrawer = () => {
 
   return (
     <animated.div style={{ ...slideInStyles }} className="animated">
-      {checkout &&
-        checkout.tnLineItems &&
-        checkout.tnLineItems.length !== 0 && (
-          <Component ref={clickRef}>
-            <div className="header">
-              <button onClick={evt => setIsCartDrawerOpen(false)}>
-                <FaChevronRight />
-              </button>
-              <div className="sub-flex">
-                <span>Cart</span>
-                <span onClick={evt => setIsCartDrawerOpen(false)}>
-                  <CartIcon />
-                </span>
-              </div>
+      {cart && cart.tnLineItems && cart.tnLineItems.length !== 0 && (
+        <Component ref={clickRef}>
+          <div className="header">
+            <button onClick={evt => setIsCartDrawerOpen(false)}>
+              <FaChevronRight />
+            </button>
+            <div className="sub-flex">
+              <span>Cart</span>
+              <span onClick={evt => setIsCartDrawerOpen(false)}>
+                <CartIcon />
+              </span>
             </div>
-            <div className="cart-products">
-              {checkout &&
-                checkout.tnLineItems &&
-                checkout.tnLineItems.map((item: tnItem) => {
-                  if (!item.isCustom && item.lineItems.length === 1) {
-                    return <ShopifyItem item={item} key={item.id} />
-                  } else if (!item.isCustom && item.lineItems.length === 2) {
-                    return <SunglassesItem item={item} key={item.id} />
-                  } else {
-                    return <CustomItem item={item} key={item.id} />
-                  }
-                })}
+          </div>
+          <div className="cart-products">
+            {cart &&
+              cart.tnLineItems &&
+              cart.tnLineItems.map((item: tnItem) => {
+                if (!item.isCustom && item.lineItems.length === 1) {
+                  return <ShopifyItem item={item} key={item.id} />
+                } else if (!item.isCustom && item.lineItems.length === 2) {
+                  return <SunglassesItem item={item} key={item.id} />
+                } else {
+                  return <CustomItem item={item} key={item.id} />
+                }
+              })}
+          </div>
+          <div className="sticky-bottom">
+            <div>
+              <EnableShipInsure />
             </div>
-            <div className="sticky-bottom">
-              <div>
-                <EnableShipInsure />
-              </div>
-              <p>
-                Subtotal:{" "}
-                <span>
-                  ${Number(checkout.subtotalPrice.amount).toFixed(2)} USD
-                </span>
-              </p>
+            <p>
+              Subtotal:{" "}
+              <span>
+                ${Number(cart.cost.subtotalAmount.amount).toFixed(2)} USD
+              </span>
+            </p>
 
-              <div className="button-flex">
-                <button
-                  className="btn"
-                  onClick={evt => setIsCartDrawerOpen(false)}
-                >
-                  CONTINUE SHOPPING
-                </button>
-                <a
-                  className="btn"
-                  href={checkout.webUrl}
-                  onClick={evt => setIsCartDrawerOpen(false)}
-                >
-                  CHECKOUT
-                </a>
-              </div>
-              <p>TAXES AND SHIPPING WILL BE CALCULATED AT CHECKOUT</p>
-              {cartMessageToggle && (
-                <p className="cart-message">{cartMessage}</p>
-              )}
+            <div className="button-flex">
+              <button
+                className="btn"
+                onClick={evt => setIsCartDrawerOpen(false)}
+              >
+                CONTINUE SHOPPING
+              </button>
+              <a
+                className="btn"
+                href={cart.checkoutUrl}
+                onClick={evt => setIsCartDrawerOpen(false)}
+              >
+                CHECKOUT
+              </a>
             </div>
-            {isRemovingFromCart && (
-              <LoaderContainer>
-                <Loader />
-              </LoaderContainer>
-            )}
-          </Component>
-        )}
+            <p>TAXES AND SHIPPING WILL BE CALCULATED AT CHECKOUT</p>
+            {cartMessageToggle && <p className="cart-message">{cartMessage}</p>}
+          </div>
+          {isRemovingFromCart && (
+            <LoaderContainer>
+              <Loader />
+            </LoaderContainer>
+          )}
+        </Component>
+      )}
     </animated.div>
   )
 }

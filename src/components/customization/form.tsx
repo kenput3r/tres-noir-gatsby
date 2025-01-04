@@ -382,10 +382,10 @@ const Form = ({
           const rxAttr =
             customInCheckout?.lineItems[1].shopifyItem.customAttributes.find(
               el => el.key === "Prescription"
-            ).value
-          if (rxAttr !== "Non-Prescription") {
+            )
+          if (rxAttr && rxAttr.value !== "Non-Prescription") {
             // set Rx
-            const prescription = JSON.parse(rxAttr) as rxType
+            const prescription = JSON.parse(rxAttr.value) as rxType
             rxInfoDispatch({
               type: `full`,
               payload: prescription,

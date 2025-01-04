@@ -2,7 +2,6 @@ import React, { useContext } from "react"
 import { Link } from "gatsby"
 import { GatsbyImage, StaticImage } from "gatsby-plugin-image"
 import styled from "styled-components"
-import { CartContext } from "../contexts/cart"
 import { ShopifyProduct } from "../types/shopify"
 import ProductAction from "./collection-product-action"
 import Spinner from "../components/spinner"
@@ -11,6 +10,7 @@ import { addedToCartGTMEvent } from "../helpers/gtm"
 import { isDiscounted, formatPrice } from "../helpers/shopify"
 import Badge from "./badge"
 import useDiscountIdentifier from "../hooks/useDiscountIdentifier"
+import { useCart } from "../contexts/storefront-cart"
 
 const Component = styled.article`
   h3,
@@ -111,7 +111,7 @@ const Product = ({
 
   const quantityLevels = useQuantityQuery(data.handle, data.variants.length)
 
-  const { addProductToCart, isAddingToCart } = useContext(CartContext)
+  const { addProductToCart, isAddingToCart } = useCart()
 
   const price = formatPrice(selectedVariant.price)
 

@@ -92,7 +92,7 @@ export interface SavedCustomizeContexts {
 }
 
 export interface SelectedVariantTable {
-  checkoutId: string
+  cartId: string
   customs: {
     [key: string]: {
       selectedVariants: SelectedVariants

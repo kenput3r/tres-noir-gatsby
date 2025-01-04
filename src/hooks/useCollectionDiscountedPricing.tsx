@@ -1,6 +1,6 @@
 import { useEffect, useState, useContext } from "react"
 
-import { CartContext } from "../contexts/cart"
+import { useCart } from "../contexts/storefront-cart"
 import useDiscountIdentifier from "./useDiscountIdentifier"
 
 type Params = {
@@ -17,7 +17,7 @@ export const useCollectionDiscountedPricing = ({ prices, handle }: Params) => {
   const [isApplicable, setIsApplicable] = useState(false)
   const [offer, setOffer] = useState("")
   // cart
-  const { getAppliedDiscountCode } = useContext(CartContext)
+  const { getAppliedDiscountCode } = useCart()
   const { discountIdentifier, enableDiscountIdentifier } =
     useDiscountIdentifier()
   const abortController = new AbortController()

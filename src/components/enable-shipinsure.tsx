@@ -1,7 +1,7 @@
-import React, { useContext } from "react"
+import React from "react"
 import styled from "styled-components"
 import { useSpring, animated } from "react-spring"
-import { CartContext } from "../contexts/cart"
+import { useCart } from "../contexts/storefront-cart"
 
 const SwitchWrapper = styled.div`
   margin-top: -10px;
@@ -55,8 +55,7 @@ const StatusLabel = styled.span`
 `
 
 const EnableShipInsure: React.FC = () => {
-  const { updateShipInsureAttribute, isShipInsureEnabled } =
-    useContext(CartContext)
+  const { updateShipInsureAttribute, isShipInsureEnabled } = useCart()
 
   const handleToggle = () => {
     updateShipInsureAttribute(!isShipInsureEnabled)

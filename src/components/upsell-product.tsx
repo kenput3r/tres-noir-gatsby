@@ -2,7 +2,7 @@ import React, { useState, useContext, ChangeEvent, useEffect } from "react"
 import { useQuantityQuery } from "../hooks/useQuantityQuery"
 import { GatsbyImage, StaticImage } from "gatsby-plugin-image"
 import { Link } from "gatsby"
-import { CartContext } from "../contexts/cart"
+import { useCart } from "../contexts/storefront-cart"
 import styled from "styled-components"
 import { addedToCartGTMEvent } from "../helpers/gtm"
 import { UpsellItem, UpsellItemVariant } from "../types/upsell"
@@ -140,7 +140,7 @@ const UpsellProduct = ({
     if (firstVariant) setSelectedVariant(firstVariant)
   }, [quantityLevels])
 
-  const { addProductToCart, isAddingToCart } = useContext(CartContext)
+  const { addProductToCart, isAddingToCart } = useCart()
 
   const handleAddToCart = () => {
     const id = selectedVariant.storefrontId

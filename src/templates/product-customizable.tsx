@@ -4,16 +4,15 @@ import React, {
   useContext,
   useRef,
   ChangeEvent,
-  useCallback,
 } from "react"
-import { Link, graphql, useStaticQuery } from "gatsby"
+import { Link, graphql } from "gatsby"
 import { StaticImage, GatsbyImage as Img } from "gatsby-plugin-image"
 import styled from "styled-components"
 import { useQuantityQuery } from "../hooks/useQuantityQuery"
 import ProductCarousel from "../components/product-carousel"
 import Layout from "../components/layout"
 import SEO from "../components/seo"
-import { CartContext } from "../contexts/cart"
+import { useCart } from "../contexts/storefront-cart"
 import {
   addedToCartGTMEvent,
   addedCustomizedToCartGTMEvent,
@@ -425,8 +424,7 @@ const ProductCustomizable = ({ data, location: any }: Props) => {
   }
 
   // cart
-  const { addProductToCart, isAddingToCart, addSunglassesToCart } =
-    useContext(CartContext)
+  const { addProductToCart, isAddingToCart, addSunglassesToCart } = useCart()
 
   const createClearanceSKUs = (data): string[] => {
     try {
@@ -701,7 +699,7 @@ const ProductCustomizable = ({ data, location: any }: Props) => {
           {
             variantId: selectedVariant.shopify.storefrontId,
             quantity: 1,
-            customAttributes: [
+            attributes: [
               { key: "customizationId", value: matchingKey },
               { key: "customizationStep", value: "1" },
             ],
@@ -709,7 +707,7 @@ const ProductCustomizable = ({ data, location: any }: Props) => {
           {
             variantId: selectedCase.storefrontId,
             quantity: 1,
-            customAttributes: [
+            attributes: [
               { key: "customizationId", value: matchingKey },
               { key: "customizationStep", value: "2" },
             ],
