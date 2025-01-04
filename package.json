@@ -8,6 +8,7 @@
     "@babel/eslint-parser": "^7.25.9",
     "@hookform/resolvers": "^3.9.1",
     "@sentry/gatsby": "^8.42.0",
+    "@shopify/storefront-api-client": "^1.0.3",
     "algoliasearch": "^4.13.0",
     "babel-plugin-styled-components": "^2.1.4",
     "cross-env": "^7.0.3",
@@ -56,6 +57,8 @@
   },
   "devDependencies": {
     "@babel/core": "^7.26.0",
+    "@graphql-codegen/cli": "^5.0.3",
+    "@shopify/api-codegen-preset": "^1.1.3",
     "@types/escape-string-regexp": "^2.0.3",
     "@types/react-helmet": "^6.1.11",
     "@types/react-instantsearch-dom": "^6.12.2",
@@ -94,7 +97,8 @@
     "serve": "gatsby serve",
     "clean": "gatsby clean",
     "test": "echo \"Write tests! -> https://gatsby.dev/unit-testing\" && exit 1",
-    "devcert": "npm run develop -- --https"
+    "devcert": "npm run develop -- --https",
+    "generate": "graphql-codegen --config storefront-cart.graphqlrc.ts"
   },
   "repository": {
     "type": "git",
