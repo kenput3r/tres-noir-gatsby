@@ -12,6 +12,7 @@ import AddToCartButton from "../components/add-to-cart-button"
 import { ReviewsProvider } from "../contexts/reviews"
 import Reviews from "../components/reviews"
 import type { YotpoSourceProductBottomLine } from "../types/yotpo"
+import type { ShopifyProduct } from "../types/shopify"
 import { isDiscounted, formatPrice } from "../helpers/shopify"
 import Divider from "../components/divider"
 import Badge from "../components/badge"
@@ -575,7 +576,7 @@ const Product = ({
                     )}
                   </div>
                 </form>
-                {selectedVariant.price > "0.00" && (
+                {selectedVariant.price > 0 && (
                   <div className="actions">
                     <div className="select-wrapper">
                       <select
