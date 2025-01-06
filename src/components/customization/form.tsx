@@ -23,7 +23,6 @@ import type {
 } from "../../contexts/storefront-cart/types/storefront-cart"
 import { isDiscounted, formatPrice } from "../../helpers/shopify"
 import ReadersTable from "../readers-table"
-// import { handleRxFromAttribute } from "../../contexts/rxInfo"
 
 const Form = ({
   shopifyCollection,

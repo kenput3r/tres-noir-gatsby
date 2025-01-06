@@ -15,7 +15,7 @@ export default async function getOrderDetails(
       ? process.env.GATSBY_STORE_TOKEN
       : ""
 
-    const orderQuery = `
+    const orderQuery = `#graphql
       query getOrderDetails($orderId: ID!){
         order(id: $orderId) {
           name

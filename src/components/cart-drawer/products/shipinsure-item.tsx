@@ -1,12 +1,10 @@
 import React, { useRef } from "react"
 import type { tnItem } from "../../../contexts/storefront-cart/types/storefront-cart"
 import { GatsbyImage } from "gatsby-plugin-image"
-import QuantitySelector from "../../quantity-selector"
 import { useCart } from "../../../contexts/storefront-cart"
 import styled from "styled-components"
 import { VscClose } from "react-icons/vsc"
 import { Link } from "gatsby"
-import { isDiscounted } from "../../../helpers/shopify"
 
 const Component = styled.div`
   .product-card {

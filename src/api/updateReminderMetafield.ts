@@ -23,7 +23,7 @@ export default async function updateReminderMetafield(
       ? process.env.GATSBY_STORE_TOKEN
       : ""
 
-    const orderQuery = `
+    const orderQuery = `#graphql
       mutation updateOrderMetafield($input: OrderInput!){
         orderUpdate(input: $input) {
           order {

@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef } from "react"
+import React, { useEffect, useRef } from "react"
 import styled from "styled-components"
 import { useStaticQuery, graphql } from "gatsby"
 import { useCart } from "../../contexts/storefront-cart"

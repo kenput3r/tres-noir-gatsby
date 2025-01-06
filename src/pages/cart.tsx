@@ -1,5 +1,5 @@
-import React, { useEffect, useContext, useRef, useState } from "react"
-import { Link, navigate, useStaticQuery, graphql } from "gatsby"
+import React, { useEffect, useContext, useRef } from "react"
+import { Link, navigate, graphql } from "gatsby"
 import {
   GatsbyImage,
   StaticImage,
@@ -10,7 +10,6 @@ import Layout from "../components/layout"
 import SEO from "../components/seo"
 import Loader from "../components/loader"
 import QuantitySelector from "../components/quantity-selector"
-// import { CartContext } from "../contexts/cart"
 import { useCart } from "../contexts/storefront-cart"
 import {
   tnItem,

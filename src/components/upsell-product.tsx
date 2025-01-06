@@ -1,4 +1,4 @@
-import React, { useState, useContext, ChangeEvent, useEffect } from "react"
+import React, { useState, ChangeEvent, useEffect } from "react"
 import { useQuantityQuery } from "../hooks/useQuantityQuery"
 import { GatsbyImage, StaticImage } from "gatsby-plugin-image"
 import { Link } from "gatsby"

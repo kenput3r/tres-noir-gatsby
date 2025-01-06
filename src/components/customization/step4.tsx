@@ -56,8 +56,8 @@ const Step4: React.FC<Props> = ({ handle }) => {
       })
     }
   }, [shopifyCollection, offer, isApplicable, discountedPrices])
-
   // end discounted prices
+
   return <Form shopifyCollection={filteredCollection} handle={handle} />
 }
 

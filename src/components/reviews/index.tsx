@@ -1,4 +1,4 @@
-import React, { useRef } from "react"
+import React from "react"
 import styled from "styled-components"
 import { useReviews } from "../../contexts/reviews"
 import ReviewList from "./review-list"
@@ -41,8 +41,6 @@ type Props = {
 
 const Reviews = ({ reviewListRef }: Props) => {
   const { data, isLoading } = useReviews()
-
-  // const reviewListRef = useRef<HTMLDivElement>(null)
 
   const scrollToTop = () => {
     const isBrowser = typeof window !== "undefined"

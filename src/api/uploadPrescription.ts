@@ -52,7 +52,7 @@ export default async function uploadPrescription(
       body: formData,
     }
     const response = await fetch(url, options)
-    const resBodyJson = await response.json()
+    const resBodyJson: any = await response.json()
     const secureUrl = resBodyJson["secure_url"]
     if (response.ok) {
       return res.status(200).json({

@@ -360,15 +360,6 @@ export const query = graphql`
       productType
       title
       vendor
-      # images {
-      #   altText
-      #   localFile {
-      #     id
-      #     childImageSharp {
-      #       gatsbyImageData
-      #     }
-      #   }
-      # }
       media {
         ... on ShopifyMediaImage {
           image {

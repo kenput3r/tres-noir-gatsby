@@ -10,7 +10,6 @@ import styled from "styled-components"
 import { VscClose } from "react-icons/vsc"
 import { Link, useStaticQuery } from "gatsby"
 import { isDiscounted } from "../../../helpers/shopify"
-import type { Cart } from "../../../contexts/storefront-cart/types/storefront-cart"
 
 const Component = styled.div`
   .fs-cont {

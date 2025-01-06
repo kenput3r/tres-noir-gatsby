@@ -3,7 +3,6 @@ import styled from "styled-components"
 import Layout from "../../components/layout"
 import SEO from "../../components/seo"
 import { FiPhone, FiMail } from "react-icons/fi"
-import { TiSortNumerically } from "react-icons/ti"
 
 const Page = styled.div`
   h1 {
@@ -234,7 +233,7 @@ const Contact = () => {
               <h3>Send us a message</h3>
               <div>
                 <label htmlFor="name">Name</label>
-                <input type="text" id="name" name="name" required/>
+                <input type="text" id="name" name="name" required />
               </div>
               <div>
                 <label htmlFor="email">Email</label>

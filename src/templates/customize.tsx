@@ -175,17 +175,6 @@ const Customize = ({
         handle = `${handle}&lens_type=${lensType}`
       }
       setProductUrl(handle)
-      // if (previewRef.current) {
-      //   const previewImage = previewRef.current.querySelector(
-      //     ".gatsby-image-wrapper img[data-main-image]"
-      //   )
-      //   // previewImage.addEventListener("loadstart", function (e) {
-      //   //   console.log("Preview Image Load Started")
-      //   // })
-      //   // previewImage.addEventListener("loadend", function (e) {
-      //   //   console.log("Preview Image Load Ended")
-      //   // })
-      // }
     }
   }, [
     contentfulProduct?.handle,

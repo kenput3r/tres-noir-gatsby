@@ -20,7 +20,7 @@ export default async function addOrderNote(
       ? process.env.GATSBY_STORE_TOKEN
       : ""
 
-    const orderQuery = `
+    const orderQuery = `#graphql
       mutation updateOrderNote($input: OrderInput!){
         orderUpdate(input: $input) {
           order {

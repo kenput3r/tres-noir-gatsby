@@ -1,4 +1,4 @@
-import React, { useContext, useRef } from "react"
+import React, { useRef } from "react"
 import type { tnItem } from "../../../contexts/storefront-cart/types/storefront-cart"
 import { GatsbyImage } from "gatsby-plugin-image"
 import QuantitySelector from "../../quantity-selector"
