@@ -69,7 +69,7 @@ export default async function getCollectionDiscountedPricing(
 
   // END HELPER FUNCTIONS
   try {
-    const API_VERSION = process.env.GATSBY_STORE_API_VERSION ?? "2024-10"
+    const API_VERSION = process.env.GATSBY_SHOPIFY_API_VERSION ?? "2025-01"
     const { offer, handle, prices } = JSON.parse(req.body) as {
       offer: string
       handle: string

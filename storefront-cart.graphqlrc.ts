@@ -3,7 +3,7 @@ import dotenv from "dotenv"
 
 dotenv.config()
 
-const API_VERSION = "2025-01"
+const API_VERSION = process.env.GATSBY_SHOPIFY_API_VERSION ?? "2025-01"
 
 export default {
   // For syntax highlighting / auto-complete when writing operations

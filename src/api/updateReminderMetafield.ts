@@ -5,7 +5,7 @@ export default async function updateReminderMetafield(
   res: GatsbyFunctionResponse
 ) {
   try {
-    const API_VERSION = process.env.GATSBY_STORE_API_VERSION ?? "2024-10"
+    const API_VERSION = process.env.GATSBY_SHOPIFY_API_VERSION ?? "2025-01"
     const parsedBody = JSON.parse(req.body)
     const orderId = parsedBody.id
     const metafieldId = "gid://shopify/Metafield/23035194867942"
