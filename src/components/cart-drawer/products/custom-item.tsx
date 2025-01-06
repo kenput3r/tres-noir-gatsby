@@ -1,5 +1,8 @@
 import React, { useRef } from "react"
-import type { tnItem } from "../../../contexts/storefront-cart/types/storefront-cart"
+import type {
+  tnItem,
+  tnSubItem,
+} from "../../../contexts/storefront-cart/types/storefront-cart"
 import { GatsbyImage } from "gatsby-plugin-image"
 import { useCart } from "../../../contexts/storefront-cart"
 import styled from "styled-components"
@@ -50,7 +53,7 @@ const CustomItem = (props: { item: tnItem }) => {
     return length - 2
   }
 
-  const totalSum = lineItems => {
+  const totalSum = (lineItems: tnSubItem[]) => {
     let sum = 0
     lineItems.forEach(item => {
       // new discounts
@@ -59,7 +62,9 @@ const CustomItem = (props: { item: tnItem }) => {
       if (hasDiscount) {
         price = (
           Number(price) -
-          Number(item.shopifyItem.discountAllocations[0].allocatedAmount.amount)
+          Number(
+            item.shopifyItem.discountAllocations[0].discountedAmount.amount
+          )
         ).toFixed(2)
       }
       // new discounts
@@ -68,7 +73,7 @@ const CustomItem = (props: { item: tnItem }) => {
     return sum.toFixed(2)
   }
 
-  const totalCompareAt = lineItems => {
+  const totalCompareAt = (lineItems: tnSubItem[]) => {
     let sum = 0
     lineItems.forEach(item => {
       let price = item.shopifyItem.merchandise.compareAtPrice
@@ -79,7 +84,7 @@ const CustomItem = (props: { item: tnItem }) => {
     return sum.toFixed(2)
   }
 
-  const totalOriginalSum = lineItems => {
+  const totalOriginalSum = (lineItems: tnSubItem[]) => {
     let sum = 0
     lineItems.forEach(item => {
       let price = item.shopifyItem.merchandise.price.amount
@@ -88,7 +93,7 @@ const CustomItem = (props: { item: tnItem }) => {
     return sum.toFixed(2)
   }
 
-  const checkForDiscountInBundle = (lineItems: any): boolean => {
+  const checkForDiscountInBundle = (lineItems: tnSubItem[]): boolean => {
     return lineItems.some(
       item => item.shopifyItem.discountAllocations.length > 0
     )

@@ -50,8 +50,10 @@ const ShopifyItem = (props: { item: tnItem }) => {
 
   const discountAllocation =
     item.lineItems[0].shopifyItem.discountAllocations.length > 0
-      ? item.lineItems[0].shopifyItem.discountAllocations[0].allocatedAmount
-          .amount
+      ? parseFloat(
+          item.lineItems[0].shopifyItem.discountAllocations[0].discountedAmount
+            .amount
+        )
       : 0
   const hasDiscount =
     item.lineItems[0].shopifyItem.discountAllocations.length > 0
