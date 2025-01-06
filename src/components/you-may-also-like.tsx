@@ -42,10 +42,12 @@ const Component = styled.section`
   }
 `
 
-const YouMayAlsoLike = (props: { shopifyProduct: ShopifyProduct }) => {
+const YouMayAlsoLike = (props: {
+  shopifyProduct: Queries.ProductQueryShopifyQuery["shopifyProduct"]
+}) => {
   const { shopifyProduct } = props
 
-  const collectionItems = useRandomizeCollection(shopifyProduct.storefrontId)
+  const collectionItems = useRandomizeCollection(shopifyProduct!.storefrontId)
 
   return (
     <Component>

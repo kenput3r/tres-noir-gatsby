@@ -215,7 +215,7 @@ const Page = styled.div`
 `
 type Props = {
   data: {
-    shopifyProduct: any
+    shopifyProduct: Queries.ProductQueryShopifyQuery["shopifyProduct"]
     yotpoProductBottomline: YotpoSourceProductBottomLine
     site: {
       siteMetadata: {
@@ -227,6 +227,9 @@ type Props = {
 const Product = ({
   data: { shopifyProduct, yotpoProductBottomline, site },
 }: Props) => {
+  if (!shopifyProduct) {
+    return null
+  }
   const { siteUrl } = site.siteMetadata
   const [selectedVariant, setSelectedVariant] = useState(
     shopifyProduct.variants[0]
@@ -262,14 +265,14 @@ const Product = ({
     const productData = {
       title: shopifyProduct.title,
       legacyResourceId: selectedVariant.legacyResourceId,
-      sku: selectedVariant.sku,
+      sku: selectedVariant.sku ?? "",
       productType: shopifyProduct.productType,
       image: selectedVariant.image?.originalSrc
         ? selectedVariant.image?.originalSrc
         : shopifyProduct.featuredImage?.originalSrc
         ? shopifyProduct.featuredImage.originalSrc
         : "",
-      url: shopifyProduct.onlineStoreUrl,
+      url: shopifyProduct.onlineStoreUrl ?? "",
       vendor: shopifyProduct.vendor,
       price: selectedVariant.price,
       compareAtPrice: selectedVariant.compareAtPrice,
@@ -298,9 +301,12 @@ const Product = ({
       // first available
       for (let key in quantityLevels) {
         if (quantityLevels[key] > 0) {
-          firstVariant = shopifyProduct.variants.find(
+          const found = shopifyProduct.variants.find(
             (_variant: any) => _variant.sku === key
           )
+          if (found) {
+            firstVariant = found
+          }
           break
         }
       }
@@ -319,11 +325,15 @@ const Product = ({
     const newVariant = shopifyProduct.variants.find(
       (_variant: any) => _variant.sku === sku
     )
+    if (!newVariant) return
     setSelectedVariant(newVariant)
   }
 
   const quantityRange = () => {
     try {
+      if (!selectedVariant?.sku) {
+        return [0]
+      }
       let minRange = 0
       if (quantityLevels && quantityLevels[selectedVariant.sku]) {
         minRange = quantityLevels[selectedVariant.sku]
@@ -363,25 +373,26 @@ const Product = ({
   const handleAddToCart = (e: { preventDefault: () => void }) => {
     e.preventDefault()
     const id = selectedVariant.storefrontId
-    const sku = selectedVariant.sku
+    const sku = selectedVariant.sku!
     const image = selectedVariant.image
-      ? selectedVariant.image.localFile.childImageSharp.gatsbyImageData
-      : shopifyProduct.featuredImage.localFile.childImageSharp.gatsbyImageData
+      ? selectedVariant.image.localFile?.childImageSharp?.gatsbyImageData
+      : shopifyProduct?.featuredImage?.localFile?.childImageSharp
+          ?.gatsbyImageData
     const qty: number = +selectedVariantQuantity
-    addProductToCart(id, qty, sku, image)
+    addProductToCart(id, qty, sku, image!)
     //alert("ADDED TO CART")
 
     const productData = {
       title: shopifyProduct.title,
       legacyResourceId: selectedVariant.legacyResourceId,
-      sku: selectedVariant.sku,
+      sku: selectedVariant.sku ?? "",
       productType: shopifyProduct.productType,
       image: selectedVariant?.image?.originalSrc
         ? selectedVariant.image?.originalSrc
         : shopifyProduct.featuredImage?.originalSrc
         ? shopifyProduct.featuredImage.originalSrc
         : "",
-      url: shopifyProduct.onlineStoreUrl,
+      url: shopifyProduct.onlineStoreUrl ?? "",
       vendor: shopifyProduct.vendor,
       price: selectedVariant.price,
       compareAtPrice: selectedVariant.compareAtPrice,
@@ -404,7 +415,7 @@ const Product = ({
 
       const price = shopifyProduct.variants[0].price
 
-      const featuredImg = shopifyProduct.featuredImage.originalSrc
+      const featuredImg = shopifyProduct?.featuredImage?.originalSrc!
 
       const description = shopifyProduct.description ?? ""
 
@@ -454,7 +465,7 @@ const Product = ({
   return (
     <ReviewsProvider
       productTitle={shopifyProduct.title}
-      productId={shopifyProduct.legacyResourceId}
+      productId={Number(shopifyProduct.legacyResourceId)}
       productHandle={shopifyProduct.handle}
       siteUrl={siteUrl}
     >
@@ -466,7 +477,7 @@ const Product = ({
             shopifyProduct.featuredImage
               ? {
                   url: shopifyProduct.featuredImage.originalSrc,
-                  alt: shopifyProduct.featuredImage.altText,
+                  alt: shopifyProduct.featuredImage.altText || "",
                 }
               : undefined
           }
@@ -491,7 +502,7 @@ const Product = ({
                         <p>{selectedVariant.selectedOptions[0].name}</p>
                         <div className="select-dropdown">
                           <select
-                            value={selectedVariant.sku}
+                            value={selectedVariant.sku!}
                             id="product-variants"
                             onChange={evt => handleVariant(evt)}
                           >
@@ -575,7 +586,7 @@ const Product = ({
                     )}
                   </div>
                 </form>
-                {selectedVariant.price > "0.00" && (
+                {selectedVariant.price > 0 && (
                   <div className="actions">
                     <div className="select-wrapper">
                       <select
@@ -583,7 +594,7 @@ const Product = ({
                         id="quantity"
                         disabled={
                           quantityLevels &&
-                          quantityLevels[selectedVariant.sku] <= 0
+                          quantityLevels[selectedVariant.sku!] <= 0
                             ? true
                             : false
                         }
@@ -598,7 +609,7 @@ const Product = ({
                     </div>
                     <div>
                       {quantityLevels &&
-                      quantityLevels[selectedVariant.sku] > 0 ? (
+                      quantityLevels[selectedVariant.sku!] > 0 ? (
                         <AddToCartButton
                           handler={e => handleAddToCart(e)}
                           loading={isAddingToCart}
@@ -661,6 +672,7 @@ export const query = graphql`
       id
       handle
       legacyResourceId
+      storefrontId
       onlineStoreUrl
       hasOnlyDefaultVariant
       priceRangeV2 {

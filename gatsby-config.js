@@ -49,6 +49,10 @@ const gtmEnv = {
 }
 
 module.exports = {
+  graphqlTypegen: {
+    typesOutputPath: `./src/types/gatsby-types.d.ts`,
+    generateOnBuild: false,
+  },
   siteMetadata: {
     title: `Tres Noir`,
     description: `Tres Noir is an independent eyewear company located in Santa Ana, Calif.`,
