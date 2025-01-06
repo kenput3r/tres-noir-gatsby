@@ -127,7 +127,7 @@ type Discount =
   | {
       offer: string
       isApplicable: boolean
-      discountedPrice: string
+      discountedPrice: number
     }
   | undefined
 

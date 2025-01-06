@@ -241,7 +241,9 @@ const Product = ({
           isApplicable &&
           isDiscounted(discountedPrice, selectedVariant.price) && (
             <div className="price-container">
-              <span className="product-price">${discountedPrice} USD</span>
+              <span className="product-price">
+                ${formatPrice(discountedPrice)} USD
+              </span>
               <span className="product-compare-at-price">
                 ${formatPrice(selectedVariant.price)} USD
               </span>
