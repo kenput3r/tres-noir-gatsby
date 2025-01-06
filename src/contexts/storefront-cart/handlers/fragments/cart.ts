@@ -42,6 +42,10 @@ export const CART_FRAGMENT = `#graphql
                 handle
                 title
               }
+              image {
+                url
+                altText
+              }
             }
           }
           cost {
