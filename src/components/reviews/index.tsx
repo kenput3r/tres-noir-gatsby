@@ -51,6 +51,28 @@ const Reviews = ({ reviewListRef }: Props) => {
     }
   }
 
+  // If the environment is development or staging, show the review form and empty reviews
+  if (
+    process.env.GATSBY_ENVIRONMENT === "development" ||
+    process.env.GATSBY_ENVIRONMENT === "staging"
+  ) {
+    return (
+      <Component>
+        <ReviewForm
+          bottomline={{
+            total_review: 0,
+            average_score: 0,
+            total_organic_reviews: 0,
+            organic_average_score: 0,
+            star_distribution: {},
+            custom_fields_bottomline: {},
+          }}
+        />
+        <ReviewsEmpty />
+      </Component>
+    )
+  }
+
   return (
     <div ref={reviewListRef}>
       {isLoading || !data ? (
