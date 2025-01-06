@@ -532,7 +532,7 @@ const Product = ({
                               ${formatPrice(selectedVariant.price)} USD
                             </span>
                           </div>
-                          {selectedVariant.compareAtPrice &&
+                          {!!selectedVariant.compareAtPrice &&
                             isDiscounted(
                               selectedVariant.price,
                               selectedVariant.compareAtPrice
