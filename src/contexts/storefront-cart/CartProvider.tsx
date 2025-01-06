@@ -14,13 +14,7 @@ import {
   CartCreateMutation as CartCreateMutationType,
   CartQuery as CartQueryType,
 } from "./types/storefront.generated"
-import type {
-  Cart,
-  tnItem,
-  CustomLineItem,
-  ImageHashTable,
-  ImageStorage,
-} from "./types/storefront-cart"
+import type { Cart, CustomLineItem } from "./types/storefront-cart"
 
 import CartContext from "./context"
 import { ErrorModalContext } from "../error"
@@ -92,7 +86,7 @@ export function CartProvider({ children }: Props) {
 
   const client = createStorefrontApiClient({
     storeDomain: process.env.GATSBY_STORE_MY_SHOPIFY as string,
-    apiVersion: "2025-01",
+    apiVersion: process.env.GATSBY_SHOPIFY_API_VERSION ?? "2025-01",
     publicAccessToken: process.env.GATSBY_STORE_STOREFRONT_TOKEN as string,
   })
 
@@ -144,15 +138,13 @@ export function CartProvider({ children }: Props) {
     return Cookies.get("shopifyCart")
   }
 
-  // const checkoutHasDiscountV2 = (code: string, myCheckout: any) => {
-  //   try {
-  //     return myCheckout.discountApplications.some(
-  //       discount => discount.code === code
-  //     )
-  //   } catch (e) {
-  //     return false
-  //   }
-  // }
+  const checkoutHasDiscountV2 = (code: string, cart: Cart) => {
+    try {
+      return cart.discountCodes.some(discount => discount.code === code)
+    } catch (e) {
+      return false
+    }
+  }
 
   const cartIsEmpty = cart => {
     try {
@@ -177,14 +169,11 @@ export function CartProvider({ children }: Props) {
         }
       )
 
-      console.log("response", response)
-
       if (!response.data?.cartCreate?.cart) {
         throw new Error("Failed to create cart")
       }
 
       const newCart = response.data?.cartCreate?.cart
-      console.log("newCart", newCart)
       // check for discount code in URL, if present cookie will be set
       const code = getDiscountParams()
       if (code && code !== "") {
@@ -192,12 +181,12 @@ export function CartProvider({ children }: Props) {
         // this cookie will be used to apply discount code once an item is added to cart
         // buy-sdk does not allow to apply discount code on create checkout with 0 items
         // ignore if discount code is already applied
-        // if (!checkoutHasDiscountV2(code, newCart)) {
-        //   Cookies.set("tnDiscountCode", code, {
-        //     sameSite: "strict",
-        //     expires: 2592000,
-        //   })
-        // }
+        if (!checkoutHasDiscountV2(code, newCart)) {
+          Cookies.set("tnDiscountCode", code, {
+            sameSite: "strict",
+            expires: 2592000,
+          })
+        }
       }
 
       if (isBrowser) {
@@ -262,36 +251,41 @@ export function CartProvider({ children }: Props) {
       shouldOpenDrawer: boolean = true
     ) => {
       try {
-        console.log("addProductToCart", variantId, quantity, sku, image)
-        console.log("cart", cart?.id)
         if (!cart) return
-
         setIsAddingToCart(true)
+
         const lineItems = [
           {
             merchandiseId: variantId,
             quantity,
           },
         ]
-        console.log("lineItems", lineItems)
-        const response = await client.request(cartLinesAdd, {
+
+        const preShipInsure = await client.request(cartLinesAdd, {
           variables: {
             cartId: cart.id,
             lines: lineItems,
           },
         })
 
-        console.log("response", response)
-
-        if (!response.data?.cartLinesAdd?.cart) {
+        if (!preShipInsure.data?.cartLinesAdd?.cart) {
           throw new Error("Failed to add item to cart")
         }
+
+        const response = await addShipInsure(
+          preShipInsure.data?.cartLinesAdd?.cart
+        )
+
+        if (!response) {
+          throw new Error("Failed to add ship insure to cart")
+        }
+
         addToImageStorage(sku, image, cart.id)
-        const updatedCart = rebuildBundles(response.data?.cartLinesAdd?.cart)
+        const updatedCart = rebuildBundles(response)
         setCart(updatedCart)
         setIsAddingToCart(false)
         if (shouldOpenDrawer) setIsCartDrawerOpen(true)
-        // handleDiscountCookie()
+        handleDiscountCookie()
       } catch (err: any) {
         console.error(err)
         setIsAddingToCart(false)
@@ -304,28 +298,35 @@ export function CartProvider({ children }: Props) {
   const addProductsToCart = useCallback(
     async (lineItems: { variantId: string; quantity: number }[]) => {
       try {
-        console.log("addProductsToCart", lineItems)
         if (!cart) return
         setIsAddingToCart(true)
+
         const lines = lineItems.map(item => ({
           merchandiseId: item.variantId,
           quantity: item.quantity,
         }))
-        const response = await client.request(cartLinesAdd, {
+        const preShipInsure = await client.request(cartLinesAdd, {
           variables: {
             cartId: cart.id,
             lines,
           },
         })
 
-        if (!response.data?.cartLinesAdd?.cart) {
+        if (!preShipInsure.data?.cartLinesAdd?.cart) {
           throw new Error("Failed to add item to cart")
         }
-        const updatedCart = response.data?.cartLinesAdd?.cart
-        setCart(updatedCart)
+
+        const response = await addShipInsure(
+          preShipInsure.data?.cartLinesAdd?.cart
+        )
+
+        if (!response) {
+          throw new Error("Failed to add ship insure to cart")
+        }
+        setCart(response)
         setIsAddingToCart(false)
         setIsCartDrawerOpen(true)
-        // handleDiscountCookie()
+        handleDiscountCookie()
       } catch (err: any) {
         console.error(err)
         setIsAddingToCart(false)
@@ -337,24 +338,30 @@ export function CartProvider({ children }: Props) {
 
   const removeProductFromCart = useCallback(
     async (lineItemId: string, imageId: string) => {
-      console.log("removeProductFromCart", lineItemId, imageId)
       try {
         if (!cart) return
-        const response = await client.request(cartLinesRemove, {
+
+        const preShipInsure = await client.request(cartLinesRemove, {
           variables: {
             cartId: cart.id,
             lineIds: [lineItemId],
           },
         })
 
-        console.log("remove product from cart response", response)
-
-        if (!response.data?.cartLinesRemove?.cart) {
+        if (!preShipInsure.data?.cartLinesRemove?.cart) {
           throw new Error("Failed to remove item from cart")
         }
 
+        const response = await addShipInsure(
+          preShipInsure.data?.cartLinesRemove?.cart
+        )
+
+        if (!response) {
+          throw new Error("Failed to add ship insure to cart")
+        }
+
         removeFromImageStorage(imageId)
-        const updatedCart = rebuildBundles(response.data?.cartLinesRemove?.cart)
+        const updatedCart = rebuildBundles(response)
         setCart(updatedCart)
       } catch (err: any) {
         console.error(err)
@@ -372,19 +379,29 @@ export function CartProvider({ children }: Props) {
     ) => {
       try {
         if (!cart) return
-        const response = await client.request(cartLinesRemove, {
+
+        const preShipInsure = await client.request(cartLinesRemove, {
           variables: {
             cartId: cart.id,
             lineIds: lineItemIds,
           },
         })
 
-        if (!response.data?.cartLinesRemove?.cart) {
+        if (!preShipInsure.data?.cartLinesRemove?.cart) {
           throw new Error("Failed to remove item from cart")
         }
+
+        const response = await addShipInsure(
+          preShipInsure.data?.cartLinesRemove?.cart
+        )
+
+        if (!response) {
+          throw new Error("Failed to add ship insure to cart")
+        }
+
         removeFromImageStorage(imageId)
         removeCustomFromLocalStorage(imageId)
-        const updatedCart = rebuildBundles(response.data?.cartLinesRemove?.cart)
+        const updatedCart = rebuildBundles(response)
         setCart(updatedCart)
       } catch (err: any) {
         console.error(err)
@@ -399,18 +416,21 @@ export function CartProvider({ children }: Props) {
     async (id: string) => {
       try {
         if (!cart) return
+
         let hasDiscount = false
         const itemToRemove = cart?.tnLineItems
           ? cart.tnLineItems.find(item => item.id === id)
           : false
+
         if (!itemToRemove) return
+
         const lineIds = itemToRemove.lineItems.map(item => {
-          // TODO: fix this
           if (item.shopifyItem.discountAllocations.length > 0) {
             hasDiscount = true
           }
           return item.shopifyItem.id
         })
+
         await removeProductsFromCart(lineIds, itemToRemove.id, hasDiscount)
       } catch (err: any) {
         console.error(err)
@@ -429,6 +449,7 @@ export function CartProvider({ children }: Props) {
     ) => {
       try {
         if (!cart) return
+
         const lineItems = [
           {
             id: lineId,
@@ -436,24 +457,30 @@ export function CartProvider({ children }: Props) {
             quantity,
           },
         ]
-        console.log("lineItems", lineItems)
-        const response = await client.request(cartLinesUpdate, {
+
+        const preShipInsure = await client.request(cartLinesUpdate, {
           variables: {
             cartId: cart.id,
             lines: lineItems,
           },
         })
 
-        console.log("update product in cart response", response)
-
-        if (!response.data?.cartLinesUpdate?.cart) {
+        if (!preShipInsure.data?.cartLinesUpdate?.cart) {
           throw new Error("Failed to update item in cart")
+        }
+
+        const response = await addShipInsure(
+          preShipInsure.data?.cartLinesUpdate?.cart
+        )
+
+        if (!response) {
+          throw new Error("Failed to add ship insure to cart")
         }
 
         if (quantity === 0) {
           removeFromImageStorage(imageId)
         }
-        const updatedCart = rebuildBundles(response.data?.cartLinesUpdate?.cart)
+        const updatedCart = rebuildBundles(response)
         setCart(updatedCart)
       } catch (err: any) {
         console.error(err)
@@ -489,15 +516,18 @@ export function CartProvider({ children }: Props) {
     async (code: string) => {
       try {
         if (!cart) return
+
         const response = await client.request(cartDiscountCodesUpdate, {
           variables: {
             cartId: cart.id,
             discountCodes: [code],
           },
         })
+
         if (!response.data?.cartDiscountCodesUpdate?.cart) {
           throw new Error("Failed to apply discount code")
         }
+
         if (isBrowser) {
           const now = new Date()
           localStorage.setItem(
@@ -508,6 +538,7 @@ export function CartProvider({ children }: Props) {
             })
           )
         }
+
         const updatedCart = rebuildBundles(
           response.data?.cartDiscountCodesUpdate?.cart
         )
@@ -523,15 +554,18 @@ export function CartProvider({ children }: Props) {
   const removeDiscountCode = useCallback(async () => {
     try {
       if (!cart) return
+
       const response = await client.request(cartDiscountCodesUpdate, {
         variables: {
           cartId: cart.id,
           discountCodes: [],
         },
       })
+
       if (!response.data?.cartDiscountCodesUpdate?.cart) {
         throw new Error("Failed to remove discount code")
       }
+
       if (isBrowser) {
         const now = new Date()
         localStorage.setItem(
@@ -542,6 +576,7 @@ export function CartProvider({ children }: Props) {
           })
         )
       }
+
       const updatedCart = rebuildBundles(
         response.data?.cartDiscountCodesUpdate?.cart
       )
@@ -564,8 +599,10 @@ export function CartProvider({ children }: Props) {
     ) => {
       try {
         if (!cart) return
+
         setIsAddingToCart(true)
-        const response = await client.request(cartLinesAdd, {
+
+        const preShipInsure = await client.request(cartLinesAdd, {
           variables: {
             cartId: cart.id,
             lines: lineItems.map(item => ({
@@ -575,11 +612,21 @@ export function CartProvider({ children }: Props) {
             })),
           },
         })
-        if (!response.data?.cartLinesAdd?.cart) {
+
+        if (!preShipInsure.data?.cartLinesAdd?.cart) {
           throw new Error("Failed to add item to cart")
         }
+
+        const response = await addShipInsure(
+          preShipInsure.data?.cartLinesAdd?.cart
+        )
+
+        if (!response) {
+          throw new Error("Failed to add ship insure to cart")
+        }
+
         addToImageStorage(key, image, cart.id)
-        const updatedCart = rebuildBundles(response.data?.cartLinesAdd?.cart)
+        const updatedCart = rebuildBundles(response)
         setCart(updatedCart)
         // add necessary data to localStorage to be able to resume from cart later on
         addCustomToLocalStorage(cart.id, key, resumeData, sku, handle)
@@ -601,11 +648,12 @@ export function CartProvider({ children }: Props) {
       image: IGatsbyImageData,
       key: string
     ) => {
-      console.log("addSunglassesToCart", lineItems, image, key)
       try {
         if (!cart) return
+
         setIsAddingToCart(true)
-        const response = await client.request(cartLinesAdd, {
+
+        const preShipInsure = await client.request(cartLinesAdd, {
           variables: {
             cartId: cart.id,
             lines: lineItems.map(item => ({
@@ -615,21 +663,32 @@ export function CartProvider({ children }: Props) {
             })),
           },
         })
-        if (!response.data?.cartLinesAdd?.cart) {
+
+        if (!preShipInsure.data?.cartLinesAdd?.cart) {
           throw new Error("Failed to add item to cart")
         }
+
+        const response = await addShipInsure(
+          preShipInsure.data?.cartLinesAdd?.cart
+        )
+
+        if (!response) {
+          throw new Error("Failed to add ship insure to cart")
+        }
+
         if (isBrowser) {
           const now = new Date()
           localStorage.setItem(
             "checkout",
             JSON.stringify({
-              value: response.data?.cartLinesAdd?.cart,
+              value: response,
               expiry: now.getTime() + 2592000,
             })
           )
         }
+
         addToImageStorage(key, image, cart.id)
-        const updatedCart = rebuildBundles(response.data?.cartLinesAdd?.cart)
+        const updatedCart = rebuildBundles(response)
         setCart(updatedCart)
         setIsAddingToCart(false)
         setIsCartDrawerOpen(true)
@@ -646,13 +705,16 @@ export function CartProvider({ children }: Props) {
   const getAppliedDiscountCode = useCallback(() => {
     try {
       if (!cart) return ""
+
       if (cartIsEmpty(cart)) {
         const cookie = Cookies.get("tnDiscountCode")
         return cookie ? cookie : ""
       }
+
       if (cart.discountCodes.length > 0) {
         return cart.discountCodes[0].code
       }
+
       return ""
     } catch (err: any) {
       return ""
@@ -663,6 +725,7 @@ export function CartProvider({ children }: Props) {
   const getCorrectShipInsureVariant = (subtotal: number) => {
     try {
       const shipInsureProduct = shipInsureData.shopifyProduct
+
       const parseRange = (sku: string) => {
         const match = sku.match(/SI_LEVEL_(\d+)-(\d+)/)
         if (match) {
@@ -673,13 +736,16 @@ export function CartProvider({ children }: Props) {
         }
         return null
       }
+
       const correctVariant = shipInsureProduct.variants.find(variant => {
         const range = parseRange(variant.sku)
         return range && subtotal >= range.min && subtotal <= range.max
       })
+
       if (!correctVariant && subtotal > 1000) {
         return shipInsureProduct.variants[shipInsureProduct.variants.length - 1]
       }
+
       if (!correctVariant) {
         let maxRangeVariant = null
         let maxRange = 0
@@ -704,12 +770,14 @@ export function CartProvider({ children }: Props) {
       const shipInsureItem = cart.lines.edges.find(
         ({ node }) => node.merchandise.product.handle === "shipinsure"
       )
+
       if (shipInsureItem) {
         return (
           Number(cart.cost.subtotalAmount.amount) -
           Number(shipInsureItem?.node.merchandise.price.amount)
         ).toFixed(2)
       }
+
       return cart.cost.subtotalAmount.amount
     } catch (e) {
       return cart.cost.subtotalAmount.amount
@@ -721,9 +789,11 @@ export function CartProvider({ children }: Props) {
     try {
       const subtotal = getSubtotalWithoutShipInsure(cart)
       const correctVariant = getCorrectShipInsureVariant(Number(subtotal))
+
       const currentShipInsure = cart.lines.edges.find(
         ({ node }) => node.merchandise.product.handle === "shipinsure"
       )
+
       // only add ship insure if it's not already in cart, and is enabled
       const hasShipInsureInCart = currentShipInsure !== undefined
 
@@ -744,6 +814,7 @@ export function CartProvider({ children }: Props) {
         if (currentShipInsure.node.merchandise.sku) {
           removeFromImageStorage(currentShipInsure.node.merchandise.sku)
         }
+
         return response.data?.cartLinesRemove?.cart
       }
 
@@ -752,7 +823,6 @@ export function CartProvider({ children }: Props) {
           correctVariant.storefrontId !== currentShipInsure.node.merchandise.id
         ) {
           // UPDATE SHIP INSURE
-
           // remove current ship insure
           await client.request(cartLinesRemove, {
             variables: {
@@ -760,9 +830,11 @@ export function CartProvider({ children }: Props) {
               lineIds: [currentShipInsure.node.id],
             },
           })
+
           if (currentShipInsure.node.merchandise.sku) {
             removeFromImageStorage(currentShipInsure.node.merchandise.sku)
           }
+
           // add correct ship insure
           const response = await client.request(cartLinesAdd, {
             variables: {
@@ -775,6 +847,7 @@ export function CartProvider({ children }: Props) {
               ],
             },
           })
+
           if (!response.data?.cartLinesAdd?.cart) {
             throw new Error("Failed to add correct ship insure item to cart")
           }
@@ -785,6 +858,7 @@ export function CartProvider({ children }: Props) {
               .childImageSharp.gatsbyImageData,
             cart.id
           )
+
           return response.data?.cartLinesAdd?.cart
         }
       }
@@ -796,20 +870,24 @@ export function CartProvider({ children }: Props) {
             quantity: 1,
           },
         ]
+
         const response = await client.request(cartLinesAdd, {
           variables: {
             cartId: cart.id,
             lines: lineItems,
           },
         })
+
         addToImageStorage(
           correctVariant.sku,
           shipInsureData.shopifyProduct.featuredImage.localFile.childImageSharp
             .gatsbyImageData,
           cart.id
         )
+
         return response.data?.cartLinesAdd?.cart
       }
+
       return cart
     } catch (err: any) {
       console.log("error", err)
@@ -823,6 +901,7 @@ export function CartProvider({ children }: Props) {
       const shipInsureItem = cart.lines.edges.find(
         ({ node }) => node.merchandise.product.handle === "shipinsure"
       )
+
       if (shipInsureItem) {
         const response = await client.request(cartLinesRemove, {
           variables: {
@@ -830,12 +909,15 @@ export function CartProvider({ children }: Props) {
             lineIds: [shipInsureItem.node.id],
           },
         })
+
         // remove ship insure from local storage
         if (shipInsureItem.node.merchandise.sku) {
           removeFromImageStorage(shipInsureItem.node.merchandise.sku)
         }
+
         return response.data?.cartLinesRemove?.cart
       }
+
       return cart
     } catch (err: any) {
       console.log("error", err)
@@ -847,7 +929,9 @@ export function CartProvider({ children }: Props) {
     async (enableShipInsure: boolean) => {
       try {
         if (!cart) return
+
         setIsRemovingFromCart(true)
+
         const response = await client.request(cartAttributesUpdate, {
           variables: {
             cartId: cart.id,
@@ -859,6 +943,7 @@ export function CartProvider({ children }: Props) {
             ],
           },
         })
+
         if (!response.data?.cartAttributesUpdate?.cart) {
           throw new Error("Failed to update ship insure attribute")
         }
@@ -870,7 +955,9 @@ export function CartProvider({ children }: Props) {
           const updatedCheckoutWithShipInsure = await addShipInsure(
             cartWithAttr
           )
+
           if (!updatedCheckoutWithShipInsure) return
+
           const updatedCart = rebuildBundles(updatedCheckoutWithShipInsure)
           setCart(updatedCart)
           setIsRemovingFromCart(false)
@@ -879,7 +966,9 @@ export function CartProvider({ children }: Props) {
           const updatedCheckoutWithoutShipInsure = await deleteShipInsure(
             cartWithAttr
           )
+
           if (!updatedCheckoutWithoutShipInsure) return
+
           const updatedCart = rebuildBundles(updatedCheckoutWithoutShipInsure)
           setCart(updatedCart)
           setIsRemovingFromCart(false)
@@ -910,6 +999,7 @@ export function CartProvider({ children }: Props) {
           // eslint-disable-next-line no-return-await
           return await getNewCart()
         }
+
         return localCart.value
       }
       try {
@@ -941,6 +1031,7 @@ export function CartProvider({ children }: Props) {
             console.log("localCart exists")
             localCart = JSON.parse(localCart) as LocalCart
             const localCartId = localCart.value.id
+
             if (localCartId === response.data.cart.id) {
               console.log("ids match")
               console.log("setting cart from local storage")

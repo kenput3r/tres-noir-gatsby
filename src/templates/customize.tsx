@@ -18,7 +18,7 @@ import {
   ShopifyProduct,
   ShopifyProductVariant,
 } from "../types/customize"
-import { ImageStorage } from "../types/checkout"
+import { ImageStorage } from "../contexts/storefront-cart/types/storefront-cart"
 import { useDiscountedPricing } from "../hooks/useDiscountedPricing"
 
 const Page = styled.div`
@@ -138,7 +138,7 @@ const Customize = ({
     contentful: contentfulProduct?.variants && contentfulProduct.variants[0],
     shopify: shopifyProduct.variants[0],
   })
-  const [currentPrice, setCurrentPrice] = useState<string>(
+  const [currentPrice, setCurrentPrice] = useState<number>(
     shopifyProduct.variants[0].price
   )
   const [currentImage, setCurrentImage] = useState({
@@ -213,7 +213,7 @@ const Customize = ({
         totalPrice += Number(el.price)
       }
     }
-    setCurrentPrice(totalPrice.toFixed(2))
+    setCurrentPrice(Number(totalPrice.toFixed(2)))
   }, [selectedVariants, isApplicable, discountedPrice, variant])
 
   /* UPDATE IMAGE */

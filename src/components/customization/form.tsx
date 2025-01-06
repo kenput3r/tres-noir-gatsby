@@ -17,8 +17,10 @@ import {
 import { CustomizeContext } from "../../contexts/customize"
 import { RxInfoContext } from "../../contexts/rxInfo"
 import { FaQuestionCircle } from "react-icons/fa"
-import { LocalCheckout } from "../../types/checkout"
-import { rxType } from "../../types/checkout"
+import type {
+  LocalCart,
+  rxType,
+} from "../../contexts/storefront-cart/types/storefront-cart"
 import { isDiscounted, formatPrice } from "../../helpers/shopify"
 import ReadersTable from "../readers-table"
 // import { handleRxFromAttribute } from "../../contexts/rxInfo"
@@ -375,14 +377,13 @@ const Form = ({
           const customsStorage = JSON.parse(
             customsResume
           ) as SelectedVariantStorage
-          const checkoutStorage = JSON.parse(checkoutString) as LocalCheckout
-          const customInCheckout = checkoutStorage.value?.tnLineItems?.find(
+          const cartStorage = JSON.parse(checkoutString) as LocalCart
+          const customInCart = cartStorage.value?.tnLineItems?.find(
             el => el.id === custom_id
           )
-          const rxAttr =
-            customInCheckout?.lineItems[1].shopifyItem.customAttributes.find(
-              el => el.key === "Prescription"
-            )
+          const rxAttr = customInCart?.lineItems[1].shopifyItem.attributes.find(
+            el => el.key === "Prescription"
+          )
           if (rxAttr && rxAttr.value !== "Non-Prescription") {
             // set Rx
             const prescription = JSON.parse(rxAttr.value) as rxType

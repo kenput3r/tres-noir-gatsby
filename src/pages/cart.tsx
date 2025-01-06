@@ -304,8 +304,6 @@ const Cart = ({
     updateShipInsureAttribute,
   } = useCart()
 
-  console.log("cart in cart page", cart)
-
   const { rxInfo, rxInfoDispatch } = useContext(RxInfoContext)
 
   const { setSelectedVariants, setCurrentStep, setHasSavedCustomized } =
@@ -321,7 +319,7 @@ const Cart = ({
   useEffect(() => {
     if (cart) {
       if (cart.lines.edges.length > 0) {
-        // startedCheckoutGTMEvent(cart)
+        startedCheckoutGTMEvent(cart)
       }
     }
   }, [cart])
@@ -402,22 +400,24 @@ const Cart = ({
     loadingOverlay.current?.classList.remove("no-events")
   }
 
-  const totalSum = lineItems => {
+  const totalSum = (lineItems: tnSubItem[]) => {
     let sum = 0
     lineItems.forEach(item => {
       const hasDiscount = item.shopifyItem.discountAllocations.length > 0
-      let price = item.shopifyItem.merchandise.price.amount
+      let price = parseFloat(item.shopifyItem.merchandise.price.amount)
       if (hasDiscount) {
         price =
           Number(price) -
-          Number(item.shopifyItem.discountAllocations[0].allocatedAmount.amount)
+          Number(
+            item.shopifyItem.discountAllocations[0].discountedAmount.amount
+          )
       }
-      sum += parseFloat(price)
+      sum += price
     })
     return sum.toFixed(2)
   }
 
-  const totalOriginalSum = lineItems => {
+  const totalOriginalSum = (lineItems: tnSubItem[]) => {
     let sum = 0
     lineItems.forEach(item => {
       let price = item.shopifyItem.merchandise.price.amount
@@ -425,7 +425,7 @@ const Cart = ({
     })
     return sum.toFixed(2)
   }
-  const totalCompareAt = lineItems => {
+  const totalCompareAt = (lineItems: tnSubItem[]) => {
     let sum = 0
     lineItems.forEach(item => {
       let price = item.shopifyItem.merchandise.compareAtPrice
@@ -436,7 +436,7 @@ const Cart = ({
     return sum.toFixed(2)
   }
 
-  const checkForDiscountInBundle = (lineItems: any): boolean => {
+  const checkForDiscountInBundle = (lineItems: tnSubItem[]): boolean => {
     return lineItems.some(
       item => item.shopifyItem.discountAllocations.length > 0
     )
@@ -466,7 +466,6 @@ const Cart = ({
   }
 
   const renderStandardProduct = (item: tnItem) => {
-    console.log("renderStandardProduct item", item)
     // check if product is shipinsure, if so, return the shipinsure component
 
     const line = item.lineItems[0].shopifyItem
@@ -620,7 +619,7 @@ const Cart = ({
               {image ? (
                 <GatsbyImage
                   image={image}
-                  alt={item.merchandise.title ?? "ShipInsure"}
+                  alt={item.merchandise.product.title ?? "ShipInsure"}
                 />
               ) : (
                 <StaticImage
@@ -633,7 +632,7 @@ const Cart = ({
               <div>
                 <p className="title">
                   <Link to={`/products/${item.merchandise.product.handle}`}>
-                    {item.merchandise.title}
+                    {item.merchandise.product.title}
                   </Link>
                 </p>
                 <div className="sub-title">
@@ -657,7 +656,6 @@ const Cart = ({
   }
 
   const renderSunglasses = (item: tnItem) => {
-    console.log("renderSunglasses item", item)
     const sunglassesStepMap = new Map()
     sunglassesStepMap.set(1, "CASE")
     const hasDiscount = checkForDiscountInBundle(item.lineItems)
