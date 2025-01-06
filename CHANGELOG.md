@@ -1,5 +1,19 @@
 # CHANGELOG
 
+## v.0.11 - 2025-01-06
+
+**Breaking Changes**
+
+- Shopify JS-Buy SDK migration to Shopify Storefront API Client.
+  - The Cart Context was refactored and migrated to use GraphQL and the Storefront API Client.
+  - Typegen was added.
+  - Features updated and now using the new context:
+    - cart
+    - cart drawer
+    - customized items (glasses)
+    - shipinsure
+    - discounts
+
 ## v.0.10 - 2024-12-06
 
 **Breaking Changes**
