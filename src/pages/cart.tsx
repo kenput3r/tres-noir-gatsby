@@ -458,7 +458,7 @@ const Cart = ({
       return spl.slice(0, -2)
     }
     if (subItem.shopifyItem.merchandise.title === "Default Title") {
-      return subItem.shopifyItem.merchandise.title
+      return subItem.shopifyItem.merchandise.product.title
     } else {
       return `${subItem.shopifyItem.merchandise.product.title} - ${subItem.shopifyItem.merchandise.title}`
     }
