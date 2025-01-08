@@ -524,7 +524,7 @@ const Step5 = (props: {
           </span>
         </p>
         <p className="substotal">
-          <span>Sub-Total: </span> <span>${currentPrice}</span>
+          <span>Sub-Total: </span> <span>${currentPrice.toFixed(2)}</span>
         </p>
       </div>
       <div className="row">
