@@ -202,7 +202,7 @@ const Customize = ({
         totalPrice += Number(el.price)
       }
     }
-    setCurrentPrice(Number(totalPrice.toFixed(2)))
+    setCurrentPrice(totalPrice)
   }, [selectedVariants, isApplicable, discountedPrice, variant])
 
   /* UPDATE IMAGE */
@@ -268,7 +268,7 @@ const Customize = ({
               />
               <div className="current-price">
                 <p>
-                  <span>${currentPrice}</span>
+                  <span>${currentPrice.toFixed(2)}</span>
                 </p>
               </div>
             </div>
@@ -279,7 +279,7 @@ const Customize = ({
               <CustomizationProgress step={currentStep} />
             </div>
             <p className="current-price desktop">
-              <span>${currentPrice}</span>
+              <span>${currentPrice.toFixed(2)}</span>
             </p>
             <div className="current-step">
               {currentStep === 1 && <Step1 handle={shopifyProduct.handle} />}
