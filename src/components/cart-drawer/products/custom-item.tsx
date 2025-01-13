@@ -1,7 +1,10 @@
-import React, { useContext, useRef } from "react"
-import { tnItem } from "../../../types/checkout"
+import React, { useRef } from "react"
+import type {
+  tnItem,
+  tnSubItem,
+} from "../../../contexts/storefront-cart/types/storefront-cart"
 import { GatsbyImage } from "gatsby-plugin-image"
-import { CartContext } from "../../../contexts/cart"
+import { useCart } from "../../../contexts/storefront-cart"
 import styled from "styled-components"
 import { VscClose } from "react-icons/vsc"
 import { Link } from "gatsby"
@@ -27,8 +30,7 @@ const Component = styled.div`
 
 const CustomItem = (props: { item: tnItem }) => {
   const { item } = props
-  const { removeProductsFromCart, setIsCartDrawerOpen } =
-    useContext(CartContext)
+  const { removeProductsFromCart, setIsCartDrawerOpen } = useCart()
 
   const loadingOverlay = useRef<HTMLDivElement>(null)
 
@@ -51,16 +53,18 @@ const CustomItem = (props: { item: tnItem }) => {
     return length - 2
   }
 
-  const totalSum = lineItems => {
+  const totalSum = (lineItems: tnSubItem[]) => {
     let sum = 0
     lineItems.forEach(item => {
       // new discounts
       const hasDiscount = item.shopifyItem.discountAllocations.length > 0
-      let price = item.shopifyItem.variant.price.amount
+      let price = item.shopifyItem.merchandise.price.amount
       if (hasDiscount) {
         price = (
           Number(price) -
-          Number(item.shopifyItem.discountAllocations[0].allocatedAmount.amount)
+          Number(
+            item.shopifyItem.discountAllocations[0].discountedAmount.amount
+          )
         ).toFixed(2)
       }
       // new discounts
@@ -69,27 +73,27 @@ const CustomItem = (props: { item: tnItem }) => {
     return sum.toFixed(2)
   }
 
-  const totalCompareAt = lineItems => {
+  const totalCompareAt = (lineItems: tnSubItem[]) => {
     let sum = 0
     lineItems.forEach(item => {
-      let price = item.shopifyItem.variant.compareAtPrice
-        ? item.shopifyItem.variant.compareAtPrice.amount
+      let price = item.shopifyItem.merchandise.compareAtPrice
+        ? item.shopifyItem.merchandise.compareAtPrice.amount
         : "0.00"
       sum += parseFloat(price)
     })
     return sum.toFixed(2)
   }
 
-  const totalOriginalSum = lineItems => {
+  const totalOriginalSum = (lineItems: tnSubItem[]) => {
     let sum = 0
     lineItems.forEach(item => {
-      let price = item.shopifyItem.variant.price.amount
+      let price = item.shopifyItem.merchandise.price.amount
       sum += parseFloat(price)
     })
     return sum.toFixed(2)
   }
 
-  const checkForDiscountInBundle = (lineItems: any): boolean => {
+  const checkForDiscountInBundle = (lineItems: tnSubItem[]): boolean => {
     return lineItems.some(
       item => item.shopifyItem.discountAllocations.length > 0
     )
@@ -121,7 +125,7 @@ const CustomItem = (props: { item: tnItem }) => {
           <div className="product-image">
             <GatsbyImage
               image={item.image}
-              alt={item.lineItems[0].shopifyItem.title}
+              alt={item.lineItems[0].shopifyItem.merchandise.product.title}
             />
           </div>
         )}
@@ -130,12 +134,14 @@ const CustomItem = (props: { item: tnItem }) => {
           <div className="product-titles">
             <Link
               onClick={evt => setIsCartDrawerOpen(false)}
-              to={`/products/${item.lineItems[0].shopifyItem.variant.product.handle}`}
+              to={`/products/${item.lineItems[0].shopifyItem.merchandise.product.handle}`}
             >
-              <p className="title">{item.lineItems[0].shopifyItem.title}</p>
+              <p className="title">
+                {item.lineItems[0].shopifyItem.merchandise.product.title}
+              </p>
             </Link>
             <p className="subtitle">
-              {formatItemTitle(item.lineItems[0].shopifyItem.variant.title)}
+              {formatItemTitle(item.lineItems[0].shopifyItem.merchandise.title)}
             </p>
             <p className="subtitle">
               + {customizationSize(item.lineItems.length)} Customizations
@@ -143,7 +149,8 @@ const CustomItem = (props: { item: tnItem }) => {
             <p className="subtitle">
               +{" "}
               {formatCaseName(
-                item.lineItems[item.lineItems.length - 1].shopifyItem.title
+                item.lineItems[item.lineItems.length - 1].shopifyItem
+                  .merchandise.product.title
               )}
             </p>
           </div>

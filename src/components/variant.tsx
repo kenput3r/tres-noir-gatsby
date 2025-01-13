@@ -4,7 +4,7 @@ import { Link } from "gatsby"
 import { GatsbyImage } from "gatsby-plugin-image"
 import ProductAction from "./collection-product-action"
 import type { ContentfulProductVariant } from "../types/contentful"
-import { isDiscounted } from "../helpers/shopify"
+import { isDiscounted, formatPrice } from "../helpers/shopify"
 import Badge from "./badge"
 
 const Component = styled.div`
@@ -93,8 +93,8 @@ const Component = styled.div`
 
 type Props = {
   contentfulData: ContentfulProductVariant
-  price: string
-  compareAtPrice: string
+  price: number
+  compareAtPrice: number
   productHandle: string
   name: string
   badge: { label: string; color: string } | null
@@ -128,11 +128,13 @@ const Variant = ({
       <h3>
         <Link to={link}>{name}</Link>
       </h3>
-      {price !== "0.00" && price !== "" && (
+      {price !== 0 && (
         <div className="price-container">
-          <span>${price} USD</span>
-          {compareAtPrice && isDiscounted(price, compareAtPrice) && (
-            <span className="strikethrough">${compareAtPrice} USD</span>
+          <span>${formatPrice(price)} USD</span>
+          {!!compareAtPrice && isDiscounted(price, compareAtPrice) && (
+            <span className="strikethrough">
+              ${formatPrice(compareAtPrice)} USD
+            </span>
           )}
         </div>
       )}

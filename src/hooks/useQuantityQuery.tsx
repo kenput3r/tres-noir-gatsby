@@ -17,7 +17,7 @@ export function useQuantityQuery(handle: string, size: number) {
 
   const fetchQuery = async () => {
     try {
-      const inventoryQuery = `
+      const inventoryQuery = `#graphql
         query variantInStock($handle:String!, $size: Int!) {
           product(handle: $handle) {
             variants(first: $size) {

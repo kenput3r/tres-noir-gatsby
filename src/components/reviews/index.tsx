@@ -1,4 +1,4 @@
-import React, { useRef } from "react"
+import React from "react"
 import styled from "styled-components"
 import { useReviews } from "../../contexts/reviews"
 import ReviewList from "./review-list"
@@ -42,8 +42,6 @@ type Props = {
 const Reviews = ({ reviewListRef }: Props) => {
   const { data, isLoading } = useReviews()
 
-  // const reviewListRef = useRef<HTMLDivElement>(null)
-
   const scrollToTop = () => {
     const isBrowser = typeof window !== "undefined"
     if (isBrowser && reviewListRef.current) {
@@ -51,6 +49,28 @@ const Reviews = ({ reviewListRef }: Props) => {
         reviewListRef.current?.scrollIntoView({ behavior: "smooth" })
       }, 500)
     }
+  }
+
+  // If the environment is development or staging, show the review form and empty reviews
+  if (
+    process.env.GATSBY_ENVIRONMENT === "development" ||
+    process.env.GATSBY_ENVIRONMENT === "staging"
+  ) {
+    return (
+      <Component>
+        <ReviewForm
+          bottomline={{
+            total_review: 0,
+            average_score: 0,
+            total_organic_reviews: 0,
+            organic_average_score: 0,
+            star_distribution: {},
+            custom_fields_bottomline: {},
+          }}
+        />
+        <ReviewsEmpty />
+      </Component>
+    )
   }
 
   return (

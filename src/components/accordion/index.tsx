@@ -1,8 +1,7 @@
-import React, { memo, RefObject, useState } from "react"
+import React, { memo, useState } from "react"
 import { useSpring, a } from "react-spring"
 import { usePrevious, useMeasure } from "./helpers"
 import { Frame, Title, Content, toggle } from "./styles"
-import * as Icons from "./icons"
 
 interface AccordionItem {
   children?: React.ReactNode

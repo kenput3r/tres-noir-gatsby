@@ -1,7 +1,7 @@
 import React from "react"
 import ReactDOM from "react-dom/client"
 import { CustomizeProvider } from "./src/contexts/customize"
-import { CartProvider } from "./src/contexts/cart"
+import { CartProvider } from "./src/contexts/storefront-cart"
 import { RxInfoContextProvider } from "./src/contexts/rxInfo"
 import { ErrorModalProvider } from "./src/contexts/error"
 import ErrorBoundary from "./src/components/error-boundary"

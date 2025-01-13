@@ -87,7 +87,7 @@ const Component = styled.footer`
     @media (max-width: 600px) {
       flex-direction: column;
     }
-    :nth-child(2) {
+    &:nth-child(2) {
       margin-top: -16px;
       @media (max-width: 600px) {
         margin-top: 2px;
@@ -112,11 +112,11 @@ const Component = styled.footer`
     padding-right: 55px;
   }
   .foot-icon {
-    :hover,
+    &:hover,
     .focus {
       color: #262626;
     }
-    :active {
+    &:active {
       color: #4f4f4f;
     }
   }

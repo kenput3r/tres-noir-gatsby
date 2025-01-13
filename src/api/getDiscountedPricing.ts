@@ -54,7 +54,7 @@ export default async function getDiscountedPricing(
       const roundedDiscountAmount = roundShopify(discountAmount)
       return {
         id,
-        discountedPrice: roundedDiscountAmount,
+        discountedPrice: Number(roundedDiscountAmount),
       }
     } else if (discountValue.__typename === "DiscountPercentage") {
       const { percentage } = discountValue
@@ -62,7 +62,7 @@ export default async function getDiscountedPricing(
       const roundedDiscountAmount = roundShopify(discountAmount)
       return {
         id,
-        discountedPrice: roundedDiscountAmount,
+        discountedPrice: Number(roundedDiscountAmount),
       }
     }
     return res
@@ -97,11 +97,12 @@ export default async function getDiscountedPricing(
 
   // END HELPER FUNCTIONS
   try {
+    const API_VERSION = process.env.GATSBY_SHOPIFY_API_VERSION ?? "2025-01"
     const { offer, handle, productId, prices } = JSON.parse(req.body)
 
     const adminToken: string = process.env.GATSBY_STORE_TOKEN ?? ""
     const storeName = process.env.GATSBY_STORE_MY_SHOPIFY ?? ""
-    const url = `https://${storeName}/admin/api/2022-04/graphql.json`
+    const url = `https://${storeName}/admin/api/${API_VERSION}/graphql.json`
 
     const variables = {
       productId: `gid://shopify/Product/${productId}`,
@@ -229,7 +230,7 @@ export default async function getDiscountedPricing(
         variables,
       }),
     })
-    const responseJson = await response.json()
+    const responseJson: any = await response.json()
     if (responseJson.errors) {
       return res.status(400).json({
         error:
@@ -359,7 +360,7 @@ type PricesType = {
 
 type DiscountedPricesType = {
   id: string
-  discountedPrice: string
+  discountedPrice: number
 }
 
 type ShopifyApplicableVariant = {
