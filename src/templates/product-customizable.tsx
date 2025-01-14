@@ -4,16 +4,15 @@ import React, {
   useContext,
   useRef,
   ChangeEvent,
-  useCallback,
 } from "react"
-import { Link, graphql, useStaticQuery } from "gatsby"
+import { Link, graphql } from "gatsby"
 import { StaticImage, GatsbyImage as Img } from "gatsby-plugin-image"
 import styled from "styled-components"
 import { useQuantityQuery } from "../hooks/useQuantityQuery"
 import ProductCarousel from "../components/product-carousel"
 import Layout from "../components/layout"
 import SEO from "../components/seo"
-import { CartContext } from "../contexts/cart"
+import { useCart } from "../contexts/storefront-cart"
 import {
   addedToCartGTMEvent,
   addedCustomizedToCartGTMEvent,
@@ -34,7 +33,7 @@ import ViewAsType from "../components/view-as-type"
 import Reviews from "../components/reviews"
 import { ReviewsProvider } from "../contexts/reviews"
 import type { YotpoSourceProductBottomLine } from "../types/yotpo"
-import { isDiscounted } from "../helpers/shopify"
+import { isDiscounted, formatPrice } from "../helpers/shopify"
 import Divider from "../components/divider"
 import Badge from "../components/badge"
 import ProductBottomline from "../components/product-bottomline"
@@ -129,7 +128,7 @@ const Page = styled.div`
       &[data-active="true"] {
         border-color: #000;
       }
-      :hover {
+      &:hover {
         cursor: pointer;
       }
       .gatsby-image-wrapper {
@@ -187,7 +186,7 @@ const Page = styled.div`
       a {
         color: var(--color-grey-dark);
         text-decoration: none;
-        :hover {
+        &:hover {
           text-decoration: underline;
         }
       }
@@ -425,8 +424,7 @@ const ProductCustomizable = ({ data, location: any }: Props) => {
   }
 
   // cart
-  const { addProductToCart, isAddingToCart, addSunglassesToCart } =
-    useContext(CartContext)
+  const { addProductToCart, isAddingToCart, addSunglassesToCart } = useCart()
 
   const createClearanceSKUs = (data): string[] => {
     try {
@@ -701,7 +699,7 @@ const ProductCustomizable = ({ data, location: any }: Props) => {
           {
             variantId: selectedVariant.shopify.storefrontId,
             quantity: 1,
-            customAttributes: [
+            attributes: [
               { key: "customizationId", value: matchingKey },
               { key: "customizationStep", value: "1" },
             ],
@@ -709,7 +707,7 @@ const ProductCustomizable = ({ data, location: any }: Props) => {
           {
             variantId: selectedCase.storefrontId,
             quantity: 1,
-            customAttributes: [
+            attributes: [
               { key: "customizationId", value: matchingKey },
               { key: "customizationStep", value: "2" },
             ],
@@ -1162,9 +1160,11 @@ const ProductCustomizable = ({ data, location: any }: Props) => {
                         <div className="left">
                           <div className="current-price-container">
                             <span className="starting-at">STARTING AT</span>
-                            <span>${selectedVariant.shopify.price} USD</span>
+                            <span>
+                              ${formatPrice(selectedVariant.shopify.price)} USD
+                            </span>
                           </div>
-                          {selectedVariant.shopify.compareAtPrice &&
+                          {!!selectedVariant.shopify.compareAtPrice &&
                             isDiscounted(
                               selectedVariant.shopify.price,
                               selectedVariant.shopify.compareAtPrice

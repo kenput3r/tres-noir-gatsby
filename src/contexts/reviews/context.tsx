@@ -1,9 +1,6 @@
 import { createContext } from "react"
 import { ReviewContextType } from "./types"
-import {
-  YotpoCreateFormData,
-  YotpoRetrieveReviewsData,
-} from "../../types/yotpo"
+import { YotpoCreateFormData } from "../../types/yotpo"
 
 const defaultContext: ReviewContextType = {
   isLoading: true,

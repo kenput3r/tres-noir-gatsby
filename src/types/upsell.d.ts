@@ -37,8 +37,8 @@ export interface UpsellItemVariant {
   inventoryQuantity: number
   legacyResourceId: string
   position: number
-  price: string
-  compareAtPrice: string
+  price: number
+  compareAtPrice: number
   selectedOptions: {
     name: string
   }[]

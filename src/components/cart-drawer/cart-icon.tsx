@@ -1,9 +1,9 @@
 import React, { useContext } from "react"
 import { Link } from "gatsby"
-import { CartContext } from "../../contexts/cart"
+import { useCart } from "../../contexts/storefront-cart"
 import { StaticImage } from "gatsby-plugin-image"
 import styled from "styled-components"
-import { tnItem } from "../../types/checkout"
+import type { tnItem } from "../../contexts/storefront-cart/types/storefront-cart"
 
 const Component = styled.div`
   .cart-icon-container {
@@ -34,10 +34,10 @@ const Component = styled.div`
 
 const CartIcon = () => {
   let cartCount = 0
-  const { checkout } = useContext(CartContext)
-  if (checkout) {
-    if (checkout.tnLineItems) {
-      checkout.tnLineItems.forEach((item: tnItem) => {
+  const { cart } = useCart()
+  if (cart) {
+    if (cart.tnLineItems) {
+      cart.tnLineItems.forEach((item: tnItem) => {
         if (!item.isCustom) {
           cartCount += item.lineItems[0].shopifyItem.quantity
         } else {
@@ -46,9 +46,7 @@ const CartIcon = () => {
       })
     } else {
       cartCount =
-        checkout.lineItems && checkout.lineItems.length
-          ? checkout.lineItems.length
-          : 0
+        cart.lines && cart.lines.edges.length ? cart.lines.edges.length : 0
     }
   }
   return (

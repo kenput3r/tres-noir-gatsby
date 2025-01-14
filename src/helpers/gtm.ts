@@ -7,7 +7,7 @@ import type {
   CollectionInfo,
   ViewedCollectionPayload,
 } from "../types/gtm"
-import type { Checkout } from "../types/checkout"
+import type { Cart } from "../contexts/storefront-cart/types/storefront-cart"
 
 // Check if window is defined (so if in the browser or in node.js).
 const isBrowser = typeof window !== "undefined"
@@ -160,29 +160,30 @@ export const addedCustomizedToCartGTMEvent = (
   }
 }
 
-export const startedCheckoutGTMEvent = (checkoutInfo: Checkout) => {
+export const startedCheckoutGTMEvent = (cartInfo: Cart) => {
   if (isBrowser) {
     const payload: StartedCheckoutPayload = {
       $event_id: new Date().getTime(),
-      $value: Number(checkoutInfo.totalPrice),
-      // Categories: ["Fiction", "Children", "Classics"],
-      CheckoutURL: checkoutInfo.webUrl,
+      $value: Number(cartInfo.cost.totalAmount.amount),
+      CheckoutURL: cartInfo.checkoutUrl,
       ItemNames: [],
       Items: [],
     }
-    checkoutInfo.lineItems
+    cartInfo.lines.edges
       .map(lineItem => ({
-        ItemPrice: Number(lineItem.variant.price),
-        ImageURL: lineItem.variant.image.src,
+        ItemPrice: Number(lineItem.node.merchandise.price),
+        ImageURL: lineItem.node.merchandise.image?.url || "",
         // ProductCategories: ["Fiction", "Children"],
-        ProductID: lineItem.variant.id.split(
+        ProductID: lineItem.node.merchandise.id.split(
           "gid://shopify/ProductVariant/"
         )[1],
-        ProductName: lineItem.title,
+        ProductName: lineItem.node.merchandise.product.title,
         // ProductURL: "http://www.example.com/path/to/product",
-        Quantity: lineItem.quantity,
-        RowTotal: Number(lineItem.variant.price) * Number(lineItem.quantity),
-        SKU: lineItem.variant.sku,
+        Quantity: lineItem.node.quantity,
+        RowTotal:
+          Number(lineItem.node.merchandise.price) *
+          Number(lineItem.node.quantity),
+        SKU: lineItem.node.merchandise.sku || "",
       }))
       .forEach(lineItem => {
         payload.Items.push(lineItem)

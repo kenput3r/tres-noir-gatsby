@@ -35,13 +35,13 @@ const ProductImageGrid = (props: { product: any; selectedVariant: any }) => {
         id: product.featuredImage.localFile.id,
       })
     }
-    if (product.images) {
-      product.images.forEach(element => {
-        if (element.localFile.id !== product.featuredImage.localFile.id)
+    if (product.media) {
+      product.media.forEach(element => {
+        if (element.image.localFile.id !== product.featuredImage.localFile.id)
           imageSet.push({
-            data: element.localFile.childImageSharp.gatsbyImageData,
-            title: element.altText,
-            id: element.localFile.id,
+            data: element.image.localFile.childImageSharp.gatsbyImageData,
+            title: element.image.altText,
+            id: element.image.localFile.id,
           })
       })
     }

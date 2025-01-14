@@ -45,12 +45,12 @@ const Component = styled.div`
       font-size: 1rem;
       fill: white;
     }
-    :hover,
-    :focus {
+    &:hover,
+    &:focus {
       background-color: #262626;
       border-color: #262626;
     }
-    :active {
+    &:active {
       background-color: #4f4f4f;
       border-color: #4f4f4f;
     }
