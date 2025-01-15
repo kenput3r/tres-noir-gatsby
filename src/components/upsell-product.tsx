@@ -1,13 +1,13 @@
-import React, { useState, ChangeEvent, useEffect } from "react"
+import React, { useState, useContext, ChangeEvent, useEffect } from "react"
 import { useQuantityQuery } from "../hooks/useQuantityQuery"
 import { GatsbyImage, StaticImage } from "gatsby-plugin-image"
 import { Link } from "gatsby"
-import { useCart } from "../contexts/storefront-cart"
+import { CartContext } from "../contexts/cart"
 import styled from "styled-components"
 import { addedToCartGTMEvent } from "../helpers/gtm"
 import { UpsellItem, UpsellItemVariant } from "../types/upsell"
 import AddToCartButton from "./add-to-cart-button"
-import { isDiscounted, formatPrice } from "../helpers/shopify"
+import { isDiscounted } from "../helpers/shopify"
 import Badge from "./badge"
 
 const Component = styled.article`
@@ -59,12 +59,12 @@ const Component = styled.article`
   .upsell-image {
     position: relative;
     max-width: 280px;
-    &:hover {
+    :hover {
       opacity: 0.7;
     }
   }
   .product-title {
-    &:hover {
+    :hover {
       text-decoration: underline;
     }
   }
@@ -140,7 +140,7 @@ const UpsellProduct = ({
     if (firstVariant) setSelectedVariant(firstVariant)
   }, [quantityLevels])
 
-  const { addProductToCart, isAddingToCart } = useCart()
+  const { addProductToCart, isAddingToCart } = useContext(CartContext)
 
   const handleAddToCart = () => {
     const id = selectedVariant.storefrontId
@@ -241,15 +241,15 @@ const UpsellProduct = ({
           </div>
           <div className="price-container">
             <span className="current">
-              <span>${formatPrice(selectedVariant.price)} USD</span>
+              <span>${selectedVariant.price}</span>
             </span>
-            {selectedVariant.compareAtPrice > 0 &&
+            {selectedVariant.compareAtPrice &&
               isDiscounted(
                 selectedVariant.price,
-                selectedVariant.compareAtPrice ?? 0
+                selectedVariant.compareAtPrice ?? "0.00"
               ) && (
                 <span className="compare-at">
-                  ${formatPrice(selectedVariant.compareAtPrice)} USD
+                  ${selectedVariant.compareAtPrice}
                 </span>
               )}
           </div>

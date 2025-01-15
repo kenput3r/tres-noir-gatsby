@@ -29,7 +29,7 @@ const VotesContainer = styled.div`
   }
   svg {
     fill: var(--color-grey-dark);
-    &:hover {
+    :hover {
       fill: #666666;
       cursor: pointer;
     }

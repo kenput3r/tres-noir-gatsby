@@ -6,6 +6,7 @@ import {
 } from "react-compare-slider"
 import styled from "styled-components"
 import { useWindowSize } from "react-use"
+import { StaticImage } from "gatsby-plugin-image"
 
 const Component = styled.section`
   margin-bottom: 35px;

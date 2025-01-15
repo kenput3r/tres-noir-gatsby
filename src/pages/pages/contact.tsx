@@ -3,6 +3,7 @@ import styled from "styled-components"
 import Layout from "../../components/layout"
 import SEO from "../../components/seo"
 import { FiPhone, FiMail } from "react-icons/fi"
+import { TiSortNumerically } from "react-icons/ti"
 
 const Page = styled.div`
   h1 {
@@ -21,7 +22,7 @@ const Page = styled.div`
     display: flex;
     .col {
       flex-basis: 50%;
-      &:nth-of-type(2) {
+      :nth-of-type(2) {
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -92,7 +93,7 @@ const Page = styled.div`
     text-transform: uppercase;
     font-family: var(--heading-font);
     -webkit-appearance: button-bevel;
-    &:hover {
+    :hover {
       cursor: pointer;
     }
     @media only screen and (max-width: 480px) {
@@ -233,7 +234,7 @@ const Contact = () => {
               <h3>Send us a message</h3>
               <div>
                 <label htmlFor="name">Name</label>
-                <input type="text" id="name" name="name" required />
+                <input type="text" id="name" name="name" required/>
               </div>
               <div>
                 <label htmlFor="email">Email</label>

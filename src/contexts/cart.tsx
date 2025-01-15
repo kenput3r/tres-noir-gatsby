@@ -15,7 +15,7 @@ import {
   CustomLineItem,
   ImageHashTable,
   ImageStorage,
-} from "../types/checkout-deprecated"
+} from "../types/checkout"
 import { SelectedVariants, SelectedVariantStorage } from "../types/global"
 import { IGatsbyImageData } from "gatsby-plugin-image"
 import { ErrorModalContext } from "../contexts/error"

@@ -27,7 +27,7 @@ const Component = styled.div`
   }
   .path {
     flex: 1;
-    &:after {
+    ::after {
       content: " ";
       display: table;
       border: 1px solid var(--color-grey-dark);
@@ -37,7 +37,7 @@ const Component = styled.div`
       margin-top: 9px;
     }
     &.active {
-      &:after {
+      ::after {
         border-color: #000;
       }
     }

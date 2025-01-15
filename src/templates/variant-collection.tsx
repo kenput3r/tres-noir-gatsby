@@ -1,9 +1,12 @@
-import React, { useState, useEffect } from "react"
-import { graphql } from "gatsby"
+import React, { useContext, useState, useEffect } from "react"
+import { graphql, useStaticQuery } from "gatsby"
 import styled from "styled-components"
+import Product from "../components/product-contentful"
 import Variant from "../components/variant"
 import Layout from "../components/layout"
 import SEO from "../components/seo"
+import Filters from "../components/filters-contentful"
+import { ContentfulCollection, ContentfulProduct } from "../types/contentful"
 import FreeShipping from "../components/free-shipping"
 import CollectionImage from "../components/collection-image"
 import { viewedCollectionGTMEvent } from "../helpers/gtm"
@@ -50,16 +53,12 @@ const VariantCollection = ({
     contentfulHomepage: any
   }
 }) => {
-  const {
-    contentfulVariantCollection: collection,
-    shopifyCollection,
-    contentfulHomepage,
-  } = data
+  const { contentfulVariantCollection: collection, shopifyCollection, contentfulHomepage } = data
   const defaultFilters = { frameWidth: "", colorName: "" }
-  // const [filters, setFilters] = useState<{
-  //   frameWidth: string
-  //   colorName: string
-  // }>(defaultFilters)
+  const [filters, setFilters] = useState<{
+    frameWidth: string
+    colorName: string
+  }>(defaultFilters)
   const [variants, setVariants] = useState<ContentfulProductVariant[]>(
     collection.variants
   )
@@ -75,8 +74,8 @@ const VariantCollection = ({
   const getShopifyPrice = (
     variant
   ): {
-    price: number
-    compareAtPrice: number
+    price: string
+    compareAtPrice: string
   } => {
     try {
       const handle = variant.product[0].handle
@@ -92,12 +91,12 @@ const VariantCollection = ({
 
       return {
         price: shopifyVariant.price,
-        compareAtPrice: shopifyVariant.compareAtPrice ?? null,
+        compareAtPrice: shopifyVariant.compareAtPrice ?? "0.00",
       }
     } catch (error) {
       return {
-        price: 0,
-        compareAtPrice: 0,
+        price: "",
+        compareAtPrice: "",
       }
     }
   }
@@ -145,7 +144,7 @@ const VariantCollection = ({
 
     // only enable BOGO, NEW, and NEW COLOR badges for variant collection
     // variant collection currently only used for clearance and collaboration items, neither of which are included in sales
-    // keep BOGO b/c clearance items are included in BOGO sales
+    // keep BOGO b/c clearance items are included in BOGO sales 
     try {
       // bogo is enabled and product is not an exclusion (e.g. collaboration products)
       if (contentfulHomepage.enableBogo && !isExcludedFromDeals) {
@@ -167,7 +166,12 @@ const VariantCollection = ({
           color: "green",
         }
       }
-      if (shopifyProduct.tags.some(tag => tag === `new_release`)) {
+      if (
+        shopifyProduct.tags.some(
+          tag =>
+            tag === `new_release`
+        )
+      ) {
         return {
           label: "New",
           color: "#DAA520",
@@ -197,6 +201,15 @@ const VariantCollection = ({
         <div className="desc-container">
           <p className="collection-description">{collection.description}</p>
         </div>
+
+        {/* <div className="filters-container">
+          <Filters
+            collection={collection}
+            filters={filters}
+            setFilters={setFilters}
+            setProducts={setVariants}
+          />
+        </div> */}
 
         <Grid>
           {variants.length ? (

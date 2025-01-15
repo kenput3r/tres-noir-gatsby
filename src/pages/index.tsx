@@ -60,7 +60,7 @@ const Page = styled.div`
     display: block;
     padding: 10px 20px;
     text-decoration: none;
-    &:hover {
+    :hover {
       cursor: pointer;
     }
   }

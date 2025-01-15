@@ -3,7 +3,6 @@ import { GatsbyImage, StaticImage } from "gatsby-plugin-image"
 import styled from "styled-components"
 import { IGatsbyImageData } from "gatsby-plugin-image"
 import { ShopifyVariant } from "../types/global"
-import { formatPrice } from "../helpers/shopify"
 
 const Component = styled.div`
   // margin-top: 35px;
@@ -52,7 +51,7 @@ const Component = styled.div`
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
-    &:hover input ~ .checkmark {
+    :hover input ~ .checkmark {
       background-color: grey;
     }
     input {
@@ -92,15 +91,15 @@ const Component = styled.div`
   }
   .ps-btn {
     cursor: pointer;
-    &:hover,
-    &:focus {
+    :hover,
+    :focus {
       opacity: 0.7;
     }
   }
   .ps-text {
     cursor: pointer;
-    &:hover,
-    &:focus {
+    :hover,
+    :focus {
       text-decoration: underline;
     }
   }
@@ -136,11 +135,11 @@ const CaseGridSunglasses = (props: {
     return str.split(" - AO")[0]
   }
 
-  const formatMoney = (price: number) => {
-    if (price === 0) {
+  const formatMoney = (price: string) => {
+    if (price === "0.00") {
       return "FREE"
     }
-    return `+ $${formatPrice(price)} USD`
+    return `+ $${price} USD`
   }
 
   const handleChange = (variant: ShopifyVariant) => {

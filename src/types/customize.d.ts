@@ -130,7 +130,7 @@ export interface ShopifyProductVariant {
   compareAtPrice: number | null
   id: string
   legacyResourceId: string
-  price: number
+  price: string
   product: {
     collections: {
       handle: string

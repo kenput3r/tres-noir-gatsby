@@ -92,7 +92,7 @@ export interface tnItem {
 }
 
 export interface ImageHashTable {
-  cartId: string
+  checkoutId: string
   images: {
     [key: string]: IGatsbyImageData
   }
@@ -106,7 +106,7 @@ export interface ImageStorage {
 export interface CustomLineItem {
   variantId: string
   quantity: number
-  attributes: { key: string; value: string }[]
+  customAttributes: { key: string; value: string }[]
 }
 
 export interface rxDetails {

@@ -1,6 +1,6 @@
 import React from "react"
 import styled from "styled-components"
-import { useStaticQuery, graphql } from "gatsby"
+import { useStaticQuery, graphql, Link } from "gatsby"
 import UpsellProduct from "./upsell-product"
 import { UpsellItems, UpsellItem } from "../types/upsell"
 

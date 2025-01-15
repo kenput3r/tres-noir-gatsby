@@ -18,7 +18,7 @@ import {
   ShopifyProduct,
   ShopifyProductVariant,
 } from "../types/customize"
-import { ImageStorage } from "../contexts/storefront-cart/types/storefront-cart"
+import { ImageStorage } from "../types/checkout"
 import { useDiscountedPricing } from "../hooks/useDiscountedPricing"
 
 const Page = styled.div`
@@ -138,7 +138,7 @@ const Customize = ({
     contentful: contentfulProduct?.variants && contentfulProduct.variants[0],
     shopify: shopifyProduct.variants[0],
   })
-  const [currentPrice, setCurrentPrice] = useState<number>(
+  const [currentPrice, setCurrentPrice] = useState<string>(
     shopifyProduct.variants[0].price
   )
   const [currentImage, setCurrentImage] = useState({
@@ -175,6 +175,17 @@ const Customize = ({
         handle = `${handle}&lens_type=${lensType}`
       }
       setProductUrl(handle)
+      // if (previewRef.current) {
+      //   const previewImage = previewRef.current.querySelector(
+      //     ".gatsby-image-wrapper img[data-main-image]"
+      //   )
+      //   // previewImage.addEventListener("loadstart", function (e) {
+      //   //   console.log("Preview Image Load Started")
+      //   // })
+      //   // previewImage.addEventListener("loadend", function (e) {
+      //   //   console.log("Preview Image Load Ended")
+      //   // })
+      // }
     }
   }, [
     contentfulProduct?.handle,
@@ -202,7 +213,7 @@ const Customize = ({
         totalPrice += Number(el.price)
       }
     }
-    setCurrentPrice(totalPrice)
+    setCurrentPrice(totalPrice.toFixed(2))
   }, [selectedVariants, isApplicable, discountedPrice, variant])
 
   /* UPDATE IMAGE */
@@ -268,7 +279,7 @@ const Customize = ({
               />
               <div className="current-price">
                 <p>
-                  <span>${currentPrice.toFixed(2)}</span>
+                  <span>${currentPrice}</span>
                 </p>
               </div>
             </div>
@@ -279,7 +290,7 @@ const Customize = ({
               <CustomizationProgress step={currentStep} />
             </div>
             <p className="current-price desktop">
-              <span>${currentPrice.toFixed(2)}</span>
+              <span>${currentPrice}</span>
             </p>
             <div className="current-step">
               {currentStep === 1 && <Step1 handle={shopifyProduct.handle} />}

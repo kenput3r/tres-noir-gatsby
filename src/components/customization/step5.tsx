@@ -2,14 +2,14 @@ import React, { useContext, useEffect, useState } from "react"
 import styled from "styled-components"
 import { GatsbyImage, StaticImage, IGatsbyImageData } from "gatsby-plugin-image"
 import { CustomizeContext } from "../../contexts/customize"
-import { useCart } from "../../contexts/storefront-cart"
+import { CartContext } from "../../contexts/cart"
 import { RxInfoContext } from "../../contexts/rxInfo"
 import { addedCustomizedToCartGTMEvent } from "../../helpers/gtm"
 import { ShopifyProductVariant } from "../../types/customize"
 import CaseGridCustomize from "../case-grid-customize"
 import Spinner from "../spinner"
 import { navigate } from "gatsby"
-import { isDiscounted, formatPrice } from "../../helpers/shopify"
+import { isDiscounted } from "../../helpers/shopify"
 
 const Component = styled.div`
   padding: 10px;
@@ -74,7 +74,7 @@ const Component = styled.div`
     font-family: var(--sub-heading-font);
     padding: 10px 20px;
     text-decoration: none;
-    &:hover {
+    :hover {
       cursor: pointer;
     }
   }
@@ -143,7 +143,7 @@ const Step5 = (props: {
     isAddingToCart,
     setIsAddingToCart,
     isRemovingFromCart,
-  } = useCart()
+  } = useContext(CartContext)
   const { isRxAble, setRxAble, rxInfo, rxInfoDispatch } =
     useContext(RxInfoContext)
   const [addedToCart, setAddedToCart] = useState(false)
@@ -178,7 +178,7 @@ const Step5 = (props: {
       {
         variantId: step1.storefrontId,
         quantity: 1,
-        attributes: [
+        customAttributes: [
           {
             key: "customizationId",
             value: matchingKey,
@@ -208,7 +208,7 @@ const Step5 = (props: {
       {
         variantId: step2.storefrontId,
         quantity: 1,
-        attributes: [
+        customAttributes: [
           {
             key: "customizationId",
             value: matchingKey,
@@ -226,7 +226,7 @@ const Step5 = (props: {
       {
         variantId: step3.storefrontId,
         quantity: 1,
-        attributes: [
+        customAttributes: [
           {
             key: "customizationId",
             value: matchingKey,
@@ -244,7 +244,7 @@ const Step5 = (props: {
       {
         variantId: selectedVariants.case.storefrontId,
         quantity: 1,
-        attributes: [
+        customAttributes: [
           {
             key: "customizationId",
             value: matchingKey,
@@ -265,7 +265,7 @@ const Step5 = (props: {
       stepItems.push({
         variantId: el.storefrontId,
         quantity: 1,
-        attributes: [
+        customAttributes: [
           {
             key: "customizationId",
             value: matchingKey,
@@ -284,7 +284,7 @@ const Step5 = (props: {
     const frameVariant = {
       variantId: variant.storefrontId,
       quantity: 1,
-      attributes: [
+      customAttributes: [
         {
           key: "customizationId",
           value: matchingKey,
@@ -413,8 +413,6 @@ const Step5 = (props: {
     })
     addedCustomizedToCartGTMEvent(productData)
     setIsAddingToCart(false)
-    // todo: fix this type issue
-    // @ts-ignore
     navigate("/cart")
   }
 
@@ -437,8 +435,8 @@ const Step5 = (props: {
             <h4>
               {selectedVariants[`step${i + 1}`].product.title}{" "}
               <span className="price">
-                + ${formatPrice(selectedVariants[`step${i + 1}`].price)}
-                {!!selectedVariants[`step${i + 1}`].compareAtPrice &&
+                + ${selectedVariants[`step${i + 1}`].price}
+                {selectedVariants[`step${i + 1}`].compareAtPrice &&
                   isDiscounted(
                     selectedVariants[`step${i + 1}`].price,
                     selectedVariants[`step${i + 1}`].compareAtPrice
@@ -446,10 +444,7 @@ const Step5 = (props: {
                     <span>
                       {" "}
                       <span className="strikethrough-grey">
-                        $
-                        {formatPrice(
-                          selectedVariants[`step${i + 1}`].compareAtPrice
-                        )}
+                        ${selectedVariants[`step${i + 1}`].compareAtPrice}
                       </span>
                     </span>
                   )}
@@ -486,13 +481,13 @@ const Step5 = (props: {
             <h4>
               {el.product.title}{" "}
               <span className="price">
-                + ${formatPrice(el.price)}
-                {!!el.compareAtPrice &&
+                + ${el.price}
+                {el.compareAtPrice &&
                   isDiscounted(el.price, el.compareAtPrice) && (
                     <span>
                       {" "}
                       <span className="strikethrough-grey">
-                        ${formatPrice(el.compareAtPrice)}
+                        ${el.compareAtPrice}
                       </span>
                     </span>
                   )}
@@ -524,7 +519,7 @@ const Step5 = (props: {
           </span>
         </p>
         <p className="substotal">
-          <span>Sub-Total: </span> <span>${currentPrice.toFixed(2)}</span>
+          <span>Sub-Total: </span> <span>${currentPrice}</span>
         </p>
       </div>
       <div className="row">
