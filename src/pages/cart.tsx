@@ -1,5 +1,5 @@
-import React, { useEffect, useContext, useRef } from "react"
-import { Link, navigate, graphql } from "gatsby"
+import React, { useEffect, useContext, useRef, useState } from "react"
+import { Link, navigate, useStaticQuery, graphql } from "gatsby"
 import {
   GatsbyImage,
   StaticImage,
@@ -10,13 +10,8 @@ import Layout from "../components/layout"
 import SEO from "../components/seo"
 import Loader from "../components/loader"
 import QuantitySelector from "../components/quantity-selector"
-import { useCart } from "../contexts/storefront-cart"
-import {
-  tnItem,
-  tnSubItem,
-  rxType,
-  LineItem,
-} from "../contexts/storefront-cart/types/storefront-cart"
+import { CartContext } from "../contexts/cart"
+import { tnItem, tnSubItem, rxType, LineItem } from "../types/checkout"
 import { startedCheckoutGTMEvent } from "../helpers/gtm"
 import { VscClose } from "react-icons/vsc"
 import UpsellCart from "../components/upsell-cart"
@@ -126,7 +121,7 @@ const Page = styled.div`
         }
         .title {
           /* font-weight: bold; */
-          &:hover {
+          :hover {
             text-decoration: underline;
           }
           margin-bottom: 0;
@@ -174,10 +169,10 @@ const Page = styled.div`
     .subtotal {
       text-align: right;
       p {
-        &:first-child {
+        :first-child {
           font-size: 1.75rem;
         }
-        &:not(:first-child) {
+        :not(:first-child) {
           color: var(--color-grey-dark);
           font-family: var(--sub-heading-font);
         }
@@ -220,10 +215,10 @@ const Page = styled.div`
       font-family: var(--heading-font);
       text-transform: uppercase;
     }
-    &:nth-child(1) {
+    :nth-child(1) {
       background: #e0e0e0;
     }
-    &:nth-child(2) {
+    :nth-child(2) {
       background: white;
     }
     hr {
@@ -295,13 +290,13 @@ const Cart = ({
   },
 }) => {
   const {
-    cart,
+    checkout,
     removeProductFromCart,
     updateProductInCart,
     removeProductsFromCart,
     isRemovingFromCart,
     updateShipInsureAttribute,
-  } = useCart()
+  } = useContext(CartContext)
 
   const { rxInfo, rxInfoDispatch } = useContext(RxInfoContext)
 
@@ -316,12 +311,12 @@ const Cart = ({
   stepMap.set(5, "CASE")
   const loadingOverlay = useRef<HTMLDivElement>(null)
   useEffect(() => {
-    if (cart) {
-      if (cart.lines.edges.length > 0) {
-        startedCheckoutGTMEvent(cart)
+    if (checkout) {
+      if (checkout.lineItems.length > 0) {
+        startedCheckoutGTMEvent(checkout)
       }
     }
-  }, [cart])
+  }, [checkout])
 
   const editGlasses = (item: tnItem) => {
     const isBrowser: boolean = typeof window !== "undefined"
@@ -337,11 +332,11 @@ const Cart = ({
         const sku = parsedCustoms[item.id].sku
 
         // grab prescription and set context
-        const rxAttr = item.lineItems[1].shopifyItem.attributes.find(
+        const rxAttr = item.lineItems[1].shopifyItem.customAttributes.find(
           el => el.key === "Prescription"
-        )
-        if (rxAttr && rxAttr.value !== "Non-Prescription") {
-          const prescription = JSON.parse(rxAttr.value) as rxType
+        ).value
+        if (rxAttr !== "Non-Prescription") {
+          const prescription = JSON.parse(rxAttr) as rxType
           rxInfoDispatch({
             type: `full`,
             payload: prescription,
@@ -361,8 +356,7 @@ const Cart = ({
         setCurrentStep(5)
         // navigate to step 5 of customize page
         navigate(
-          // @ts-ignore
-          `/products/${handle}/customize?variant=${sku}&custom_id=${item.id.toString()}`
+          `/products/${handle}/customize?variant=${sku}&custom_id=${item.id}`
         )
       }
     }
@@ -390,52 +384,49 @@ const Cart = ({
 
   const updateQuantity = async (
     lineId: string,
-    variantId: string,
     quantity: number,
     imageId: string
   ) => {
     loadingOverlay.current?.classList.add("no-events")
-    await updateProductInCart(lineId, variantId, quantity, imageId)
+    await updateProductInCart(lineId, quantity, imageId)
     loadingOverlay.current?.classList.remove("no-events")
   }
 
-  const totalSum = (lineItems: tnSubItem[]) => {
+  const totalSum = lineItems => {
     let sum = 0
     lineItems.forEach(item => {
       const hasDiscount = item.shopifyItem.discountAllocations.length > 0
-      let price = parseFloat(item.shopifyItem.merchandise.price.amount)
+      let price = item.shopifyItem.variant.price.amount
       if (hasDiscount) {
         price =
           Number(price) -
-          Number(
-            item.shopifyItem.discountAllocations[0].discountedAmount.amount
-          )
+          Number(item.shopifyItem.discountAllocations[0].allocatedAmount.amount)
       }
-      sum += price
-    })
-    return sum.toFixed(2)
-  }
-
-  const totalOriginalSum = (lineItems: tnSubItem[]) => {
-    let sum = 0
-    lineItems.forEach(item => {
-      let price = item.shopifyItem.merchandise.price.amount
       sum += parseFloat(price)
     })
     return sum.toFixed(2)
   }
-  const totalCompareAt = (lineItems: tnSubItem[]) => {
+
+  const totalOriginalSum = lineItems => {
     let sum = 0
     lineItems.forEach(item => {
-      let price = item.shopifyItem.merchandise.compareAtPrice
-        ? item.shopifyItem.merchandise.compareAtPrice.amount
+      let price = item.shopifyItem.variant.price.amount
+      sum += parseFloat(price)
+    })
+    return sum.toFixed(2)
+  }
+  const totalCompareAt = lineItems => {
+    let sum = 0
+    lineItems.forEach(item => {
+      let price = item.shopifyItem.variant.compareAtPrice
+        ? item.shopifyItem.variant.compareAtPrice.amount
         : "0.00"
       sum += parseFloat(price)
     })
     return sum.toFixed(2)
   }
 
-  const checkForDiscountInBundle = (lineItems: tnSubItem[]): boolean => {
+  const checkForDiscountInBundle = (lineItems: any): boolean => {
     return lineItems.some(
       item => item.shopifyItem.discountAllocations.length > 0
     )
@@ -451,16 +442,16 @@ const Cart = ({
     isCustom: boolean
   ) => {
     if (subItem.stepNumber === "0" && isCustom) {
-      return subItem.shopifyItem.merchandise.title.split("-")[0]
+      return subItem.shopifyItem.variant.title.split("-")[0]
     }
     if (stepName === "CASE") {
-      let spl = subItem.shopifyItem.merchandise.product.title.split("AO")[0]
+      let spl = subItem.shopifyItem.title.split("AO")[0]
       return spl.slice(0, -2)
     }
-    if (subItem.shopifyItem.merchandise.title === "Default Title") {
-      return subItem.shopifyItem.merchandise.product.title
+    if (subItem.shopifyItem.variant.title === "Default Title") {
+      return subItem.shopifyItem.title
     } else {
-      return `${subItem.shopifyItem.merchandise.product.title} - ${subItem.shopifyItem.merchandise.title}`
+      return `${subItem.shopifyItem.title} - ${subItem.shopifyItem.variant.title}`
     }
   }
 
@@ -469,36 +460,32 @@ const Cart = ({
 
     const line = item.lineItems[0].shopifyItem
 
-    if (line.merchandise.product.handle === "shipinsure") {
+    if (line.variant.product.handle === "shipinsure") {
       return renderShipInsure(line, item.image)
     }
 
     const hasDiscount = line.discountAllocations.length > 0
-    const originalPrice = line.merchandise.price.amount
+    const originalPrice = line.variant.price.amount
 
-    let price: string | number = line.merchandise.price.amount
+    let price: string | number = line.variant.price.amount
     if (hasDiscount) {
       price = (
         Number(price) -
-        Number(line.discountAllocations[0].discountedAmount.amount) /
+        Number(line.discountAllocations[0].allocatedAmount.amount) /
           line.quantity
       ).toString()
     }
     const discountAllocation =
       item.lineItems[0].shopifyItem.discountAllocations.length > 0
-        ? parseFloat(
-            item.lineItems[0].shopifyItem.discountAllocations[0]
-              .discountedAmount.amount
-          )
+        ? item.lineItems[0].shopifyItem.discountAllocations[0].allocatedAmount
+            .amount
         : 0
     const totalOriginalPrice = (
-      Number(line.merchandise.price.amount) * line.quantity
+      Number(line.variant.price.amount) * line.quantity
     ).toFixed(2)
-    const totalCompareAtPrice = !line.merchandise.compareAtPrice
+    const totalCompareAtPrice = !line.variant.compareAtPrice
       ? "0.00"
-      : (
-          Number(line.merchandise.compareAtPrice.amount) * line.quantity
-        ).toFixed(2)
+      : (Number(line.variant.compareAtPrice.amount) * line.quantity).toFixed(2)
     return (
       <li key={line.id}>
         <div className="close-btn">
@@ -515,7 +502,7 @@ const Cart = ({
             {item.image ? (
               <GatsbyImage
                 image={item.image}
-                alt={line.merchandise.title}
+                alt={line.variant.title}
               ></GatsbyImage>
             ) : (
               <StaticImage
@@ -527,14 +514,14 @@ const Cart = ({
           <div className="card-items">
             <div>
               <p className="title">
-                <Link to={`/products/${line.merchandise.product.handle}`}>
-                  {line.merchandise.product.title}
+                <Link to={`/products/${line.variant.product.handle}`}>
+                  {line.title}
                 </Link>
               </p>
               <div className="sub-title">
                 <span>
-                  {line.merchandise.title !== "Default Title"
-                    ? line.merchandise.title
+                  {line.variant.title !== "Default Title"
+                    ? line.variant.title
                     : ""}
                 </span>
                 <div className="price-group">
@@ -543,16 +530,13 @@ const Cart = ({
                       ${Number(originalPrice).toFixed(2)}
                     </span>
                   ) : (
-                    line.merchandise.compareAtPrice &&
+                    line.variant.compareAtPrice &&
                     isDiscounted(
                       originalPrice,
-                      line.merchandise.compareAtPrice.amount
+                      line.variant.compareAtPrice.amount
                     ) && (
                       <span className="original-price">
-                        $
-                        {Number(line.merchandise.compareAtPrice.amount).toFixed(
-                          2
-                        )}
+                        ${Number(line.variant.compareAtPrice.amount).toFixed(2)}
                       </span>
                     )
                   )}
@@ -566,7 +550,6 @@ const Cart = ({
                 lineId={line.id}
                 quantity={line.quantity}
                 imageId={item.id}
-                variantId={line.merchandise.id}
                 updateQuantity={updateQuantity}
               />
               <div className="price-group">
@@ -575,7 +558,7 @@ const Cart = ({
                     ${totalOriginalPrice}
                   </span>
                 ) : (
-                  line.merchandise.compareAtPrice &&
+                  line.variant.compareAtPrice &&
                   isDiscounted(totalOriginalPrice, totalCompareAtPrice) && (
                     <span className="price original-price">
                       ${totalCompareAtPrice}
@@ -585,7 +568,7 @@ const Cart = ({
                 <span className="price">
                   $
                   {(
-                    Number(line.merchandise.price.amount) * line.quantity -
+                    Number(line.variant.price.amount) * line.quantity -
                     discountAllocation
                   ).toFixed(2)}
                 </span>
@@ -616,10 +599,7 @@ const Cart = ({
           <div className="card">
             <div className="card-image">
               {image ? (
-                <GatsbyImage
-                  image={image}
-                  alt={item.merchandise.product.title ?? "ShipInsure"}
-                />
+                <GatsbyImage image={image} alt={item.title ?? "ShipInsure"} />
               ) : (
                 <StaticImage
                   src="../images/product-no-image.jpg"
@@ -630,8 +610,8 @@ const Cart = ({
             <div className="card-items">
               <div>
                 <p className="title">
-                  <Link to={`/products/${item.merchandise.product.handle}`}>
-                    {item.merchandise.product.title}
+                  <Link to={`/products/${item.variant.product.handle}`}>
+                    {item.title}
                   </Link>
                 </p>
                 <div className="sub-title">
@@ -642,7 +622,7 @@ const Cart = ({
                   </span>
                   <div className="price-group">
                     <span className="price">
-                      ${Number(item.merchandise.price.amount).toFixed(2)}
+                      ${Number(item.variant.price.amount).toFixed(2)}
                     </span>
                   </div>
                 </div>
@@ -673,11 +653,11 @@ const Cart = ({
     const clearanceSKUs = createClearanceSKUs(clearanceItemsData)
     // if a sunglasses's product handle is in const variable and isDiscounted, then it is a clearance sale, and we should show the final sale disclaimer
     const isClearanceSale =
-      clearanceSKUs.includes(item.lineItems[0].shopifyItem.merchandise.sku) &&
-      item.lineItems[0].shopifyItem.merchandise.compareAtPrice &&
+      clearanceSKUs.includes(item.lineItems[0].shopifyItem.variant.sku) &&
+      item.lineItems[0].shopifyItem.variant.compareAtPrice &&
       isDiscounted(
-        item.lineItems[0].shopifyItem.merchandise.price.amount,
-        item.lineItems[0].shopifyItem.merchandise.compareAtPrice.amount
+        item.lineItems[0].shopifyItem.variant.price.amount,
+        item.lineItems[0].shopifyItem.variant.compareAtPrice.amount
       )
 
     return (
@@ -696,7 +676,7 @@ const Cart = ({
             {item.image ? (
               <GatsbyImage
                 image={item.image}
-                alt={item.lineItems[0].shopifyItem.merchandise.title}
+                alt={item.lineItems[0].shopifyItem.variant.title}
               ></GatsbyImage>
             ) : (
               <StaticImage
@@ -709,9 +689,9 @@ const Cart = ({
             <div>
               <p className="title">
                 <Link
-                  to={`/products/${item.lineItems[0].shopifyItem.merchandise.product.handle}`}
+                  to={`/products/${item.lineItems[0].shopifyItem.variant.product.handle}`}
                 >
-                  {item.lineItems[0].shopifyItem.merchandise.product.title}
+                  {item.lineItems[0].shopifyItem.title}
                 </Link>
               </p>
               <div className="sub-title-customize">
@@ -719,19 +699,18 @@ const Cart = ({
                   // new discounts
                   const hasDiscount =
                     subItem.shopifyItem.discountAllocations.length > 0
-                  let price = subItem.shopifyItem.merchandise.price.amount
-                  const originalPrice =
-                    subItem.shopifyItem.merchandise.price.amount
-                  const compareAtPrice = subItem.shopifyItem.merchandise
+                  let price = subItem.shopifyItem.variant.price.amount
+                  const originalPrice = subItem.shopifyItem.variant.price.amount
+                  const compareAtPrice = subItem.shopifyItem.variant
                     .compareAtPrice
-                    ? subItem.shopifyItem.merchandise.compareAtPrice.amount
+                    ? subItem.shopifyItem.variant.compareAtPrice.amount
                     : "0.00"
                   if (hasDiscount) {
                     price = (
                       Number(price) -
                       Number(
                         subItem.shopifyItem.discountAllocations[0]
-                          .discountedAmount.amount
+                          .allocatedAmount.amount
                       )
                     ).toFixed(2)
                   }
@@ -755,11 +734,10 @@ const Cart = ({
                               ${Number(originalPrice).toFixed(2)}
                             </span>
                           ) : (
-                            subItem.shopifyItem.merchandise.compareAtPrice &&
+                            subItem.shopifyItem.variant.compareAtPrice &&
                             isDiscounted(
-                              subItem.shopifyItem.merchandise.price.amount,
-                              subItem.shopifyItem.merchandise.compareAtPrice
-                                .amount
+                              subItem.shopifyItem.variant.price.amount,
+                              subItem.shopifyItem.variant.compareAtPrice.amount
                             ) && (
                               <span className="original-price">
                                 ${Number(compareAtPrice).toFixed(2)}
@@ -827,7 +805,7 @@ const Cart = ({
             {item.image ? (
               <GatsbyImage
                 image={item.image}
-                alt={item.lineItems[0].shopifyItem.merchandise.title}
+                alt={item.lineItems[0].shopifyItem.variant.title}
               ></GatsbyImage>
             ) : (
               <StaticImage
@@ -840,9 +818,9 @@ const Cart = ({
             <div>
               <p className="title">
                 <Link
-                  to={`/products/${item.lineItems[0].shopifyItem.merchandise.product.handle}`}
+                  to={`/products/${item.lineItems[0].shopifyItem.variant.product.handle}`}
                 >
-                  {item.lineItems[0].shopifyItem.merchandise.product.title}
+                  {item.lineItems[0].shopifyItem.title}
                 </Link>
               </p>
               <div className="sub-title-customize">
@@ -857,16 +835,15 @@ const Cart = ({
                           // new discounts
                           const hasDiscount =
                             subItem.shopifyItem.discountAllocations.length > 0
-                          let price =
-                            subItem.shopifyItem.merchandise.price.amount
+                          let price = subItem.shopifyItem.variant.price.amount
                           const originalPrice =
-                            subItem.shopifyItem.merchandise.price.amount
+                            subItem.shopifyItem.variant.price.amount
                           if (hasDiscount) {
                             price = (
                               Number(price) -
                               Number(
                                 subItem.shopifyItem.discountAllocations[0]
-                                  .discountedAmount.amount
+                                  .allocatedAmount.amount
                               )
                             ).toFixed(2)
                           }
@@ -899,17 +876,17 @@ const Cart = ({
                                       ${Number(originalPrice).toFixed(2)}
                                     </span>
                                   ) : (
-                                    subItem.shopifyItem.merchandise
+                                    subItem.shopifyItem.variant
                                       .compareAtPrice &&
                                     isDiscounted(
                                       originalPrice,
-                                      subItem.shopifyItem.merchandise
-                                        .compareAtPrice.amount
+                                      subItem.shopifyItem.variant.compareAtPrice
+                                        .amount
                                     ) && (
                                       <span className="original-price">
                                         $
                                         {Number(
-                                          subItem.shopifyItem.merchandise
+                                          subItem.shopifyItem.variant
                                             .compareAtPrice.amount
                                         ).toFixed(2)}
                                       </span>
@@ -968,11 +945,11 @@ const Cart = ({
     <Layout>
       <SEO title="Cart" />
       <Page>
-        {!cart ? (
+        {!checkout ? (
           <Loader />
         ) : (
           <>
-            {!cart.lines.edges.length ? (
+            {!checkout.lineItems.length ? (
               <section className="empty-cart">
                 <h1>Cart</h1>
                 <div className="grey-background">
@@ -1000,13 +977,13 @@ const Cart = ({
                     <h2>
                       Your cart:{" "}
                       <span className="total">
-                        ${Number(cart.cost.subtotalAmount.amount).toFixed(2)}
+                        ${Number(checkout.subtotalPrice.amount).toFixed(2)}
                       </span>
                     </h2>
                     <ul>
-                      {cart &&
-                        cart?.tnLineItems &&
-                        cart.tnLineItems.map((item: tnItem) => {
+                      {checkout &&
+                        checkout.tnLineItems &&
+                        checkout.tnLineItems.map((item: tnItem) => {
                           if (item) {
                             if (item.isCustom) {
                               return renderCustomProduct(item)
@@ -1022,7 +999,7 @@ const Cart = ({
                       <p>
                         Subtotal:{" "}
                         <span className="total">
-                          ${Number(cart.cost.subtotalAmount.amount).toFixed(2)}
+                          ${Number(checkout.subtotalPrice.amount).toFixed(2)}
                         </span>
                       </p>
                       <p>Delivery & Taxes are calculated at checkout.</p>
@@ -1031,7 +1008,7 @@ const Cart = ({
                       )}
                     </div>
                     <div className="btn-container">
-                      <a href={cart.checkoutUrl} className="btn checkout">
+                      <a href={checkout.webUrl} className="btn checkout">
                         Check Out
                       </a>
                     </div>

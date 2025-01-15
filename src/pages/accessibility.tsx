@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useState, useContext } from "react"
 import styled from "styled-components"
 import { navigate } from "gatsby"
 import Layout from "../components/layout"

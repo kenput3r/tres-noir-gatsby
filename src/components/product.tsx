@@ -2,15 +2,15 @@ import React, { useContext } from "react"
 import { Link } from "gatsby"
 import { GatsbyImage, StaticImage } from "gatsby-plugin-image"
 import styled from "styled-components"
+import { CartContext } from "../contexts/cart"
 import { ShopifyProduct } from "../types/shopify"
 import ProductAction from "./collection-product-action"
 import Spinner from "../components/spinner"
 import { useQuantityQuery } from "../hooks/useQuantityQuery"
 import { addedToCartGTMEvent } from "../helpers/gtm"
-import { isDiscounted, formatPrice } from "../helpers/shopify"
+import { isDiscounted } from "../helpers/shopify"
 import Badge from "./badge"
 import useDiscountIdentifier from "../hooks/useDiscountIdentifier"
-import { useCart } from "../contexts/storefront-cart"
 
 const Component = styled.article`
   h3,
@@ -91,7 +91,7 @@ const Product = ({
   data,
   collection,
   discount = {
-    discountedPrice: 0,
+    discountedPrice: "",
     isApplicable: false,
     offer: "",
   },
@@ -99,7 +99,7 @@ const Product = ({
   data: ShopifyProduct
   collection: string
   discount?: {
-    discountedPrice: number
+    discountedPrice: string
     isApplicable: boolean
     offer: string
   }
@@ -111,9 +111,13 @@ const Product = ({
 
   const quantityLevels = useQuantityQuery(data.handle, data.variants.length)
 
-  const { addProductToCart, isAddingToCart } = useCart()
+  const { addProductToCart, isAddingToCart } = useContext(CartContext)
 
-  const price = formatPrice(selectedVariant.price)
+  // const price: string = parseFloat(
+  //   data.priceRangeV2.minVariantPrice.amount.toString()
+  // ).toFixed(2)
+
+  const price = selectedVariant.price
 
   const handleAddToCart = (e: { preventDefault: () => void }) => {
     e.preventDefault()
@@ -133,8 +137,8 @@ const Product = ({
         : "",
       url: data.onlineStoreUrl,
       vendor: data.vendor,
-      price: data.priceRangeV2.minVariantPrice.amount,
-      compareAtPrice: null,
+      price: String(data.priceRangeV2.minVariantPrice.amount),
+      compareAtPrice: "",
       collections: [collection],
       quantity: qty,
     }
@@ -226,26 +230,23 @@ const Product = ({
         {!isApplicable ? (
           <div className="price-container">
             <span className="product-price">${price} USD</span>
-            {!!selectedVariant.compareAtPrice &&
-              selectedVariant.compareAtPrice > 0 &&
+            {data.variants[0].compareAtPrice &&
               isDiscounted(
                 selectedVariant.price,
                 selectedVariant.compareAtPrice
               ) && (
                 <span className="product-compare-at-price">
-                  ${formatPrice(selectedVariant.compareAtPrice)} USD
+                  ${selectedVariant.compareAtPrice} USD
                 </span>
               )}
           </div>
         ) : (
-          isApplicable &&
+          discountedPrice &&
           isDiscounted(discountedPrice, selectedVariant.price) && (
             <div className="price-container">
-              <span className="product-price">
-                ${formatPrice(discountedPrice)} USD
-              </span>
+              <span className="product-price">${discountedPrice} USD</span>
               <span className="product-compare-at-price">
-                ${formatPrice(selectedVariant.price)} USD
+                ${selectedVariant.price} USD
               </span>
             </div>
           )

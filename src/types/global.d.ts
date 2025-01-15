@@ -7,7 +7,7 @@ declare module "*.json"
 export interface ShopifyVariant {
   sku: string
   legacyResourceId: string
-  compareAtPrice: number | null
+  compareAtPrice: string | null
   storefrontId: string
   title: string
   image: {
@@ -18,7 +18,7 @@ export interface ShopifyVariant {
       }
     }
   }
-  price: number
+  price: string
   product?: {
     title: string
     handle: string
@@ -53,19 +53,6 @@ export interface ShopifyProduct {
       }
     }
   ]
-  media: [
-    {
-      image: {
-        altText: string
-        localFile: {
-          id: string
-          childImageSharp: {
-            gatsbyImageData: IGatsbyImageData
-          }
-        }
-      }
-    }
-  ]
   title: string
   variants: ShopifyVariant[]
 }
@@ -92,7 +79,7 @@ export interface SavedCustomizeContexts {
 }
 
 export interface SelectedVariantTable {
-  cartId: string
+  checkoutId: string
   customs: {
     [key: string]: {
       selectedVariants: SelectedVariants

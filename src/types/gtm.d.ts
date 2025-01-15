@@ -1,9 +1,9 @@
 export interface ShopifyProductInfo {
   collections: string[]
-  compareAtPrice: number | null
+  compareAtPrice: string
   image: string
   legacyResourceId: string
-  price: number
+  price: string
   productType: string
   quantity?: number
   sku: string

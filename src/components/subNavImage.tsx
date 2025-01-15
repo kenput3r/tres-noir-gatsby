@@ -54,7 +54,7 @@ const Component = styled.div`
           top: 1rem;
           right: 1.5rem;
         }
-        &:hover {
+        :hover {
           opacity: 0.65;
         }
       }

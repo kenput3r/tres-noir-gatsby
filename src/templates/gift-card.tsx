@@ -1,6 +1,6 @@
-import React, { useState, ChangeEvent, useEffect } from "react"
+import React, { useState, useContext, ChangeEvent, useEffect } from "react"
 import { graphql } from "gatsby"
-import { useCart } from "../contexts/storefront-cart"
+import { CartContext } from "../contexts/cart"
 import styled from "styled-components"
 import Layout from "../components/layout"
 import SEO from "../components/seo"
@@ -195,7 +195,7 @@ const GiftCard = ({ data: { shopifyProduct } }: any) => {
   const [selectedVariantQuantity, setSelectedVariantQuantity] =
     useState<string>("1")
 
-  const { addProductToCart, isAddingToCart } = useCart()
+  const { addProductToCart, isAddingToCart } = useContext(CartContext)
 
   const handleVariant = (evt: ChangeEvent<HTMLSelectElement>) => {
     const legacyResourceId = evt.target.value
@@ -360,16 +360,12 @@ export const query = graphql`
       productType
       title
       vendor
-      media {
-        ... on ShopifyMediaImage {
-          image {
-            altText
-            localFile {
-              id
-              childImageSharp {
-                gatsbyImageData
-              }
-            }
+      images {
+        altText
+        localFile {
+          id
+          childImageSharp {
+            gatsbyImageData
           }
         }
       }

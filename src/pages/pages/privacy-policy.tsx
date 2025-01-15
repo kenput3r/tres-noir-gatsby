@@ -53,12 +53,12 @@ const Page = styled.div`
   }
   a {
     color: black;
-    &:hover,
-    &:active,
-    &:focus {
+    :hover,
+    :active,
+    :focus {
       color: var(--color-grey-dark);
     }
-    &:visited {
+    :visited {
       color: black;
     }
   }

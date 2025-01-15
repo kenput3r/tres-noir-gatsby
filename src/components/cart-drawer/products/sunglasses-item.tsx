@@ -1,11 +1,8 @@
-import React, { useRef } from "react"
-import type {
-  tnItem,
-  tnSubItem,
-} from "../../../contexts/storefront-cart/types/storefront-cart"
+import React, { useContext, useRef } from "react"
+import { tnItem } from "../../../types/checkout"
 import { GatsbyImage } from "gatsby-plugin-image"
 import { graphql } from "gatsby"
-import { useCart } from "../../../contexts/storefront-cart"
+import { CartContext } from "../../../contexts/cart"
 import styled from "styled-components"
 import { VscClose } from "react-icons/vsc"
 import { Link, useStaticQuery } from "gatsby"
@@ -45,7 +42,8 @@ const Component = styled.div`
 
 const SunglassesItem = (props: { item: tnItem }) => {
   const { item } = props
-  const { removeProductsFromCart, setIsCartDrawerOpen } = useCart()
+  const { removeProductsFromCart, setIsCartDrawerOpen } =
+    useContext(CartContext)
 
   const clearanceItemsData = useStaticQuery(graphql`
     query getClearanceItemsDrawer {
@@ -75,11 +73,11 @@ const SunglassesItem = (props: { item: tnItem }) => {
 
   // if a sunglasses's product handle is in const variable and isDiscounted, then it is a clearance sale, and we should show the final sale disclaimer
   const isClearanceSale =
-    clearanceSKUs.includes(item.lineItems[0].shopifyItem.merchandise.sku) &&
-    item.lineItems[0].shopifyItem.merchandise.compareAtPrice &&
+    clearanceSKUs.includes(item.lineItems[0].shopifyItem.variant.sku) &&
+    item.lineItems[0].shopifyItem.variant.compareAtPrice &&
     isDiscounted(
-      item.lineItems[0].shopifyItem.merchandise.price.amount,
-      item.lineItems[0].shopifyItem.merchandise.compareAtPrice.amount
+      item.lineItems[0].shopifyItem.variant.price.amount,
+      item.lineItems[0].shopifyItem.variant.compareAtPrice.amount
     )
 
   const removeMultipleProducts = async (item: tnItem) => {
@@ -100,26 +98,24 @@ const SunglassesItem = (props: { item: tnItem }) => {
   const totalCompareAt = lineItems => {
     let sum = 0
     lineItems.forEach(item => {
-      let price = item.shopifyItem.merchandise.compareAtPrice
-        ? item.shopifyItem.merchandise.compareAtPrice.amount
+      let price = item.shopifyItem.variant.compareAtPrice
+        ? item.shopifyItem.variant.compareAtPrice.amount
         : "0.00"
       sum += parseFloat(price)
     })
     return sum.toFixed(2)
   }
 
-  const totalSum = (lineItems: tnSubItem[]) => {
+  const totalSum = lineItems => {
     let sum = 0
     lineItems.forEach(item => {
       // new discounts
       const hasDiscount = item.shopifyItem.discountAllocations.length > 0
-      let price = item.shopifyItem.merchandise.price.amount
+      let price = item.shopifyItem.variant.price.amount
       if (hasDiscount) {
         price = (
           Number(price) -
-          Number(
-            item.shopifyItem.discountAllocations[0].discountedAmount.amount
-          )
+          Number(item.shopifyItem.discountAllocations[0].allocatedAmount.amount)
         ).toFixed(2)
       }
       // new discounts
@@ -128,16 +124,16 @@ const SunglassesItem = (props: { item: tnItem }) => {
     return sum.toFixed(2)
   }
 
-  const totalOriginalSum = (lineItems: tnSubItem[]) => {
+  const totalOriginalSum = lineItems => {
     let sum = 0
     lineItems.forEach(item => {
-      let price = item.shopifyItem.merchandise.price.amount
+      let price = item.shopifyItem.variant.price.amount
       sum += parseFloat(price)
     })
     return sum.toFixed(2)
   }
 
-  const checkForDiscountInBundle = (lineItems: tnSubItem[]): boolean => {
+  const checkForDiscountInBundle = (lineItems: any): boolean => {
     return lineItems.some(
       item => item.shopifyItem.discountAllocations.length > 0
     )
@@ -165,7 +161,7 @@ const SunglassesItem = (props: { item: tnItem }) => {
           <div className="product-image">
             <GatsbyImage
               image={item.image}
-              alt={item.lineItems[0].shopifyItem.merchandise.product.title}
+              alt={item.lineItems[0].shopifyItem.title}
             />
           </div>
         )}
@@ -174,23 +170,19 @@ const SunglassesItem = (props: { item: tnItem }) => {
           <div className="product-titles">
             <Link
               onClick={evt => setIsCartDrawerOpen(false)}
-              to={`/products/${item.lineItems[0].shopifyItem.merchandise.product.handle}`}
+              to={`/products/${item.lineItems[0].shopifyItem.variant.product.handle}`}
             >
-              <p className="title">
-                {item.lineItems[0].shopifyItem.merchandise.product.title}
-              </p>
+              <p className="title">{item.lineItems[0].shopifyItem.title}</p>
             </Link>
             <p className="subtitle">
-              {item.lineItems[0].shopifyItem.merchandise.title ===
-              "Default Title"
+              {item.lineItems[0].shopifyItem.variant.title === "Default Title"
                 ? ""
-                : item.lineItems[0].shopifyItem.merchandise.title}
+                : item.lineItems[0].shopifyItem.variant.title}
             </p>
             <p className="subtitle">
               +{" "}
               {formatCaseName(
-                item.lineItems[item.lineItems.length - 1].shopifyItem
-                  .merchandise.product.title
+                item.lineItems[item.lineItems.length - 1].shopifyItem.title
               )}
             </p>
           </div>

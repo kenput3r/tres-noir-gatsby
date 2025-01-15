@@ -10,13 +10,13 @@ const Page = styled.div`
   a {
     text-decoration: none;
     color: black;
-    &:focus,
-    &:hover,
-    &:visited {
+    :focus,
+    :hover,
+    :visited {
       color: black;
     }
-    &:focus,
-    &:hover {
+    :focus,
+    :hover {
       text-decoration: underline;
     }
   }
@@ -137,8 +137,8 @@ const RxFAQ = () => (
                     vision care products. Use your benefits to invest in:
                   </p>
                   <p>
-                    - Prescription eyewear with advanced lens options:
-                    Blue-light filtering technology, Light responsive lenses,
+                    - Prescription eyewear with advanced lens options: 
+                    Blue-light filtering technology, Light responsive lenses, 
                     progressive lenses
                   </p>
                   <p>- Prescription sunglasses</p>

@@ -18,8 +18,8 @@ const Component = styled.nav<StyledProps>`
   top: 0;
   left: 0;
   transition: transform 0.3s ease-in-out;
-  transform: ${({ $isDrawerOpen }) =>
-    $isDrawerOpen ? "translateX(0)" : "translateX(-100%)"};
+  transform: ${({ isDrawerOpen }) =>
+    isDrawerOpen ? "translateX(0)" : "translateX(-100%)"};
   width: 400px;
   z-index: 10000;
   a {
@@ -53,7 +53,7 @@ interface DrawerProps {
 }
 
 interface StyledProps {
-  $isDrawerOpen: boolean
+  isDrawerOpen: boolean
 }
 
 interface Item {
@@ -66,7 +66,7 @@ interface Item {
 const Drawer = ({ isDrawerOpen, setIsDrawerOpen }: DrawerProps) => {
   const { items } = useDesktopNavigation()
   return (
-    <Component $isDrawerOpen={isDrawerOpen}>
+    <Component isDrawerOpen={isDrawerOpen}>
       <a href="#" role="button" onClick={() => setIsDrawerOpen(!isDrawerOpen)}>
         &times;
       </a>

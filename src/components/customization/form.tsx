@@ -17,12 +17,11 @@ import {
 import { CustomizeContext } from "../../contexts/customize"
 import { RxInfoContext } from "../../contexts/rxInfo"
 import { FaQuestionCircle } from "react-icons/fa"
-import type {
-  LocalCart,
-  rxType,
-} from "../../contexts/storefront-cart/types/storefront-cart"
-import { isDiscounted, formatPrice } from "../../helpers/shopify"
+import { LocalCheckout } from "../../types/checkout"
+import { rxType } from "../../types/checkout"
+import { isDiscounted } from "../../helpers/shopify"
 import ReadersTable from "../readers-table"
+// import { handleRxFromAttribute } from "../../contexts/rxInfo"
 
 const Form = ({
   shopifyCollection,
@@ -132,7 +131,7 @@ const Form = ({
           if (!found) {
             if (
               selectedVariants.step4.length === 1 &&
-              selectedVariants.step4[0].price === 0
+              selectedVariants.step4[0].price === "0.00"
             ) {
               setSelectedVariants({
                 ...selectedVariants,
@@ -376,16 +375,17 @@ const Form = ({
           const customsStorage = JSON.parse(
             customsResume
           ) as SelectedVariantStorage
-          const cartStorage = JSON.parse(checkoutString) as LocalCart
-          const customInCart = cartStorage.value?.tnLineItems?.find(
+          const checkoutStorage = JSON.parse(checkoutString) as LocalCheckout
+          const customInCheckout = checkoutStorage.value?.tnLineItems?.find(
             el => el.id === custom_id
           )
-          const rxAttr = customInCart?.lineItems[1].shopifyItem.attributes.find(
-            el => el.key === "Prescription"
-          )
-          if (rxAttr && rxAttr.value !== "Non-Prescription") {
+          const rxAttr =
+            customInCheckout?.lineItems[1].shopifyItem.customAttributes.find(
+              el => el.key === "Prescription"
+            ).value
+          if (rxAttr !== "Non-Prescription") {
             // set Rx
-            const prescription = JSON.parse(rxAttr.value) as rxType
+            const prescription = JSON.parse(rxAttr) as rxType
             rxInfoDispatch({
               type: `full`,
               payload: prescription,
@@ -575,8 +575,7 @@ const Form = ({
       {shopifyCollection.products.map((product: ShopifyProduct, index) => {
         // fix variant.image is null
         if (product.variants[0].image === null) {
-          // product.variants[0].image = product.media[0].image
-          product.variants[0].image = product.media[0].image
+          product.variants[0].image = product.images[0]
         }
         return (
           <React.Fragment key={product.id}>
@@ -592,17 +591,17 @@ const Form = ({
                     product.featuredImage && product.featuredImage.localFile
                       ? product.featuredImage.localFile.childImageSharp
                           .gatsbyImageData
-                      : product.media[0].image.localFile.childImageSharp
+                      : product.images[0].localFile.childImageSharp
                           .gatsbyImageData
                   }
-                  alt={product.media[0].image.altText || product.title}
+                  alt={product.images[0].altText || product.title}
                 />
                 <div className="product-description">
                   <h4>
                     {product.title}{" "}
                     <span className="price">
-                      {` + $${formatPrice(product.variants[0].price)}`}
-                      {!!product.variants[0].compareAtPrice &&
+                      {` + $${product.variants[0].price}`}
+                      {product.variants[0].compareAtPrice &&
                         isDiscounted(
                           product.variants[0].price,
                           product.variants[0].compareAtPrice
@@ -610,7 +609,7 @@ const Form = ({
                           <span>
                             {" "}
                             <span className="strikethrough-grey">
-                              ${formatPrice(product.variants[0].compareAtPrice)}
+                              ${product.variants[0].compareAtPrice}
                             </span>
                           </span>
                         )}
@@ -660,10 +659,10 @@ const Form = ({
                     product.featuredImage && product.featuredImage.localFile
                       ? product.featuredImage.localFile.childImageSharp
                           .gatsbyImageData
-                      : product.media[0].image.localFile.childImageSharp
+                      : product.images[0].localFile.childImageSharp
                           .gatsbyImageData
                   }
-                  alt={product.media[0].image.altText || product.title}
+                  alt={product.images[0].altText || product.title}
                 />
                 <div className="product-description">
                   <h4>{product.title}</h4>

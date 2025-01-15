@@ -1,6 +1,12 @@
-import React, { useState, ChangeEvent, useEffect, useRef } from "react"
+import React, {
+  useState,
+  useContext,
+  ChangeEvent,
+  useEffect,
+  useRef,
+} from "react"
 import { graphql } from "gatsby"
-import { useCart } from "../contexts/storefront-cart"
+import { CartContext } from "../contexts/cart"
 import styled from "styled-components"
 import Layout from "../components/layout"
 import SEO from "../components/seo"
@@ -12,8 +18,7 @@ import AddToCartButton from "../components/add-to-cart-button"
 import { ReviewsProvider } from "../contexts/reviews"
 import Reviews from "../components/reviews"
 import type { YotpoSourceProductBottomLine } from "../types/yotpo"
-import type { ShopifyProduct } from "../types/shopify"
-import { isDiscounted, formatPrice } from "../helpers/shopify"
+import { isDiscounted } from "../helpers/shopify"
 import Divider from "../components/divider"
 import Badge from "../components/badge"
 import ProductBottomline from "../components/product-bottomline"
@@ -313,7 +318,7 @@ const Product = ({
   const [selectedVariantQuantity, setSelectedVariantQuantity] =
     useState<string>("1")
 
-  const { addProductToCart, isAddingToCart } = useCart()
+  const { addProductToCart, isAddingToCart } = useContext(CartContext)
 
   const handleVariant = (evt: ChangeEvent<HTMLSelectElement>) => {
     const sku = evt.target.value
@@ -528,26 +533,23 @@ const Product = ({
 
                         <div className="value">
                           <div>
-                            <span>
-                              ${formatPrice(selectedVariant.price)} USD
-                            </span>
+                            <span>${selectedVariant.price} USD</span>
                           </div>
-                          {!!selectedVariant.compareAtPrice &&
+                          {selectedVariant.compareAtPrice &&
                             isDiscounted(
                               selectedVariant.price,
                               selectedVariant.compareAtPrice
                             ) && (
                               <div className="compare-at-price">
                                 <span className="compare-at-price">
-                                  ${formatPrice(selectedVariant.compareAtPrice)}{" "}
-                                  USD
+                                  ${selectedVariant.compareAtPrice} USD
                                 </span>
                               </div>
                             )}
                         </div>
                       </>
                     ) : (
-                      !!discountedPrice &&
+                      discountedPrice &&
                       isDiscounted(discountedPrice, selectedVariant.price) && (
                         <>
                           <div className="badge-container">
@@ -562,12 +564,12 @@ const Product = ({
 
                           <div className="value">
                             <div>
-                              <span>${formatPrice(discountedPrice)} USD</span>
+                              <span>${discountedPrice} USD</span>
                             </div>
 
                             <div className="compare-at-price">
                               <span className="compare-at-price">
-                                ${formatPrice(selectedVariant.price)} USD
+                                ${selectedVariant.price} USD
                               </span>
                             </div>
                           </div>
@@ -576,7 +578,7 @@ const Product = ({
                     )}
                   </div>
                 </form>
-                {selectedVariant.price > 0 && (
+                {selectedVariant.price > "0.00" && (
                   <div className="actions">
                     <div className="select-wrapper">
                       <select
@@ -675,16 +677,12 @@ export const query = graphql`
       productType
       title
       vendor
-      media {
-        ... on ShopifyMediaImage {
-          image {
-            altText
-            localFile {
-              id
-              childImageSharp {
-                gatsbyImageData
-              }
-            }
+      images {
+        altText
+        localFile {
+          id
+          childImageSharp {
+            gatsbyImageData
           }
         }
       }
