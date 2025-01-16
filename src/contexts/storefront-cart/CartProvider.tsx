@@ -1016,6 +1016,7 @@ export function CartProvider({ children }: Props) {
               id: cartId,
             },
           })
+
           if (!response.data?.cart) {
             throw new Error("Failed to fetch cart")
           }
@@ -1057,7 +1058,10 @@ export function CartProvider({ children }: Props) {
         setCart(rebuiltCart)
       } catch (err: any) {
         console.error("ERROR", err.message)
-        renderErrorModal()
+        const cart = (await getNewCart()) as unknown as CartFragmentType
+        const rebuiltCart = rebuildBundles(cart)
+        setCart(rebuiltCart)
+        // renderErrorModal()
       }
     }
     initializeCheckout()
