@@ -141,6 +141,7 @@ module.exports = {
         shopifyConnections: ["collections"],
         downloadImages: true,
         salesChannel: "Tres Noir Gatsby v4",
+        prioritize: true,
       },
     },
     {

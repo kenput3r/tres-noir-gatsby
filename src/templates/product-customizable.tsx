@@ -1070,7 +1070,7 @@ const ProductCustomizable = ({ data, location: any }: Props) => {
               />
               <div className="heading">
                 <h1>{shopifyProduct.title}</h1>
-                <ProductBottomline reviewListRef={reviewListRef} />
+                <ProductBottomline reviewListRef={reviewListRef as any} />
                 <p className="fit">
                   Size: {contentfulProduct && contentfulProduct.fitDimensions}{" "}
                   <span>
@@ -1171,7 +1171,11 @@ const ProductCustomizable = ({ data, location: any }: Props) => {
                             ) && (
                               <div className="compare-at-price">
                                 <span>
-                                  ${selectedVariant.shopify.compareAtPrice} USD
+                                  $
+                                  {formatPrice(
+                                    selectedVariant.shopify.compareAtPrice
+                                  )}{" "}
+                                  USD
                                 </span>
                               </div>
                             )}
@@ -1343,7 +1347,7 @@ const ProductCustomizable = ({ data, location: any }: Props) => {
           )}
           <Divider />
           <div className="row-no-flex review-row">
-            <Reviews reviewListRef={reviewListRef} />
+            <Reviews reviewListRef={reviewListRef as any} />
           </div>
         </Page>
       </Layout>
